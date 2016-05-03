@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A2A811C2-600D-451B-AA15-346BF7ECED4A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AntMe</RootNamespace>
+    <AssemblyName>AntMe.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\bin\Debug\AntMe.Core.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\bin\Release\AntMe.Core.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Angle.cs" />
+    <Compile Include="Campaign.cs" />
+    <Compile Include="CampaignDescriptionAttribute.cs" />
+    <Compile Include="CodeGeneratorAttribute.cs" />
+    <Compile Include="Compass.cs" />
+    <Compile Include="Delegates.cs" />
+    <Compile Include="EngineState.cs" />
+    <Compile Include="ExpandedObject.cs" />
+    <Compile Include="Faction.cs" />
+    <Compile Include="FactionFactory.cs" />
+    <Compile Include="FactionFilterAttribute.cs" />
+    <Compile Include="FactionInfoProperty.cs" />
+    <Compile Include="FactionItem.cs" />
+    <Compile Include="FactionInfo.cs" />
+    <Compile Include="FactionItemInfo.cs" />
+    <Compile Include="FactionItemState.cs" />
+    <Compile Include="FactionProperty.cs" />
+    <Compile Include="FactionState.cs" />
+    <Compile Include="FactionStateProperty.cs" />
+    <Compile Include="FactionUnit.cs" />
+    <Compile Include="FactoryInterop.cs" />
+    <Compile Include="FactoryInteropProperty.cs" />
+    <Compile Include="ICodeGenerator.cs" />
+    <Compile Include="IExtensionPack.cs" />
+    <Compile Include="InfoProperty.cs" />
+    <Compile Include="Interop.cs" />
+    <Compile Include="InteropProperty.cs" />
+    <Compile Include="ISerializableState.cs" />
+    <Compile Include="ItemInfo.cs" />
+    <Compile Include="ItemInfoProperty.cs" />
+    <Compile Include="ItemState.cs" />
+    <Compile Include="ItemStateProperty.cs" />
+    <Compile Include="ITypeMapper.cs" />
+    <Compile Include="ITypeMapperEntry.cs" />
+    <Compile Include="ITypeResolver.cs" />
+    <Compile Include="Level.cs" />
+    <Compile Include="LevelDescriptionAttribute.cs" />
+    <Compile Include="LevelMode.cs" />
+    <Compile Include="LevelProperty.cs" />
+    <Compile Include="LevelState.cs" />
+    <Compile Include="LevelStateProperty.cs" />
+    <Compile Include="MapState.cs" />
+    <Compile Include="MapTile.cs" />
+    <Compile Include="MipMap.cs" />
+    <Compile Include="MipMapLayer.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="EngineProperty.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="ItemProperty.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="Index2.cs" />
+    <Compile Include="PlayerAttribute.cs" />
+    <Compile Include="PlayerAttributeMappingAttribute.cs" />
+    <Compile Include="PrimordialPlayerAttribute.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Property.cs" />
+    <Compile Include="PropertyList.cs" />
+    <Compile Include="ReadOnlyDictionary.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="StateDeserializer.cs" />
+    <Compile Include="StateProperty.cs" />
+    <Compile Include="StateSerializer.cs" />
+    <Compile Include="Tracer.cs" />
+    <Compile Include="UnitInterop.cs" />
+    <Compile Include="UnitInteropProperty.cs" />
+    <Compile Include="Vector2.cs" />
+    <Compile Include="Vector3.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PropertyStructure.cd" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

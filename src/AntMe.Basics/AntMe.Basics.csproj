@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FC17801C-CF46-4612-915D-98704F9C11D4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AntMe.Basics</RootNamespace>
+    <AssemblyName>AntMe.Basics</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\bin\Debug\AntMe.Basics.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\bin\Release\AntMe.Basics.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Factions\Ants\Interop\StatisticInterop.cs" />
+    <Compile Include="ItemProperties\AttackableProperty.cs" />
+    <Compile Include="ItemProperties\AttackableState.cs" />
+    <Compile Include="ItemProperties\AttackerProperty.cs" />
+    <Compile Include="ItemProperties\AttackerState.cs" />
+    <Compile Include="ItemProperties\CarrierProperty.cs" />
+    <Compile Include="ItemProperties\CarrierState.cs" />
+    <Compile Include="ItemProperties\CollectableGoodProperty.cs" />
+    <Compile Include="ItemProperties\CollectableGoodState.cs" />
+    <Compile Include="ItemProperties\CollectableProperty.cs" />
+    <Compile Include="ItemProperties\CollectableState.cs" />
+    <Compile Include="ItemProperties\CollectorProperty.cs" />
+    <Compile Include="ItemProperties\CollectorState.cs" />
+    <Compile Include="ItemProperties\CollidableProperty.cs" />
+    <Compile Include="ItemProperties\CollidableState.cs" />
+    <Compile Include="EngineExtensions\InteractionExtension.cs" />
+    <Compile Include="EngineExtensions\PhysicsExtension.cs" />
+    <Compile Include="EngineExtensions\PhysicsUnit.cs" />
+    <Compile Include="ItemProperties\PortableProperty.cs" />
+    <Compile Include="ItemProperties\PortableState.cs" />
+    <Compile Include="EngineExtensions\RecognitionExtension.cs" />
+    <Compile Include="ItemProperties\SightingProperty.cs" />
+    <Compile Include="ItemProperties\SightingState.cs" />
+    <Compile Include="ItemProperties\SmellableProperty.cs" />
+    <Compile Include="ItemProperties\SmellableState.cs" />
+    <Compile Include="ItemProperties\SnifferProperty.cs" />
+    <Compile Include="ItemProperties\SnifferState.cs" />
+    <Compile Include="ItemProperties\VisibleCell.cs" />
+    <Compile Include="ItemProperties\VisibleEnvironment.cs" />
+    <Compile Include="ItemProperties\VisibleProperty.cs" />
+    <Compile Include="ItemProperties\VisibleState.cs" />
+    <Compile Include="ItemProperties\WalkingProperty.cs" />
+    <Compile Include="ItemProperties\WalkingState.cs" />
+    <Compile Include="Extension.cs" />
+    <Compile Include="Factions\Ants\AntFactoryInterop.cs" />
+    <Compile Include="Factions\Ants\AntFaction.cs" />
+    <Compile Include="Factions\Ants\AntFactionSettings.cs" />
+    <Compile Include="Factions\Ants\AntFactionState.cs" />
+    <Compile Include="Factions\Ants\AntGeneratorFiles.Designer.cs">
+      <DependentUpon>AntGeneratorFiles.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Items\AnthillInfo.cs" />
+    <Compile Include="Items\AnthillItem.cs" />
+    <Compile Include="Items\AnthillState.cs" />
+    <Compile Include="Items\AntInfo.cs" />
+    <Compile Include="Factions\Ants\AntUnitInterop.cs" />
+    <Compile Include="Items\AntItem.cs" />
+    <Compile Include="Items\AntState.cs" />
+    <Compile Include="Factions\Ants\CasteAttribute.cs" />
+    <Compile Include="Factions\Ants\CasteAttributeMappingAttribute.cs" />
+    <Compile Include="Factions\Ants\Interop\InteractionInterop.cs" />
+    <Compile Include="Factions\Ants\Interop\PhysicsInterop.cs" />
+    <Compile Include="Factions\Ants\Interop\RecognitionInterop.cs" />
+    <Compile Include="Items\MarkerInfo.cs" />
+    <Compile Include="Items\MarkerItem.cs" />
+    <Compile Include="Items\MarkerState.cs" />
+    <Compile Include="Factions\Ants\AntUnit.cs" />
+    <Compile Include="Factions\Ants\AntFactory.cs" />
+    <Compile Include="Factions\Ants\PrimordialCasteAttribute.cs" />
+    <Compile Include="Factions\Bugs\BugFaction.cs" />
+    <Compile Include="Factions\Bugs\BugFactionSettings.cs" />
+    <Compile Include="Factions\Bugs\BugFactionState.cs" />
+    <Compile Include="Factions\Bugs\BugGeneratorFiles.Designer.cs">
+      <DependentUpon>BugGeneratorFiles.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Items\BugInfo.cs" />
+    <Compile Include="Factions\Bugs\BugUnitInterop.cs" />
+    <Compile Include="Items\BugItem.cs" />
+    <Compile Include="Factions\Bugs\BugFactoryInterop.cs" />
+    <Compile Include="Items\BugState.cs" />
+    <Compile Include="Factions\Bugs\BugUnit.cs" />
+    <Compile Include="Factions\Bugs\BugFactory.cs" />
+    <Compile Include="Items\AppleInfo.cs" />
+    <Compile Include="Items\AppleItem.cs" />
+    <Compile Include="Items\AppleState.cs" />
+    <Compile Include="Items\SugarInfo.cs" />
+    <Compile Include="Items\SugarItem.cs" />
+    <Compile Include="Items\SugarState.cs" />
+    <Compile Include="LevelProperties\AreaTrigger.cs" />
+    <Compile Include="LevelProperties\FactionFilterLevelProperty.cs" />
+    <Compile Include="LevelProperties\HotSwapLevelProperty.cs" />
+    <Compile Include="LevelProperties\HotSwapState.cs" />
+    <Compile Include="LevelProperties\ITrigger.cs" />
+    <Compile Include="LevelProperties\ScreenDialog.cs" />
+    <Compile Include="LevelProperties\ScreenHighlight.cs" />
+    <Compile Include="LevelProperties\ScreenHighlightsLevelProperty.cs" />
+    <Compile Include="LevelProperties\ScreenHighlightsState.cs" />
+    <Compile Include="LevelProperties\ScreenMapArea.cs" />
+    <Compile Include="LevelProperties\ScreenMapMarker.cs" />
+    <Compile Include="LevelProperties\ScreenNotification.cs" />
+    <Compile Include="LevelProperties\TimerTrigger.cs" />
+    <Compile Include="LevelProperties\TriggerLevelProperty.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ItemProperties\AppleCollectableProperty.cs" />
+    <Compile Include="ItemProperties\AppleCollectableState.cs" />
+    <Compile Include="ItemProperties\SugarCollectableProperty.cs" />
+    <Compile Include="ItemProperties\SugarCollectableState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Factions\Ants\AntGeneratorFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AntGeneratorFiles.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Factions\Bugs\BugGeneratorFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BugGeneratorFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Factions\Ants\femaleNames.txt" />
+    <Content Include="Factions\Bugs\maleNames.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj">
+      <Project>{a2a811c2-600d-451b-aa15-346bf7eced4a}</Project>
+      <Name>AntMe.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

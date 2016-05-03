@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A25DCAAE-5927-4059-B9ED-2A25FBE81AA9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AntMe.Core.Debug</RootNamespace>
+    <AssemblyName>AntMe.Core.Debug</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DebugAttackableItem.cs" />
+    <Compile Include="DebugAttackerItem.cs" />
+    <Compile Include="DebugCarrierItem.cs" />
+    <Compile Include="DebugCollectableItem.cs" />
+    <Compile Include="DebugCollectorItem.cs" />
+    <Compile Include="DebugCollisionItem.cs" />
+    <Compile Include="DebugFaction.cs" />
+    <Compile Include="DebugFactionSettings.cs" />
+    <Compile Include="DebugFactionState.cs" />
+    <Compile Include="DebugGameItem.cs" />
+    <Compile Include="DebugGood1.cs" />
+    <Compile Include="DebugGood2.cs" />
+    <Compile Include="DebugLevel.cs" />
+    <Compile Include="DebugLevel1.cs" />
+    <Compile Include="DebugLevel2.cs" />
+    <Compile Include="DebugPortableItem.cs" />
+    <Compile Include="DebugSightingItem.cs" />
+    <Compile Include="DebugSmellableItem.cs" />
+    <Compile Include="DebugSnifferItem.cs" />
+    <Compile Include="DebugVisibleItem.cs" />
+    <Compile Include="DebugWalkingItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DeutscheAmeise.cs" />
+    <Compile Include="DeutscheKolonie.cs" />
+    <Compile Include="DeutschesNest.cs" />
+    <Compile Include="DeutscheWanze.cs" />
+    <Compile Include="EngineRenderer.cs" />
+    <Compile Include="EngineRenderer.Designer.cs">
+      <DependentUpon>EngineRenderer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EnglishAnt.cs" />
+    <Compile Include="EnglishBug.cs" />
+    <Compile Include="EnglishColony.cs" />
+    <Compile Include="EnglishNest.cs" />
+    <Compile Include="LevelRenderer.cs" />
+    <Compile Include="LevelRenderer.Designer.cs">
+      <DependentUpon>LevelRenderer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RawAnt.cs" />
+    <Compile Include="RawBug.cs" />
+    <Compile Include="RawColony.cs" />
+    <Compile Include="RawNest.cs" />
+    <Compile Include="StateRenderer.cs" />
+    <Compile Include="StateRenderer.Designer.cs">
+      <DependentUpon>StateRenderer.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AntMe.Core\AntMe.Core.csproj">
+      <Project>{a2a811c2-600d-451b-aa15-346bf7eced4a}</Project>
+      <Name>AntMe.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\AntMe.Basics\AntMe.Basics.csproj">
+      <Project>{FC17801C-CF46-4612-915D-98704F9C11D4}</Project>
+      <Name>AntMe.Extension.Basics</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

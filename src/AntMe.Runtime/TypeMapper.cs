@@ -1,0 +1,1712 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Diagnostics;
+
+namespace AntMe.Runtime
+{
+    /// <summary>
+    /// Statisches Repository für alle erweiterbaren Core-Fragmente der AntMe! Runtime.
+    /// </summary>
+    public class TypeMapper : ITypeMapper, ITypeResolver
+    {
+        // Last ID: 29
+        private Tracer tracer = new Tracer("AntMe.Simulation.TypeMapper");
+
+        /// <summary>
+        /// Neue Instanz des Type Mappers.
+        /// </summary>
+        public TypeMapper()
+        {
+            tracer.Trace(TraceEventType.Information, 1, "TypeMapper started");
+        }
+
+        #region Type Maps
+
+        /// <summary>
+        /// Standard Container für Types.
+        /// </summary>
+        private class TypeMap : ITypeMapperEntry
+        {
+            public IExtensionPack ExtensionPack { get; set; }
+
+            /// <summary>
+            /// Name der Extension
+            /// </summary>
+            public string Name { get; set; }
+
+            /// <summary>
+            /// Typ der Extension
+            /// </summary>
+            public Type Type { get; set; }
+        }
+
+        private class ExtenderTypeMap<T> : TypeMap, IRankedTypeMapperEntry
+        {
+            public T ExtenderDelegate { get; set; }
+
+            public int Rank { get; set; }
+        }
+
+        private class StateInfoTypeMap<CS, CI> : TypeMap, IStateInfoTypeMapperEntry
+        {
+            public Type StateType { get; set; }
+
+            public Type InfoType { get; set; }
+
+            public CS CreateStateDelegate { get; set; }
+
+            public CI CreateInfoDelegate { get; set; }
+        }
+
+        private class AttachmentTypeMap<T> : TypeMap, IAttachmentTypeMapperEntry
+        {
+            public Type AttachmentType { get; set; }
+
+            public T CreateDelegate { get; set; }
+        }
+
+        #endregion
+
+        #region Engine Properties
+
+        private class EnginePropertyContainer : ExtenderTypeMap<Func<Engine, EngineProperty>> { }
+
+        private readonly List<EnginePropertyContainer> enginePropertyContainer =
+            new List<EnginePropertyContainer>();
+
+        /// <summary>
+        /// Listet alle registrierten Extensions auf.
+        /// </summary>
+        public IEnumerable<IRankedTypeMapperEntry> EngineProperties
+        {
+            get
+            {
+                tracer.Trace(TraceEventType.Information, 17, "Requested Engine Property List");
+                return enginePropertyContainer.OrderBy(e => e.Rank);
+            }
+        }
+
+        /// <summary>
+        /// Registriert eine Engine Extension. Die Extension braucht entweder einen Konstruktor mit 
+        /// den Parametern (Engine) oder einen Create Delegaten.
+        /// </summary>
+        /// <param name="extensionPack">Referenz auf den verantwortlichen Extension Pack</param>
+        /// <param name="name">Name der Extension</param>
+        /// <param name="rank">Rang der Extension</param>
+        /// <param name="createExtensionDelegate">Delegat zum Erstellen einer neuen Instanz</param>
+        /// <typeparam name="T">Extension Type</typeparam>
+        public void RegisterEngineProperty<T>(IExtensionPack extensionPack, string name, int rank, Func<Engine, T> createExtensionDelegate = null) where T : EngineProperty
+        {
+            Type t = typeof(T);
+
+            tracer.Trace(TraceEventType.Information, 3, "Try to register new Extension '{0}' ({1})", name, t.FullName);
+
+            // Extension Pack darf nicht null sein.
+            if (extensionPack == null)
+            {
+                tracer.Trace(TraceEventType.Critical, 4, "Extension Pack is null ({0})", t.FullName);
+                throw new ArgumentNullException("extensionPack");
+            }
+
+            // Existenz eines Namens sicher stellen
+            if (string.IsNullOrEmpty(name))
+            {
+                tracer.Trace(TraceEventType.Critical, 4, "Extension Name is not set ({0})", t.FullName);
+                throw new ArgumentNullException("name");
+            }
+
+            // Instaniierbarkeit prüfen
+            if (t.IsAbstract)
+            {
+                tracer.Trace(TraceEventType.Critical, 5, "Extension is abstract '{0}' ({1})", name, t.FullName);
+                throw new NotSupportedException("Extension is abstract");
+            }
+
+            // Collision checken
+            if (enginePropertyContainer.Any(e => e.Type == t))
+            {
+                tracer.Trace(TraceEventType.Critical, 6, "Extension is already registered '{0}' ({1})", name, t.FullName);
+                throw new ArgumentException("This Extension is already registered");
+            }
+
+            if (createExtensionDelegate == null)
+            {
+                tracer.Trace(TraceEventType.Information, 7, "Extension contains no CreateDelegate");
+
+                // Der Standard-Prozess erwartet einen mit der Struktur ctor(Engine)
+                if (t.GetConstructor(new[] { typeof(Engine) }) == null)
+                {
+                    tracer.Trace(TraceEventType.Critical, 9, "Extension has no empty Constructor '{0}' ({1})", name, t.FullName);
+                    throw new NotSupportedException(string.Format("Extension has no empty Constructor '{0}' ({1})", name, t.FullName));
+                }
+            }
+            else
+            {
+                tracer.Trace(TraceEventType.Information, 8, "Extension contains CreateDelegate");
+            }
+
+            EnginePropertyContainer container = new EnginePropertyContainer()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Rank = rank,
+                Type = t,
+                ExtenderDelegate = createExtensionDelegate
+            };
+
+            tracer.Trace(TraceEventType.Information, 2, "Register Engine Extension succeeded '{0}' ({1})", name, t.FullName);
+
+            enginePropertyContainer.Add(container);
+        }
+
+        #endregion
+
+        #region Items
+
+        private class ItemTypeMap : StateInfoTypeMap<Func<Item, ItemState>, Func<Item, Item, ItemInfo>> { }
+
+        private List<ItemTypeMap> itemsContainer =
+            new List<ItemTypeMap>();
+
+        /// <summary>
+        /// Liefert eine Liste registrierter Game Items.
+        /// </summary>
+        public IEnumerable<IStateInfoTypeMapperEntry> Items { get { return itemsContainer; } }
+
+        /// <summary>
+        /// Registriert einen Game Type beim Type Mapper.
+        /// </summary>
+        /// <param name="name">Name des Game Items</param>
+        /// <param name="createStateDelegate">Delegat zur manuellen Erstellung eines States</param>
+        /// <param name="createInfoDelegate">Delegat zur manuellen Erstellung eines Info Objektes</param>
+        /// <typeparam name="T">Type des Types</typeparam>
+        /// <typeparam name="S">Dazugehöriger State Type</typeparam>
+        /// <typeparam name="I">Dazugehöriger Info Type</typeparam>
+        public void RegisterItem<T, S, I>(IExtensionPack extensionPack, string name,
+            Func<Item, S> createStateDelegate = null,
+            Func<Item, Item, I> createInfoDelegate = null)
+            where T : Item
+            where S : ItemState
+            where I : ItemInfo
+        {
+            // Extension Pack darf nicht null sein
+            if (extensionPack == null)
+                throw new ArgumentNullException("engine");
+
+            // Text darf nicht leer sein
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
+
+            Type itemType = typeof(T);
+            Type stateType = typeof(S);
+            Type infoType = typeof(I);
+
+            // Prüft auf abstract
+            if (itemType.IsAbstract)
+                throw new NotSupportedException("Item Type is abstract");
+
+            // Prüfen ob dieser Type bereits registriert ist
+            if (itemsContainer.Any(c => c.Type == itemType))
+                throw new NotSupportedException("Item is already registered");
+
+            if (stateType.IsAbstract)
+                throw new NotSupportedException("State Type is abstract");
+
+            // Check for Parameterless Constructor
+            if (stateType.GetConstructor(new Type[] { }) == null)
+                throw new NotSupportedException("The State has no parameterless Constructor");
+
+            // Check for Constructor with T
+            if (stateType.GetConstructor(new Type[] { typeof(T) }) == null)
+                throw new NotSupportedException("The State has no Constructor with Item");
+
+            if (infoType.IsAbstract)
+                throw new NotSupportedException("Info Type is abstract");
+
+            // Check for Item/Item Constructor
+            if (infoType.GetConstructor(new Type[] { typeof(T), typeof(Item) }) == null)
+                throw new NotSupportedException("The Info Type has no Constructor with T and Item");
+
+            itemsContainer.Add(new ItemTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = itemType,
+                StateType = stateType,
+                InfoType = infoType,
+                CreateStateDelegate = createStateDelegate,
+                CreateInfoDelegate = createInfoDelegate
+            });
+        }
+
+        #endregion
+
+        #region Item Properties
+
+        private class ItemPropertyTypeMap : StateInfoTypeMap<Func<Item, ItemProperty, ItemStateProperty>, Func<Item, ItemProperty, Item, ItemInfoProperty>> { }
+
+        private List<ItemPropertyTypeMap> itemProperties = new List<ItemPropertyTypeMap>();
+
+        /// <summary>
+        /// Liefert eine Liste aller registrierten Properties zurück.
+        /// </summary>
+        public IEnumerable<IStateInfoTypeMapperEntry> ItemProperties
+        {
+            get
+            {
+                tracer.Trace(TraceEventType.Information, 29, "Requested List of Properties");
+                return itemProperties;
+            }
+        }
+
+        /// <summary>
+        /// Registriert ein Item Property das keine State- oder Info-Properties besitzt.
+        /// </summary>
+        /// <typeparam name="T">Type des Property</typeparam>
+        /// <param name="extensionPack">Referenz auf den Extension Pack</param>
+        /// <param name="name">Name des Properties</param>
+        public void RegisterItemProperty<T>(IExtensionPack extensionPack, string name)
+            where T : ItemProperty
+        {
+            RegisterItemProperty<T, ItemStateProperty, ItemInfoProperty>(extensionPack, name, false, false, null, null);
+        }
+
+        /// <summary>
+        /// Registriert ein Item Property das nur ein State Property hat.
+        /// </summary>
+        /// <typeparam name="T">Type des Property</typeparam>
+        /// <typeparam name="S">Type des State Properties</typeparam>
+        /// <param name="extensionPack">Referenz auf den Extension Pack</param>
+        /// <param name="name">Name des Properties</param>
+        /// <param name="createStateDelegate">Optionaler Delegat zur Erzeugung des States.</param>
+        public void RegisterItemPropertyS<T, S>(IExtensionPack extensionPack, string name,
+            Func<Item, ItemProperty, S> createStateDelegate = null)
+            where T : ItemProperty
+            where S : ItemStateProperty
+        {
+            RegisterItemProperty<T, S, ItemInfoProperty>(extensionPack, name, true, false, createStateDelegate, null);
+        }
+
+        /// <summary>
+        /// Registriert ein Item Property das nur ein Info Property hat.
+        /// </summary>
+        /// <typeparam name="T">Type des Property</typeparam>
+        /// <typeparam name="I">Type des Info Property</typeparam>
+        /// <param name="extensionPack">Referenz auf den Extension Pack</param>
+        /// <param name="name">Name des Properties</param>
+        /// <param name="createInfoDelegate">Optionaler Delegat zur Erzeugung des Info Properties.</param>
+        public void RegisterItemPropertyI<T, I>(IExtensionPack extensionPack, string name,
+            Func<Item, ItemProperty, Item, I> createInfoDelegate = null)
+            where T : ItemProperty
+            where I : ItemInfoProperty
+        {
+            RegisterItemProperty<T, ItemStateProperty, I>(extensionPack, name, false, true, null, createInfoDelegate);
+        }
+
+        /// <summary>
+        /// Registriert ein Item Property mit samt den State- und Info-Properties
+        /// </summary>
+        /// <param name="extensionPack">Referenz auf den Extension Pack</param>
+        /// <param name="name">Name des Properties</param>
+        /// <param name="createStateDelegate">Delegate zum Erstellen eines neuen State Properties</param>
+        /// <param name="createInfoDelegate">Delegate zum Erstellen eines neuen Info Properties. Parameter sind das eigentliche Game Item, das Property und der Observer</param>
+        /// <typeparam name="T">Type des Property</typeparam>
+        /// <typeparam name="S">Type des State Property</typeparam>
+        /// <typeparam name="I">Type des Info Property</typeparam>
+        public void RegisterItemPropertySI<T, S, I>(IExtensionPack extensionPack, string name,
+            Func<Item, ItemProperty, S> createStateDelegate = null,
+            Func<Item, ItemProperty, Item, I> createInfoDelegate = null)
+            where T : ItemProperty
+            where S : ItemStateProperty
+            where I : ItemInfoProperty
+        {
+            RegisterItemProperty<T, S, I>(extensionPack, name, true, true, createStateDelegate, createInfoDelegate);
+        }
+
+        private void RegisterItemProperty<T, S, I>(IExtensionPack extensionPack, string name,
+            bool stateSet, bool infoSet,
+            Func<Item, ItemProperty, S> createStateDelegate = null,
+            Func<Item, ItemProperty, Item, I> createInfoDelegate = null)
+            where T : ItemProperty
+            where S : ItemStateProperty
+            where I : ItemInfoProperty
+        {
+            // Extension prüfen
+            if (extensionPack == null)
+            {
+                tracer.Trace(TraceEventType.Critical, 19, "Extension Pack not set");
+                throw new ArgumentNullException("extensionPack");
+            }
+
+            // Namen prüfen
+            if (string.IsNullOrEmpty(name))
+            {
+                tracer.Trace(TraceEventType.Critical, 18, "Name of Property not set");
+                throw new ArgumentNullException("name");
+            }
+
+            // Type
+            Type type = typeof(T);
+            if (type.IsAbstract)
+            {
+                tracer.Trace(TraceEventType.Critical, 20, "Property is abstract '{0}' ({1})", name, type.FullName);
+                throw new ArgumentException("Type is abstract");
+            }
+
+            // Kollisionen prüfen
+            if (itemProperties.Any(p => p.Type == type))
+            {
+                tracer.Trace(TraceEventType.Critical, 21, "Property is already registered. '{0}' ({1})", name, type.FullName);
+                throw new NotSupportedException("Property is already registered");
+            }
+
+            // TODO: Konstruktoren prüfen
+
+            Type stateType = null;
+
+            // Prüfen, ob State Type angegeben wurde.
+            if (stateSet)
+            {
+                stateType = typeof(S);
+                tracer.Trace(TraceEventType.Information, 22, "Property contains State Property. '{0}' ({1})", name, stateType.FullName);
+
+                // Abstract
+                if (stateType.IsAbstract)
+                {
+                    // TODO: Tracer
+                    throw new ArgumentException("State Type is abstract");
+                }
+
+                // Braucht einen parameterlosen Konstruktor
+                if (stateType.GetConstructor(new Type[] { }) == null)
+                {
+                    tracer.Trace(TraceEventType.Critical, 23, "State Property contains no parameterless Constructor. '{0}' ({1})", name, stateType.FullName);
+                    throw new NotSupportedException("State Type has no parameterless Constructor");
+                }
+
+                // Braucht einen Konstruktor der das Item und das Item Property entgegen nimmt.
+                if (stateType.GetConstructor(new Type[] { typeof(Item), typeof(T) }) == null)
+                {
+                    tracer.Trace(TraceEventType.Critical, 24, "State Property contains no Constructor with Property Type. '{0}' ({1})", name, stateType.FullName);
+                    throw new NotSupportedException("State Type has no Constructor with Item Property Type");
+                }
+            }
+            else
+            {
+                tracer.Trace(TraceEventType.Information, 26, "Property contains no State Property. '{0}'", name);
+            }
+
+            // Check Info Type
+            Type infoType = null;
+
+            // Prüfen, ob Info Type angegeben wurde.
+            if (infoSet)
+            {
+                infoType = typeof(I);
+                tracer.Trace(TraceEventType.Information, 25, "Property contains Info Property. '{0}' ({1})", name, infoType.FullName);
+
+                // Auf Abstract prüfen
+                if (infoType.IsAbstract)
+                {
+                    // TODO: Tracer
+                    throw new ArgumentException("Info Type is abstract");
+                }
+
+                // Braucht einen Konstruktor mit Item Property 
+                if (infoType.GetConstructor(new Type[] { typeof(Item), typeof(T), typeof(Item) }) == null)
+                {
+                    tracer.Trace(TraceEventType.Critical, 28, "Info Property does not contain a Constructor with Property Type and Observer Item. '{0}' ({1})", name, infoType.FullName);
+                    throw new NotSupportedException("Info Type has no Constructor with Item Property and a Game Item");
+                }
+            }
+            else
+            {
+                tracer.Trace(TraceEventType.Information, 27, "Property contains no Info Property. '{0}'", name);
+            }
+
+            itemProperties.Add(new ItemPropertyTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T),
+                StateType = stateType,
+                InfoType = infoType,
+                CreateStateDelegate = createStateDelegate,
+                CreateInfoDelegate = createInfoDelegate
+            });
+
+            tracer.Trace(TraceEventType.Information, 29, "Property registered successful. '{0}'", name);
+        }
+
+        #endregion
+
+        #region Item Attachment Properties
+
+        private class ItemAttchmentTypeMap : AttachmentTypeMap<Func<Item, ItemProperty>> { }
+
+        private List<ItemAttchmentTypeMap> itemAttachments = new List<ItemAttchmentTypeMap>();
+
+        /// <summary>
+        /// Auflistung aller registrierten Item Attachments.
+        /// </summary>
+        public IEnumerable<IAttachmentTypeMapperEntry> ItemAttachments
+        {
+            get { return itemAttachments; }
+        }
+
+        /// <summary>
+        /// Hängt ein definiertes Property an ein Item an.
+        /// </summary>
+        /// <typeparam name="I">Item</typeparam>
+        /// <typeparam name="P">Property</typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createPropertyDelegate"></param>
+        public void AttachItemProperty<I, P>(IExtensionPack extensionPack, string name, Func<Item, P> createPropertyDelegate = null)
+            where I : Item
+            where P : ItemProperty
+        {
+            // Extension prüfen
+            if (extensionPack == null)
+            {
+                // TODO: Tracer
+                throw new ArgumentNullException("extensionPack");
+            }
+
+            // Name prüfen
+            if (string.IsNullOrEmpty(name))
+            {
+                // TODO: Tracer
+                throw new ArgumentNullException("name");
+            }
+
+            if (!itemProperties.Any(c => c.Type == typeof(P)))
+            {
+                // TODO: Tracer
+                throw new ArgumentException("Property is not registered");
+            }
+
+            if (itemAttachments.Any(c => c.Type == typeof(I) && c.AttachmentType == typeof(P)))
+            {
+                // TODO: Tracer
+                throw new NotSupportedException("Item Property Combination is already reagistered");
+            }
+
+            if (createPropertyDelegate == null)
+            {
+                // TODO: Construktor prüfen
+                if (typeof(P).GetConstructor(new Type[] { typeof(Item) }) == null)
+                {
+                    // TODO: Tracer
+                    throw new NotSupportedException("Property has no fitting Constructor.");
+                }
+            }
+
+            itemAttachments.Add(new ItemAttchmentTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(I),
+                AttachmentType = typeof(P),
+                CreateDelegate = createPropertyDelegate
+            });
+        }
+
+        #endregion
+
+        #region Item Extender
+
+        private class ItemExtenderTypeMap : ExtenderTypeMap<Action<Item>> { }
+
+        private List<ItemExtenderTypeMap> itemExtender = new List<ItemExtenderTypeMap>();
+
+        /// <summary>
+        /// Liefert eine priorisierte Liste der Extender zum angegebenen Game Item Type zurück.
+        /// </summary>
+        /// <typeparam name="T">Game Item Type</typeparam>
+        /// <returns>Liste der Extender</returns>
+        public IEnumerable<IRankedTypeMapperEntry> ItemExtender
+        {
+            get
+            {
+                return itemExtender.OrderBy(g => g.Rank);
+            }
+        }
+
+        /// <summary>
+        /// Registriert einen Delegaten zur Erweiterung des angegebenen Item Types.
+        /// </summary>
+        /// <param name="extensionPack"></param>
+        /// <param name="name">Name der Erweiterung</param>
+        /// <param name="rank">Priorität</param>
+        /// <typeparam name="T">Item Type für den der Extender gilt</typeparam>
+        /// <param name="extenderDelegate">Delegat</param>
+        public void RegisterItemExtender<T>(IExtensionPack extensionPack, string name, Action<Item> extenderDelegate, int rank)
+            where T : Item
+        {
+            // Kein Name angegeben
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
+
+            // Kein Delegat angegeben
+            if (extenderDelegate == null)
+                throw new ArgumentNullException("extenderDelegate");
+
+            itemExtender.Add(new ItemExtenderTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T),
+                Rank = rank,
+                ExtenderDelegate = extenderDelegate
+            });
+        }
+
+        #endregion
+
+        #region Factions
+
+        private class FactionTypeMap : StateInfoTypeMap<Func<Faction, FactionState>, Func<Faction, Item, FactionInfo>>, ITypeMapperFactionEntry
+        {
+            public Type FactoryType { get; set; }
+
+            public Type UnitType { get; set; }
+
+            public Type FactoryInteropType { get; set; }
+
+            public Type UnitInteropType { get; set; }
+        }
+
+        private List<FactionTypeMap> factions = new List<FactionTypeMap>();
+
+        /// <summary>
+        /// Liefert eine Liste der registrierten Factions.
+        /// </summary>
+        public IEnumerable<ITypeMapperFactionEntry> Factions
+        {
+            get
+            {
+                return factions;
+            }
+        }
+
+        /// <summary>
+        /// Registriert eine neue Faction am System.
+        /// </summary>
+        /// <param name="extensionPack">Referenz auf die Extension</param>
+        /// <param name="name">Name der Faction</param>
+        /// <typeparam name="T">Typ der spezialisierten Faction</typeparam>
+        /// <typeparam name="F">Typ der Fabric</typeparam>
+        /// <typeparam name="U">Typ der Unit</typeparam>
+        /// <typeparam name="S">Typ der State Klasse</typeparam>
+        /// <typeparam name="I">Typ der Info Klasse</typeparam>
+        /// <typeparam name="FI"></typeparam>
+        /// <typeparam name="UI"></typeparam>
+        /// <param name="createInfoDelegate"></param>
+        /// <param name="createStateDelegate"></param>
+        public void RegisterFaction<T, S, I, F, FI, U, UI>(IExtensionPack extensionPack, string name,
+            Func<Faction, S> createStateDelegate = null,
+            Func<Faction, Item, I> createInfoDelegate = null)
+            where T : Faction
+            where S : FactionState
+            where I : FactionInfo
+            where F : FactionFactory
+            where FI : FactoryInterop
+            where U : FactionUnit
+            where UI : UnitInterop
+        {
+            // TODO: Null-Check und Vererbungscheck
+            factions.Add(new FactionTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T),
+                StateType = typeof(S),
+                InfoType = typeof(I),
+                FactoryType = typeof(F),
+                FactoryInteropType = typeof(FI),
+                UnitType = typeof(U),
+                UnitInteropType = typeof(UI),
+                CreateStateDelegate = createStateDelegate,
+                CreateInfoDelegate = createInfoDelegate
+            });
+        }
+
+
+
+        /// <summary>
+        /// Identifiziert die zugehörige Faction zum übergebenen Player Type.
+        /// </summary>
+        /// <param name="playerType">Typ des Spielers</param>
+        /// <returns>Full Type Name</returns>
+        public string LookupFactionName(Type playerType)
+        {
+            var faction = factions.FirstOrDefault(f => playerType.IsSubclassOf(f.FactoryType));
+            if (faction != null)
+                return faction.Type.FullName;
+            return null;
+        }
+
+        #endregion
+
+        #region Faction Property
+
+        private class FactionPropertyTypeMap : StateInfoTypeMap<Func<Faction, FactionProperty, FactionStateProperty>, Func<Faction, FactionProperty, Item, FactionInfoProperty>> { }
+
+        private List<FactionPropertyTypeMap> factionProperties = new List<FactionPropertyTypeMap>();
+
+        public IEnumerable<IStateInfoTypeMapperEntry> FactionProperties
+        {
+            get { return factionProperties; }
+        }
+
+        public void RegisterFactionProperty<T>(IExtensionPack extensionPack, string name)
+            where T : FactionProperty
+        {
+            RegisterFactionProperty<T, FactionStateProperty, FactionInfoProperty>(extensionPack, name, false, false, null, null);
+        }
+
+        public void RegisterFactionProperty<T, S>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null)
+            where T : FactionProperty
+            where S : FactionStateProperty
+        {
+            RegisterFactionProperty<T, S, FactionInfoProperty>(extensionPack, name, true, false, createStateDelegate, null);
+        }
+
+        public void RegisterFactionProperty<T, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+            where T : FactionProperty
+            where I : FactionInfoProperty
+        {
+            RegisterFactionProperty<T, FactionStateProperty, I>(extensionPack, name, false, true, null, createInfoDelegate);
+        }
+
+        public void RegisterFactionProperty<T, S, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+            where T : FactionProperty
+            where S : FactionStateProperty
+            where I : FactionInfoProperty
+        {
+            RegisterFactionProperty<T, S, I>(extensionPack, name, true, true, createStateDelegate, createInfoDelegate);
+        }
+
+        private void RegisterFactionProperty<T, S, I>(IExtensionPack extensionPack, string name,
+            bool stateSet, bool infoSet,
+            Func<Faction, FactionProperty, S> createStateDelegate = null,
+            Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+            where T : FactionProperty
+            where S : FactionStateProperty
+            where I : FactionInfoProperty
+        {
+            // Extension prüfen
+            if (extensionPack == null)
+            {
+                // tracer.Trace(TraceEventType.Critical, 19, "Extension Pack not set");
+                throw new ArgumentNullException("extensionPack");
+            }
+
+            // Namen prüfen
+            if (string.IsNullOrEmpty(name))
+            {
+                // tracer.Trace(TraceEventType.Critical, 18, "Name of Property not set");
+                throw new ArgumentNullException("name");
+            }
+
+            // Type
+            Type type = typeof(T);
+            if (type.IsAbstract)
+            {
+                // tracer.Trace(TraceEventType.Critical, 20, "Property is abstract '{0}' ({1})", name, type.FullName);
+                throw new ArgumentException("Type is abstract");
+            }
+
+            // Kollisionen prüfen
+            if (itemProperties.Any(p => p.Type == type))
+            {
+                // tracer.Trace(TraceEventType.Critical, 21, "Property is already registered. '{0}' ({1})", name, type.FullName);
+                throw new NotSupportedException("Property is already registered");
+            }
+
+            // TODO: Konstruktoren prüfen
+
+            Type stateType = null;
+
+            // Prüfen, ob State Type angegeben wurde.
+            if (stateSet)
+            {
+                stateType = typeof(S);
+                // tracer.Trace(TraceEventType.Information, 22, "Property contains State Property. '{0}' ({1})", name, stateType.FullName);
+
+                // Abstract
+                if (stateType.IsAbstract)
+                {
+                    // TODO: Tracer
+                    throw new ArgumentException("State Type is abstract");
+                }
+
+                // Braucht einen parameterlosen Konstruktor
+                if (stateType.GetConstructor(new Type[] { }) == null)
+                {
+                    // tracer.Trace(TraceEventType.Critical, 23, "State Property contains no parameterless Constructor. '{0}' ({1})", name, stateType.FullName);
+                    throw new NotSupportedException("State Type has no parameterless Constructor");
+                }
+
+                // Braucht einen Konstruktor der das Item und das Item Property entgegen nimmt.
+                if (stateType.GetConstructor(new Type[] { typeof(Faction), typeof(T) }) == null)
+                {
+                    // tracer.Trace(TraceEventType.Critical, 24, "State Property contains no Constructor with Property Type. '{0}' ({1})", name, stateType.FullName);
+                    throw new NotSupportedException("State Type has no Constructor with Item Property Type");
+                }
+            }
+            else
+            {
+                // tracer.Trace(TraceEventType.Information, 26, "Property contains no State Property. '{0}'", name);
+            }
+
+            // Check Info Type
+            Type infoType = null;
+
+            // Prüfen, ob Info Type angegeben wurde.
+            if (infoSet)
+            {
+                infoType = typeof(I);
+                // tracer.Trace(TraceEventType.Information, 25, "Property contains Info Property. '{0}' ({1})", name, infoType.FullName);
+
+                // Auf Abstract prüfen
+                if (infoType.IsAbstract)
+                {
+                    // TODO: Tracer
+                    throw new ArgumentException("Info Type is abstract");
+                }
+
+                // Braucht einen Konstruktor mit Item Property 
+                if (infoType.GetConstructor(new Type[] { typeof(Faction), typeof(T), typeof(Item) }) == null)
+                {
+                    // tracer.Trace(TraceEventType.Critical, 28, "Info Property does not contain a Constructor with Property Type and Observer Item. '{0}' ({1})", name, infoType.FullName);
+                    throw new NotSupportedException("Info Type has no Constructor with Item Property and a Game Item");
+                }
+            }
+            else
+            {
+                // tracer.Trace(TraceEventType.Information, 27, "Property contains no Info Property. '{0}'", name);
+            }
+
+            factionProperties.Add(new FactionPropertyTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T),
+                StateType = stateType,
+                InfoType = infoType,
+                CreateStateDelegate = createStateDelegate,
+                CreateInfoDelegate = createInfoDelegate
+            });
+
+            // tracer.Trace(TraceEventType.Information, 29, "Property registered successful. '{0}'", name);
+        }
+
+
+
+        #endregion
+
+        #region Faction Attachment Properties
+
+        private class FactionAttachmentTypeMap : AttachmentTypeMap<Func<Faction, FactionProperty>> { }
+
+        private List<FactionAttachmentTypeMap> factionAttachments = new List<FactionAttachmentTypeMap>();
+
+        public IEnumerable<IAttachmentTypeMapperEntry> FactionAttachments { get { return factionAttachments; } }
+
+        public void AttachFactionProperty<I, P>(IExtensionPack extensionPack, string name, Func<Faction, P> createPropertyDelegate = null)
+            where I : Faction
+            where P : FactionProperty
+        {
+            // Extension prüfen
+            if (extensionPack == null)
+            {
+                // TODO: Tracer
+                throw new ArgumentNullException("extensionPack");
+            }
+
+            // Name prüfen
+            if (string.IsNullOrEmpty(name))
+            {
+                // TODO: Tracer
+                throw new ArgumentNullException("name");
+            }
+
+            if (!itemProperties.Any(c => c.Type == typeof(P)))
+            {
+                // TODO: Tracer
+                throw new ArgumentException("Property is not registered");
+            }
+
+            if (itemAttachments.Any(c => c.Type == typeof(I) && c.AttachmentType == typeof(P)))
+            {
+                // TODO: Tracer
+                throw new NotSupportedException("Item Property Combination is already reagistered");
+            }
+
+            if (createPropertyDelegate == null)
+            {
+                // TODO: Construktor prüfen
+                if (typeof(P).GetConstructor(new Type[] { typeof(Faction) }) == null)
+                {
+                    // TODO: Tracer
+                    throw new NotSupportedException("Property has no fitting Constructor.");
+                }
+            }
+
+            factionAttachments.Add(new FactionAttachmentTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(I),
+                AttachmentType = typeof(P),
+                CreateDelegate = createPropertyDelegate
+            });
+        }
+
+        #endregion
+
+        #region Faction Extender
+
+        private class FactionExtenderTypeMap : ExtenderTypeMap<Action<Faction>> { }
+
+        private List<FactionExtenderTypeMap> factionExtender = new List<FactionExtenderTypeMap>();
+
+        public IEnumerable<IRankedTypeMapperEntry> FactionExtender
+        {
+            get { return factionExtender; }
+        }
+
+        public void RegisterFactionExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<Faction> extenderDelegate)
+        {
+            // TODO: Check Stuff
+            factionExtender.Add(new FactionExtenderTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T),
+                Rank = rank,
+                ExtenderDelegate = extenderDelegate
+            });
+        }
+
+        #endregion
+
+        #region Interop Properties
+
+        private List<TypeMap> factoryInteropProperties = new List<TypeMap>();
+
+        private List<TypeMap> unitInteropProperties = new List<TypeMap>();
+
+        /// <summary>
+        /// Liste aller registrierten Factory Interop Properties.
+        /// </summary>
+        public IEnumerable<ITypeMapperEntry> FactoryInteropProperties { get { return factoryInteropProperties; } }
+
+        /// <summary>
+        /// Liste aller registrierten Unit Interop Properties.
+        /// </summary>
+        public IEnumerable<ITypeMapperEntry> UnitInteropProperties { get { return unitInteropProperties; } }
+
+        /// <summary>
+        /// Registriert ein Property für den Factory Interop
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="extensionPack">Referenz auf die Extension</param>
+        /// <param name="name">Name des Properties</param>
+        public void RegisterFactoryInteropProperty<T>(IExtensionPack extensionPack, string name)
+            where T : FactoryInteropProperty
+        {
+            // TODO: Prüfungen
+            factoryInteropProperties.Add(new TypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T)
+            });
+        }
+
+        /// <summary>
+        /// Registriert ein Property für den Unit Interop
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="extensionPack">Extension Pack</param>
+        /// <param name="name">name des Properties</param>
+        public void RegisterUnitInteropProperty<T>(IExtensionPack extensionPack, string name)
+            where T : UnitInteropProperty
+        {
+            // TODO: Prüfungen
+            unitInteropProperties.Add(new TypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T)
+            });
+        }
+
+        #endregion
+
+        #region Interop Attachment Properties
+
+        private class FactoryAttchmentTypeMap : AttachmentTypeMap<Func<FactoryInterop, FactoryInteropProperty>> { }
+
+        private class UnitAttchmentTypeMap : AttachmentTypeMap<Func<UnitInterop, UnitInteropProperty>> { }
+
+        private List<FactoryAttchmentTypeMap> factoryInteropAttachments = new List<FactoryAttchmentTypeMap>();
+
+        private List<UnitAttchmentTypeMap> unitInteropAttachments = new List<UnitAttchmentTypeMap>();
+
+        public IEnumerable<IAttachmentTypeMapperEntry> FactoryInteropAttachments { get { return factoryInteropAttachments; } }
+
+        public IEnumerable<IAttachmentTypeMapperEntry> UnitInteropAttachments { get { return unitInteropAttachments; } }
+
+        /// <summary>
+        /// Hängt ein Property an eine gegebene Factory Interop an.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="P"></typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createPropertyDelegate"></param>
+        public void AttachFactoryInteropProperty<T, P>(IExtensionPack extensionPack, string name,
+            Func<FactoryInterop, P> createPropertyDelegate = null)
+            where T : FactoryInterop
+            where P : FactoryInteropProperty
+        {
+            // TODO: Prüfungen
+            factoryInteropAttachments.Add(new FactoryAttchmentTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T),
+                AttachmentType = typeof(P),
+                CreateDelegate = createPropertyDelegate
+            });
+        }
+
+        /// <summary>
+        /// Hängt ein Property an eine gegebene Unit Interop an.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="P"></typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createPropertyDelegate"></param>
+        public void AttachUnitInteropProperty<T, P>(IExtensionPack extensionPack, string name,
+            Func<UnitInterop, P> createPropertyDelegate = null)
+            where T : UnitInterop
+            where P : UnitInteropProperty
+        {
+            // TODO: Prüfungen
+            unitInteropAttachments.Add(new UnitAttchmentTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T),
+                AttachmentType = typeof(P),
+                CreateDelegate = createPropertyDelegate
+            });
+        }
+
+        #endregion
+
+        #region Interop Extender
+
+        private class FactoryExtenderTypeMap : ExtenderTypeMap<Action<FactoryInterop>> { }
+
+        private class UnitExtenderTypeMap : ExtenderTypeMap<Action<UnitInterop>> { }
+
+        private List<FactoryExtenderTypeMap> factoryInteropExtender = new List<FactoryExtenderTypeMap>();
+
+        private List<UnitExtenderTypeMap> unitInteropExtender = new List<UnitExtenderTypeMap>();
+
+        public IEnumerable<IRankedTypeMapperEntry> FactoryInteropExtender { get { return factoryInteropExtender; } }
+
+        public IEnumerable<IRankedTypeMapperEntry> UnitInteropExtender { get { return unitInteropExtender; } }
+
+        /// <summary>
+        /// Registriert einen Extender für das gegebene Factory Interop
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="rank"></param>
+        /// <param name="extenderDelegate"></param>
+        public void RegisterFactoryInteropExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<FactoryInterop> extenderDelegate)
+            where T : FactoryInterop
+        {
+            // TODO: Prüfungen
+            factoryInteropExtender.Add(new FactoryExtenderTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T),
+                Rank = rank,
+                ExtenderDelegate = extenderDelegate
+            });
+        }
+
+        /// <summary>
+        /// Registriert einen Extender für das gegebene Unit Interop
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="rank"></param>
+        /// <param name="extenderDelegate"></param>
+        public void RegisterUnitInteropExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<UnitInterop> extenderDelegate)
+            where T : UnitInterop
+        {
+            // TODO: prüfungen
+            unitInteropExtender.Add(new UnitExtenderTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(T),
+                Rank = rank,
+                ExtenderDelegate = extenderDelegate
+            });
+        }
+
+        #endregion
+
+        #region Level Properties
+
+        private class LevelPropertiesTypeMap : StateInfoTypeMap<Func<Level, LevelProperty, LevelStateProperty>, Action>
+        {
+            public Func<Level, LevelProperty> CreatePropertyDelegate { get; set; }
+        }
+
+        private List<LevelPropertiesTypeMap> levelProperties = new List<LevelPropertiesTypeMap>();
+
+        public IEnumerable<IStateInfoTypeMapperEntry> LevelProperties
+        {
+            get
+            {
+                return levelProperties;
+            }
+        }
+
+        public void RegisterLevelProperty<P>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null) where P : LevelProperty
+        {
+            RegisterLevelProperty<P, LevelStateProperty>(extensionPack, name, false, createPropertyDelegate, null);
+        }
+
+        public void RegisterLevelProperty<P, S>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null, Func<Level, LevelProperty, LevelStateProperty> createStatePropertyDelegate = null)
+            where P : LevelProperty
+            where S : LevelStateProperty
+        {
+            RegisterLevelProperty<P, S>(extensionPack, name, true, createPropertyDelegate, createStatePropertyDelegate);
+        }
+
+        private void RegisterLevelProperty<P, S>(IExtensionPack extensionPack, string name, bool stateSet, Func<Level, LevelProperty> createPropertyDelegate = null, Func<Level, LevelProperty, LevelStateProperty> createStatePropertyDelegate = null)
+        {
+            Type stateType = null;
+            if (stateSet)
+                stateType = typeof(S);
+
+            levelProperties.Add(new LevelPropertiesTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(P),
+                StateType = stateType,
+                InfoType = null,
+                CreatePropertyDelegate = createPropertyDelegate,
+                CreateStateDelegate = createStatePropertyDelegate,
+                CreateInfoDelegate = null,
+            });
+        }
+
+        #endregion
+
+        #region Level Extender
+
+        private class LevelExtenderTypeMap : ExtenderTypeMap<Action<Level>> { }
+
+        private List<LevelExtenderTypeMap> levelExtender = new List<LevelExtenderTypeMap>();
+
+        public IEnumerable<IRankedTypeMapperEntry> LevelExtender
+        {
+            get
+            {
+                return levelExtender;
+            }
+        }
+
+        public void RegisterLevelExtender<L>(IExtensionPack extensionPack, string name, int rank, Action<Level> extenderDelegate) 
+            where L : Level
+        {
+            // TODO: Check Stuff
+            levelExtender.Add(new LevelExtenderTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = typeof(L),
+                Rank = rank,
+                ExtenderDelegate = extenderDelegate
+            });
+        }
+
+        #endregion
+
+        #region Engine Resolver
+
+        /// <summary>
+        /// Ermittelt alle registrierten Extensions für die übergebene Engine.
+        /// </summary>
+        /// <param name="engine">Referenz auf die neue Engine</param>
+        public void ResolveEngine(Engine engine)
+        {
+            tracer.Trace(TraceEventType.Information, 10, "Apply Extensions to a new Engine");
+
+            // Engine muss gesetzt sein
+            if (engine == null)
+            {
+                tracer.Trace(TraceEventType.Critical, 11, "No Engine was set");
+                throw new ArgumentNullException("engine");
+            }
+
+            var extensions = enginePropertyContainer.OrderBy(e => e.Rank).ToArray();
+            EngineProperty[] result = new EngineProperty[extensions.Length];
+
+            for (int i = 0; i < extensions.Length; i++)
+            {
+                EnginePropertyContainer item = extensions[i];
+
+                tracer.Trace(TraceEventType.Information, 12, "Try to apply Extension {0}", item.Name);
+
+                if (item.ExtenderDelegate != null)
+                {
+                    // Benutze CreateDelegate
+                    tracer.Trace(TraceEventType.Information, 13, "Use Delegate");
+                    result[i] = item.ExtenderDelegate(engine);
+                }
+                else
+                {
+                    // Automatische Instanz
+                    tracer.Trace(TraceEventType.Information, 14, "Use Activator");
+                    result[i] = Activator.CreateInstance(item.Type, engine) as EngineProperty;
+                }
+
+                // Existenz prüfen
+                if (result[i] == null)
+                {
+                    tracer.Trace(TraceEventType.Critical, 15, "Could not create Extension '{0}'", item.Name);
+                    throw new NullReferenceException(
+                        string.Format("Es konnte keine Instanz der Engine Extension {0} erstellt werden.", item.Name));
+                }
+
+                tracer.Trace(TraceEventType.Information, 13, "Apply Extension Successful {0}", item.Name);
+            }
+        }
+
+        #endregion
+
+        #region Item Resolver
+
+        /// <summary>
+        /// Hängt alle Properties an und startet Extender.
+        /// </summary>
+        /// <param name="item">Neues Game Item</param>
+        public void ResolveItem(Item item)
+        {
+            if (item == null)
+                throw new ArgumentNullException("Item");
+
+            // Sicherstellen, dass das Item registriert ist.
+            if (!itemsContainer.Any(c => c.Type == item.GetType()))
+            {
+                // TODO: Trace
+                throw new NotSupportedException("Item is not registered.");
+            }
+
+            // Vererbungskette auflösen
+            List<Type> types = new List<Type>();
+            Type current = item.GetType();
+            types.Add(current);
+            while (current != typeof(Item))
+            {
+                current = current.BaseType;
+                types.Add(current);
+            }
+            Type[] itemTypes = types.ToArray();
+            Array.Reverse(itemTypes);
+
+            // Attachements
+            foreach (var type in itemTypes)
+            {
+                foreach (var attachment in itemAttachments.Where(c => c.Type == type))
+                {
+                    if (attachment.CreateDelegate != null)
+                    {
+                        ItemProperty property = attachment.CreateDelegate(item);
+                        if (property != null)
+                        {
+                            if (property.GetType() != attachment.AttachmentType)
+                            {
+                                // TODO: Trace
+                                throw new NotSupportedException("Delegate returned wrong Property Type");
+                            }
+                            item.AddProperty(property);
+                        }
+                    }
+                    else
+                    {
+                        item.AddProperty(Activator.CreateInstance(attachment.AttachmentType, item) as ItemProperty);
+                    }
+                }
+            }
+
+            // Extender
+            foreach (var extender in itemExtender.Where(c => itemTypes.Contains(c.Type)).OrderBy(c => c.Rank))
+            {
+                extender.ExtenderDelegate(item);
+            }
+        }
+
+        /// <summary>
+        /// Instanziert einen State inkl. Properties.
+        /// </summary>
+        /// <param name="item">Item Instanz</param>
+        /// <returns>Neue Instanz des passenden States</returns>
+        public ItemState CreateItemState(Item item)
+        {
+            if (item == null)
+                throw new ArgumentNullException("Item");
+
+            var container = itemsContainer.FirstOrDefault(g => g.Type == item.GetType());
+            if (container == null)
+            {
+                // TODO: Trace
+                throw new ArgumentException("Item is not registered");
+            }
+
+            ItemState state;
+            if (container.CreateStateDelegate != null)
+            {
+                // Erstellung über Delegat
+                state = container.CreateStateDelegate(item);
+                if (state == null)
+                {
+                    // TODO: Trace
+                    throw new NotSupportedException("No state was returned by delegate.");
+                }
+
+                if (state.GetType() != container.StateType)
+                {
+                    // TODO: Trace
+                    throw new NotSupportedException("delegate returned a wrong State Type");
+                }
+            }
+            else {
+                // Automatische Erstellung
+                state = Activator.CreateInstance(container.StateType) as ItemState;
+                if (state == null)
+                {
+                    // TODO: Trace
+                    throw new Exception("State could not be created.");
+                }
+            }
+
+
+            // State Properties auffüllen
+            foreach (var property in item.Properties)
+            {
+                var map = itemProperties.FirstOrDefault(p => p.Type == property.GetType());
+                if (map == null)
+                    throw new NotSupportedException("Property is not registered.");
+
+                StateProperty prop = null;
+                if (map.CreateStateDelegate != null)
+                {
+                    // Option 1: Create Delegate
+                    prop = map.CreateStateDelegate(item, property);
+
+                    if (prop != null)
+                    {
+                        if (prop.GetType() != map.StateType)
+                        {
+                            // TODO: Trace
+                            throw new NotSupportedException("Delegate returned a wrong Property Type");
+                        }
+
+                        state.AddProperty(prop);
+                    }
+                }
+                else if (map.StateType != null)
+                {
+                    // Option 2: Dynamische Erzeugung
+                    prop = Activator.CreateInstance(map.StateType, item, property) as StateProperty;
+                    if (prop == null)
+                    {
+                        // TODO: Trace
+                        throw new Exception("Could not create State Property");
+                    }
+                    state.AddProperty(prop);
+                }
+            }
+
+            return state;
+        }
+
+        /// <summary>
+        /// Instanziert eine Info zum dazugehörigen Item.
+        /// </summary>
+        /// <param name="item">Item Instanz</param>
+        /// <param name="observer">Beobachtendes Game Item</param>
+        /// <returns>Neue Instanz des passenden Infos</returns>
+        public ItemInfo CreateItemInfo(Item item, Item observer)
+        {
+            if (item == null)
+                throw new ArgumentNullException("item");
+
+            if (observer == null)
+                throw new ArgumentNullException("observer");
+
+            var container = itemsContainer.FirstOrDefault(g => g.Type == item.GetType());
+            if (container == null)
+            {
+                // TODO: Trace
+                throw new ArgumentException("Item is not registered");
+            }
+
+            // Keine Info
+            if (container.InfoType == null)
+                return null;
+
+            if (container != null)
+            {
+                var info = Activator.CreateInstance(container.InfoType, item, observer) as ItemInfo;
+
+                // Info-Properties in Abhängigkeit der Item-Props
+                foreach (var property in item.Properties)
+                {
+                    var map = itemProperties.FirstOrDefault(p => p.Type == property.GetType());
+                    if (map == null)
+                        throw new NotSupportedException("Property is not registered.");
+
+                    ItemInfoProperty prop = null;
+                    if (map.CreateInfoDelegate != null)
+                    {
+                        // Option 1: Create Delegate
+                        prop = map.CreateInfoDelegate(item, property, observer);
+
+                        if (prop != null)
+                        {
+                            if (prop.GetType() != map.InfoType)
+                            {
+                                // TODO: Tracing
+                                throw new NotSupportedException("Create Delegate returned a wrong type");
+                            }
+
+                            info.AddProperty(prop);
+                        }
+                    }
+                    else if (map.InfoType != null)
+                    {
+                        // Option 2: Automatische Erstellung
+                        prop = Activator.CreateInstance(map.InfoType, item, property, observer) as ItemInfoProperty;
+                        if (prop == null)
+                        {
+                            // TODO: Trace
+                            throw new Exception("Could not create Info Property");
+                        }
+                        info.AddProperty(prop);
+                    }
+
+                    // TODO: Logging falls Properties nicht gefunden werden
+                }
+
+
+                return info;
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region Faction Resolver
+
+        public Faction CreateFaction(Type factoryType, string name, PlayerColor color)
+        {
+            var faction = factions.FirstOrDefault(f => factoryType.IsSubclassOf(f.FactoryType));
+            if (faction != null)
+                return Activator.CreateInstance(faction.Type, factoryType, name, color) as Faction;
+            return null;
+        }
+
+        public void ResolveFaction(Faction faction)
+        {
+            if (faction == null)
+                throw new ArgumentNullException("Faction");
+
+            // Sicherstellen, dass das Item registriert ist.
+            if (!factions.Any(c => c.Type == faction.GetType()))
+            {
+                // TODO: Trace
+                throw new NotSupportedException("Faction is not registered.");
+            }
+
+            // Vererbungskette auflösen
+            List<Type> types = new List<Type>();
+            Type current = faction.GetType();
+            types.Add(current);
+            while (current != typeof(Faction))
+            {
+                current = current.BaseType;
+                types.Add(current);
+            }
+            Type[] factionTypes = types.ToArray();
+            Array.Reverse(factionTypes);
+
+            // Attachements
+            foreach (var type in factionTypes)
+            {
+                foreach (var attachment in factionAttachments.Where(c => c.Type == type))
+                {
+                    if (attachment.CreateDelegate != null)
+                    {
+                        FactionProperty property = attachment.CreateDelegate(faction);
+                        if (property != null)
+                        {
+                            if (property.GetType() != attachment.AttachmentType)
+                            {
+                                // TODO: Trace
+                                throw new NotSupportedException("Delegate returned wrong Property Type");
+                            }
+                            faction.AddProperty(property);
+                        }
+                    }
+                    else
+                    {
+                        faction.AddProperty(Activator.CreateInstance(attachment.AttachmentType, faction) as FactionProperty);
+                    }
+                }
+            }
+
+            // Extender
+            foreach (var extender in factionExtender.Where(c => factionTypes.Contains(c.Type)).OrderBy(c => c.Rank))
+            {
+                extender.ExtenderDelegate(faction);
+            }
+        }
+
+        public FactionState CreateFactionState(Faction faction)
+        {
+            if (faction == null)
+                throw new ArgumentNullException("Faction");
+
+            var container = factions.FirstOrDefault(g => g.Type == faction.GetType());
+            if (container == null)
+            {
+                // TODO: Trace
+                throw new ArgumentException("Faction is not registered");
+            }
+
+            FactionState state;
+            if (container.CreateStateDelegate != null)
+            {
+                // Erstellung über Delegat
+                state = container.CreateStateDelegate(faction);
+                if (state == null)
+                {
+                    // TODO: Trace
+                    throw new NotSupportedException("No state was returned by delegate.");
+                }
+
+                if (state.GetType() != container.StateType)
+                {
+                    // TODO: Trace
+                    throw new NotSupportedException("delegate returned a wrong State Type");
+                }
+            }
+            else {
+                // Automatische Erstellung
+                state = Activator.CreateInstance(container.StateType) as FactionState;
+                if (state == null)
+                {
+                    // TODO: Trace
+                    throw new Exception("State could not be created.");
+                }
+            }
+
+
+            // State Properties auffüllen
+            foreach (var property in faction.Properties)
+            {
+                var map = factionProperties.FirstOrDefault(p => p.Type == property.GetType());
+                if (map == null)
+                    throw new NotSupportedException("Property is not registered.");
+
+                FactionStateProperty prop = null;
+                if (map.CreateStateDelegate != null)
+                {
+                    // Option 1: Create Delegate
+                    prop = map.CreateStateDelegate(faction, property);
+
+                    if (prop != null)
+                    {
+                        if (prop.GetType() != map.StateType)
+                        {
+                            // TODO: Trace
+                            throw new NotSupportedException("Delegate returned a wrong Property Type");
+                        }
+
+                        state.AddProperty(prop);
+                    }
+                }
+                else if (map.StateType != null)
+                {
+                    // Option 2: Dynamische Erzeugung
+                    prop = Activator.CreateInstance(map.StateType, faction, property) as FactionStateProperty;
+                    if (prop == null)
+                    {
+                        // TODO: Trace
+                        throw new Exception("Could not create State Property");
+                    }
+                    state.AddProperty(prop);
+                }
+            }
+
+            return state;
+        }
+
+        public FactionInfo CreateFactionInfo(Faction faction, Item observer)
+        {
+            if (faction == null)
+                throw new ArgumentNullException("Faction");
+
+            if (observer == null)
+                throw new ArgumentNullException("observer");
+
+            var container = factions.FirstOrDefault(g => g.Type == faction.GetType());
+            if (container == null)
+            {
+                // TODO: Trace
+                throw new ArgumentException("Faction is not registered");
+            }
+
+            FactionInfo info = null;
+            if (container.CreateInfoDelegate != null)
+            {
+                info = container.CreateInfoDelegate(faction, observer);
+                if (info == null)
+                {
+                    // TODO: Trace
+                    throw new NotSupportedException("No info was returned by delegate.");
+                }
+
+                if (info.GetType() != container.StateType)
+                {
+                    // TODO: Trace
+                    throw new NotSupportedException("delegate returned a wrong Info Type");
+                }
+            }
+            else
+            {
+                info = Activator.CreateInstance(container.InfoType, faction, observer) as FactionInfo;
+                if (info == null)
+                {
+                    // TODO: Trace
+                    throw new Exception("Info could not be created.");
+                }
+            }
+
+            // Info-Properties in Abhängigkeit der Item-Props
+            foreach (var property in faction.Properties)
+            {
+                var map = factionProperties.FirstOrDefault(p => p.Type == property.GetType());
+                if (map == null)
+                    throw new NotSupportedException("Property is not registered.");
+
+                FactionInfoProperty prop = null;
+                if (map.CreateInfoDelegate != null)
+                {
+                    // Option 1: Create Delegate
+                    prop = map.CreateInfoDelegate(faction, property, observer);
+
+                    if (prop != null)
+                    {
+                        if (prop.GetType() != map.InfoType)
+                        {
+                            // TODO: Tracing
+                            throw new NotSupportedException("Create Delegate returned a wrong type");
+                        }
+
+                        info.AddProperty(prop);
+                    }
+                }
+                else if (map.InfoType != null)
+                {
+                    // Option 2: Automatische Erstellung
+                    prop = Activator.CreateInstance(map.InfoType, faction, property, observer) as FactionInfoProperty;
+                    if (prop == null)
+                    {
+                        // TODO: Trace
+                        throw new Exception("Could not create Info Property");
+                    }
+                    info.AddProperty(prop);
+                }
+
+                // TODO: Logging falls Properties nicht gefunden werden
+            }
+
+
+            return info;
+        }
+
+        #endregion
+
+        #region Interop Resolver
+
+        /// <summary>
+        /// Erzeugt eine neue Instanz eines passendes Factory Interop.
+        /// </summary>
+        /// <param name="faction"></param>
+        /// <returns></returns>
+        public FactoryInterop CreateFactoryInterop(Faction faction)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Erzeugt eine neue Instanz eines passenden Unit Interop.
+        /// </summary>
+        /// <param name="faction"></param>
+        /// <returns></returns>
+        public UnitInterop CreateUnitInterop(Faction faction)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Level Resolver
+
+        #endregion
+
+        #region Settings
+
+        /// <summary>
+        /// Liefert die Standard-Einstellungen für alle registrierten Elemente
+        /// </summary>
+        /// <returns></returns>
+        public Settings GetGlobalSettings()
+        {
+            Settings result = new Settings();
+
+            // TODO: Add Engine Extensions
+            // TODO: Add Faction Extensions
+            // TODO: Add Item Extensions
+            // TODO: Add Property Extension
+
+            return result;
+        }
+
+        #endregion
+    }
+}

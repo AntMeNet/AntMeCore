@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CoreTestClient</RootNamespace>
     <AssemblyName>CoreTestClient</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
@@ -27,13 +27,14 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -42,35 +43,76 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>antme.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CampaignPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CampaignPreview.Designer.cs">
+      <DependentUpon>CampaignPreview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LevelPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LevelPreview.Designer.cs">
+      <DependentUpon>LevelPreview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoaderPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LoaderPreview.Designer.cs">
+      <DependentUpon>LoaderPreview.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MapPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MapPreview.Designer.cs">
+      <DependentUpon>MapPreview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlaygroundRenderer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PlaygroundRenderer.Designer.cs">
+      <DependentUpon>PlaygroundRenderer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="CampaignPreview.resx">
+      <DependentUpon>CampaignPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LevelPreview.resx">
+      <DependentUpon>LevelPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoaderPreview.resx">
+      <DependentUpon>LoaderPreview.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MapPreview.resx">
+      <DependentUpon>MapPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlaygroundRenderer.resx">
+      <DependentUpon>PlaygroundRenderer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -80,6 +122,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -108,6 +151,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="antme.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\AntMe.Core\AntMe.Core.csproj">
+      <Project>{a2a811c2-600d-451b-aa15-346bf7eced4a}</Project>
+      <Name>AntMe.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\AntMe.Generator\AntMe.Generator.csproj">
+      <Project>{fa3d1283-c79d-47a1-81af-265eb95d6d51}</Project>
+      <Name>AntMe.Generator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\AntMe.Runtime\AntMe.Runtime.csproj">
+      <Project>{b15f5fbe-7460-4f89-ad30-cc3d135293b4}</Project>
+      <Name>AntMe.Runtime</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
