@@ -35,7 +35,7 @@ namespace AntMe.ItemProperties.Basics
 
         public WalkingState() : base() { }
 
-        public WalkingState(WalkingProperty property) : base(property)
+        public WalkingState(Item item, WalkingProperty property) : base(item, property)
         {
             Speed = property.Speed;
             MaximumSpeed = property.MaximumSpeed;

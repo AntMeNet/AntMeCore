@@ -8,6 +8,16 @@ namespace AntMe
     /// </summary>
     public interface ITypeMapper
     {
+        #region Management
+
+        /// <summary>
+        /// Removes all Extension Elements with the given Extension Pack Source.
+        /// </summary>
+        /// <param name="extensionPack">Extension Pack to remove</param>
+        void RemoveExtensionPack(IExtensionPack extensionPack);
+
+        #endregion
+
         #region Engine Properties
 
         /// <summary>

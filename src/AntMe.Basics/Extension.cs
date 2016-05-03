@@ -29,18 +29,18 @@ namespace AntMe.Extension.Basics
             // ##########################
             // Standard Item Properties
             // ##########################
-            typeMapper.RegisterItemPropertySI<AttackableProperty, AttackableState, ItemInfoProperty>(this, "Attackable");
-            typeMapper.RegisterItemPropertySI<AttackerProperty, AttackerState, ItemInfoProperty>(this, "Attacker");
-            typeMapper.RegisterItemPropertySI<CarrierProperty, CarrierState, ItemInfoProperty>(this, "Carrier");
-            typeMapper.RegisterItemPropertySI<CollectorProperty, CollectorState, ItemInfoProperty>(this, "Collector");
-            typeMapper.RegisterItemPropertySI<CollidableProperty, CollidableState, ItemInfoProperty>(this, "Collidable");
-            typeMapper.RegisterItemPropertySI<PortableProperty, PortableState, ItemInfoProperty>(this, "Portable");
-            typeMapper.RegisterItemPropertySI<SightingProperty, SightingState, ItemInfoProperty>(this, "Sighting");
-            typeMapper.RegisterItemPropertySI<SmellableProperty, SmellableState, ItemInfoProperty>(this, "Smellable");
-            typeMapper.RegisterItemPropertySI<SnifferProperty, SnifferState, ItemInfoProperty>(this, "Sniffer");
-            typeMapper.RegisterItemPropertySI<VisibleProperty, VisibleState, ItemInfoProperty>(this, "Visible");
-            typeMapper.RegisterItemPropertySI<WalkingProperty, WalkingState, ItemInfoProperty>(this, "Walking");
-            typeMapper.RegisterItemPropertySI<CollectableProperty, CollectableState, ItemInfoProperty>(this, "Collectable");
+            typeMapper.RegisterItemPropertyS<AttackableProperty, AttackableState>(this, "Attackable");
+            typeMapper.RegisterItemPropertyS<AttackerProperty, AttackerState>(this, "Attacker");
+            typeMapper.RegisterItemPropertyS<CarrierProperty, CarrierState>(this, "Carrier");
+            typeMapper.RegisterItemPropertyS<CollectorProperty, CollectorState>(this, "Collector");
+            typeMapper.RegisterItemPropertyS<CollidableProperty, CollidableState>(this, "Collidable");
+            typeMapper.RegisterItemPropertyS<PortableProperty, PortableState>(this, "Portable");
+            typeMapper.RegisterItemPropertyS<SightingProperty, SightingState>(this, "Sighting");
+            typeMapper.RegisterItemPropertyS<SmellableProperty, SmellableState>(this, "Smellable");
+            typeMapper.RegisterItemPropertyS<SnifferProperty, SnifferState>(this, "Sniffer");
+            typeMapper.RegisterItemPropertyS<VisibleProperty, VisibleState>(this, "Visible");
+            typeMapper.RegisterItemPropertyS<WalkingProperty, WalkingState>(this, "Walking");
+            typeMapper.RegisterItemPropertyS<CollectableProperty, CollectableState>(this, "Collectable");
             typeMapper.RegisterItemPropertyS<AppleCollectableProperty, AppleCollectableState>(this, "Apple Collectable");
             typeMapper.RegisterItemPropertyS<SugarCollectableProperty, SugarCollectableState>(this, "Sugar Collectable");
 
@@ -66,8 +66,8 @@ namespace AntMe.Extension.Basics
             typeMapper.AttachItemProperty<AppleItem, CollidableProperty>(this, "Apple Collidable");
             typeMapper.AttachItemProperty<AppleItem, PortableProperty>(this, "Apple Portable");
             typeMapper.AttachItemProperty<AppleItem, VisibleProperty>(this, "Apple Visible");
-            typeMapper.AttachItemProperty<SugarItem, CollectableProperty>(this, "Apple Collectable");
-            typeMapper.AttachItemProperty<SugarItem, AppleCollectableProperty>(this, "Apple Collectable"); // TODO: Amounts (amount))
+            typeMapper.AttachItemProperty<AppleItem, CollectableProperty>(this, "Apple Collectable");
+            typeMapper.AttachItemProperty<AppleItem, AppleCollectableProperty>(this, "Apple Collectable"); // TODO: Amounts (amount))
 
             // Sugar
             typeMapper.RegisterItem<SugarItem, SugarState, SugarInfo>(this, "Sugar");

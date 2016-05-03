@@ -14,7 +14,7 @@ namespace AntMe.ItemProperties.Basics
 
         public PortableState() : base() { }
 
-        public PortableState(PortableProperty property) : base(property)
+        public PortableState(Item item, PortableProperty property) : base(item, property)
         {
             Weight = property.PortableWeight;
             property.OnPortableWeightChanged += (i, v) => { Weight = v; };

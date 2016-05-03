@@ -22,7 +22,7 @@ namespace AntMe.ItemProperties.Basics
 
         public CollectableGoodState() : base() { }
 
-        public CollectableGoodState(CollectableGoodProperty property) : base(property)
+        public CollectableGoodState(Item item, CollectableGoodProperty property) : base(item, property)
         {
             Amount = property.Amount;
             Capacity = property.Capacity;

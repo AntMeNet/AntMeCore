@@ -3,19 +3,24 @@
 namespace AntMe
 {
     /// <summary>
-    /// Basis Info Container.
+    /// Base Interface for all Type Mapper Entries.
     /// </summary>
     public interface ITypeMapperEntry
     {
         /// <summary>
-        /// Name des Mapping-Elementes.
+        /// Name of the Mapping Element.
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        /// Zugehöriger Datentyp.
+        /// Type of the Mapping Element.
         /// </summary>
         Type Type { get; }
+
+        /// <summary>
+        /// Reference to the Source Extension Pack.
+        /// </summary>
+        IExtensionPack ExtensionPack { get; }
     }
 
     /// <summary>

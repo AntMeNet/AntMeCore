@@ -20,7 +20,7 @@ namespace AntMe.ItemProperties.Basics
 
         public CollidableState() : base() { }
 
-        public CollidableState(CollidableProperty property) : base(property)
+        public CollidableState(Item item, CollidableProperty property) : base(item, property)
         {
             Fixed = property.CollisionFixed;
             Mass = property.CollisionMass;

@@ -32,7 +32,7 @@ namespace AntMe.ItemProperties.Basics
 
         public SightingState() : base() { }
 
-        public SightingState(SightingProperty property) : base(property)
+        public SightingState(Item item, SightingProperty property) : base(item, property)
         {
             ViewDirection = (short)property.ViewDirection.Degree;
             ViewAngle = property.ViewAngle;

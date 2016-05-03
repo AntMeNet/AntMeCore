@@ -10,12 +10,11 @@ using System.Xml.Serialization;
 namespace AntMe.Runtime
 {
     /// <summary>
-    /// Statischer Handler zum Laden und Analysieren von Zusatzinhalten wie 
-    /// Factions, GameItems und Levels.
+    /// Static Class to load and analyze external Content like Extensions, Levels or Players.
     /// </summary>
     public static class ExtensionLoader
     {
-        #region Lokaler Prozessraum
+        #region local Process Area
 
         private static bool extensionsLoaded = false;
         private static IEnumerable<IExtensionPack> extensionPackCache = null;
@@ -29,99 +28,67 @@ namespace AntMe.Runtime
         private static TypeMapper typeMapper = new TypeMapper();
 
         /// <summary>
-        /// Lädt alle verfügbaren Extensions initial zum Programmstart. 
+        /// Tries to Loads all available Extensions within the valid extension pathes.
         /// 
-        /// Die Suchpfade des Scripts sind
-        /// - Applicationsverzeichnis
-        /// - Applikationspfad/Extensions
-        /// - AppData/Local/AntMe/Extensions
+        /// The method searchs for Extensions in the following pathes:
+        /// - Application Path (e.g. "C:\Program Files\AntMe!\")
+        /// - Extension Folder of the Application Path (e.g. "C:\Program Files\AntMe!\Extensions")
+        /// - App Data Folder ("C:\Users\[username]\AppData\Local\AntMe\Extensions")
         /// 
-        /// Es werden folgende Extensions geladen
-        /// - Factions (immer)
-        /// - GameItems (immer)
-        /// - Extenders (immer)
-        /// - Campaigns (nur full)
-        /// - Players (nur full)
-        /// - Levels (nur full)
-        /// - Generators (nur full)
+        /// The method loads the following fragments:
+        /// - Factions (always)
+        /// - GameItems (always)
+        /// - Extenders (always)
+        /// - Campaigns (only full)
+        /// - Players (only full)
+        /// - Levels (only full)
+        /// - Generators (only full)
         /// </summary>
-        /// <param name="token">Erlaubt die Übergabe eines Progress/Cancelation-Token</param>
-        /// <param name="full">Legt den Umfang des Ladeprozesses fest</param>
-        /// <param name="signedOnly">Nur signierte Assemblies werden geladen</param>
-        public static void LoadExtensions(ProgressToken token, bool full, bool signedOnly = true)
+        /// <param name="token">Optional Reference to a Progress Token</param>
+        /// <param name="full">Switch between basic Extension Loader or full Content Load.</param>
+        public static void LoadExtensions(ProgressToken token, bool full)
         {
             if (extensionsLoaded)
                 return;
 
+            List<string> files = new List<string>();
             List<Exception> errors = new List<Exception>();
+            List<Assembly> assemblies = new List<Assembly>();
 
-            // Loader-Host aufbauen
-            AppDomainSetup setup = new AppDomainSetup();
-            setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            Evidence evidence = new Evidence();
-            AppDomain appDomain = AppDomain.CreateDomain("AntMe! Analyzer", evidence, setup);
-
-            Type hostType = typeof(ExtensionLoaderHost);
-            ExtensionLoaderHost host = appDomain.CreateInstanceAndUnwrap(hostType.Assembly.FullName, hostType.FullName) as ExtensionLoaderHost;
-
-            // Stammverzeichnis
+            // Query Application Root
             string dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            foreach (string file in Directory.EnumerateFiles(dir, "*.dll"))
-            {
-                try
-                {
-                    if (!signedOnly || host.AnalyseExtensionAssembly(File.ReadAllBytes(file)))
-                        Assembly.LoadFile(file);
-                }
-                catch (Exception ex)
-                {
-                    // Ladefehler dokumentieren
-                    if (token != null && token.Errors != null)
-                        token.Errors.Add(ex);
-                }
+            files.AddRange(Directory.EnumerateFiles(dir, "*.dll"));
 
-                // Cancel
-                if (token != null && token.Cancel) return;
-            }
-
-            // Extension-Folder
+            // Query Extension Folder
             dir = dir + "\\Extensions";
             if (Directory.Exists(dir))
-            {
-                foreach (string file in Directory.EnumerateFiles(dir, "*.dll"))
-                {
-                    try
-                    {
-                        if (!signedOnly || host.AnalyseExtensionAssembly(File.ReadAllBytes(file)))
-                            Assembly.LoadFile(file);
-                    }
-                    catch (Exception ex)
-                    {
-                        // Ladefehler dokumentieren
-                        if (token != null && token.Errors != null)
-                            token.Errors.Add(ex);
-                        errors.Add(ex);
-                    }
+                files.AddRange(Directory.EnumerateFiles(dir, "*.dll"));
 
-                    // Cancel
-                    if (token != null && token.Cancel) return;
-                }
-            }
-
-            // Extension Ordner (AppData/Local/AntMe/Extensions)
+            // Query AppData Folder
             dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions";
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
-            foreach (string file in Directory.EnumerateFiles(dir, "*.dll"))
+            files.AddRange(Directory.EnumerateFiles(dir, "*.dll"));
+
+            // Calculation of total Tasks (based on the number of files)
+            int currentTask = 0;
+            if (token != null)
+            {
+                token.TotalTasks = (full ? files.Count * 2 : files.Count) + 1;
+                token.CurrentTask = currentTask;
+            }
+
+            // Try to load all files from list
+            foreach (var file in files)
             {
                 try
                 {
-                    if (!signedOnly || host.AnalyseExtensionAssembly(File.ReadAllBytes(file)))
-                        Assembly.LoadFile(file);
+                    // Try to load and add to list
+                    assemblies.Add(Assembly.LoadFile(file));
                 }
                 catch (Exception ex)
                 {
-                    // Ladefehler dokumentieren
+                    // Add Loading Error to List
                     if (token != null && token.Errors != null)
                         token.Errors.Add(ex);
                     errors.Add(ex);
@@ -131,20 +98,16 @@ namespace AntMe.Runtime
                 if (token != null && token.Cancel) return;
             }
 
-            AppDomain.Unload(appDomain);
-
-            // First Cancel-Point
-            if (token != null && token.Cancel)
-                return;
-
-            // Anzahl Tasks ermitteln
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            int currentTask = 0;
+            // Recalculation of total Tasks (based on the number of loaded assemblies)
+            currentTask = 1;
             if (token != null)
             {
-                token.TotalTasks = (full ? assemblies.Length * 2 : assemblies.Length) + 1;
+                token.TotalTasks = (full ? assemblies.Count * 2 : assemblies.Count) + 1;
                 token.CurrentTask = currentTask;
             }
+
+            // Cancel
+            if (token != null && token.Cancel) return;
 
             // Pass 1 Load Extension Packs
             List<IExtensionPack> extensionPacks = new List<IExtensionPack>();
@@ -156,10 +119,11 @@ namespace AntMe.Runtime
                         !type.IsAbstract &&
                         typeof(IExtensionPack).IsAssignableFrom(type))
                     {
+                        IExtensionPack extensionPack = null;
                         try
                         {
                             // Instanz erzeugen & Laden
-                            var extensionPack = Activator.CreateInstance(type) as IExtensionPack;
+                            extensionPack = Activator.CreateInstance(type) as IExtensionPack;
                             extensionPack.Load(DefaultTypeMapper);
                             extensionPacks.Add(extensionPack);
                         }
@@ -169,6 +133,10 @@ namespace AntMe.Runtime
                             if (token != null && token.Errors != null)
                                 token.Errors.Add(ex);
                             errors.Add(ex);
+
+                            // Remove all Type Mapper elements
+                            if (extensionPack != null)
+                                DefaultTypeMapper.RemoveExtensionPack(extensionPack);
                         }
                     }
 
@@ -185,7 +153,6 @@ namespace AntMe.Runtime
             extensionPackCache = extensionPacks;
 
             // Fill Caches
-
             if (full)
             {
                 List<CampaignInfo> campaigns = new List<CampaignInfo>();
@@ -194,7 +161,7 @@ namespace AntMe.Runtime
                 List<CodeGeneratorAttribute> generators = new List<CodeGeneratorAttribute>();
 
                 // Pass 2 (Levels & Players) [generators, campaigns, levels, players]
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                foreach (var assembly in assemblies)
                 {
                     LoaderInfo loader = AnalyseAssembly(assembly, true, true, true, true);
                     generators.AddRange(loader.CodeGenerators);
@@ -255,7 +222,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Lädt die statistischen Daten zu Campaigns, Levels und Playern
+        /// Loads all known statitics for the available Campagins, Levels and Players.
         /// </summary>
         public static void LoadStatistics()
         {
@@ -320,7 +287,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Speichert die gesammelten Statistik-Daten weg.
+        /// Saves the current state of Campaign-, Level- and Player Statistics.
         /// </summary>
         public static void SaveStatistics()
         {
@@ -382,7 +349,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Liefert eine Liste der geladenen ExtensionPacks zurück.
+        /// List of all available Extension Packs.
         /// </summary>
         public static IEnumerable<IExtensionPack> ExtensionPacks
         {
@@ -396,9 +363,8 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Liefert alle geladenen Kampagnen
+        /// List of all available Campaigns.
         /// </summary>
-        /// <returns>Geladene Kampagnen</returns>
         public static IEnumerable<CampaignInfo> Campaigns
         {
             get
@@ -411,7 +377,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Liefert alle geladenen Levels inkl. dem Assembly Byte-Array.
+        /// List of all available Levels.
         /// </summary>
         /// <returns></returns>
         public static IEnumerable<LevelInfo> Levels
@@ -425,7 +391,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Liefert alle geladenen Player inkl. dem Assembly Byte-Array.
+        /// List of all available Players.
         /// </summary>
         /// <returns></returns>
         public static IEnumerable<PlayerInfo> Players
@@ -440,7 +406,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Liefert alle geladenen Code Generatoren.
+        /// List of all available Code Generators.
         /// </summary>
         public static IEnumerable<CodeGeneratorAttribute> CodeGenerators
         {
@@ -453,13 +419,19 @@ namespace AntMe.Runtime
             }
         }
 
+        /// <summary>
+        /// Reference to the default Type Mapper.
+        /// </summary>
         public static ITypeMapper DefaultTypeMapper { get { return typeMapper; } }
 
+        /// <summary>
+        /// Reference to the default Type Resolver.
+        /// </summary>
         public static ITypeResolver DefaultTypeResolver { get { return typeMapper; } }
 
         #endregion
 
-        #region Neutrale Analyse Methoden
+        #region Common Analyze Methods
 
         /// <summary>
         /// Analysiert ein gegebenes Assembly auf brauchbare Klassen.
@@ -727,7 +699,7 @@ namespace AntMe.Runtime
 
         #endregion
 
-        #region Externe AppDomain
+        #region Additional App Domain Stuff
 
         /// <summary>
         /// Analysiert die angegebene Datei, lädt sie aber nicht in den aktuellen Prozessraum.
@@ -811,12 +783,12 @@ namespace AntMe.Runtime
     }
 
     /// <summary>
-    /// Token zur Übergabe in einen Task um den Prozess abzubrechen und den Fortschritt zu ermitteln.
+    /// Token for tracking the current progress and handle the Cancel-Flag.
     /// </summary>
     public class ProgressToken
     {
         /// <summary>
-        /// Neue Instanz eines Tokens.
+        /// Create a new token.
         /// </summary>
         public ProgressToken()
         {
@@ -824,22 +796,22 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Erlaubt den Abbruch von Außen.
+        /// Cancel Signal to stop the current Task.
         /// </summary>
         public bool Cancel { get; set; }
 
         /// <summary>
-        /// Gibt die Anzahl Arbeitsschritte an.
+        /// Total Amount of Tasks within the current process.
         /// </summary>
         public int TotalTasks { get; set; }
 
         /// <summary>
-        /// Gibt die Anzahl bereits erledigter Aufgaben an.
+        /// Amount of finished Tasks within the current process.
         /// </summary>
         public int CurrentTask { get; set; }
 
         /// <summary>
-        /// Gibt eine Auflistung angefallener Fehler zurück.
+        /// List of occured Errors so far.
         /// </summary>
         public List<Exception> Errors { get; private set; }
     }

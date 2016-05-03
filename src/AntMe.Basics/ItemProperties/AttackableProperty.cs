@@ -15,11 +15,11 @@ namespace AntMe.ItemProperties.Basics
         private int attackableMaximumHealth;
         private float attackableRadius;
 
-        public AttackableProperty(Item item, float radius, int health, int maximumHealth) : base(item)
+        public AttackableProperty(Item item) : base(item)
         {
-            AttackableRadius = radius;
-            AttackableHealth = health;
-            AttackableMaximumHealth = maximumHealth;
+            //AttackableRadius = radius;
+            //AttackableHealth = health;
+            //AttackableMaximumHealth = maximumHealth;
         }
 
         /// <summary>

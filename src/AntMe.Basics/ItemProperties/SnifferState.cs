@@ -6,7 +6,7 @@ namespace AntMe.ItemProperties.Basics
     {
         public SnifferState() : base() { }
 
-        public SnifferState(SnifferProperty property) : base(property) { }
+        public SnifferState(Item item, SnifferProperty property) : base(item, property) { }
 
         public override void SerializeFirst(System.IO.BinaryWriter stream, byte version)
         {

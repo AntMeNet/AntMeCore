@@ -4,9 +4,9 @@ namespace AntMe.ItemProperties.Basics
 {
     public sealed class SugarCollectableProperty : CollectableGoodProperty
     {
-        public SugarCollectableProperty(Item item, int capacity, int amount)
-            : base(item, capacity, amount)
+        public SugarCollectableProperty(Item item) : base(item)
         {
+            // Amount?
         }
     }
 }

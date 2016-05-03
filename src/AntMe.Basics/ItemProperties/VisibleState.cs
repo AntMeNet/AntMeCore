@@ -7,7 +7,7 @@ namespace AntMe.ItemProperties.Basics
     {
         public VisibleState() : base() { }
 
-        public VisibleState(VisibleProperty property) : base(property)
+        public VisibleState(Item item, VisibleProperty property) : base(item, property)
         {
 
         }

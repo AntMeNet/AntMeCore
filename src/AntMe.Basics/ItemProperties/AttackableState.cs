@@ -26,7 +26,7 @@ namespace AntMe.ItemProperties.Basics
 
         public AttackableState() : base() { }
 
-        public AttackableState(AttackableProperty property) : base(property)
+        public AttackableState(Item item, AttackableProperty property) : base(item, property)
         {
             MaximumHealth = property.AttackableMaximumHealth;
             Health = property.AttackableHealth;

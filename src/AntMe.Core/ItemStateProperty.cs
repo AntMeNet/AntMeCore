@@ -14,6 +14,6 @@
         /// Standard-Konstruktor.
         /// </summary>
         /// <param name="property">Referenz auf das zugehörige Item Property.</param>
-        public ItemStateProperty(ItemProperty property) : base(property) { }
+        public ItemStateProperty(Item item, ItemProperty property) : base(property) { }
     }
 }

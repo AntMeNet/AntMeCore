@@ -15,7 +15,7 @@ namespace AntMe.ItemProperties.Basics
 
         public CollectableState() : base() { }
 
-        public CollectableState(CollectableProperty property) : base(property)
+        public CollectableState(Item item, CollectableProperty property) : base(item, property)
         {
             CollectableRadius = property.CollectableRadius;
             property.OnCollectableRadiusChanged += (i,v) => { CollectableRadius = v; };

@@ -19,18 +19,13 @@ namespace AntMe.ItemProperties.Basics
         private float viewangle;
         private float viewrange;
 
-        public SightingProperty(Item item, float range) : base(item)
+        public SightingProperty(Item item) : base(item)
         {
-            ViewRange = range;
-            ViewAngle = 360;
-            ViewDirection = Angle.Right;
-        }
-
-        public SightingProperty(Item item, float range, float angle, Angle direction) :
-            this(item, range)
-        {
-            ViewAngle = angle;
-            ViewDirection = direction;
+            //ViewRange = range;
+            //ViewAngle = 360;
+            //ViewDirection = Angle.Right;
+            //ViewAngle = angle;
+            //ViewDirection = direction;
         }
 
         /// <summary>

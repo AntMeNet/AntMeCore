@@ -24,13 +24,12 @@ namespace AntMe.Items.Basics
 
             if (settings.AntHillDestructable)
             {
-                _attackable = new AttackableProperty(this, HillRadius, 
-                    settings.AntHillHitpoints, settings.AntHillHitpoints);
+                _attackable = new AttackableProperty(this);
                 AddProperty(_attackable);
             }
 
-            _sugar = new SugarCollectableProperty(this, int.MaxValue, 0);
-            _apple = new AppleCollectableProperty(this, int.MaxValue, 0);
+            _sugar = new SugarCollectableProperty(this);
+            _apple = new AppleCollectableProperty(this);
             var collectable = new CollectableProperty(this);
             AddProperty(collectable);
             AddProperty(_sugar);

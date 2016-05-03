@@ -14,7 +14,7 @@ namespace AntMe.ItemProperties.Basics
 
         public CollectorState() : base() { }
 
-        public CollectorState(CollectorProperty property) : base(property)
+        public CollectorState(Item item, CollectorProperty property) : base(item, property)
         {
             CollectorRange = property.CollectorRange;
             property.OnCollectorRangeChanged += (i, v) => { CollectorRange = v; };

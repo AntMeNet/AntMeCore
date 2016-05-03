@@ -13,9 +13,9 @@ namespace AntMe.ItemProperties.Basics
         private readonly Dictionary<Type, CollectableGoodProperty> collectableGoods = new Dictionary<Type, CollectableGoodProperty>();
         private float collectorRange;
 
-        public CollectorProperty(Item item, float range) : base(item)
+        public CollectorProperty(Item item) : base(item)
         {
-            CollectorRange = range;
+            // CollectorRange = range;
         }
 
         /// <summary>

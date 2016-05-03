@@ -54,8 +54,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CampaignPreview.cs">
@@ -64,17 +66,23 @@
     <Compile Include="CampaignPreview.Designer.cs">
       <DependentUpon>CampaignPreview.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoaderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoaderForm.Designer.cs">
+      <DependentUpon>LoaderForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExtensionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExtensionsForm.Designer.cs">
+      <DependentUpon>ExtensionsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="LevelPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LevelPreview.Designer.cs">
       <DependentUpon>LevelPreview.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LoaderPreview.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LoaderPreview.Designer.cs">
-      <DependentUpon>LoaderPreview.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -99,11 +107,14 @@
     <EmbeddedResource Include="CampaignPreview.resx">
       <DependentUpon>CampaignPreview.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LoaderForm.resx">
+      <DependentUpon>LoaderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExtensionsForm.resx">
+      <DependentUpon>ExtensionsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LevelPreview.resx">
       <DependentUpon>LevelPreview.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LoaderPreview.resx">
-      <DependentUpon>LoaderPreview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -165,6 +176,9 @@
       <Project>{b15f5fbe-7460-4f89-ad30-cc3d135293b4}</Project>
       <Name>AntMe.Runtime</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Screens\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

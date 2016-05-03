@@ -12,9 +12,9 @@ namespace AntMe.ItemProperties.Basics
         private float _maxSpeed;
         private float _speed;
 
-        public WalkingProperty(Item item, float maxSpeed) : base(item)
+        public WalkingProperty(Item item) : base(item)
         {
-            MaximumSpeed = maxSpeed;
+            // MaximumSpeed = maxSpeed;
             Direction = Angle.Right;
             Speed = 0f;
         }

@@ -16,7 +16,7 @@ namespace AntMe.ItemProperties.Basics
 
         public CarrierState() : base() { }
 
-        public CarrierState(CarrierProperty property) : base(property)
+        public CarrierState(Item item, CarrierProperty property) : base(item, property)
         {
             CarrierStrength = property.CarrierStrength;
             property.OnCarrierStrengthChanged += (i, v) => { CarrierStrength = v; };

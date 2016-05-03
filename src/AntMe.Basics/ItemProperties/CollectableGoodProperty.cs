@@ -13,7 +13,7 @@ namespace AntMe.ItemProperties.Basics
         private int amount;
         private int capacity;
 
-        public CollectableGoodProperty(Item item, int capacity, int amount) : base(item)
+        public CollectableGoodProperty(Item item) : base(item)
         {
             Capacity = capacity;
             Amount = amount;

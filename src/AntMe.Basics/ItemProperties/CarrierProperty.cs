@@ -12,9 +12,9 @@ namespace AntMe.ItemProperties.Basics
         private PortableProperty carrierLoad;
         private float carrierStrength;
 
-        public CarrierProperty(Item item, float strength) : base(item)
+        public CarrierProperty(Item item) : base(item)
         {
-            CarrierStrength = strength;
+            // CarrierStrength = strength;
         }
 
         /// <summary>

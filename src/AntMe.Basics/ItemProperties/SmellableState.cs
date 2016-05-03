@@ -1,5 +1,4 @@
-﻿using AntMe.ItemProperties.Basics;
-using System;
+﻿using System;
 using System.IO;
 
 namespace AntMe.ItemProperties.Basics
@@ -8,7 +7,7 @@ namespace AntMe.ItemProperties.Basics
     {
         public SmellableState() : base() { }
 
-        public SmellableState(SmellableProperty property) : base(property)
+        public SmellableState(Item item, SmellableProperty property) : base(item, property)
         {
 
         }

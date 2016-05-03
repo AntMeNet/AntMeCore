@@ -27,31 +27,5 @@ namespace AntMe.Runtime
             Assembly assembly = Assembly.Load(file);
             return ExtensionLoader.AnalyseAssembly(assembly, level, campaign, player, false);
         }
-
-        /// <summary>
-        /// Prüft, ob die angegebene Assembly mit dem AntMe-Key Signiert wurde.
-        /// </summary>
-        /// <param name="file">Assembly als Byte-Dump</param>
-        /// <returns>Gibt an, ob die Assembly gültig signiert wurde</returns>
-        public bool AnalyseExtensionAssembly(byte[] file)
-        {
-            try
-            {
-                Assembly assembly = Assembly.Load(file);
-
-                byte[] key = assembly.GetName().GetPublicKey();
-
-                // Kein Key, nicht signiert
-                if (key == null)
-                    return false;
-
-                // Vergleich mit dem Key von AntMe.Runtime
-                return key.SequenceEqual(Assembly.GetExecutingAssembly().GetName().GetPublicKey());
-            }
-            catch { }
-
-            // Im Fehlerfall ist die Assembly natürlich auch nicht gültig
-            return false;
-        }
     }
 }

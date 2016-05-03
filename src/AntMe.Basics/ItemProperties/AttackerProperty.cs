@@ -13,17 +13,12 @@ namespace AntMe.ItemProperties.Basics
         private int attackStrength;
         private AttackableProperty attackTarget;
 
-        public AttackerProperty(Item item, float range, int strength, int recoveryTime) :
-            this(item, range, strength)
+        public AttackerProperty(Item item) : base(item)
         {
-            AttackRecoveryTime = recoveryTime;
-        }
-
-        public AttackerProperty(Item item, float range, int strength) : base(item)
-        {
-            AttackRecoveryTime = 0;
-            AttackRange = range;
-            AttackStrength = strength;
+            // AttackRecoveryTime = recoveryTime;
+            //AttackRecoveryTime = 0;
+            //AttackRange = range;
+            //AttackStrength = strength;
         }
 
         /// <summary>

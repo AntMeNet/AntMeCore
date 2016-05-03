@@ -29,7 +29,7 @@ namespace AntMe.ItemProperties.Basics
 
         public AttackerState() : base() { }
 
-        public AttackerState(AttackerProperty property) : base(property)
+        public AttackerState(Item item, AttackerProperty property) : base(item, property)
         {
             AttackRange = property.AttackRange;
             AttackRecoveryTime = property.AttackRecoveryTime;

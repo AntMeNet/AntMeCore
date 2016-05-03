@@ -15,10 +15,10 @@ namespace AntMe.ItemProperties.Basics
         private float portableRadius;
         private float portableWeight;
 
-        public PortableProperty(Item item, float radius, float weight) : base(item)
+        public PortableProperty(Item item) : base(item)
         {
-            PortableRadius = radius;
-            PortableWeight = weight;
+            PortableRadius = item.Radius;
+            PortableWeight = 100;
         }
 
         /// <summary>

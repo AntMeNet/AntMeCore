@@ -7,9 +7,9 @@ namespace AntMe.ItemProperties.Basics
     /// </summary>
     public sealed class AppleCollectableProperty : CollectableGoodProperty
     {
-        public AppleCollectableProperty(Item item, int capacity, int amount)
-            : base(item, capacity, amount)
+        public AppleCollectableProperty(Item item) : base(item)
         {
+            // Amount?
         }
     }
 }

@@ -13,9 +13,9 @@ namespace AntMe.ItemProperties.Basics
         private readonly List<SnifferProperty> snifferItems = new List<SnifferProperty>();
         private float smellableRadius;
 
-        public SmellableProperty(Item item, float radius) : base(item)
+        public SmellableProperty(Item item) : base(item)
         {
-            SmellableRadius = radius;
+            SmellableRadius = item.Radius;
         }
 
         #region Properties
