@@ -35,7 +35,7 @@ namespace CoreTestClient.Screens
 
         public override ISimulationClient StartSimulation()
         {
-            ISimulationClient result = SimulationClient.CreateSecure(ExtensionLoader.DefaultTypeResolver);
+            ISimulationClient result = SimulationClient.CreateUnsecure(ExtensionLoader.DefaultTypeResolver);
             result.AquireMaster();
             result.UploadLevel(level.Type);
             for (byte i = 0; i < 8; i++)
@@ -46,6 +46,7 @@ namespace CoreTestClient.Screens
                     result.SetMasterState(i, (PlayerColor)i, i, true);
                 }
             }
+            result.StartSimulation();
             return result;
         }
 

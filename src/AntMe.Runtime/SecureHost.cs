@@ -53,7 +53,8 @@ namespace AntMe.Runtime
 
             // Level erzeugen
             Assembly levelAssembly = Assembly.Load(settings.Level.AssemblyFile);
-            var lvl = levelAssembly.CreateInstance(settings.Level.TypeName, false) as Level;
+            Type levelType = levelAssembly.GetType(settings.Level.TypeName, true);
+            Level lvl = Activator.CreateInstance(levelType, ExtensionLoader.DefaultTypeResolver) as Level;
             _level = lvl;
 
             // Player erzeugen

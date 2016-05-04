@@ -85,6 +85,15 @@ namespace CoreTestClient
         private void timer_Tick(object sender, EventArgs e)
         {
             startToolButton.Enabled = CurrentMode != null && CurrentMode.CanStart;
+
+            if (CurrentClient != null)
+            {
+                stateLabel.Text = CurrentClient.ServerState.ToString();
+            }
+            else
+            {
+                stateLabel.Text = "No Client";
+            }
         }
 
         private void startToolButton_Click(object sender, EventArgs e)
@@ -93,6 +102,8 @@ namespace CoreTestClient
             {
                 // Create Client
                 CurrentClient = CurrentMode.StartSimulation();
+                CurrentClient.OnError += CurrentClient_OnError;
+                CurrentClient.OnSimulationChanged += CurrentClient_OnSimulationChanged;
 
                 // Dispose Mode
                 mainPanel.Controls.Remove(CurrentMode);
@@ -100,11 +111,25 @@ namespace CoreTestClient
                 CurrentMode = null;
 
                 // Start Simulation
+                Renderer = new PlaygroundRenderer();
+                mainPanel.Controls.Add(Renderer);
+                Renderer.Dock = DockStyle.Fill;
+                Renderer.SetSimulation(CurrentClient);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void CurrentClient_OnSimulationChanged(ISimulationClient client, AntMe.Runtime.SimulationState parameter1, byte parameter2)
+        {
+            // throw new NotImplementedException();
+        }
+
+        private void CurrentClient_OnError(ISimulationClient client, string message)
+        {
+            MessageBox.Show(message);
         }
     }
 }

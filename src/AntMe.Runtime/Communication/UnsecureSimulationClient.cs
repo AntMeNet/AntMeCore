@@ -15,7 +15,8 @@ namespace AntMe.Runtime.Communication
         protected override void InitSimulation(int seed, LevelInfo level, PlayerInfo[] players, Slot[] slots)
         {
             Assembly levelAssembly = Assembly.Load(level.Type.AssemblyFile);
-            simulation = levelAssembly.CreateInstance(level.Type.TypeName, false) as Level;
+            Type levelType = levelAssembly.GetType(level.Type.TypeName);
+            simulation = Activator.CreateInstance(levelType, ExtensionLoader.DefaultTypeResolver) as Level;
 
             // Player erzeugen
             Faction[] levelFactions = new Faction[8];

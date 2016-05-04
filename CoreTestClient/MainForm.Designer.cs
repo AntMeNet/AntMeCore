@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.programMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.singleGameMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.closeMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.loaderMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.extensionsMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,10 +42,11 @@
             this.mainPanel = new System.Windows.Forms.Panel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.startToolButton = new System.Windows.Forms.ToolStripButton();
-            this.singleGameMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.stateLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timeLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.mainMenu.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,10 +71,22 @@
             this.programMenu.Size = new System.Drawing.Size(65, 20);
             this.programMenu.Text = "Program";
             // 
+            // singleGameMenu
+            // 
+            this.singleGameMenu.Name = "singleGameMenu";
+            this.singleGameMenu.Size = new System.Drawing.Size(140, 22);
+            this.singleGameMenu.Text = "Single Game";
+            this.singleGameMenu.Click += new System.EventHandler(this.singleGameMenu_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(137, 6);
+            // 
             // closeMenu
             // 
             this.closeMenu.Name = "closeMenu";
-            this.closeMenu.Size = new System.Drawing.Size(152, 22);
+            this.closeMenu.Size = new System.Drawing.Size(140, 22);
             this.closeMenu.Text = "Close";
             this.closeMenu.Click += new System.EventHandler(this.closeMenu_Click);
             // 
@@ -100,6 +115,9 @@
             // 
             // statusStrip
             // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stateLabel,
+            this.timeLabel});
             this.statusStrip.Location = new System.Drawing.Point(0, 419);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(784, 22);
@@ -134,22 +152,22 @@
             this.startToolButton.Text = "Start";
             this.startToolButton.Click += new System.EventHandler(this.startToolButton_Click);
             // 
-            // singleGameMenu
-            // 
-            this.singleGameMenu.Name = "singleGameMenu";
-            this.singleGameMenu.Size = new System.Drawing.Size(152, 22);
-            this.singleGameMenu.Text = "Single Game";
-            this.singleGameMenu.Click += new System.EventHandler(this.singleGameMenu_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
-            // 
             // timer
             // 
             this.timer.Enabled = true;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
+            // stateLabel
+            // 
+            this.stateLabel.Name = "stateLabel";
+            this.stateLabel.Size = new System.Drawing.Size(40, 17);
+            this.stateLabel.Text = "[state]";
+            // 
+            // timeLabel
+            // 
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(39, 17);
+            this.timeLabel.Text = "[time]";
             // 
             // MainForm
             // 
@@ -168,6 +186,8 @@
             this.Text = "AntMe! Core Client";
             this.mainMenu.ResumeLayout(false);
             this.mainMenu.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -190,6 +210,8 @@
         private System.Windows.Forms.ToolStripMenuItem singleGameMenu;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.ToolStripStatusLabel stateLabel;
+        private System.Windows.Forms.ToolStripStatusLabel timeLabel;
     }
 }
 

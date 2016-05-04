@@ -1,13 +1,17 @@
 ﻿using AntMe.Runtime.Communication;
+using System;
 using System.Windows.Forms;
 
 namespace CoreTestClient.Screens
 {
-    public abstract partial class GameModeScreen : UserControl
+    public partial class GameModeScreen : UserControl
     {
-        public abstract bool CanStart { get; }
+        public virtual bool CanStart { get { throw new NotImplementedException(); } }
 
-        public abstract ISimulationClient StartSimulation();
+        public virtual ISimulationClient StartSimulation()
+        {
+            throw new NotImplementedException();
+        }
 
         public GameModeScreen()
         {

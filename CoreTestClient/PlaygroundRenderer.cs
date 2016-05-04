@@ -1,8 +1,6 @@
 ﻿using AntMe;
-using AntMe.Runtime;
 using AntMe.Runtime.Communication;
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -24,6 +22,7 @@ namespace CoreTestClient
 
         private ISimulationClient simulation;
         private LevelState currentState;
+        private Color[] colors = new Color[8];
 
 
         public PlaygroundRenderer()
@@ -35,15 +34,6 @@ namespace CoreTestClient
             roundLabel.Text = string.Empty;
             mapLabel.Text = string.Empty;
             itemLabel.Text = string.Empty;
-            timerDropDown.Text = "Stopped";
-
-            showPlaygroundCheckbox.Checked = RenderPlaygroundInfos;
-            showItemCenterCheckbox.Checked = RenderItemCenter;
-            showCollisionCheckbox.Checked = RenderItemBody;
-            showMovementCheckbox.Checked = RenderItemMovement;
-            showViewCheckbox.Checked = RenderItemViewRange;
-            showSmellableCheckbox.Checked = RenderItemSmellableRange;
-            showAttackerCheckbox.Checked = RenderItemAttackerRange;
 
             renderScreen.Paint += renderScreen_Paint;
             renderScreen.Resize += renderScreen_Resize;
@@ -58,24 +48,39 @@ namespace CoreTestClient
         {
             simulation = client;
 
-            if (simulation != null && simulation.ServerState == SimulationState.Running)
+            if (simulation != null)
             {
+                simulation.OnSimulationState += Simulation_OnSimulationState;
                 //CurrentState = simulation.NextState();
-                //foreach (var faction in CurrentState.Factions)
-                //    colors[faction.PlayerIndex] = Convert(faction.PlayerColor);
-
-                //SetScale(CurrentState.Map.GetCellCount());
+                
             }
+        }
+
+        private void Simulation_OnSimulationState(ISimulationClient client, LevelState parameter)
+        {
+            if (currentState == null)
+            {
+                foreach (var faction in parameter.Factions)
+                    colors[faction.PlayerIndex] = Convert(faction.PlayerColor);
+
+                SetScale(parameter.Map.GetCellCount());
+            }
+
+            currentState = parameter;
+
+            Redraw(currentState.Round, currentState.Items.Count);
+            //if (currentState != null)
+                // RefreshTree(CurrentState);
         }
 
         #region Renderscreen Events
 
-        void renderScreen_MouseEnter(object sender, EventArgs e)
+        private void renderScreen_MouseEnter(object sender, EventArgs e)
         {
             renderScreen.Focus();
         }
 
-        void renderScreen_MouseWheel(object sender, MouseEventArgs e)
+        private void renderScreen_MouseWheel(object sender, MouseEventArgs e)
         {
             float oldScale = scale;
             scale += scale * (float)e.Delta * 0.001f;
@@ -98,7 +103,7 @@ namespace CoreTestClient
             renderScreen.Invalidate();
         }
 
-        void renderScreen_Paint(object sender, PaintEventArgs e)
+        private void renderScreen_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.SkyBlue);
 
@@ -109,16 +114,16 @@ namespace CoreTestClient
             propertyGrid.Refresh();
         }
 
-        void renderScreen_Resize(object sender, EventArgs e)
+        private void renderScreen_Resize(object sender, EventArgs e)
         {
             Rescale();
         }
 
-        bool dragging = false;
-        int mousex = 0;
-        int mousey = 0;
+        private bool dragging = false;
+        private int mousex = 0;
+        private int mousey = 0;
 
-        void renderScreen_MouseMove(object sender, MouseEventArgs e)
+        private void renderScreen_MouseMove(object sender, MouseEventArgs e)
         {
             if (dragging)
             {
@@ -130,12 +135,12 @@ namespace CoreTestClient
             }
         }
 
-        void renderScreen_MouseUp(object sender, MouseEventArgs e)
+        private void renderScreen_MouseUp(object sender, MouseEventArgs e)
         {
             dragging = false;
         }
 
-        void renderScreen_MouseDown(object sender, MouseEventArgs e)
+        private void renderScreen_MouseDown(object sender, MouseEventArgs e)
         {
             dragging = true;
             mousex = e.X;
@@ -147,184 +152,7 @@ namespace CoreTestClient
             propertyGrid.SelectedObject = e.Node.Tag;
         }
 
-        private void showPlaygroundCheckbox_Click(object sender, EventArgs e)
-        {
-            RenderPlaygroundInfos = !RenderPlaygroundInfos;
-            renderScreen.Invalidate();
-        }
-
-        private void showItemCenterCheckbox_Click(object sender, EventArgs e)
-        {
-            RenderItemCenter = !RenderItemCenter;
-            renderScreen.Invalidate();
-        }
-
-        private void showCollisionCheckbox_Click(object sender, EventArgs e)
-        {
-            RenderItemBody = !RenderItemBody;
-            renderScreen.Invalidate();
-        }
-
-        private void showAttackerCheckbox_Click(object sender, EventArgs e)
-        {
-            RenderItemAttackerRange = !RenderItemAttackerRange;
-            renderScreen.Invalidate();
-        }
-
-        private void showViewCheckbox_Click(object sender, EventArgs e)
-        {
-            RenderItemViewRange = !RenderItemViewRange;
-            renderScreen.Invalidate();
-        }
-
-        private void showSmellableCheckbox_Click(object sender, EventArgs e)
-        {
-            RenderItemSmellableRange = !RenderItemSmellableRange;
-            renderScreen.Invalidate();
-        }
-
-        private void showMovementCheckbox_Click(object sender, EventArgs e)
-        {
-            RenderItemMovement = !RenderItemMovement;
-            renderScreen.Invalidate();
-        }
-
-        private void timerStopButton_Click(object sender, EventArgs e)
-        {
-            timerStopButton.Checked = true;
-            timer1Button.Checked = false;
-            timer10Button.Checked = false;
-            timer20Button.Checked = false;
-            timer50Button.Checked = false;
-
-            gameUpdateTimer.Enabled = false;
-            timerDropDown.Text = "Stopped";
-        }
-
-        private void timer1Button_Click(object sender, EventArgs e)
-        {
-            timerStopButton.Checked = false;
-            timer1Button.Checked = true;
-            timer10Button.Checked = false;
-            timer20Button.Checked = false;
-            timer50Button.Checked = false;
-
-            gameUpdateTimer.Enabled = true;
-            gameUpdateTimer.Interval = 1000;
-            timerDropDown.Text = "1 fps";
-        }
-
-        private void timer10Button_Click(object sender, EventArgs e)
-        {
-            timerStopButton.Checked = false;
-            timer1Button.Checked = false;
-            timer10Button.Checked = true;
-            timer20Button.Checked = false;
-            timer50Button.Checked = false;
-
-            gameUpdateTimer.Enabled = true;
-            gameUpdateTimer.Interval = 100;
-            timerDropDown.Text = "10 fps";
-        }
-
-        private void timer20Button_Click(object sender, EventArgs e)
-        {
-            timerStopButton.Checked = false;
-            timer1Button.Checked = false;
-            timer10Button.Checked = false;
-            timer20Button.Checked = true;
-            timer50Button.Checked = false;
-
-            gameUpdateTimer.Enabled = true;
-            gameUpdateTimer.Interval = 50;
-            timerDropDown.Text = "20 fps";
-        }
-
-        private void timer50Button_Click(object sender, EventArgs e)
-        {
-            timerStopButton.Checked = false;
-            timer1Button.Checked = false;
-            timer10Button.Checked = false;
-            timer20Button.Checked = false;
-            timer50Button.Checked = true;
-
-            gameUpdateTimer.Enabled = true;
-            gameUpdateTimer.Interval = 20;
-            timerDropDown.Text = "50 fps";
-        }
-
         #endregion
-
-        private bool renderPlaygroundInfos = false;
-        private bool renderItemCenter = true;
-        private bool renderItemBody = true;
-        private bool renderItemMovement = true;
-        private bool renderItemViewRange = true;
-        private bool renderItemSmellableRange = true;
-        private bool renderItemAttackerRange = true;
-
-        [Category("AntMe"), DisplayName("Render Playground Infos"), DefaultValue(false)]
-        public bool RenderPlaygroundInfos { 
-            get { return renderPlaygroundInfos; }
-            set { 
-                renderPlaygroundInfos = value;
-                showPlaygroundCheckbox.Checked = value;
-            }
-        }
-
-        [Category("AntMe"), DisplayName("Render Item Center")]
-        public bool RenderItemCenter { 
-            get { return renderItemCenter; }
-            set { 
-                renderItemCenter = value;
-                showItemCenterCheckbox.Checked = value;
-            }
-        }
-
-        [Category("AntMe"), DisplayName("Render Item Body")]
-        public bool RenderItemBody { 
-            get { return renderItemBody; }
-            set { 
-                renderItemBody = value;
-                showCollisionCheckbox.Checked = value;
-            }
-        }
-
-        [Category("AntMe"), DisplayName("Render Item Movement")]
-        public bool RenderItemMovement {
-            get { return renderItemMovement; }
-            set { 
-                renderItemMovement = value;
-                showMovementCheckbox.Checked = value;
-            }
-        }
-
-        [Category("AntMe"), DisplayName("Render Item View Range")]
-        public bool RenderItemViewRange {
-            get { return renderItemViewRange; }
-            set { 
-                renderItemViewRange = value;
-                showViewCheckbox.Checked = value;
-            }
-        }
-
-        [Category("AntMe"), DisplayName("Render Item Smellable Range")]
-        public bool RenderItemSmellableRange {
-            get { return renderItemSmellableRange; }
-            set { 
-                renderItemSmellableRange = value;
-                showSmellableCheckbox.Checked = value;
-            }
-        }
-
-        [Category("AntMe"), DisplayName("Render Item Attacker Range")]
-        public bool RenderItemAttackerRange {
-            get { return renderItemAttackerRange; }
-            set { 
-                renderItemAttackerRange = value;
-                showAttackerCheckbox.Checked = value;
-            }
-        }
 
         #region Subclass
 
@@ -373,17 +201,6 @@ namespace CoreTestClient
                     //    // DrawItem(item.Id, item.Position, 10, Color.Blue);
                     //}
                 }
-            }
-        }
-
-        private void NextRound()
-        {
-            if (simulation != null && simulation.ServerState == AntMe.Runtime.SimulationState.Running)
-            {
-                //currentState = Simulation.NextState();
-                //Redraw(CurrentState.Round, CurrentState.Items.Count);
-                //if (CurrentState != null)
-                //    RefreshTree(CurrentState);
             }
         }
 
@@ -452,11 +269,8 @@ namespace CoreTestClient
             float localHeight = size.Y * Map.CELLSIZE;
 
             // Linke, untere Kante
-            if (renderPlaygroundInfos)
-            {
-                // g.DrawLine(playgroundLines, offsetX, offsetY, offsetX, offsetY + (height * scale));
-                // g.DrawLine(playgroundLines, offsetX, offsetY + (height * scale), offsetX + (width * scale), offsetY + (height * scale));
-            }
+            // g.DrawLine(playgroundLines, offsetX, offsetY, offsetX, offsetY + (height * scale));
+            // g.DrawLine(playgroundLines, offsetX, offsetY + (height * scale), offsetX + (width * scale), offsetY + (height * scale));
 
             // Rechte, obere Kanten der Zellen
             float cell = Map.CELLSIZE * scale;
@@ -470,14 +284,11 @@ namespace CoreTestClient
                     float bottom = ((y + 1) * cell) + offsetY;
                     g.FillRectangle(GetCellcolor(tiles[x, y]), left, top, cell, cell);
 
-                    if (RenderPlaygroundInfos)
-                    {
-                        // g.DrawLine(playgroundLines, left, top, right, top);
-                        // g.DrawLine(playgroundLines, right, top, right, bottom);
+                    // g.DrawLine(playgroundLines, left, top, right, top);
+                    // g.DrawLine(playgroundLines, right, top, right, bottom);
                         
-                        g.DrawString(tiles[x, y].Height.ToString(), playgroundText, playgroundTextBrush, left, top);
-                        g.DrawString(tiles[x, y].Speed.ToString(), playgroundText, playgroundTextBrush, left, top + 9);
-                    }
+                    g.DrawString(tiles[x, y].Height.ToString(), playgroundText, playgroundTextBrush, left, top);
+                    g.DrawString(tiles[x, y].Speed.ToString(), playgroundText, playgroundTextBrush, left, top + 9);
                 }
             }
         }
@@ -540,7 +351,7 @@ namespace CoreTestClient
             float y = (position.Y * scale) + offsetY;
 
             // Kollisionsbody
-            if (RenderItemBody && bodyRadius.HasValue)
+            if (bodyRadius.HasValue)
             {
                 float rad = bodyRadius.Value * scale;
 
@@ -549,7 +360,7 @@ namespace CoreTestClient
             }
 
             // Sichtkegel zeichnen
-            if (RenderItemViewRange && viewerRange.HasValue)
+            if (viewerRange.HasValue)
             {
                 float rad = viewerRange.Value * scale;
                 Pen pen = (borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines);
@@ -563,14 +374,14 @@ namespace CoreTestClient
             }
 
             // Movement
-            if (RenderItemMovement && bodyDirection.HasValue && bodySpeed.HasValue)
+            if (bodyDirection.HasValue && bodySpeed.HasValue)
             {
                 Vector2 vector = Vector2.FromAngle(Angle.FromRadian(bodyDirection.Value)) * (bodySpeed.Value * scale);
                 g.DrawLine(itemCenterPen, x, y, x + vector.X, y + vector.Y);
             }
 
             // Riechradius zeichnen
-            if (RenderItemSmellableRange && smellableRange.HasValue)
+            if (smellableRange.HasValue)
             {
                 float rad = smellableRange.Value * scale;
                 Pen pen = (borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines);
@@ -579,28 +390,10 @@ namespace CoreTestClient
             }
 
             // Zentrum und ID
-            if (RenderItemCenter)
-            {
-                g.DrawRectangle(itemCenterPen, x, y, 1, 1);
-                g.DrawString(id.ToString(), playgroundText, playgroundTextBrush, x, y);
-            }
+            g.DrawRectangle(itemCenterPen, x, y, 1, 1);
+            g.DrawString(id.ToString(), playgroundText, playgroundTextBrush, x, y);
         }
 
         #endregion
-
-        private void gameUpdateTimer_Tick(object sender, EventArgs e)
-        {
-            NextRound();
-        }
-
-        private void singleRoundButton_Click(object sender, EventArgs e)
-        {
-            NextRound();
-        }
-
-        private void timerMaxButton_Click(object sender, EventArgs e)
-        {
-            gameUpdateTimer.Interval = 10;
-        }
     }
 }
