@@ -16,18 +16,18 @@ namespace AntMe.Simulation.Debug
         {
             this.level = level;
 
-            //if (level != null)
-            //{
-            //    nameLabel.Text = level.Name;
-            //    descriptionLabel.Text = level.Description;
-            //    mapPreview1.SetMap(level.Map);
-            //}
-            //else
-            //{
-            //    nameLabel.Text = string.Empty;
-            //    descriptionLabel.Text = string.Empty;
-            //    mapPreview1.SetMap(null);
-            //}
+            if (level != null)
+            {
+                nameLabel.Text = level.LevelDescription.Name;
+                descriptionLabel.Text = level.LevelDescription.Description;
+                mapPreview1.SetMap(level.LevelDescription.Map);
+            }
+            else
+            {
+                nameLabel.Text = string.Empty;
+                descriptionLabel.Text = string.Empty;
+                mapPreview1.SetMap(null);
+            }
 
         }
     }

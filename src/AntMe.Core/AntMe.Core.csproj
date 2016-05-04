@@ -51,7 +51,6 @@
     <Compile Include="Angle.cs" />
     <Compile Include="Campaign.cs" />
     <Compile Include="CampaignDescriptionAttribute.cs" />
-    <Compile Include="CodeGeneratorAttribute.cs" />
     <Compile Include="Compass.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="EngineState.cs" />
@@ -70,7 +69,6 @@
     <Compile Include="FactionUnit.cs" />
     <Compile Include="FactoryInterop.cs" />
     <Compile Include="FactoryInteropProperty.cs" />
-    <Compile Include="ICodeGenerator.cs" />
     <Compile Include="IExtensionPack.cs" />
     <Compile Include="InfoProperty.cs" />
     <Compile Include="Interop.cs" />

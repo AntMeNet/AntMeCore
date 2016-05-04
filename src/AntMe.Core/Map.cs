@@ -6,10 +6,10 @@ using System.Runtime.Serialization;
 namespace AntMe
 {
     /// <summary>
-    ///     Repräsentiert eine Karte mit einer Höhenmap und einer Flächendefinition.
+    /// Represents the topological information about a level Map.
     /// </summary>
     [Serializable]
-    public class Map
+    public abstract class Map
     {
         #region Constants
 
@@ -61,41 +61,27 @@ namespace AntMe
         #endregion
 
         /// <summary>
-        ///     Definition des Randverhaltens
+        /// Gets or sets the border behavior of this map.
         /// </summary>
         [DisplayName("Border Behavior")]
-        [Description("Legt fest, ob der Rand des Spielfeldes blockt.")]
+        [Description("Gets or sets the border behavior of this map.")]
         public bool BlockBorder { get; set; }
 
         /// <summary>
-        ///     Tiles für die einzelnen Zellen.
-        ///     TODO: Test schreiben
+        /// Gets or sets the two-dimentional array of Map Tiles.
         /// </summary>
         [DisplayName("Tiles")]
-        [Description("Definition der Tiles für einzelne Zellen")]
+        [Description("Gets or sets the two-dimentional array of Map Tiles.")]
         public MapTile[,] Tiles { get; set; }
 
         /// <summary>
-        ///     Auflistung der Startpunkte.
+        /// List of Start Point for the available Player Slots.
         /// </summary>
         [DisplayName("Start Points")]
-        [Description("Auflistung der Startpunkte.")]
+        [Description("List of Start Point for the available Player Slots.")]
         public Index2[] StartPoints { get; set; }
 
-        #region Statische Methoden (Generatoren und Serialisierer)
-
-        /// <summary>
-        ///     Erzeugt eine Standard-Karte im angegebenen Format.
-        /// </summary>
-        /// <param name="width">Anzahl Spalten</param>
-        /// <param name="height">Anzahl Zeilen</param>
-        /// <param name="blockBorder">Wird der Rand blockieren?</param>
-        /// <param name="initialSpeed">Inititale Bodenbeschaffenheit</param>
-        /// <param name="initialHeight">Inititale Höhe</param>
-        /// <returns>Neue Map-Instanz</returns>
-        public static Map CreateMap(int width, int height, bool blockBorder,
-            TileSpeed initialSpeed = TileSpeed.Normal,
-            TileHeight initialHeight = TileHeight.Medium)
+        public Map(int width, int height, bool blockBorder, TileSpeed initialSpeed = TileSpeed.Normal, TileHeight initialHeight = TileHeight.Medium)
         {
             // Check Parameter
             if (width < MIN_WIDTH)
@@ -107,15 +93,14 @@ namespace AntMe
             if (height > MAX_HEIGHT)
                 throw new ArgumentOutOfRangeException(string.Format("Map must have a max of {0} Rows", MAX_HEIGHT));
 
-            var map = new Map();
-            map.BlockBorder = blockBorder;
+            BlockBorder = blockBorder;
 
             // Create Tiles
-            map.Tiles = new MapTile[width, height];
+            Tiles = new MapTile[width, height];
             for (int x = 0; x < width; x++)
                 for (int y = 0; y < height; y++)
                 {
-                    map.Tiles[x, y] = new MapTile
+                    Tiles[x, y] = new MapTile
                     {
                         Height = initialHeight,
                         Shape = TileShape.Flat,
@@ -126,128 +111,18 @@ namespace AntMe
             // Create Players
             int dx = width / 6;
             int dy = height / 6;
-            map.StartPoints = new Index2[8];
-            map.StartPoints[0] = new Index2(dx, dy);
-            map.StartPoints[1] = new Index2(5 * dx, 5 * dy);
-            map.StartPoints[2] = new Index2(5 * dx, dy);
-            map.StartPoints[3] = new Index2(dx, 5 * dy);
-            map.StartPoints[4] = new Index2(3 * dx, dy);
-            map.StartPoints[5] = new Index2(3 * dx, 5 * dy);
-            map.StartPoints[6] = new Index2(dx, 3 * dy);
-            map.StartPoints[7] = new Index2(5 * dx, 3 * dy);
-
-            return map;
+            StartPoints = new Index2[8];
+            StartPoints[0] = new Index2(dx, dy);
+            StartPoints[1] = new Index2(5 * dx, 5 * dy);
+            StartPoints[2] = new Index2(5 * dx, dy);
+            StartPoints[3] = new Index2(dx, 5 * dy);
+            StartPoints[4] = new Index2(3 * dx, dy);
+            StartPoints[5] = new Index2(3 * dx, 5 * dy);
+            StartPoints[6] = new Index2(dx, 3 * dy);
+            StartPoints[7] = new Index2(5 * dx, 3 * dy);
         }
 
-        /// <summary>
-        ///     Deserialisiert eine Map aus einem gegebenen Stream.
-        ///     TODO: Test!!!
-        /// </summary>
-        /// <param name="stream">Quellstream</param>
-        /// <returns>Deserialisierte Map</returns>
-        public static Map Deserialize(Stream stream)
-        {
-            var reader = new BinaryReader(stream);
-
-            // Intro (Typ und Version)
-            if (reader.ReadString() != "AntMe! Map")
-                throw new Exception("This is not a AntMe! Map");
-            if (reader.ReadByte() != 1)
-                throw new Exception("Wrong Version");
-
-            var map = new Map();
-
-            // Globale Infos (Border, Width, Height)
-            map.BlockBorder = reader.ReadBoolean();
-            int width = reader.ReadInt32();
-            int height = reader.ReadInt32();
-            int playercount = reader.ReadByte();
-
-            if (playercount < MIN_STARTPOINTS)
-                throw new Exception("Too less Player in this Map");
-            if (playercount > MAX_STARTPOINTS)
-                throw new Exception("Too many Player in this Map");
-
-            // Startpunkte einlesen
-            map.StartPoints = new Index2[playercount];
-            for (int i = 0; i < playercount; i++)
-            {
-                map.StartPoints[i] = new Index2(
-                    reader.ReadInt32(),
-                    reader.ReadInt32());
-            }
-
-            if (width < MIN_WIDTH || width > MAX_WIDTH)
-                throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_WIDTH,
-                    MAX_WIDTH));
-            if (height < MIN_HEIGHT || height > MAX_HEIGHT)
-                throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_HEIGHT,
-                    MAX_HEIGHT));
-
-            // Zellen einlesen
-            map.Tiles = new MapTile[width, height];
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
-                {
-                    map.Tiles[x, y] = new MapTile
-                    {
-                        Shape = (TileShape)reader.ReadByte(),
-                        Speed = (TileSpeed)reader.ReadByte(),
-                        Height = (TileHeight)reader.ReadByte()
-                    };
-                }
-
-            return map;
-        }
-
-        /// <summary>
-        ///     Serialisiert eine Map in einen Stream.
-        ///     TODO: Test!!!
-        /// </summary>
-        /// <param name="stream">Zielstream</param>
-        /// <param name="map">Zu serialisierende Map</param>
-        public static void Serialize(Stream stream, Map map)
-        {
-            // Check Map
-            if (map == null)
-                throw new ArgumentNullException("map");
-            map.CheckMap();
-
-            // Check Stream
-            if (stream == null)
-                throw new ArgumentNullException("stream");
-            if (!stream.CanWrite)
-                throw new ArgumentException("Stream is read only");
-
-
-            var writer = new BinaryWriter(stream);
-
-            // Intro (Typ und Version)
-            writer.Write("AntMe! Map");
-            writer.Write((byte)1);
-
-            // Global Infos (Block, Width, Height)
-            writer.Write(map.BlockBorder);
-            writer.Write(map.Tiles.GetLength(0));
-            writer.Write(map.Tiles.GetLength(1));
-            writer.Write((byte)map.StartPoints.GetLength(0));
-
-            // Startpoints
-            for (int i = 0; i < map.StartPoints.GetLength(0); i++)
-            {
-                writer.Write(map.StartPoints[i].X);
-                writer.Write(map.StartPoints[i].Y);
-            }
-
-            // Zelleninfos
-            for (int y = 0; y < map.Tiles.GetLength(1); y++)
-                for (int x = 0; x < map.Tiles.GetLength(0); x++)
-                {
-                    writer.Write((byte)map.Tiles[x, y].Shape);
-                    writer.Write((byte)map.Tiles[x, y].Speed);
-                    writer.Write((byte)map.Tiles[x, y].Height);
-                }
-        }
+        #region Statische Methoden (Generatoren und Serialisierer)
 
         /// <summary>
         ///     Ermittelt die Höhe der Position auf Basis der Zellen- und Positionsangaben.

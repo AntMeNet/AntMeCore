@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 
 namespace AntMe.Runtime
@@ -25,7 +24,7 @@ namespace AntMe.Runtime
 
             // Zu analysierende Assembly laden
             Assembly assembly = Assembly.Load(file);
-            return ExtensionLoader.AnalyseAssembly(assembly, level, campaign, player, false);
+            return ExtensionLoader.AnalyseAssembly(assembly, level, campaign, player);
         }
     }
 }

@@ -4,42 +4,32 @@ using System.Resources;
 namespace AntMe
 {
     /// <summary>
-    /// Attribut zur Beschreibung einer Level-Klasse.
+    /// Level Description Attribute to hold all relevant Information about a Level.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     [Serializable]
     public sealed class LevelDescriptionAttribute : Attribute
     {
         /// <summary>
-        /// Parameterloser Konstuktor für den Serializer.
+        /// Default Constructor.
         /// </summary>
-        public LevelDescriptionAttribute()
-        {
-            MinPlayerCount = 0;
-            MaxPlayerCount = 8;
-            Hidden = false;
-        }
-
-        /// <summary>
-        /// Standard Konstruktor.
-        /// </summary>
-        /// <param name="guid">Level Guid als String</param>
-        /// <param name="mapType">Typ der zu verwendenden Map</param>
-        /// <param name="name">Name des Levels</param>
-        /// <param name="description">Level-Beschreibung</param>
+        /// <param name="guid">Guid of this Level</param>
+        /// <param name="mapType">Type of the Map</param>
+        /// <param name="name">Name of this Level</param>
+        /// <param name="description">Short Level Description</param>
         public LevelDescriptionAttribute(string guid, Type mapType, string name, string description)
         {
             Init(guid, mapType, name, description);
         }
 
         /// <summary>
-        /// Standard Konstruktor.
+        /// Default Constructor.
         /// </summary>
-        /// <param name="guid">Level Guid als String</param>
-        /// <param name="mapType">Typ der zu verwendenden Map</param>
-        /// <param name="resourceType">Typ der Ressource für Name und Beschreibung</param>
-        /// <param name="nameKey">Ressource Key für den Namen</param>
-        /// <param name="descriptionKey">Ressource Key für die Beschreibung</param>
+        /// <param name="guid">Guid of this Level</param>
+        /// <param name="mapType">Type of the Map</param>
+        /// <param name="resourceType">Type of Resource Class for Name and Description</param>
+        /// <param name="nameKey">Resource Key for the Level Name</param>
+        /// <param name="descriptionKey">Resource Key for the Level Description</param>
         public LevelDescriptionAttribute(string guid, Type mapType, Type resourceType, string nameKey, string descriptionKey)
         {
             // Ressourcen auflösen und Strings auslesen
@@ -50,22 +40,35 @@ namespace AntMe
             Init(guid, mapType, name, description);
         }
 
+        /// <summary>
+        /// Initializes the Attribute Stuff and checks the data.
+        /// </summary>
+        /// <param name="guid">Guid of this Level</param>
+        /// <param name="mapType">Type of the Map</param>
+        /// <param name="name">Name of this Level</param>
+        /// <param name="description">Short Level Description</param>
         private void Init(string guid, Type mapType, string name, string description)
         {
-            // Check Id
+            // Check for valid ID
             Guid id;
             if (!Guid.TryParse(guid, out id))
-                throw new ArgumentException("Guid hat kein gültiges Format");
+                throw new ArgumentException("Invalid Guid Format in Level Description.");
 
             // Check Name
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException("name", string.Format("The Level Desciption with the ID {0} has no valid Name", id.ToString()));
 
             // Check Description
             if (string.IsNullOrEmpty(description))
-                throw new ArgumentNullException("description");
+                throw new ArgumentNullException("description", string.Format("The Level Desciption with the ID {0} and Name '{1}' has no valid Description", id.ToString(), name));
 
             // Check Map
+            if (mapType == null)
+                throw new ArgumentNullException("mapType", string.Format("The Level Desciption with the Name '{0}' has no valid Map", name));
+            if (mapType.IsAbstract)
+                throw new ArgumentException(string.Format("The Level Desciption with the Name '{0}' uses an abstract Map", name));
+            if (mapType.GetConstructor(new Type[] { }) == null)
+                throw new ArgumentException(string.Format("The Level Desciption with the Name '{0}' uses a Map without a parameterless constructor", name));
             Map map = (Map)Activator.CreateInstance(mapType);
             map.CheckMap();
 
@@ -80,60 +83,60 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt die eindeutige ID des Levels zurück.
+        /// Level ID.
         /// </summary>
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Gibt den Namen des Levels zurück.
+        /// Name of the Level.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gibt die Beschreibung des Levels zurück.
+        /// Short Description of the Level.
         /// </summary>
         public string Description { get; set; }
 
         /// <summary>
-        ///     Gibt die maximale Anzahl Spieler an.
+        /// Maximum Count of Players for the Level.
         /// </summary>
         public int MaxPlayerCount { get; set; }
 
         /// <summary>
-        ///     Gibt die minimale Anzahl Spieler an.
+        /// Minimum Count of Players for the Level.
         /// </summary>
         public int MinPlayerCount { get; set; }
 
         /// <summary>
-        /// Gibt an, ob das Level beim Durchsuchen der Datei gefunden werden soll.
+        /// Is this Level free for play or hidden in an Campaign?
         /// </summary>
         public bool Hidden { get; set; }
 
         /// <summary>
-        /// Gibt die Map zurück.
+        /// Returns the Map for this Level.
         /// </summary>
         public Map Map { get; set; }
 
         /// <summary>
-        /// Validiert die Angaben des Attributs.
+        /// Validates all Level Description Properties.
         /// </summary>
         public void Validate()
         {
             // ID prüfen
             if (Id == Guid.Empty)
-                throw new ArgumentNullException("Id kann nicht empty sein");
+                throw new ArgumentException("Id kann nicht empty sein");
 
             // Name prüfen
             if (string.IsNullOrEmpty(Name))
-                throw new ArgumentNullException("Name kann nicht leer sein");
+                throw new ArgumentException("Name kann nicht leer sein");
 
             // Description prüfen
             if (string.IsNullOrEmpty(Description))
-                throw new ArgumentNullException("Description kann nicht leer sein");
+                throw new ArgumentException("Description kann nicht leer sein");
 
             // Map prüfen
             if (Map == null)
-                throw new ArgumentNullException("Map darf nicht null sein");
+                throw new ArgumentException("Map darf nicht null sein");
             Map.CheckMap();
 
             // Min Player

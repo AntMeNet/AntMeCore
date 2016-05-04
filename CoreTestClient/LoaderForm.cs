@@ -14,14 +14,13 @@ namespace CoreTestClient
         {
             InitializeComponent();
             Size = new Size(Size.Width, 133);
-
-            ProgressToken token = new ProgressToken();
+            updateTimer.Enabled = true;
 
             Task t = new Task(() =>
             {
                 try
                 {
-                    ExtensionLoader.LoadExtensions(token, false);
+                    ExtensionLoader.LoadExtensions(token, true);
                     Invoke((MethodInvoker)delegate
                     {
                         HandleSuccess();

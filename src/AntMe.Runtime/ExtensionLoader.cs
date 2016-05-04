@@ -21,7 +21,6 @@ namespace AntMe.Runtime
         private static IEnumerable<CampaignInfo> campaignCache = null;
         private static IEnumerable<LevelInfo> levelCache = null;
         private static IEnumerable<PlayerInfo> playerCache = null;
-        private static IEnumerable<CodeGeneratorAttribute> codeGeneratorCache = null;
         private static Dictionary<Guid, PlayerStatistics> playerStatistics = new Dictionary<Guid, PlayerStatistics>();
         private static Dictionary<Guid, CampaignStatistics> campaignStatistics = new Dictionary<Guid, CampaignStatistics>();
         private static Dictionary<Guid, LevelStatistics> levelStatistics = new Dictionary<Guid, LevelStatistics>();
@@ -42,7 +41,6 @@ namespace AntMe.Runtime
         /// - Campaigns (only full)
         /// - Players (only full)
         /// - Levels (only full)
-        /// - Generators (only full)
         /// </summary>
         /// <param name="token">Optional Reference to a Progress Token</param>
         /// <param name="full">Switch between basic Extension Loader or full Content Load.</param>
@@ -111,7 +109,7 @@ namespace AntMe.Runtime
 
             // Pass 1 Load Extension Packs
             List<IExtensionPack> extensionPacks = new List<IExtensionPack>();
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var assembly in assemblies)
             {
                 foreach (var type in assembly.GetExportedTypes())
                 {
@@ -140,14 +138,14 @@ namespace AntMe.Runtime
                         }
                     }
 
-                    currentTask++;
-
                     if (token != null)
                     {
                         token.CurrentTask = currentTask;
                         if (token.Cancel) return;
                     }
                 }
+
+                currentTask++;
             }
 
             extensionPackCache = extensionPacks;
@@ -158,13 +156,11 @@ namespace AntMe.Runtime
                 List<CampaignInfo> campaigns = new List<CampaignInfo>();
                 List<LevelInfo> levels = new List<LevelInfo>();
                 List<PlayerInfo> players = new List<PlayerInfo>();
-                List<CodeGeneratorAttribute> generators = new List<CodeGeneratorAttribute>();
 
-                // Pass 2 (Levels & Players) [generators, campaigns, levels, players]
+                // Pass 2 (Levels & Players) [campaigns, levels, players]
                 foreach (var assembly in assemblies)
                 {
-                    LoaderInfo loader = AnalyseAssembly(assembly, true, true, true, true);
-                    generators.AddRange(loader.CodeGenerators);
+                    LoaderInfo loader = AnalyseAssembly(assembly, true, true, true);
 
                     // Types mit File Dump
                     if (loader.Campaigns.Count > 0 ||
@@ -202,8 +198,11 @@ namespace AntMe.Runtime
                     }
 
                     currentTask++;
+
+                    errors.AddRange(loader.Errors);
                     if (token != null)
                     {
+                        token.Errors.AddRange(loader.Errors);
                         token.CurrentTask = currentTask;
                         if (token.Cancel) return;
                     }
@@ -212,7 +211,6 @@ namespace AntMe.Runtime
                 campaignCache = campaigns;
                 levelCache = levels;
                 playerCache = players;
-                codeGeneratorCache = generators;
             }
 
             extensionsLoaded = true;
@@ -406,20 +404,6 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// List of all available Code Generators.
-        /// </summary>
-        public static IEnumerable<CodeGeneratorAttribute> CodeGenerators
-        {
-            get
-            {
-                if (codeGeneratorCache == null)
-                    throw new Exception("Extensions are not loaded");
-
-                return codeGeneratorCache;
-            }
-        }
-
-        /// <summary>
         /// Reference to the default Type Mapper.
         /// </summary>
         public static ITypeMapper DefaultTypeMapper { get { return typeMapper; } }
@@ -434,11 +418,14 @@ namespace AntMe.Runtime
         #region Common Analyze Methods
 
         /// <summary>
-        /// Analysiert ein gegebenes Assembly auf brauchbare Klassen.
+        /// Scans the given Assembly for potential stuff like Campaigns, Levels and Players.
         /// </summary>
-        /// <param name="assembly">Assembly</param>
-        /// <returns>Gesammelte Infos der Assembly</returns>
-        internal static LoaderInfo AnalyseAssembly(Assembly assembly, bool level, bool campaign, bool player, bool generator)
+        /// <param name="assembly">Assembly to search in</param>
+        /// <param name="campaign">Scan for new Campaigns</param>
+        /// <param name="level">Scan for new Levels</param>
+        /// <param name="player">Scan for new Players</param>
+        /// <returns>Scan Results</returns>
+        internal static LoaderInfo AnalyseAssembly(Assembly assembly, bool level, bool campaign, bool player)
         {
             LoaderInfo loaderInfo = new LoaderInfo();
             bool isStatic = false;
@@ -489,21 +476,6 @@ namespace AntMe.Runtime
                         {
                             PlayerInfo playerInfo = AnalysePlayerType(type);
                             loaderInfo.Players.Add(playerInfo);
-                        }
-                        catch (Exception ex)
-                        {
-                            loaderInfo.Errors.Add(ex);
-                        }
-                    }
-
-                    // Found Generator
-                    if (generator && type.GetInterface("ICodeGenerator") != null && type.GetCustomAttributes(typeof(CodeGeneratorAttribute), false).Length > 0)
-                    {
-                        try
-                        {
-                            CodeGeneratorAttribute attribute = (CodeGeneratorAttribute)type.GetCustomAttributes(typeof(CodeGeneratorAttribute), false).First();
-                            attribute.Generator = (ICodeGenerator)Activator.CreateInstance(type);
-                            loaderInfo.CodeGenerators.Add(attribute);
                         }
                         catch (Exception ex)
                         {
