@@ -55,10 +55,12 @@
     <ProjectReference Include="..\AntMe.Basics\AntMe.Basics.csproj">
       <Project>{fc17801c-cf46-4612-915d-98704f9c11d4}</Project>
       <Name>AntMe.Basics</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj">
       <Project>{a2a811c2-600d-451b-aa15-346bf7eced4a}</Project>
       <Name>AntMe.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

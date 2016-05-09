@@ -102,6 +102,12 @@
     <Compile Include="MapPreview.Designer.cs">
       <DependentUpon>MapPreview.cs</DependentUpon>
     </Compile>
+    <Compile Include="PlayerPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PlayerPreview.Designer.cs">
+      <DependentUpon>PlayerPreview.cs</DependentUpon>
+    </Compile>
     <Compile Include="PlayerSelectorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -154,6 +160,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MapPreview.resx">
       <DependentUpon>MapPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlayerPreview.resx">
+      <DependentUpon>PlayerPreview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PlayerSelectorForm.resx">
       <DependentUpon>PlayerSelectorForm.cs</DependentUpon>

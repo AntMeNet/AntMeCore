@@ -61,5 +61,16 @@ namespace CoreTestClient
                 SelectedLevel = null;
             }
         }
+
+        private void levelList_DoubleClick(object sender, EventArgs e)
+        {
+            if (levelList.SelectedItems.Count > 0)
+            {
+                LevelInfo level = levelList.SelectedItems[0].Tag as LevelInfo;
+                SelectedLevel = level;
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+        }
     }
 }

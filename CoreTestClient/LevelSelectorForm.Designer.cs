@@ -31,12 +31,12 @@
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.levelList = new System.Windows.Forms.ListView();
             this.nameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.levelPreview = new AntMe.Simulation.Debug.LevelPreview();
             this.panel = new System.Windows.Forms.Panel();
             this.loadButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.levelPreview = new AntMe.Simulation.Debug.LevelPreview();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -68,6 +68,7 @@
             this.levelList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.nameColumn});
             this.levelList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.levelList.FullRowSelect = true;
             this.levelList.Location = new System.Drawing.Point(0, 0);
             this.levelList.Name = "levelList";
             this.levelList.Size = new System.Drawing.Size(333, 390);
@@ -75,11 +76,20 @@
             this.levelList.UseCompatibleStateImageBehavior = false;
             this.levelList.View = System.Windows.Forms.View.Details;
             this.levelList.SelectedIndexChanged += new System.EventHandler(this.levelList_SelectedIndexChanged);
+            this.levelList.DoubleClick += new System.EventHandler(this.levelList_DoubleClick);
             // 
             // nameColumn
             // 
             this.nameColumn.Text = "Name";
             this.nameColumn.Width = 223;
+            // 
+            // levelPreview
+            // 
+            this.levelPreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.levelPreview.Location = new System.Drawing.Point(0, 0);
+            this.levelPreview.Name = "levelPreview";
+            this.levelPreview.Size = new System.Drawing.Size(497, 390);
+            this.levelPreview.TabIndex = 0;
             // 
             // panel
             // 
@@ -127,14 +137,6 @@
             // openFileDialog
             // 
             this.openFileDialog.DefaultExt = "dll";
-            // 
-            // levelPreview
-            // 
-            this.levelPreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.levelPreview.Location = new System.Drawing.Point(0, 0);
-            this.levelPreview.Name = "levelPreview";
-            this.levelPreview.Size = new System.Drawing.Size(497, 390);
-            this.levelPreview.TabIndex = 0;
             // 
             // LevelSelectorForm
             // 

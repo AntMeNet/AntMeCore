@@ -1569,7 +1569,7 @@ namespace AntMe.Runtime
         {
             var faction = factions.FirstOrDefault(f => factoryType.IsSubclassOf(f.FactoryType));
             if (faction != null)
-                return Activator.CreateInstance(faction.Type, factoryType, name, color) as Faction;
+                return Activator.CreateInstance(faction.Type, this, factoryType, name, color) as Faction;
             return null;
         }
 

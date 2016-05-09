@@ -33,12 +33,15 @@
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.playerList = new System.Windows.Forms.ListView();
             this.nameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.authorColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.playerPreview = new CoreTestClient.PlayerPreview();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
+            this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,6 +64,7 @@
             this.loadButton.TabIndex = 2;
             this.loadButton.Text = "Open File...";
             this.loadButton.UseVisualStyleBackColor = true;
+            this.loadButton.Click += new System.EventHandler(this.loadButton_Click);
             // 
             // cancelButton
             // 
@@ -76,6 +80,7 @@
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.okButton.Location = new System.Drawing.Point(754, 6);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -93,23 +98,30 @@
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.listView1);
+            this.splitContainer.Panel1.Controls.Add(this.playerList);
+            // 
+            // splitContainer.Panel2
+            // 
+            this.splitContainer.Panel2.Controls.Add(this.playerPreview);
             this.splitContainer.Size = new System.Drawing.Size(817, 418);
             this.splitContainer.SplitterDistance = 326;
             this.splitContainer.TabIndex = 1;
             // 
-            // listView1
+            // playerList
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.playerList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.nameColumn,
             this.authorColumn});
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.Location = new System.Drawing.Point(0, 0);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(326, 418);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.playerList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.playerList.FullRowSelect = true;
+            this.playerList.Location = new System.Drawing.Point(0, 0);
+            this.playerList.Name = "playerList";
+            this.playerList.Size = new System.Drawing.Size(326, 418);
+            this.playerList.TabIndex = 0;
+            this.playerList.UseCompatibleStateImageBehavior = false;
+            this.playerList.View = System.Windows.Forms.View.Details;
+            this.playerList.SelectedIndexChanged += new System.EventHandler(this.playerList_SelectedIndexChanged);
+            this.playerList.DoubleClick += new System.EventHandler(this.playerList_DoubleClick);
             // 
             // nameColumn
             // 
@@ -120,6 +132,18 @@
             // 
             this.authorColumn.Text = "Author";
             this.authorColumn.Width = 148;
+            // 
+            // playerPreview
+            // 
+            this.playerPreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.playerPreview.Location = new System.Drawing.Point(0, 0);
+            this.playerPreview.Name = "playerPreview";
+            this.playerPreview.Size = new System.Drawing.Size(487, 418);
+            this.playerPreview.TabIndex = 0;
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.DefaultExt = "dll";
             // 
             // PlayerSelectorForm
             // 
@@ -137,6 +161,7 @@
             this.Text = "Select a Player";
             this.panel.ResumeLayout(false);
             this.splitContainer.Panel1.ResumeLayout(false);
+            this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -150,8 +175,10 @@
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.Button loadButton;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView playerList;
         private System.Windows.Forms.ColumnHeader nameColumn;
         private System.Windows.Forms.ColumnHeader authorColumn;
+        private PlayerPreview playerPreview;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }
