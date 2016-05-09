@@ -8,7 +8,7 @@ namespace AntMe.Runtime.Communication
     {
         Level simulation = null;
 
-        public UnsecureSimulationClient(ITypeResolver resolver) : base(resolver) { }
+        public UnsecureSimulationClient(string[] extensionPaths, ITypeResolver resolver) : base(extensionPaths, resolver) { }
 
         public Level LevelInstance { get { return simulation; } }
 
@@ -32,19 +32,19 @@ namespace AntMe.Runtime.Communication
                 Type playerType = playerAssembly.GetType(players[i].Type.TypeName);
 
                 // Identify Name
-                var playerAttributes = playerType.GetCustomAttributes(typeof(PlayerAttribute), true);
+                var playerAttributes = playerType.GetCustomAttributes(typeof(FactoryAttribute), true);
                 if (playerAttributes.Length != 1)
                     throw new Exception("Player does not have the right number of Player Attributes");
 
-                PlayerAttribute playerAttribute = playerAttributes[0] as PlayerAttribute;
+                FactoryAttribute playerAttribute = playerAttributes[0] as FactoryAttribute;
 
                 // Find the right Mapping
                 var mappingAttributes = playerAttribute.GetType().
-                    GetCustomAttributes(typeof(PlayerAttributeMappingAttribute), false);
+                    GetCustomAttributes(typeof(FactoryAttributeMappingAttribute), false);
                 if (mappingAttributes.Length != 1)
                     throw new Exception("Player Attribute has no valid Property Mapping Attribute");
 
-                PlayerAttributeMappingAttribute mappingAttribute = mappingAttributes[0] as PlayerAttributeMappingAttribute;
+                FactoryAttributeMappingAttribute mappingAttribute = mappingAttributes[0] as FactoryAttributeMappingAttribute;
 
                 // Werte auslesen
                 string name = playerAttribute.GetType().GetProperty(mappingAttribute.NameProperty).

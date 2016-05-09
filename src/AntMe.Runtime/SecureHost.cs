@@ -15,7 +15,7 @@ namespace AntMe.Runtime
             _serializer = new StateSerializer();
         }
 
-        public void Setup(Setup settings)
+        public void Setup(string[] extensionPaths, Setup settings)
         {
             if (settings == null)
                 throw new ArgumentNullException("settings", "Settings is null");
@@ -43,7 +43,7 @@ namespace AntMe.Runtime
             colors.Clear();
 
             // Load Default Assemblies
-            ExtensionLoader.LoadExtensions(null, false);
+            ExtensionLoader.LoadExtensions(extensionPaths, null, false);
 
             // TODO: this is for debug
             AppDomain.CurrentDomain.AssemblyLoad += (x, y) => { };
@@ -71,19 +71,19 @@ namespace AntMe.Runtime
                 Type playerType = playerAssembly.GetType(settings.Player[i].TypeName);
 
                 // Identify Name
-                object[] playerAttributes = playerType.GetCustomAttributes(typeof (PlayerAttribute), true);
+                object[] playerAttributes = playerType.GetCustomAttributes(typeof (FactoryAttribute), true);
                 if (playerAttributes.Length != 1)
                     throw new Exception("Player does not have the right number of Player Attributes");
 
-                var playerAttribute = playerAttributes[0] as PlayerAttribute;
+                var playerAttribute = playerAttributes[0] as FactoryAttribute;
 
                 // Find the right Mapping
                 object[] mappingAttributes = playerAttribute.GetType().
-                    GetCustomAttributes(typeof (PlayerAttributeMappingAttribute), false);
+                    GetCustomAttributes(typeof (FactoryAttributeMappingAttribute), false);
                 if (mappingAttributes.Length != 1)
                     throw new Exception("Player Attribute has no valid Property Mapping Attribute");
 
-                var mappingAttribute = mappingAttributes[0] as PlayerAttributeMappingAttribute;
+                var mappingAttribute = mappingAttributes[0] as FactoryAttributeMappingAttribute;
 
                 // Werte auslesen
                 var name = playerAttribute.GetType().GetProperty(mappingAttribute.NameProperty).

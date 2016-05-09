@@ -13,6 +13,7 @@ namespace AntMe.Runtime.Communication
     /// </summary>
     internal abstract class LocalSimulationClient : ISimulationClient
     {
+        protected string[] extensionPaths;
         protected ITypeResolver resolver;
 
         private readonly int clientId = 1;
@@ -25,9 +26,10 @@ namespace AntMe.Runtime.Communication
         private Log log;
         private Stopwatch watch = new Stopwatch();
 
-        public LocalSimulationClient(ITypeResolver resolver)
+        public LocalSimulationClient(string[] extensionPaths, ITypeResolver resolver)
         {
             this.resolver = resolver;
+            this.extensionPaths = extensionPaths;
 
             // User erstellen
             master = new UserProfile() { Id = clientId, Username = "local" };
@@ -289,7 +291,7 @@ namespace AntMe.Runtime.Communication
                 }
 
                 // Level analysieren
-                LevelInfo info = ExtensionLoader.SecureFindLevel(level.AssemblyFile, level.TypeName);
+                LevelInfo info = ExtensionLoader.SecureFindLevel(extensionPaths, level.AssemblyFile, level.TypeName);
                 if (info != null)
                 {
                     info.Type.AssemblyFile = level.AssemblyFile;
@@ -369,7 +371,7 @@ namespace AntMe.Runtime.Communication
                 }
 
                 // Level analysieren
-                PlayerInfo info = ExtensionLoader.SecureFindPlayer(player.AssemblyFile, player.TypeName);
+                PlayerInfo info = ExtensionLoader.SecureFindPlayer(extensionPaths, player.AssemblyFile, player.TypeName);
                 if (info != null)
                 {
                     info.Type.AssemblyFile = player.AssemblyFile;

@@ -1,12 +1,22 @@
-﻿using System;
-
-
-namespace AntMe
+﻿namespace AntMe
 {
-    [Serializable]
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public abstract class PlayerAttribute : Attribute
+    /// <summary>
+    /// Default Attribute to decorate a Player Factory.
+    /// </summary>
+    [FactoryAttributeMapping(
+        NameProperty = "Name",
+        AuthorProperty = "Author"
+    )]
+    public sealed class PlayerAttribute : FactoryAttribute
     {
-        public bool Hidden { get; set; }
+        /// <summary>
+        /// Holds the Display Name of the Ai.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Holds the Player Name.
+        /// </summary>
+        public string Author { get; set; }
     }
 }

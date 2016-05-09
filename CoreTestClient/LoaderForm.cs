@@ -1,6 +1,8 @@
 ﻿using AntMe.Runtime;
 using System;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,7 +22,13 @@ namespace CoreTestClient
             {
                 try
                 {
-                    ExtensionLoader.LoadExtensions(token, true);
+                    string[] pathes = new string[] {
+                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions",
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
+                    };
+
+                    ExtensionLoader.LoadExtensions(pathes, token, true);
                     Invoke((MethodInvoker)delegate
                     {
                         HandleSuccess();

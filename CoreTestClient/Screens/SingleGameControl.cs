@@ -3,6 +3,8 @@ using System;
 using System.Windows.Forms;
 using AntMe.Runtime.Communication;
 using AntMe;
+using System.IO;
+using System.Reflection;
 
 namespace CoreTestClient.Screens
 {
@@ -35,7 +37,13 @@ namespace CoreTestClient.Screens
 
         public override ISimulationClient StartSimulation()
         {
-            ISimulationClient result = SimulationClient.CreateUnsecure(ExtensionLoader.DefaultTypeResolver);
+            string[] extensionPaths = new string[] {
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions",
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
+            };
+
+            ISimulationClient result = SimulationClient.CreateUnsecure(extensionPaths, ExtensionLoader.DefaultTypeResolver);
             result.AquireMaster();
             result.UploadLevel(level.Type);
             for (byte i = 0; i < 8; i++)

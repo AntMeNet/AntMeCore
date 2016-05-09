@@ -14,6 +14,7 @@ namespace AntMe.Runtime
         private SecureHost _host;
         private StateDeserializer _deserializer;
         private LevelState _lastState;
+        private string[] extensionPaths;
 
 
         /// <summary>
@@ -26,8 +27,9 @@ namespace AntMe.Runtime
         /// </summary>
         public Exception LastException { get; private set; }
 
-        public SecureSimulation()
+        public SecureSimulation(string[] extensionPaths)
         {
+            this.extensionPaths = extensionPaths;
             State = SimulationState.Stopped;
         }
 
@@ -52,7 +54,7 @@ namespace AntMe.Runtime
                 _appDomain = AppDomain.CreateDomain("AntMe! Jail", evidence, setup);
                 _host = _appDomain.CreateInstanceAndUnwrap(t.Assembly.FullName, t.FullName) as SecureHost;
 
-                _host.Setup(settings);
+                _host.Setup(extensionPaths, settings);
 
                 State = SimulationState.Running;
             }

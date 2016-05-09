@@ -13,18 +13,18 @@ namespace AntMe.Runtime.Communication
         /// Erstellt einen Simulationskäfig im aktuellen Prozessraum, allerdings mit AppDomain Sicherheitskäfig.
         /// </summary>
         /// <returns>Simulation Client</returns>
-        public static ISimulationClient CreateSecure(ITypeResolver resolver)
+        public static ISimulationClient CreateSecure(string[] extensionPaths, ITypeResolver resolver)
         {
-            return new SecureSimulationClient(resolver);
+            return new SecureSimulationClient(extensionPaths, resolver);
         }
 
         /// <summary>
         /// Erstellt einen Simulationskäfig im aktuellen Prozessraum ohne Abschirmung. Bitte nur im Debug-Modus verwenden.
         /// </summary>
         /// <returns>Simulation Client</returns>
-        public static ISimulationClient CreateUnsecure(ITypeResolver resolver)
+        public static ISimulationClient CreateUnsecure(string[] extensionPaths, ITypeResolver resolver)
         {
-            return new UnsecureSimulationClient(resolver);
+            return new UnsecureSimulationClient(extensionPaths, resolver);
         }
 
         /// <summary>
@@ -32,10 +32,10 @@ namespace AntMe.Runtime.Communication
         /// </summary>
         /// <param name="pipeName">Pipe Name</param>
         /// <returns>Instance of the Client</returns>
-        public static ISimulationClient CreateNamedPipe(string pipeName)
+        public static ISimulationClient CreateNamedPipe(string[] extensionPaths, string pipeName)
         {
             WcfSimulationCallback callback = new WcfSimulationCallback();
-            WcfSimulationClient client = new WcfSimulationClient(callback);
+            WcfSimulationClient client = new WcfSimulationClient(extensionPaths, callback);
 
             var factory =
                 new DuplexChannelFactory<ISimulationService>(
@@ -55,10 +55,10 @@ namespace AntMe.Runtime.Communication
         /// <param name="address">Target IP</param>
         /// <param name="port">Port</param>
         /// <returns>Instance of the Client</returns>
-        public static ISimulationClient CreateTcp(IPAddress address, int port)
+        public static ISimulationClient CreateTcp(string[] extensionPaths, IPAddress address, int port)
         {
             WcfSimulationCallback callback = new WcfSimulationCallback();
-            WcfSimulationClient client = new WcfSimulationClient(callback);
+            WcfSimulationClient client = new WcfSimulationClient(extensionPaths, callback);
 
             throw new NotImplementedException();
 

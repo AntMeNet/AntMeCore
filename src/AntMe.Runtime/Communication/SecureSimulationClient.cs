@@ -7,11 +7,11 @@
     {
         SecureSimulation simulation = null;
 
-        public SecureSimulationClient(ITypeResolver resolver) : base(resolver) { }
+        public SecureSimulationClient(string[] extensionPaths, ITypeResolver resolver) : base(extensionPaths, resolver) { }
 
         protected override void InitSimulation(int seed, LevelInfo level, PlayerInfo[] players, Slot[] slots)
         {
-            simulation = new SecureSimulation();
+            simulation = new SecureSimulation(extensionPaths);
 
             // Settings aufbauen
             Setup settings = new Setup();

@@ -21,16 +21,16 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <OutputPath>..\..\bin\Debug\Extensions\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Debug\AntMe.Extension.Community.XML</DocumentationFile>
+    <DocumentationFile>..\..\bin\Debug\Extensions\AntMe.Extension.Community.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Release\</OutputPath>
+    <OutputPath>..\..\bin\Release\Extensions\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extension.cs" />
+    <Compile Include="Players\DefaultAnt.cs" />
+    <Compile Include="Players\DefaultAntColony.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -48,9 +50,12 @@
     <Folder Include="Fractions\" />
     <Folder Include="Items\" />
     <Folder Include="Levels\" />
-    <Folder Include="Players\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AntMe.Basics\AntMe.Basics.csproj">
+      <Project>{fc17801c-cf46-4612-915d-98704f9c11d4}</Project>
+      <Name>AntMe.Basics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj">
       <Project>{a2a811c2-600d-451b-aa15-346bf7eced4a}</Project>
       <Name>AntMe.Core</Name>

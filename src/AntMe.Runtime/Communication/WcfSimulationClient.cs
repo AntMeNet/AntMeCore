@@ -25,18 +25,22 @@ namespace AntMe.Runtime.Communication
         private ISimulationService channel;
         private DuplexChannelFactory<ISimulationService> factory;
 
+        private string[] extensionPaths;
+
         #region Construction
 
         /// <summary>
         /// Private Constructor
         /// </summary>
         /// <param name="callback">Instance of the Callback Class</param>
-        internal WcfSimulationClient(WcfSimulationCallback callback)
+        internal WcfSimulationClient(string[] extensionPaths, WcfSimulationCallback callback)
         {
             ClientId = -1;
             IsOpen = false;
             IsReady = false;
             Protocol = 0;
+
+            this.extensionPaths = extensionPaths;
 
             this.callback = callback;
             this.callback.OnLevelChanged += callback_OnLevelChanged;
@@ -744,7 +748,7 @@ namespace AntMe.Runtime.Communication
         {
             LevelInfo levelInfo = null;
             if (level != null)
-                levelInfo = AntMe.Runtime.ExtensionLoader.SecureFindLevel(level.AssemblyFile, level.TypeName);
+                levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, level.AssemblyFile, level.TypeName);
 
             _level = levelInfo;
 

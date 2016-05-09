@@ -42,9 +42,10 @@ namespace AntMe.Runtime
         /// - Players (only full)
         /// - Levels (only full)
         /// </summary>
+        /// <param name="extensionPaths">List of pathes to search for Extensions</param>
         /// <param name="token">Optional Reference to a Progress Token</param>
         /// <param name="full">Switch between basic Extension Loader or full Content Load.</param>
-        public static void LoadExtensions(ProgressToken token, bool full)
+        public static void LoadExtensions(string[] extensionPaths, ProgressToken token, bool full)
         {
             if (extensionsLoaded)
                 return;
@@ -53,20 +54,15 @@ namespace AntMe.Runtime
             List<Exception> errors = new List<Exception>();
             List<Assembly> assemblies = new List<Assembly>();
 
-            // Query Application Root
-            string dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            files.AddRange(Directory.EnumerateFiles(dir, "*.dll"));
+            foreach (var path in extensionPaths)
+            {
+                // Check if Path exists
+                if (!Directory.Exists(path))
+                    continue;
 
-            // Query Extension Folder
-            dir = dir + "\\Extensions";
-            if (Directory.Exists(dir))
-                files.AddRange(Directory.EnumerateFiles(dir, "*.dll"));
-
-            // Query AppData Folder
-            dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions";
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            files.AddRange(Directory.EnumerateFiles(dir, "*.dll"));
+                // Enumerate all dll-Files
+                files.AddRange(Directory.EnumerateFiles(path, "*.dll"));
+            }
 
             // Calculation of total Tasks (based on the number of files)
             int currentTask = 0;
@@ -470,7 +466,7 @@ namespace AntMe.Runtime
                     }
 
                     // Found Player (Ignorieren, falls Faction-Liste null)
-                    if (player && type.GetCustomAttributes(typeof(PlayerAttribute), true).Length > 0)
+                    if (player && type.GetCustomAttributes(typeof(FactoryAttribute), true).Length > 0)
                     {
                         try
                         {
@@ -615,8 +611,8 @@ namespace AntMe.Runtime
         /// <returns>Infos über den Player</returns>
         private static PlayerInfo AnalysePlayerType(Type type)
         {
-            PlayerAttribute[] playerAttributes =
-                (PlayerAttribute[])type.GetCustomAttributes(typeof(PlayerAttribute), true);
+            FactoryAttribute[] playerAttributes =
+                (FactoryAttribute[])type.GetCustomAttributes(typeof(FactoryAttribute), true);
 
             // Kein oder zu viele Description Attributes
             if (playerAttributes.Length != 1)
@@ -626,13 +622,13 @@ namespace AntMe.Runtime
                     type.Assembly.FullName));
 
             // Property Mapping
-            PlayerAttribute playerAttribute = playerAttributes[0];
-            var mappings = playerAttribute.GetType().GetCustomAttributes(typeof(PlayerAttributeMappingAttribute), true);
+            FactoryAttribute playerAttribute = playerAttributes[0];
+            var mappings = playerAttribute.GetType().GetCustomAttributes(typeof(FactoryAttributeMappingAttribute), true);
 
             if (mappings.Length != 1)
                 throw new NotSupportedException("The Player Attribute has no valid Property Mapping");
 
-            var mapping = mappings[0] as PlayerAttributeMappingAttribute;
+            var mapping = mappings[0] as FactoryAttributeMappingAttribute;
             Type playerType = playerAttribute.GetType();
 
             // Map Name
@@ -674,25 +670,31 @@ namespace AntMe.Runtime
         #region Additional App Domain Stuff
 
         /// <summary>
-        /// Analysiert die angegebene Datei, lädt sie aber nicht in den aktuellen Prozessraum.
+        /// Scans the given Assembly for additional Level-, Campaign- and Player-Elements within a closed AppDomain.
         /// </summary>
-        /// <param name="filename">Dateiname der Datei, die analysiert werden soll</param>
-        /// <returns>Liste der gefundenen Spielelemente</returns>
-        public static LoaderInfo SecureAnalyseExtension(string filename, bool level, bool player)
+        /// <param name="extensionPaths">List of pathes to search for Extensions</param>
+        /// <param name="filename">Filename</param>
+        /// <param name="level">Search for Levels and Campagins</param>
+        /// <param name="player">Search for Players</param>
+        /// <returns>Collection of found Elements and occured Errors</returns>
+        public static LoaderInfo SecureAnalyseExtension(string[] extensionPaths, string filename, bool level, bool player)
         {
             // Datei öffnen
             byte[] file = File.ReadAllBytes(filename);
 
             // Analyse
-            return SecureAnalyseExtension(file, level, player);
+            return SecureAnalyseExtension(extensionPaths, file, level, player);
         }
 
         /// <summary>
-        /// Analysiert die angegebene Datei, lädt sie aber nicht in den aktuellen Prozessraum.
+        /// Scans the given Assembly for additional Level-, Campaign- and Player-Elements within a closed AppDomain.
         /// </summary>
-        /// <param name="file">Eingelesene Datei, die analysiert werden soll</param>
-        /// <returns>Liste der gefundenen Spielelemente</returns>
-        public static LoaderInfo SecureAnalyseExtension(byte[] file, bool level, bool player)
+        /// <param name="extensionPaths">List of pathes to search for Extensions</param>
+        /// <param name="file">Filedump</param>
+        /// <param name="level">Search for Levels and Campagins</param>
+        /// <param name="player">Search for Players</param>
+        /// <returns>Collection of found Elements and occured Errors</returns>
+        public static LoaderInfo SecureAnalyseExtension(string[] extensionPaths, byte[] file, bool level, bool player)
         {
             AppDomainSetup setup = new AppDomainSetup();
             setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
@@ -702,7 +704,7 @@ namespace AntMe.Runtime
             Type hostType = typeof(ExtensionLoaderHost);
 
             ExtensionLoaderHost host = appDomain.CreateInstanceAndUnwrap(hostType.Assembly.FullName, hostType.FullName) as ExtensionLoaderHost;
-            LoaderInfo info = host.AnalyseExtension(file, level, level, player);
+            LoaderInfo info = host.AnalyseExtension(extensionPaths, file, level, level, player);
             foreach (var item in info.Players)
                 item.Source = PlayerSource.Imported;
 
@@ -712,14 +714,15 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Analysiert die mitgegebene Assembly und durchsucht sie nach dem angegebenen Level.
+        /// Searches in the given Assembly for the requested Level Type within a closed AppDomain.
         /// </summary>
-        /// <param name="file"></param>
-        /// <param name="typeName"></param>
-        /// <returns></returns>
-        public static LevelInfo SecureFindLevel(byte[] file, string typeName)
+        /// <param name="extensionPaths">List of pathes to search for Extensions</param>
+        /// <param name="file">Filedump of the Assembly</param>
+        /// <param name="typeName">Name of the Type</param>
+        /// <returns>LevelInfo of the fitting Level or null in case of no result</returns>
+        public static LevelInfo SecureFindLevel(string[] extensionPaths, byte[] file, string typeName)
         {
-            LoaderInfo info = ExtensionLoader.SecureAnalyseExtension(file, true, false);
+            LoaderInfo info = SecureAnalyseExtension(extensionPaths, file, true, false);
             foreach (var level in info.Levels)
             {
                 if (level.Type.TypeName.Equals(typeName))
@@ -731,16 +734,15 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Analysiert die mitgegebene Assembly und durchsucht sie nach dem angegebenen Player.
+        /// Searches in the given Assembly for the requested Player Type within a closed AppDomain.
         /// </summary>
-        /// <param name="file"></param>
-        /// <param name="typeName"></param>
-        /// <returns></returns>
-        public static PlayerInfo SecureFindPlayer(byte[] file, string typeName)
+        /// <param name="extensionPaths">List of pathes to search for Extensions</param>
+        /// <param name="file">Filedump of the Assembly</param>
+        /// <param name="typeName">Name of the Type</param>
+        /// <returns>PlayerInfo of the fitting Player or null in case of no result</returns>
+        public static PlayerInfo SecureFindPlayer(string[] extensionPaths, byte[] file, string typeName)
         {
-            // TODO: Abhängigkeiten prüfen (wegen static und so)
-
-            LoaderInfo info = ExtensionLoader.SecureAnalyseExtension(file, false, true);
+            LoaderInfo info = SecureAnalyseExtension(extensionPaths, file, false, true);
             foreach (var player in info.Players)
             {
                 if (player.Type.TypeName.Equals(typeName))

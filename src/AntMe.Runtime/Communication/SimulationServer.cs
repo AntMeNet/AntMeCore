@@ -53,14 +53,15 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Starts to listen for new connections.
         /// </summary>
+        /// <param name = "extensionPaths" > List of pathes to search for Extensions</param>
         /// <param name="pipeName">name of NamedPipe or null, if disabled</param>
         /// <param name="port">TCP Port to listen for new connection or 0, if disabled</param>
-        public static void Start(string pipeName, int port)
+        public static void Start(string[] extensionPaths, string pipeName, int port)
         {
             if (instance != null)
                 throw new Exception("Server is already running");
 
-            instance = new SimulationServer(pipeName, port);
+            instance = new SimulationServer(extensionPaths, pipeName, port);
             try
             {
                 instance.Open();
@@ -139,14 +140,20 @@ namespace AntMe.Runtime.Communication
         private int port;
 
         /// <summary>
-        /// Service Host for incoming Connections
+        /// Service Host for incoming Connections.
         /// </summary>
         private ServiceHost host;
 
-        private SimulationServer(string pipeName, int port)
+        /// <summary>
+        /// List of pathes to search for Extensions.
+        /// </summary>
+        private string[] extensionPaths;
+
+        private SimulationServer(string[] extensionPaths, string pipeName, int port)
         {
             this.pipeName = pipeName;
             this.port = port;
+            this.extensionPaths = extensionPaths;
         }
 
         /// <summary>
@@ -424,7 +431,7 @@ namespace AntMe.Runtime.Communication
                 // Analyse Level
                 LevelInfo levelInfo = null;
                 if (levelType != null)
-                    levelInfo = ExtensionLoader.SecureFindLevel(levelType.AssemblyFile, levelType.TypeName);
+                    levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, levelType.AssemblyFile, levelType.TypeName);
 
                 lock (simulationLock)
                 {
@@ -483,7 +490,7 @@ namespace AntMe.Runtime.Communication
         internal void UploadPlayer(ISimulationService service, TypeInfo playerType)
         {
             // Check File Size
-            if (playerType != null && playerType.AssemblyFile.Length > SimulationServer.MAXPLAYERSIZE)
+            if (playerType != null && playerType.AssemblyFile.Length > MAXPLAYERSIZE)
                 throw new ArgumentException("File is too large");
 
             ClientInfo client;
@@ -492,7 +499,7 @@ namespace AntMe.Runtime.Communication
                 // Analyse File
                 PlayerInfo playerInfo = null;
                 if (playerType != null)
-                    playerInfo = ExtensionLoader.SecureFindPlayer(playerType.AssemblyFile, playerType.TypeName);
+                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
 
                 // Save Player Infos
                 if (playerInfo == null)
@@ -570,7 +577,7 @@ namespace AntMe.Runtime.Communication
             {
                 PlayerInfo playerInfo = null;
                 if (playerType != null)
-                    playerInfo = ExtensionLoader.SecureFindPlayer(playerType.AssemblyFile, playerType.TypeName);
+                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
 
                 lock (simulationLock)
                 {
@@ -845,7 +852,7 @@ namespace AntMe.Runtime.Communication
                     if (count > levelInfo.LevelDescription.MaxPlayerCount)
                         throw new InvalidOperationException("Too many player for this Map");
 
-                    simulation = new SecureSimulation();
+                    simulation = new SecureSimulation(extensionPaths);
                     simulation.Start(settings);
 
                     // Start Simulation Loop
