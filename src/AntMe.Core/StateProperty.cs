@@ -9,7 +9,7 @@ namespace AntMe
     {
         public StateProperty() { }
 
-        public StateProperty(ItemProperty property) { }
+        public StateProperty(Property property) { }
 
         /// <summary>
         /// Serializer-Methode für das erste Vorkommen dieser Instanz.

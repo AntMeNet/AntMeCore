@@ -12,7 +12,7 @@ namespace AntMe
         ///     Gibt den Name der Fraktion zurück oder legt diesen fest.
         /// </summary>
         [DisplayName("Name")]
-        [Description("")]
+        [Description("Name of the Player")]
         [ReadOnly(true)]
         [Category("Static")]
         public string Name { get; set; }
@@ -20,17 +20,17 @@ namespace AntMe
         /// <summary>
         ///     Gibt den Spieler Index zurück oder legt diesen fest.
         /// </summary>
-        [DisplayName("Index")]
-        [Description("")]
+        [DisplayName("Slot")]
+        [Description("Slot Index")]
         [ReadOnly(true)]
         [Category("Static")]
-        public byte PlayerIndex { get; set; }
+        public byte SlotIndex { get; set; }
 
         /// <summary>
         /// Gibt den Namen der zugrunde liegenden Faction zurück oder legt diesen fest.
         /// </summary>
         [DisplayName("Faction Name")]
-        [Description("")]
+        [Description("Name of the Faction")]
         [ReadOnly(true)]
         [Category("Static")]
         public string FactionName { get; set; }
@@ -39,7 +39,7 @@ namespace AntMe
         /// Gibt die Farbe des Spielers an oder legt diese fest.
         /// </summary>
         [DisplayName("Color")]
-        [Description("")]
+        [Description("Player Color")]
         [ReadOnly(true)]
         [Category("Static")]
         public PlayerColor PlayerColor { get; set; }
@@ -48,7 +48,7 @@ namespace AntMe
         /// Gibt die Startposition des Spielers zurück oder legt diesen fest.
         /// </summary>
         [DisplayName("Start Point")]
-        [Description("")]
+        [Description("Start Point")]
         [ReadOnly(true)]
         [Category("Static")]
         public Vector2 StartPoint { get; set; }
@@ -58,7 +58,7 @@ namespace AntMe
         ///     diese fest.
         /// </summary>
         [DisplayName("Points")]
-        [Description("")]
+        [Description("Total Points")]
         [ReadOnly(true)]
         [Category("Dynamic")]
         public int Points { get; set; }
@@ -121,6 +121,11 @@ namespace AntMe
         public virtual void DeserializeUpdate(BinaryReader stream, byte version)
         {
             Points = stream.ReadInt32();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} ({1})", Name, FactionName);
         }
     }
 

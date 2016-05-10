@@ -268,7 +268,7 @@ namespace AntMe
             if (factionType != null)
             {
                 state = Activator.CreateInstance(factionType) as FactionState;
-                state.PlayerIndex = index;
+                state.SlotIndex = index;
                 ValidatedDeserialisation(state.DeserializeFirst);
             }
             else

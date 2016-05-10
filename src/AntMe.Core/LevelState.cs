@@ -68,20 +68,6 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Standard Konstruktor
-        /// </summary>
-        /// <param name="map">Referenz auf die Map</param>
-        /// <param name="round">Aktuelle Runde.</param>
-        /// <param name="mode">Level Mode</param>
-        public LevelState(MapState map, int round, LevelMode mode)
-            : this()
-        {
-            Round = round;
-            Map = map;
-            Mode = mode;
-        }
-
-        /// <summary>
         /// Methode, die beim ersten Serialisieren dieser Instanz aufgerufen wird. 
         /// Dieser Call kann auch lange nach der Erstellung passieren, wenn 
         /// beispielsweise neue Zuschauer die States beobachten wollen.

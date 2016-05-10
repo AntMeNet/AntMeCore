@@ -3,6 +3,7 @@ using AntMe.Runtime.Communication;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace CoreTestClient
 {
@@ -71,7 +72,7 @@ namespace CoreTestClient
             if (currentState == null)
             {
                 foreach (var faction in levelState.Factions)
-                    colors[faction.PlayerIndex] = Convert(faction.PlayerColor);
+                    colors[faction.SlotIndex] = Convert(faction.PlayerColor);
 
                 SetScale(levelState.Map.GetCellCount());
             }
@@ -111,81 +112,88 @@ namespace CoreTestClient
 
         private void renderScreen_Paint(object sender, PaintEventArgs e)
         {
-            LevelState state = currentState;
-
-            e.Graphics.Clear(Color.SkyBlue);
-
-            if (state != null)
+            try
             {
-                Index2 mapSize = state.Map.GetCellCount();
+                LevelState state = currentState;
 
-                // Draw Playground
-                float localWidth = mapSize.X * Map.CELLSIZE;
-                float localHeight = mapSize.Y * Map.CELLSIZE;
+                e.Graphics.Clear(Color.SkyBlue);
 
-                // Rechte, obere Kanten der Zellen
-                float cell = Map.CELLSIZE * scale;
-                for (int x = 0; x < mapSize.X; x++)
+                if (state != null)
                 {
-                    for (int y = 0; y < mapSize.Y; y++)
+                    Index2 mapSize = state.Map.GetCellCount();
+
+                    // Draw Playground
+                    float localWidth = mapSize.X * Map.CELLSIZE;
+                    float localHeight = mapSize.Y * Map.CELLSIZE;
+
+                    // Rechte, obere Kanten der Zellen
+                    float cell = Map.CELLSIZE * scale;
+                    for (int x = 0; x < mapSize.X; x++)
                     {
-                        float left = (x * cell) + offsetX;
-                        float right = ((x + 1) * cell) + offsetX;
-                        float top = (y * cell) + offsetY;
-                        float bottom = ((y + 1) * cell) + offsetY;
-                        e.Graphics.FillRectangle(GetCellcolor(state.Map.Tiles[x, y]), left, top, cell, cell);
-                    }
-                }
-
-                foreach (var item in currentState.Items)
-                {
-                    float x = (item.Position.X * scale) + offsetX;
-                    float y = (item.Position.Y * scale) + offsetY;
-
-                    // Kollisionsbody
-                    float rad = item.Radius * scale;
-                    e.Graphics.FillEllipse(new SolidBrush(Color.Gray), x - rad, y - rad, rad * 2, rad * 2);
-
-                    if (item is FactionItemState)
-                    {
-                        FactionItemState factionItem = item as FactionItemState;
-                        // e.Graphics.DrawEllipse((borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines), x - rad, y - rad, rad * 2, rad * 2);
+                        for (int y = 0; y < mapSize.Y; y++)
+                        {
+                            float left = (x * cell) + offsetX;
+                            float right = ((x + 1) * cell) + offsetX;
+                            float top = (y * cell) + offsetY;
+                            float bottom = ((y + 1) * cell) + offsetY;
+                            e.Graphics.FillRectangle(GetCellcolor(state.Map.Tiles[x, y]), left, top, cell, cell);
+                        }
                     }
 
-                    //    // Sichtkegel zeichnen
-                    //    if (viewerRange.HasValue)
-                    //    {
-                    //        float rad = viewerRange.Value * scale;
-                    //        Pen pen = (borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines);
-                    //        g.DrawEllipse(pen, x - rad, y - rad, rad * 2, rad * 2);
+                    foreach (var item in treeState)
+                    {
+                        float x = (item.Position.X * scale) + offsetX;
+                        float y = (item.Position.Y * scale) + offsetY;
 
-                    //        if (viewerDirection.HasValue)
-                    //        {
-                    //            Vector2 vector = Vector2.FromAngle(Angle.FromRadian(viewerDirection.Value)) * rad;
-                    //            g.DrawLine(pen, x, y, x + vector.X, y + vector.Y);
-                    //        }
-                    //    }
+                        // Kollisionsbody
+                        float rad = item.Radius * scale;
+                        e.Graphics.FillEllipse(new SolidBrush(Color.Gray), x - rad, y - rad, rad * 2, rad * 2);
 
-                    //    // Movement
-                    //    if (bodyDirection.HasValue && bodySpeed.HasValue)
-                    //    {
-                    //        Vector2 vector = Vector2.FromAngle(Angle.FromRadian(bodyDirection.Value)) * (bodySpeed.Value * scale);
-                    //        g.DrawLine(itemCenterPen, x, y, x + vector.X, y + vector.Y);
-                    //    }
+                        if (item is FactionItemState)
+                        {
+                            FactionItemState factionItem = item as FactionItemState;
+                            // e.Graphics.DrawEllipse((borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines), x - rad, y - rad, rad * 2, rad * 2);
+                        }
 
-                    //    // Riechradius zeichnen
-                    //    if (smellableRange.HasValue)
-                    //    {
-                    //        float rad = smellableRange.Value * scale;
-                    //        Pen pen = (borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines);
-                    //        g.FillEllipse(new SolidBrush(Color.FromArgb(40, 255, 238, 58)), x - rad, y - rad, rad * 2, rad * 2);
-                    //        g.DrawEllipse(pen, x - rad, y - rad, rad * 2, rad * 2);
-                    //    }
+                        //    // Sichtkegel zeichnen
+                        //    if (viewerRange.HasValue)
+                        //    {
+                        //        float rad = viewerRange.Value * scale;
+                        //        Pen pen = (borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines);
+                        //        g.DrawEllipse(pen, x - rad, y - rad, rad * 2, rad * 2);
 
-                    // Zentrum und ID
-                    e.Graphics.DrawRectangle(itemCenterPen, x, y, 1, 1);
-                    e.Graphics.DrawString(item.Id.ToString(), playgroundText, playgroundTextBrush, x, y);
+                        //        if (viewerDirection.HasValue)
+                        //        {
+                        //            Vector2 vector = Vector2.FromAngle(Angle.FromRadian(viewerDirection.Value)) * rad;
+                        //            g.DrawLine(pen, x, y, x + vector.X, y + vector.Y);
+                        //        }
+                        //    }
+
+                        //    // Movement
+                        //    if (bodyDirection.HasValue && bodySpeed.HasValue)
+                        //    {
+                        //        Vector2 vector = Vector2.FromAngle(Angle.FromRadian(bodyDirection.Value)) * (bodySpeed.Value * scale);
+                        //        g.DrawLine(itemCenterPen, x, y, x + vector.X, y + vector.Y);
+                        //    }
+
+                        //    // Riechradius zeichnen
+                        //    if (smellableRange.HasValue)
+                        //    {
+                        //        float rad = smellableRange.Value * scale;
+                        //        Pen pen = (borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines);
+                        //        g.FillEllipse(new SolidBrush(Color.FromArgb(40, 255, 238, 58)), x - rad, y - rad, rad * 2, rad * 2);
+                        //        g.DrawEllipse(pen, x - rad, y - rad, rad * 2, rad * 2);
+                        //    }
+
+                        // Zentrum und ID
+                        e.Graphics.DrawRectangle(itemCenterPen, x, y, 1, 1);
+                        e.Graphics.DrawString(item.Id.ToString(), playgroundText, playgroundTextBrush, x, y);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -337,7 +345,7 @@ namespace CoreTestClient
         private TreeNode mapNode;
         private TreeNode factionsNode;
         private TreeNode itemsNode;
-        private LevelState treeState = null;
+        private ItemState[] treeState = null;
 
         private void UpdateTree()
         {
@@ -345,6 +353,8 @@ namespace CoreTestClient
 
             if (state != null)
             {
+                ItemState[] itemStates = state.Items.ToArray();
+
                 // Initial
                 if (treeState == null)
                 {
@@ -372,10 +382,22 @@ namespace CoreTestClient
                         }
                     }
 
-                    // Items
-                    foreach (var item in state.Items)
+                    treeState = new ItemState[0];
+                }
+
+                // Items entfernen
+                foreach (var item in treeState)
+                {
+                    if (!state.Items.Contains(item))
+                        itemsNode.Nodes["item" + item.Id].Remove();
+                }
+
+                // Items einfügen
+                foreach (var item in itemStates)
+                {
+                    if (!treeState.Contains(item))
                     {
-                        var node = itemsNode.Nodes.Add(item.ToString());
+                        var node = itemsNode.Nodes.Add("item" + item.Id, item.ToString());
                         node.Tag = item;
 
                         foreach (var property in item.Properties)
@@ -385,36 +407,8 @@ namespace CoreTestClient
                         }
                     }
                 }
-                else
-                {
-                    // Update
-                    levelNode.Tag = state;
 
-                    // Items entfernen
-                    foreach (var item in treeState.Items)
-                    {
-                        if (!state.Items.Contains(item))
-                            itemsNode.Nodes["item" + item.Id].Remove();
-                    }
-
-                    // Items einfügen
-                    foreach (var item in state.Items)
-                    {
-                        if (!treeState.Items.Contains(item))
-                        {
-                            var node = itemsNode.Nodes.Add("item" + item.Id, item.ToString());
-                            node.Tag = item;
-
-                            foreach (var property in item.Properties)
-                            {
-                                var subnode = node.Nodes.Add(property.ToString());
-                                subnode.Tag = property;
-                            }
-                        }
-                    }
-                }
-
-
+                treeState = itemStates;
             }
             else
             {
@@ -430,10 +424,11 @@ namespace CoreTestClient
                     itemsNode.Nodes.Clear();
                     itemsNode.Tag = null;
                     propertyGrid.SelectedObject = null;
+                    treeState = null;
                 }
             }
 
-            treeState = state;
+            
         }
     }
 }

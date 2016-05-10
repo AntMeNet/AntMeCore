@@ -16,11 +16,11 @@ namespace AntMe.Runtime.EventLog
             {
                 foreach (var faction in state.Factions)
                 {
-                    Points.Add(faction.PlayerIndex, faction.Points);
+                    Points.Add(faction.SlotIndex, faction.Points);
                     if (OnNewEvent != null)
                         OnNewEvent(new FactionPointsEntry() { 
                             Round = state.Round, 
-                            PlayerIndex = faction.PlayerIndex, 
+                            PlayerIndex = faction.SlotIndex, 
                             Points = faction.Points 
                         });
                 }
@@ -29,14 +29,14 @@ namespace AntMe.Runtime.EventLog
 
             foreach (var faction in state.Factions)
             {
-                if (Points[faction.PlayerIndex] != faction.Points)
+                if (Points[faction.SlotIndex] != faction.Points)
                 {
-                    Points[faction.PlayerIndex] = faction.Points;
+                    Points[faction.SlotIndex] = faction.Points;
                     if (OnNewEvent != null)
                         OnNewEvent(new FactionPointsEntry()
                         {
                             Round = state.Round,
-                            PlayerIndex = faction.PlayerIndex,
+                            PlayerIndex = faction.SlotIndex,
                             Points = faction.Points
                         });
                 }

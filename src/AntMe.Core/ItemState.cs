@@ -70,6 +70,7 @@ namespace AntMe
 
             item.PositionChanged += (i, v) => { Position = v; };
             item.OrientationChanged += (i, v) => { Orientation = (short)v.Degree; };
+            item.RadiusChanged += (i, v) => { Radius = v; };
         }
 
         /// <summary>

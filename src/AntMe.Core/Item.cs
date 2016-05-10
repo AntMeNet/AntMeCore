@@ -188,8 +188,6 @@ namespace AntMe
             // Beim ersten Aufruf muss der State neu gefüllt werden
             if (state == null)
                 state = resolver.CreateItemState(this);
-
-            state.Radius = Radius;
             OnBeforeState(state);
             return state;
         }

@@ -142,13 +142,13 @@ namespace AntMe
             // Factions durchlaufen
             foreach (var faction in state.Factions)
             {
-                if (_factions.ContainsKey(faction.PlayerIndex))
+                if (_factions.ContainsKey(faction.SlotIndex))
                 {
                     // Alte Faction
                     _writer.Write((byte)SerializerPackage.FactionUpdate);
-                    _writer.Write((byte)faction.PlayerIndex);
+                    _writer.Write((byte)faction.SlotIndex);
                     ValidateSerialization(faction.SerializeUpdate);
-                    _factions[faction.PlayerIndex] = !_lastFlag;
+                    _factions[faction.SlotIndex] = !_lastFlag;
                 }
                 else
                 {
@@ -167,11 +167,11 @@ namespace AntMe
                     }
 
                     _writer.Write((byte)SerializerPackage.FactionFirst);
-                    _writer.Write((byte)faction.PlayerIndex);
+                    _writer.Write((byte)faction.SlotIndex);
                     _writer.Write((byte)factionId);
                     ValidateSerialization(faction.SerializeFirst);
 
-                    _factions.Add(faction.PlayerIndex, !_lastFlag);
+                    _factions.Add(faction.SlotIndex, !_lastFlag);
                 }
             }
 

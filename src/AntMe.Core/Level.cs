@@ -493,27 +493,46 @@ namespace AntMe
                 }
             }
 
-            var state = new LevelState(mapState, engine.Round, Mode);
+            // Create a new Instance of State
+            if (State == null)
+            {
+                State = Resolver.CreateLevelState(this);
+                State.Map = mapState;
+
+                // Collect all Faction States
+                for (int i = 0; i < MAX_SLOTS; i++)
+                {
+                    if (Factions[i] != null)
+                    {
+                        State.Factions.Add(Factions[i].GetFactionState());
+                    }
+                }
+            }
+
+            State.Round = engine.Round;
+            State.Mode = Mode;
 
             // TODO: Property States sammeln
             // Fügt die Screenhighlights ein
             //while (screenHighlights.Count > 0)
             //    state.ScreenHighlights.Add(screenHighlights.Dequeue());
 
-            // Durchläuft alle Fraktionen zur Ermittlung des States
-            for (int i = 0; i < MAX_SLOTS; i++)
+            // Remove old Items
+            foreach (var item in State.Items.ToArray())
             {
-                if (Factions[i] != null)
-                {
-                    state.Factions.Add(Factions[i].GetFactionState());
-                }
+                if (!engine.Items.Any(i => i.Id == item.Id))
+                    State.Items.Remove(item);
             }
 
-            // Durchläuft alle Items zur Ermittlung der States
+            // Insert new Items
             foreach (Item item in engine.Items)
-                state.Items.Add(item.GetState());
+            {
+                ItemState itemState = item.GetState();
+                if (!State.Items.Contains(itemState))
+                    State.Items.Add(itemState);
+            }
 
-            return State = state;
+            return State;
         }
 
         #region Story Telling

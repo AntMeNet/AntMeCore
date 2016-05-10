@@ -192,7 +192,7 @@ namespace AntMe
             // TODO: Faction Name über TypeMapper ermitteln
             state.FactionName = GetType().Name;
             state.Name = Name;
-            state.PlayerIndex = SlotIndex;
+            state.SlotIndex = SlotIndex;
             state.PlayerColor = PlayerColor;
             state.StartPoint = Home;
             state.Points = Points;

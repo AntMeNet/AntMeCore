@@ -1439,7 +1439,7 @@ namespace AntMe.Runtime
             else
             {
                 // Automatische Erstellung
-                state = Activator.CreateInstance(container.StateType) as ItemState;
+                state = Activator.CreateInstance(container.StateType, item) as ItemState;
                 if (state == null)
                 {
                     // TODO: Trace
@@ -1679,6 +1679,12 @@ namespace AntMe.Runtime
                 }
             }
 
+            // Insert static Values
+            state.FactionName = container.Name;
+            state.Name = faction.Name;
+            state.PlayerColor = faction.PlayerColor;
+            state.SlotIndex = faction.SlotIndex;
+            state.StartPoint = faction.Home;
 
             // State Properties auffüllen
             foreach (var property in faction.Properties)
@@ -1888,6 +1894,58 @@ namespace AntMe.Runtime
             {
                 extender.ExtenderDelegate(level);
             }
+        }
+
+        /// <summary>
+        /// Generates a State for the given Level.
+        /// </summary>
+        /// <param name="level">Level</param>
+        /// <returns>New State</returns>
+        public LevelState CreateLevelState(Level level)
+        {
+            if (level == null)
+                throw new ArgumentNullException("level");
+
+            LevelState state = new LevelState();
+
+            // State Properties auffüllen
+            foreach (var property in level.Properties)
+            {
+                var map = levelProperties.FirstOrDefault(p => p.Type == property.GetType());
+                if (map == null)
+                    throw new NotSupportedException("Property is not registered.");
+
+                LevelStateProperty prop = null;
+                if (map.CreateStateDelegate != null)
+                {
+                    // Option 1: Create Delegate
+                    prop = map.CreateStateDelegate(level, property);
+
+                    if (prop != null)
+                    {
+                        if (prop.GetType() != map.StateType)
+                        {
+                            // TODO: Trace
+                            throw new NotSupportedException("Delegate returned a wrong Property Type");
+                        }
+
+                        state.AddProperty(prop);
+                    }
+                }
+                else if (map.StateType != null)
+                {
+                    // Option 2: Dynamische Erzeugung
+                    prop = Activator.CreateInstance(map.StateType, level, property) as LevelStateProperty;
+                    if (prop == null)
+                    {
+                        // TODO: Trace
+                        throw new Exception("Could not create State Property");
+                    }
+                    state.AddProperty(prop);
+                }
+            }
+
+            return state;
         }
 
         #endregion

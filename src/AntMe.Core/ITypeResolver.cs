@@ -103,6 +103,13 @@ namespace AntMe
         /// <param name="level"></param>
         void ResolveLevel(Level level);
 
+        /// <summary>
+        /// Generates a State for the given Level.
+        /// </summary>
+        /// <param name="level">Level</param>
+        /// <returns>New State</returns>
+        LevelState CreateLevelState(Level level);
+
         #endregion
 
         #region Settings
