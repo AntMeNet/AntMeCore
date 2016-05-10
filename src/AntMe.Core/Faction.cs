@@ -4,14 +4,17 @@ using System.Collections.Generic;
 namespace AntMe
 {
     /// <summary>
-    /// Basisklasse für alle Factions.
+    /// Base Class to all Factions.
     /// </summary>
     public abstract class Faction : PropertyList<FactionProperty>
     {
+        /// <summary>
+        /// Type of the Players Factory Class.
+        /// </summary>
         private Type factoryType;
 
         /// <summary>
-        /// Referenz auf den verwendeten Type Resolver.
+        /// Reference to the global Type Resolver.
         /// </summary>
         protected readonly ITypeResolver Resolver;
 
@@ -22,46 +25,49 @@ namespace AntMe
         /// Standard-Konstruktor für Factions.
         /// </summary>
         /// <param name="resolver">Referenz auf den Resolver</param>
+        /// <param name="settings">Settings</param>
         /// <param name="factoryType"></param>
-        /// <param name="name">Player Name</param>
-        /// <param name="color">Player Farbe</param>
-        protected Faction(ITypeResolver resolver, Type factoryType, string name, PlayerColor color)
+        /// <param name="level">Reference to the Level</param>
+        protected Faction(ITypeResolver resolver, Settings settings, Type factoryType, Level level)
         {
-            // TODO: Factory Type check
-            this.factoryType = factoryType;
-
             UnitInterops = new Dictionary<int, FactionUnitInteropGroup>();
             Resolver = resolver;
-            PlayerColor = color;
-            Name = name;
+            Settings = settings;
+            Level = level;
+            this.factoryType = factoryType;
 
             resolver.ResolveFaction(this);
         }
 
         /// <summary>
-        /// Gibt den Spieler Index innerhalb des Levels an.
+        /// Slot Index.
         /// </summary>
-        public byte PlayerIndex { get; set; }
+        public byte SlotIndex { get; private set; }
 
         /// <summary>
-        /// Gibt den Namen der Faction zurück.
+        /// Team Index.
         /// </summary>
-        public string Name { get; set; }
+        public byte TeamIndex { get; private set; }
 
         /// <summary>
-        /// Gibt die Spielerfarbe zurück.
+        /// Player Name.
         /// </summary>
-        public PlayerColor PlayerColor { get; set; }
+        public string Name { get; private set; }
+
+        /// <summary>
+        /// Player Color.
+        /// </summary>
+        public PlayerColor PlayerColor { get; private set; }
 
         /// <summary>
         ///     Gibt eine Referenz aufs aktuelle Level zurück.
         /// </summary>
-        public Level Level { get; set; }
+        public Level Level { get; private set; }
 
         /// <summary>
         ///     Gibt den Startpunkt der Fraktion zurück.
         /// </summary>
-        public Vector2 Home { get; set; }
+        public Vector2 Home { get; private set; }
 
         /// <summary>
         /// Gibt den aktuellen Punktestand dieser Faction an.
@@ -71,19 +77,19 @@ namespace AntMe
         /// <summary>
         /// Factory/Slot-Spezifische Kopie der Settings.
         /// </summary>
-        public Settings Settings { get; set; }
+        public Settings Settings { get; private set; }
 
         /// <summary>
         ///     Der Zufallszahlengenerator für diese Fraktion. Bitte immer
         ///     verwenden, um eine deterministrische Simulation zu
         ///     gewährleisten.
         /// </summary>
-        public Random Random { get; set; }
+        public Random Random { get; private set; }
 
         /// <summary>
         /// Instanz der Factory Klasse.
         /// </summary>
-        public FactionFactory Factory { get; set; }
+        public FactionFactory Factory { get; private set; }
 
         /// <summary>
         /// Interop Instanz der Factory Klasse.
@@ -99,12 +105,21 @@ namespace AntMe
         ///     Methode wird vom Level zur Initialisierung der Fraktion aufgerufen.
         ///     Ideal zur Initialisierung von Listen und Caches.
         /// </summary>
-        public void Init()
+        public void Init(byte slotIndex, byte teamIndex, string name, PlayerColor color, Random random, Vector2 home)
         {
+            SlotIndex = slotIndex;
+            TeamIndex = teamIndex;
+            Name = name;
+            PlayerColor = color;
+            Random = random;
+            Home = home;
+
             // Factory für Ameisen erzeugen
             FactoryInterop = Resolver.CreateFactoryInterop(this);
             Factory = (FactionFactory)Activator.CreateInstance(factoryType);
             Factory.Init(FactoryInterop);
+
+            // TODO: Types checken!
 
             OnInit();
         }
@@ -177,7 +192,7 @@ namespace AntMe
             // TODO: Faction Name über TypeMapper ermitteln
             state.FactionName = GetType().Name;
             state.Name = Name;
-            state.PlayerIndex = PlayerIndex;
+            state.PlayerIndex = SlotIndex;
             state.PlayerColor = PlayerColor;
             state.StartPoint = Home;
             state.Points = Points;

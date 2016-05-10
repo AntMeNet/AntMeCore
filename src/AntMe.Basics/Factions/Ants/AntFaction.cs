@@ -18,14 +18,10 @@ namespace AntMe.Factions.Ants
         private int _antRespawnDelay;
         private int totalAntCount = 0;
 
-        public AntFaction(ITypeResolver resolver, Type colony, string name, PlayerColor color)
-            : base(resolver, colony, name, color)
+        public AntFaction(ITypeResolver resolver, Settings settings, Type factoryType, Level level)
+            : base(resolver, settings, factoryType, level)
         {
-            // prüfen, ob das auch vom richtigen Typ ist
-            if (!colony.IsSubclassOf(typeof(AntFactory)))
-                throw new ArgumentException("Colony Type is wrong");
-
-            _colonyType = colony;
+            // TODO: Check Factory Type?
 
             _names = AntGeneratorFiles.femaleNames.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
         }

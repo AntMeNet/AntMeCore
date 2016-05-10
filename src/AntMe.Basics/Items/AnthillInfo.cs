@@ -44,7 +44,7 @@
                 if (Observer is FactionItem)
                 {
                     FactionItem item = Observer as FactionItem;
-                    return (item.Faction.PlayerIndex == anthillItem.Faction.PlayerIndex);
+                    return (item.Faction.SlotIndex == anthillItem.Faction.SlotIndex);
                 }
                 return false;
             }

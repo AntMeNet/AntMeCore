@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Reflection;
 
 namespace AntMe
 {
@@ -10,6 +10,11 @@ namespace AntMe
     /// </summary>
     public abstract class Level : PropertyList<LevelProperty>
     {
+        /// <summary>
+        /// Gives the maximum Number of Players per Level.
+        /// </summary>
+        public const byte MAX_SLOTS = 8;
+
         /// <summary>
         /// Referenz auf den Type Resolver.
         /// </summary>
@@ -20,9 +25,15 @@ namespace AntMe
         /// </summary>
         public const int FRAMES_PER_SECOND = 20;
 
+        /// <summary>
+        /// Simulation Engine.
+        /// </summary>
         private Engine engine = null;
+
+        /// <summary>
+        /// Cached Map State.
+        /// </summary>
         private MapState mapState = null;
-        private Settings settings = null;
 
         // Last ID: 0
         private readonly Tracer tracer = new Tracer("AntMe.Level");
@@ -31,9 +42,20 @@ namespace AntMe
         /// Standard-Konstruktor.
         /// </summary>
         /// <param name="resolver">Referenz auf den Type Resolver.</param>
-        protected Level(ITypeResolver resolver)
+        /// <param name="settings">Globale Settings</param>
+        protected Level(ITypeResolver resolver, Settings settings)
         {
             Resolver = resolver;
+            Settings = settings;
+
+            // Clone Settings for Slots
+            FactionSettings = new Settings[MAX_SLOTS];
+            for (int i = 0; i < MAX_SLOTS; i++)
+                FactionSettings[i] = Settings.Clone();
+
+            // Give the Level Designer the chance to change Faction/Slot Settings.
+            DoSettings();
+
             Mode = LevelMode.Uninit;
 
             // Ermitteln des LevelDescriptionAttribute
@@ -46,7 +68,8 @@ namespace AntMe
             }
             LevelDescription = (LevelDescriptionAttribute)levelDescriptions[0];
 
-            // TODO: Level-Extensions
+            // Level-Extensions
+            resolver.ResolveLevel(this);
         }
 
         /// <summary>
@@ -68,6 +91,16 @@ namespace AntMe
         /// Gibt den zugrundeliegenden Seed für den Zufallsgenerator zurück.
         /// </summary>
         public int RandomSeed { get; private set; }
+
+        /// <summary>
+        /// Global Settings for the whole Level.
+        /// </summary>
+        public Settings Settings { get; private set; }
+
+        /// <summary>
+        /// Faction/Slot-Specific Settings.
+        /// </summary>
+        public Settings[] FactionSettings { get; private set; }
 
         /// <summary>
         /// Referenz auf die grundlegende Engine
@@ -112,12 +145,10 @@ namespace AntMe
         ///     LevelDescription und übergebene Faction-List nicht übereinstimmen
         ///     oder das Level nicht im richtigen Modus ist.
         /// </exception>
-        /// <param name="resolver">Instanz des aktuellen Type Resolvers</param>
-        /// <param name="settings">Die aktuellen Settings</param>
-        /// <param name="factions">Liste der involvierten Factions</param>
-        public void Init(ITypeResolver resolver, Settings settings, params Faction[] factions)
+        /// <param name="slot">Liste der Spieler</param>
+        public void Init(params LevelSlot[] slot)
         {
-            Init(resolver, settings, 0, factions);
+            Init(0, slot);
         }
 
         /// <summary>
@@ -133,11 +164,9 @@ namespace AntMe
         ///     LevelDescription und übergebene Faction-List nicht übereinstimmen
         ///     oder das Level nicht im richtigen Modus ist.
         /// </exception>
-        /// <param name="resolver">Instanz des aktuellen Type Resolvers</param>
-        /// <param name="settings">Aktuelle Settings</param>
         /// <param name="randomSeed">Initialwert des Zufallsgenerators. 0 = Random</param>
-        /// <param name="factions">Liste der involvierten Factions</param>
-        public void Init(ITypeResolver resolver, Settings settings, int randomSeed, params Faction[] factions)
+        /// <param name="slots">Liste der involvierten Factions</param>
+        public void Init(int randomSeed, params LevelSlot[] slots)
         {
             // Level muss Uninit sein
             if (Mode != LevelMode.Uninit)
@@ -150,13 +179,13 @@ namespace AntMe
             Random = new Random(RandomSeed);
 
             // Parameter checken
-            if (factions.Length > 8)
+            if (slots.Length > MAX_SLOTS)
             {
                 Mode = LevelMode.InitFailed;
                 throw new ArgumentOutOfRangeException();
             }
 
-            engine = new Engine(resolver);
+            engine = new Engine(Resolver);
 
             // Erstelle Karte und prüfe Karte auf Korrektheit
             Map map = LevelDescription.Map;
@@ -170,58 +199,54 @@ namespace AntMe
             int minPlayer = LevelDescription.MinPlayerCount;
             int maxPlayer = LevelDescription.MaxPlayerCount;
 
-            // Ermitteln der Filter Attribute
-            object[] levelFilters = GetType().GetCustomAttributes(typeof(FactionFilterAttribute), false);
-            var filters = new Dictionary<int, List<FactionFilterAttribute>>();
-            foreach (FactionFilterAttribute item in levelFilters)
-            {
-                if (!filters.ContainsKey(item.PlayerIndex))
-                    filters.Add(item.PlayerIndex, new List<FactionFilterAttribute>());
-                filters[item.PlayerIndex].Add(item);
-            }
+            // TODO: Ermitteln der Filter Attribute
+            //object[] levelFilters = GetType().GetCustomAttributes(typeof(FactionFilterAttribute), false);
+            //var filters = new Dictionary<int, List<FactionFilterAttribute>>();
+            //foreach (FactionFilterAttribute item in levelFilters)
+            //{
+            //    if (!filters.ContainsKey(item.PlayerIndex))
+            //        filters.Add(item.PlayerIndex, new List<FactionFilterAttribute>());
+            //    filters[item.PlayerIndex].Add(item);
+            //}
 
             // Doppelte Farben prüfen
             var colors = new List<PlayerColor>();
-            foreach (Faction faction in factions)
+            foreach (var slot in slots)
             {
-                if (faction != null)
+                if (slot != null)
                 {
-                    if (colors.Contains(faction.PlayerColor))
+                    if (colors.Contains(slot.Color))
                     {
                         Mode = LevelMode.InitFailed;
                         throw new NotSupportedException("There are two Players with the same color");
                     }
-                    colors.Add(faction.PlayerColor);
+                    colors.Add(slot.Color);
                 }
             }
 
-            // TODO: Factions auf vollständigkeit Prüfen
-
             // Gegencheck mit Level-Attributen
-            Factions = new Faction[8];
             int playerCount = 0;
             int highestSlot = 0;
-            for (int i = 0; i < factions.Length; i++)
+            for (int i = 0; i < slots.Length; i++)
             {
-                Factions[i] = factions[i];
-                if (factions[i] != null)
+                if (slots[i] != null)
                 {
                     // Counter
                     playerCount++;
                     highestSlot = i;
 
-                    // Filter
-                    if (filters.ContainsKey(i) && filters[i].Count > 0)
-                    {
-                        if (filters[i].Any(item => item.FactionType == factions[i].GetType()))
-                            continue;
+                    // TODO: Filter
+                    //if (filters.ContainsKey(i) && filters[i].Count > 0)
+                    //{
+                    //    if (filters[i].Any(item => item.FactionType == slots[i].GetType()))
+                    //        continue;
 
-                        Mode = LevelMode.InitFailed;
-                        Factions = null;
-                        throw new NotSupportedException(string.Format(
-                            "Faction '{0}' is not allowed in Slot {1}",
-                            factions[i].GetType(), i));
-                    }
+                    //    Mode = LevelMode.InitFailed;
+                    //    Factions = null;
+                    //    throw new NotSupportedException(string.Format(
+                    //        "Faction '{0}' is not allowed in Slot {1}",
+                    //        slots[i].GetType(), i));
+                    //}
                 }
             }
 
@@ -229,14 +254,12 @@ namespace AntMe
             if (playerCount < minPlayer)
             {
                 Mode = LevelMode.InitFailed;
-                Factions = null;
                 throw new NotSupportedException(string.Format("Too less player. Requires {0} Player", minPlayer));
             }
 
             if (playerCount > maxPlayer)
             {
                 Mode = LevelMode.InitFailed;
-                Factions = null;
                 throw new NotSupportedException(string.Format("Too many player. Requires a Maximum of {0} Player",
                     maxPlayer));
             }
@@ -244,7 +267,6 @@ namespace AntMe
             if (highestSlot > map.GetPlayerCount())
             {
                 Mode = LevelMode.InitFailed;
-                Factions = null;
                 throw new NotSupportedException(string.Format("Too many Slots used. Map has only {0} Slots",
                     map.GetPlayerCount()));
             }
@@ -255,9 +277,25 @@ namespace AntMe
             }
             catch (Exception)
             {
-                Factions = null;
                 Mode = LevelMode.InitFailed;
                 throw;
+            }
+
+            // Factions erzeugen
+            Factions = new Faction[MAX_SLOTS];
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i] == null)
+                    continue;
+
+                // Identify Faction
+                Factions[i] = Resolver.CreateFaction(slots[i].FactoryType, FactionSettings[i], this);
+
+                // Falls Faction nicht gefunden werden konnte
+                if (Factions[i] == null)
+                    throw new Exception(string.Format("Cound not identify Faction for player {0}.",
+                        slots[i].Name));
+
             }
 
             // State erzeugen
@@ -274,7 +312,7 @@ namespace AntMe
             {
                 try
                 {
-                    InitFaction(i, Factions[i]);
+                    InitFaction(i, slots[i], Factions[i]);
                 }
                 catch (Exception)
                 {
@@ -349,31 +387,29 @@ namespace AntMe
         /// <summary>
         ///     Initialisiert die systemeigenen Fraktionstypen (Ameisen, Wanzen, Viren)
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="slotIndex"></param>
+        /// <param name="slot"></param>
         /// <param name="faction"></param>
-        private void InitFaction(byte index, Faction faction)
+        private void InitFaction(byte slotIndex, LevelSlot slot, Faction faction)
         {
             if (faction == null)
                 return;
 
-            faction.PlayerIndex = index;
-            faction.Level = this;
-            faction.Home = new Vector2(
-                (engine.Map.StartPoints[index].X + 0.5f) * Map.CELLSIZE,
-                (engine.Map.StartPoints[index].Y + 0.5f) * Map.CELLSIZE);
-            faction.Random = new Random(RandomSeed + index + 1);
-            faction.Init();
+            faction.Init(
+                slotIndex,
+                slot.Team,
+                slot.Name,
+                slot.Color,
+                new Random(RandomSeed + slotIndex + 1),
+                new Vector2(
+                (engine.Map.StartPoints[slotIndex].X + 0.5f) * Map.CELLSIZE,
+                (engine.Map.StartPoints[slotIndex].Y + 0.5f) * Map.CELLSIZE));
         }
 
         #endregion
 
         /// <summary>
-        ///     Wird vom System aufgerufen, bevor die Settings an die Engine und an
-        ///     die Fraktionen weitergegeben werden. Map, Engine und Factions
-        ///     existieren, sind aber uninitialisiert.
-        ///     - Level Settings anpassen
-        ///     - Faction Settings anpassen
-        ///     - Engine Extensions registrieren
+        /// Gives the Level Designer the chance to change Settings.
         /// </summary>
         protected virtual void DoSettings()
         {
@@ -434,7 +470,7 @@ namespace AntMe
                 engine.Update();
 
                 // Updates der Factions
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < MAX_SLOTS; i++)
                 {
                     if (Factions[i] != null)
                     {
@@ -465,7 +501,7 @@ namespace AntMe
             //    state.ScreenHighlights.Add(screenHighlights.Dequeue());
 
             // Durchläuft alle Fraktionen zur Ermittlung des States
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < MAX_SLOTS; i++)
             {
                 if (Factions[i] != null)
                 {
@@ -493,7 +529,7 @@ namespace AntMe
                 throw new NotSupportedException("Level is not running");
 
             // Prüfen, ob Playerindex gültig ist
-            if (playerIndex < 0 && playerIndex >= 8)
+            if (playerIndex < 0 && playerIndex >= MAX_SLOTS)
                 throw new ArgumentOutOfRangeException("playerIndex", "PlayerIndex must be between 0 and 7");
 
             // Prüfen, ob der entsprechende Player auch existiert
@@ -541,7 +577,7 @@ namespace AntMe
                 throw new NotSupportedException("Level is not running");
 
             // Prüfen, ob Playerindex gültig ist
-            if (playerIndex < 0 && playerIndex >= 8)
+            if (playerIndex < 0 && playerIndex >= MAX_SLOTS)
                 throw new ArgumentOutOfRangeException("playerIndex", "PlayerIndex must be between 0 and 7");
 
             // Prüfen, ob der entsprechende Player auch existiert

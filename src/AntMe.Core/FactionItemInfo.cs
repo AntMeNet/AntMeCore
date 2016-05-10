@@ -25,7 +25,7 @@ namespace AntMe
 
             observerFaction = -1;
             if (observer is FactionItem)
-                observerFaction = (observer as FactionItem).Faction.PlayerIndex;
+                observerFaction = (observer as FactionItem).Faction.SlotIndex;
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace AntMe
         /// </summary>
         public bool IsFriendly
         {
-            get { return (factionItem.Faction.PlayerIndex == observerFaction); }
+            get { return (factionItem.Faction.SlotIndex == observerFaction); }
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace AntMe
         /// </summary>
         public bool IsEnemy
         {
-            get { return (factionItem.Faction.PlayerIndex != observerFaction); }
+            get { return (factionItem.Faction.SlotIndex != observerFaction); }
         }
     }
 }

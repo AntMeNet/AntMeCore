@@ -12,14 +12,19 @@ namespace AntMe.Levelpack.Levels
         "AntMe! Classic",
         "This one is the classic AntMe! 1.0 Level. Static, plain Map with random resources here and there...",
         MinPlayerCount = 0,
-        MaxPlayerCount = 8
+        MaxPlayerCount = MAX_SLOTS
     )]
     public sealed class ClassicLevel : Level
     {
         private SugarItem sugar = null;
         private AppleItem apple = null;
 
-        public ClassicLevel(ITypeResolver resolver) : base(resolver) { }
+        public ClassicLevel(ITypeResolver resolver, Settings settings) : base(resolver, settings) { }
+
+        protected override void DoSettings()
+        {
+            base.DoSettings();
+        }
 
         protected override void OnInit()
         {
@@ -44,7 +49,7 @@ namespace AntMe.Levelpack.Levels
                 }
 
                 if (winner != null)
-                    Finish(winner.PlayerIndex);
+                    Finish(winner.SlotIndex);
                 else
                     Draw();
             }

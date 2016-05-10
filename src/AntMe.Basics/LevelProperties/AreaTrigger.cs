@@ -31,7 +31,7 @@
 
         protected override bool Filter(T item)
         {
-            return item.Faction.PlayerIndex == FactionFilter;
+            return item.Faction.SlotIndex == FactionFilter;
         }
     }
 

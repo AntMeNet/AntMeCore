@@ -49,10 +49,10 @@ namespace AntMe
         /// falls keine passende Faction gefunden werden konnte.
         /// </summary>
         /// <param name="factoryType">Typ der Spieler Factory</param>
-        /// <param name="name">Name des Spielers</param>
-        /// <param name="color">Farbe des Spielers</param>
+        /// <param name="settings">Settings</param>
+        /// <param name="level">Level</param>
         /// <returns>Neue Faction-Instanz</returns>
-        Faction CreateFaction(Type factoryType, string name, PlayerColor color);
+        Faction CreateFaction(Type factoryType, Settings settings, Level level);
 
         /// <summary>
         /// Füllt eine neue Faction mit den registrierten Properties.
@@ -96,6 +96,12 @@ namespace AntMe
         #endregion
 
         #region Level Resolver
+
+        /// <summary>
+        /// Methode zum Anwenden von Level Properties und Extender
+        /// </summary>
+        /// <param name="level"></param>
+        void ResolveLevel(Level level);
 
         #endregion
 

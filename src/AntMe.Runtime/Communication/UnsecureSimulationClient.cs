@@ -16,23 +16,23 @@ namespace AntMe.Runtime.Communication
         {
             Assembly levelAssembly = Assembly.Load(level.Type.AssemblyFile);
             Type levelType = levelAssembly.GetType(level.Type.TypeName);
-            simulation = Activator.CreateInstance(levelType, ExtensionLoader.DefaultTypeResolver) as Level;
+            simulation = Activator.CreateInstance(levelType, 
+                ExtensionLoader.DefaultTypeResolver, 
+                ExtensionLoader.DefaultTypeResolver.GetGlobalSettings()) as Level;
 
             // Player erzeugen
-            Faction[] levelFactions = new Faction[8];
+            LevelSlot[] levelSlots = new LevelSlot[8];
             for (int i = 0; i < 8; i++)
             {
                 // Skipp, falls nicht vorhanden
                 if (players[i] == null)
                     continue;
 
-                // TODO: Use Extension Loader for Name-Stuff
-
                 Assembly playerAssembly = Assembly.Load(players[i].Type.AssemblyFile);
-                Type playerType = playerAssembly.GetType(players[i].Type.TypeName);
+                Type factoryType = playerAssembly.GetType(players[i].Type.TypeName);
 
                 // Identify Name
-                var playerAttributes = playerType.GetCustomAttributes(typeof(FactoryAttribute), true);
+                var playerAttributes = factoryType.GetCustomAttributes(typeof(FactoryAttribute), true);
                 if (playerAttributes.Length != 1)
                     throw new Exception("Player does not have the right number of Player Attributes");
 
@@ -50,20 +50,17 @@ namespace AntMe.Runtime.Communication
                 string name = playerAttribute.GetType().GetProperty(mappingAttribute.NameProperty).
                     GetValue(playerAttribute, null) as string;
 
-                // Identify Faction
-                levelFactions[i] = resolver.CreateFaction(playerType, name, slots[i].ColorKey);
-
-                // Falls Faction nicht gefunden werden konnte
-                if (levelFactions[i] == null)
-                    throw new Exception(string.Format("Cound not identify Faction for player {0}.",
-                        players[i].Type.TypeName));
-
-                // TODO: Load Settings from somewhere
-
+                levelSlots[i] = new LevelSlot()
+                {
+                    FactoryType = factoryType,
+                    Name = name,
+                    Color = slots[i].ColorKey,
+                    Team = slots[i].Team
+                };
             }
 
             // Level initialisieren
-            simulation.Init(ExtensionLoader.DefaultTypeResolver, resolver.GetGlobalSettings(), seed, levelFactions.ToArray());
+            simulation.Init(seed, levelSlots);
         }
 
         protected override LevelState UpdateSimulation()

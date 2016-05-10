@@ -58,20 +58,18 @@ namespace AntMe.Runtime
             _level = lvl;
 
             // Player erzeugen
-            var levelFactions = new Faction[8];
+            LevelSlot[] levelSlots = new LevelSlot[8];
             for (int i = 0; i < 8; i++)
             {
                 // Skipp, falls nicht vorhanden
                 if (settings.Player[i] == null)
                     continue;
 
-                // TODO: Use Extension Loader for Name-Stuff
-
                 Assembly playerAssembly = Assembly.Load(settings.Player[i].AssemblyFile);
-                Type playerType = playerAssembly.GetType(settings.Player[i].TypeName);
+                Type factoryType = playerAssembly.GetType(settings.Player[i].TypeName);
 
                 // Identify Name
-                object[] playerAttributes = playerType.GetCustomAttributes(typeof (FactoryAttribute), true);
+                object[] playerAttributes = factoryType.GetCustomAttributes(typeof (FactoryAttribute), true);
                 if (playerAttributes.Length != 1)
                     throw new Exception("Player does not have the right number of Player Attributes");
 
@@ -89,20 +87,17 @@ namespace AntMe.Runtime
                 var name = playerAttribute.GetType().GetProperty(mappingAttribute.NameProperty).
                     GetValue(playerAttribute, null) as string;
 
-                // Identify Faction
-                levelFactions[i] = ExtensionLoader.DefaultTypeResolver.CreateFaction(playerType, name, settings.Colors[i]);
-
-                // Falls Faction nicht gefunden werden konnte
-                if (levelFactions[i] == null)
-                    throw new Exception(string.Format("Cound not identify Faction for player {0}.",
-                        settings.Player[i].TypeName));
-
-                // TODO: Load Settings from somewhere
+                levelSlots[i] = new LevelSlot()
+                {
+                    FactoryType = factoryType,
+                    Name = name,
+                    Color = settings.Colors[i],
+                    Team = settings.Teams[i]
+                };
             }
 
             // Level initialisieren
-            _level.Init(ExtensionLoader.DefaultTypeResolver, ExtensionLoader.DefaultTypeResolver.GetGlobalSettings(), 
-                settings.Seed, levelFactions.ToArray());
+            _level.Init(settings.Seed, levelSlots);
         }
 
         public byte[] NextFrame()

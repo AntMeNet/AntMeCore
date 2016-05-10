@@ -85,6 +85,7 @@
     <Compile Include="LevelDescriptionAttribute.cs" />
     <Compile Include="LevelMode.cs" />
     <Compile Include="LevelProperty.cs" />
+    <Compile Include="LevelSlot.cs" />
     <Compile Include="LevelState.cs" />
     <Compile Include="LevelStateProperty.cs" />
     <Compile Include="MapState.cs" />

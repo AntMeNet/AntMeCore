@@ -18,12 +18,10 @@ namespace AntMe.Factions.Bugs
         private BugFaction Nest;
         private BugFactoryInterop NestInterop;
 
-        public BugFaction(ITypeResolver resolver, Type colony, string name, PlayerColor color)
-            : base(resolver, colony, name, color)
+        public BugFaction(ITypeResolver resolver, Settings settings, Type factoryType, Level level)
+            : base(resolver, settings, factoryType, level)
         {
-            // prüfen, ob das auch vom richtigen Typ ist
-            if (!colony.IsSubclassOf(typeof(BugFactory)))
-                throw new ArgumentException("Nest Type is wrong");
+            // TODO: Check factory Type?
         }
 
         protected override void OnInit()

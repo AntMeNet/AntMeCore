@@ -19,7 +19,7 @@ namespace AntMe
         /// <param name="item"></param>
         public FactionItemState(FactionItem item) : base(item)
         {
-            PlayerIndex = item.Faction.PlayerIndex;
+            PlayerIndex = item.Faction.SlotIndex;
         }
 
         /// <summary>

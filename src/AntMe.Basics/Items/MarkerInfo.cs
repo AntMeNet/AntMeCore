@@ -20,7 +20,7 @@
                 if (Observer is FactionItem)
                 {
                     FactionItem item = Observer as FactionItem;
-                    return (item.Faction.PlayerIndex == markerItem.Faction.PlayerIndex);
+                    return (item.Faction.SlotIndex == markerItem.Faction.SlotIndex);
                 }
                 return false;
             }

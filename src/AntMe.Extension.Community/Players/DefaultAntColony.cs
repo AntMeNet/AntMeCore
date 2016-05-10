@@ -8,6 +8,12 @@ namespace AntMe.Extension.Community.Players
     {
         public override void Init(FactoryInterop interop)
         {
+            AntFactoryInterop antInterop = interop as AntFactoryInterop;
+            antInterop.OnCreateMember += AntInterop_OnCreateMember;
+        }
+
+        private Type AntInterop_OnCreateMember()
+        {
             throw new NotImplementedException();
         }
     }

@@ -1223,7 +1223,8 @@ namespace AntMe.Runtime
             }
         }
 
-        public void RegisterLevelProperty<P>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null) where P : LevelProperty
+        public void RegisterLevelProperty<P>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null) 
+            where P : LevelProperty
         {
             RegisterLevelProperty<P, LevelStateProperty>(extensionPack, name, false, createPropertyDelegate, null);
         }
@@ -1270,7 +1271,7 @@ namespace AntMe.Runtime
             }
         }
 
-        public void RegisterLevelExtender<L>(IExtensionPack extensionPack, string name, int rank, Action<Level> extenderDelegate) 
+        public void RegisterLevelExtender<L>(IExtensionPack extensionPack, string name, int rank, Action<Level> extenderDelegate)
             where L : Level
         {
             // TODO: Check Stuff
@@ -1435,7 +1436,8 @@ namespace AntMe.Runtime
                     throw new NotSupportedException("delegate returned a wrong State Type");
                 }
             }
-            else {
+            else
+            {
                 // Automatische Erstellung
                 state = Activator.CreateInstance(container.StateType) as ItemState;
                 if (state == null)
@@ -1565,11 +1567,19 @@ namespace AntMe.Runtime
 
         #region Faction Resolver
 
-        public Faction CreateFaction(Type factoryType, string name, PlayerColor color)
+        /// <summary>
+        /// Erstellt eine neue Faction auf Basis des übergebenen Factory Types oder null, 
+        /// falls keine passende Faction gefunden werden konnte.
+        /// </summary>
+        /// <param name="factoryType">Typ der Spieler Factory</param>
+        /// <param name="settings">Settings</param>
+        /// <param name="level">Level</param>
+        /// <returns>Neue Faction-Instanz</returns>
+        public Faction CreateFaction(Type factoryType, Settings settings, Level level)
         {
             var faction = factions.FirstOrDefault(f => factoryType.IsSubclassOf(f.FactoryType));
             if (faction != null)
-                return Activator.CreateInstance(faction.Type, this, factoryType, name, color) as Faction;
+                return Activator.CreateInstance(faction.Type, this, settings, factoryType, level) as Faction;
             return null;
         }
 
@@ -1658,7 +1668,8 @@ namespace AntMe.Runtime
                     throw new NotSupportedException("delegate returned a wrong State Type");
                 }
             }
-            else {
+            else
+            {
                 // Automatische Erstellung
                 state = Activator.CreateInstance(container.StateType) as FactionState;
                 if (state == null)
@@ -1798,13 +1809,47 @@ namespace AntMe.Runtime
         #region Interop Resolver
 
         /// <summary>
-        /// Erzeugt eine neue Instanz eines passendes Factory Interop.
+        /// Creates a filled Factory Interop (all registered Properties and applied Extender) 
+        /// for the given Faction.
         /// </summary>
-        /// <param name="faction"></param>
-        /// <returns></returns>
+        /// <param name="faction">Reference to the Faction</param>
+        /// <returns>New Instance of a full filled Factory Interop</returns>
         public FactoryInterop CreateFactoryInterop(Faction faction)
         {
-            throw new NotImplementedException();
+            if (faction == null)
+                throw new ArgumentNullException("faction");
+
+            // Search for the related Faction Definition
+            var factionDefintion = factions.FirstOrDefault(f => f.Type == faction.GetType());
+            if (factionDefintion == null)
+                throw new ArgumentException("Faction is not registered");
+
+            // Creates a new Instance of the registered Interop Type
+            FactoryInterop result = Activator.CreateInstance(factionDefintion.FactoryInteropType, faction) as FactoryInterop;
+            if (result == null)
+                throw new Exception("Error during Factory Interop Creation.");
+
+            // Creates all Attachment Properties for the selected Interop Type
+            foreach (var item in factoryInteropAttachments.Where(a => a.Type == result.GetType()))
+            {
+                FactoryInteropProperty property = null;
+                if (item.CreateDelegate != null)
+                    property = item.CreateDelegate(result);
+                else
+                {
+                    property = Activator.CreateInstance(item.AttachmentType, faction, result) as FactoryInteropProperty;
+                    if (property == null)
+                        throw new Exception("Error during Factory Interop Property Creation.");
+                }
+            }
+
+            // Execute all Extender for the selected Interop Type.
+            foreach (var extender in factoryInteropExtender.Where(e => e.Type == result.GetType()).OrderBy(e => e.Rank))
+            {
+                extender.ExtenderDelegate(result);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -1820,6 +1865,30 @@ namespace AntMe.Runtime
         #endregion
 
         #region Level Resolver
+
+        public void ResolveLevel(Level level)
+        {
+            // Level Properties
+            foreach (var item in levelProperties)
+            {
+                LevelProperty property = null;
+                if (item.CreatePropertyDelegate != null)
+                    property = item.CreatePropertyDelegate(level);
+                else
+                {
+                    property = Activator.CreateInstance(item.Type, level) as LevelProperty;
+                    if (property == null)
+                        throw new Exception("Not able to create a Level Property");
+                }
+            }
+
+            // TODO: Level-Vererbung auflösen
+            // Level Extender
+            foreach (var extender in levelExtender.Where(e => e.Type == level.GetType()).OrderBy(e => e.Rank))
+            {
+                extender.ExtenderDelegate(level);
+            }
+        }
 
         #endregion
 
