@@ -13,7 +13,7 @@ namespace AntMe.Items.Basics
         private readonly AttackableProperty _attackable;
 
         public AnthillItem(ITypeResolver resolver, AntFaction faction, Vector2 position)
-            : base(resolver, faction, position, Angle.Right)
+            : base(resolver, faction, position, HillRadius, Angle.Right)
         {
             AntFactionSettings settings = new AntFactionSettings();
 

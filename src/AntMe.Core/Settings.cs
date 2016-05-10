@@ -9,47 +9,28 @@ namespace AntMe
     /// </summary>
     public sealed class Settings
     {
-        // Item-Settings (global)
-        // Faction-Settings (global, Slot)
-        // FactionItem-Settings (global, Slot, Faction)
-        // Property-Settings (global, Slot, Faction, Item)
-
-        // Default, wird von Application überschrieben
-        // Level (Clone und Default überschreiben)
-        // Faction
-        // Item
-        // Property
-
-        /*
-            - Standard-Settings für Items, Factions, Properties (Wie?)
-            - Überschreiben durch Applikationssettings
-            - [Optional] Überschreiben durch Level-Settings
-            - Clone für jeden Slot [0..7] und überschreiben durch Slot-Settings
-            - Überschreiben der Slot-Settings durch entsprechende Faction-Settings
-            
-            Offene Fragen:
-            - wie soll das Sammeln der Default-Settings aussehen? -> ISettingsConsumer?
-            - Wie kann ein Item andere Defaults für Properties setzen?
-            - Wie kann eine Faction andere Defaults für Properties/Items setzen?
-            - Bedingte Settings (Properties in Items/Factions, Abhängigkeiten zu anderen Settings) -> calculatedValues?
-        */
-
         /// <summary>
-        /// globales Settings-Dictionary
-        /// key = Typename:Keyname (bsp.: "AntMe.Factions.AntFaction:MaxAntCount")
+        /// Dictionary for Setting Values
+        /// key = Typename:Keyname (e.g.: "AntMe.Factions.AntFaction:MaxAntCount")
         /// </summary>
         private Dictionary<string, string> global;
 
         /// <summary>
-        /// Leerer Konstruktor.
+        /// Dictionary for Descriptions.
+        /// </summary>
+        private Dictionary<string, string> descriptions;
+
+        /// <summary>
+        /// Default Constructor
         /// </summary>
         public Settings()
         {
             global = new Dictionary<string, string>();
+            descriptions = new Dictionary<string, string>();
         }
 
         /// <summary>
-        /// Konstruktor mit einem initialen Stream.
+        /// Initialize the Settings with the given Stream.
         /// </summary>
         /// <param name="stream">Stream</param>
         public Settings(Stream stream) : this()
@@ -58,7 +39,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Konstruktor mit einer initialen Settings-Datei.
+        /// Initialize the Settings with the given Settings File.
         /// </summary>
         /// <param name="filename">Dateinamen</param>
         public Settings(string filename) : this()
@@ -67,9 +48,9 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Konstruktor auf Basis einer anderen Settings-Liste.
+        /// Initialize the Settings with another Settings as source.
         /// </summary>
-        /// <param name="settings">Basis Settings</param>
+        /// <param name="settings">Source Settings</param>
         public Settings(Settings settings) : this()
         {
             Apply(settings);
@@ -84,7 +65,10 @@ namespace AntMe
         /// Fügt Settings aus einem Stream zu den aktuellen Settings hinzu.
         /// </summary>
         /// <param name="stream">Stream</param>
-        public void Apply(Stream stream) { }
+        public void Apply(Stream stream)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Fügt Settings aus einer Datei zu den aktuellen Settings hinzu.
@@ -106,7 +90,7 @@ namespace AntMe
         {
             foreach (var key in settings.global.Keys)
             {
-                Apply(key, settings.global[key]);
+                Apply(key, settings.global[key], settings.descriptions[key]);
             }
         }
 
@@ -116,9 +100,22 @@ namespace AntMe
         /// <typeparam name="T">Datentyp für den diese Settings gelten</typeparam>
         /// <param name="key">Settings Name</param>
         /// <param name="value">Settings Wert</param>
-        public void Apply<T>(string key, string value)
+        /// <param name="description">Optional Description for this key</param>
+        public void Apply<T>(string key, string value, string description = null)
         {
-            Apply(FullKey<T>(key), value);
+            Apply(FullKey<T>(key), value, description);
+        }
+
+        /// <summary>
+        /// Fügt den gegebenen Schlüssel in die Settings ein oder überschreibt ihn.
+        /// </summary>
+        /// <typeparam name="T">Datentyp für den diese Settings gelten</typeparam>
+        /// <param name="key">Settings Name</param>
+        /// <param name="value">Settings Wert</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Apply<T>(string key, int value, string description = null)
+        {
+            Apply(FullKey<T>(key), value.ToString(), description);
         }
 
         /// <summary>
@@ -126,9 +123,39 @@ namespace AntMe
         /// </summary>
         /// <param name="key">Dictionary Key (inkl. Type-Prefix)</param>
         /// <param name="value">Settings Value</param>
-        private void Apply(string key, string value)
+        /// <param name="description">Optional Description for this key</param>
+        public void Apply(string key, string value, string description = null)
         {
+            // TODO: Check right syntax (full.type.name:key)
+
             global[key] = value;
+
+            // Set Description (if available)
+            if (!string.IsNullOrEmpty(description))
+                descriptions[key] = description;
+        }
+
+        public void Apply(string key, int value, string description = null)
+        {
+            Apply(key, value.ToString(), description);
+        }
+
+        public void Apply(string key, float value, string description = null)
+        {
+            Apply(key, value.ToString(), description);
+        }
+
+        public void Apply(string key, bool value, string description = null)
+        {
+            Apply(key, value.ToString(), description);
+        }
+
+        /// <summary>
+        /// Enumerates all Settings Keys.
+        /// </summary>
+        public IEnumerable<string> Keys
+        {
+            get { return global.Keys; }
         }
 
         /// <summary>
@@ -166,6 +193,14 @@ namespace AntMe
             return string.Empty;
         }
 
+        public string GetString(string key)
+        {
+            string result;
+            if (global.TryGetValue(key, out result))
+                return result;
+            return string.Empty;
+        }
+
         /// <summary>
         /// Gibt den Settings Wert als Integer zurück oder null, falls nicht vorhanden.
         /// </summary>
@@ -175,6 +210,15 @@ namespace AntMe
         public int? GetInt<T>(string key)
         {
             string value = GetString<T>(key);
+            int result;
+            if (int.TryParse(value, out result))
+                return result;
+            return null;
+        }
+
+        public int? GetInt(string key)
+        {
+            string value = GetString(key);
             int result;
             if (int.TryParse(value, out result))
                 return result;
@@ -196,6 +240,15 @@ namespace AntMe
             return null;
         }
 
+        public bool? GetBool(string key)
+        {
+            string value = GetString(key);
+            bool result;
+            if (bool.TryParse(value, out result))
+                return result;
+            return null;
+        }
+
         /// <summary>
         /// Gibt den Settings-Wert als float zurück oder null, falls nicht vorhanden.
         /// </summary>
@@ -209,6 +262,28 @@ namespace AntMe
             if (float.TryParse(value, out result))
                 return result;
             return null;
+        }
+
+        public float? GetFloat(string key)
+        {
+            string value = GetString(key);
+            float result;
+            if (float.TryParse(value, out result))
+                return result;
+            return null;
+        }
+
+        public string GetDescription<T>(string key)
+        {
+            return GetDescription(FullKey<T>(key));
+        }
+
+        public string GetDescription(string key)
+        {
+            string result;
+            if (descriptions.TryGetValue(key, out result))
+                return result;
+            return string.Empty;
         }
 
         /// <summary>

@@ -21,10 +21,12 @@ namespace AntMe.Runtime
         private static IEnumerable<CampaignInfo> campaignCache = null;
         private static IEnumerable<LevelInfo> levelCache = null;
         private static IEnumerable<PlayerInfo> playerCache = null;
+        private static Settings extensionSettings = null;
         private static Dictionary<Guid, PlayerStatistics> playerStatistics = new Dictionary<Guid, PlayerStatistics>();
         private static Dictionary<Guid, CampaignStatistics> campaignStatistics = new Dictionary<Guid, CampaignStatistics>();
         private static Dictionary<Guid, LevelStatistics> levelStatistics = new Dictionary<Guid, LevelStatistics>();
         private static TypeMapper typeMapper = new TypeMapper();
+        
 
         /// <summary>
         /// Tries to Loads all available Extensions within the valid extension pathes.
@@ -105,6 +107,7 @@ namespace AntMe.Runtime
 
             // Pass 1 Load Extension Packs
             List<IExtensionPack> extensionPacks = new List<IExtensionPack>();
+            Settings settings = new Settings();
             foreach (var assembly in assemblies)
             {
                 foreach (var type in assembly.GetExportedTypes())
@@ -118,7 +121,7 @@ namespace AntMe.Runtime
                         {
                             // Instanz erzeugen & Laden
                             extensionPack = Activator.CreateInstance(type) as IExtensionPack;
-                            extensionPack.Load(DefaultTypeMapper);
+                            extensionPack.Load(DefaultTypeMapper, settings);
                             extensionPacks.Add(extensionPack);
                         }
                         catch (Exception ex)
@@ -145,6 +148,7 @@ namespace AntMe.Runtime
             }
 
             extensionPackCache = extensionPacks;
+            extensionSettings = settings;
 
             // Fill Caches
             if (full)
@@ -408,6 +412,11 @@ namespace AntMe.Runtime
         /// Reference to the default Type Resolver.
         /// </summary>
         public static ITypeResolver DefaultTypeResolver { get { return typeMapper; } }
+
+        /// <summary>
+        /// Returns a copy of the Extension Settings.
+        /// </summary>
+        public static Settings ExtensionSettings { get { return extensionSettings.Clone(); } }
 
         #endregion
 

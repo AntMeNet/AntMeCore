@@ -17,7 +17,7 @@ namespace AntMe.Extension.Basics
 
         public Version Version { get { return new Version(2, 0); } }
 
-        public void Load(ITypeMapper typeMapper)
+        public void Load(ITypeMapper typeMapper, Settings settings)
         {
             // ##########################
             // Standard Engine Extensions
@@ -122,6 +122,8 @@ namespace AntMe.Extension.Basics
             // ##########################
             // Settings
             // ##########################
+
+            
         }
     }
 }

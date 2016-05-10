@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace AntMe
 {
     /// <summary>
-    /// Abstrakte Basisklasse für alle Spielelemente, die in der Engine aktiv
-    /// werden sollen.
+    /// Abstract Base Class for all kind of Game Items.
     /// </summary>
     public abstract class Item : PropertyList<ItemProperty>
     {
@@ -22,42 +20,39 @@ namespace AntMe
         private float radius;
 
         /// <summary>
-        /// Neue Instanz eines Items.
+        /// Default Constructor.
         /// </summary>
-        /// <param name="resolver">Referenz auf den Resolver</param>
-        /// <param name="position">Initiale Position</param>
-        /// <param name="orientation">Initiale Orientierung</param>
-        public Item(ITypeResolver resolver, Vector2 position, Angle orientation)
+        /// <param name="resolver">Reference to the default Type Resolver</param>
+        /// <param name="position">First Position of this Item</param>
+        /// <param name="radius">Radius of this Item</param>
+        /// <param name="orientation">First Orientation of this Item</param>
+        public Item(ITypeResolver resolver, Vector2 position, float radius, Angle orientation)
         {
             this.resolver = resolver;
             Orientation = orientation;
+            Radius = radius;
             Position = new Vector3(position.X, position.Y, 0);
 
-            // Resolver starten
+            // Resolve Item Properties and Extender
             resolver.ResolveItem(this);
         }
 
         /// <summary>
-        /// Referenz auf die Engine, in der das Element aktiv ist.
+        /// Reference to the attached Engine.
         /// </summary>
-        [Browsable(false)]
         public Engine Engine { get { return engine; } }
 
         /// <summary>
-        /// Id des Spielemenentes.
+        /// Id of this Game Item.
         /// </summary>
-        [DisplayName("ID")]
-        [Description("Id des Spielemenentes.")]
         public int Id
         {
             get { return id; }
         }
 
         /// <summary>
-        /// Gibt die aktuelle Zelle zurück.
+        /// Current Map Cell.
         /// </summary>
-        [DisplayName("Cell")]
-        [Description("Gibt die aktuelle Zelle zurück.")]
         public Index2 Cell
         {
             get { return cell; }
@@ -73,14 +68,8 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt die aktuelle Orientierung des Items innerhalb der Simulation
-        /// zurück oder legt diese fest. Nicht zu verwechseln mit der Blick-
-        /// oder Bewegungsrichtung.
+        /// Item Orientation.
         /// </summary>
-        [DisplayName("Orientation")]
-        [Description(
-            "Gibt die aktuelle Orientierung des Items innerhalb der Simulation zurück oder legt diese fest. Nicht zu verwechseln mit der Blick- oder Bewegungsrichtung."
-            )]
         public Angle Orientation
         {
             get { return orientation; }
@@ -93,10 +82,8 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt den aktuellen Radius des Items zurück oder legt diesen fest.
+        /// Item Radius.
         /// </summary>
-        [DisplayName("Radius")]
-        [Description("Gibt den aktuellen Radius des Items zurück.")]
         public float Radius
         {
             get
@@ -112,11 +99,8 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt die aktuelle Position des Items innerhalb des Spielfelds zurück
-        /// oder legt diese fest.
+        /// Item Position.
         /// </summary>
-        [DisplayName("Position")]
-        [Description("Gibt die aktuelle Position des Items innerhalb des Spielfelds zurück oder legt diese fest.")]
         public Vector3 Position
         {
             get { return position; }
@@ -136,11 +120,6 @@ namespace AntMe
                 }
             }
         }
-
-        ///// <summary>
-        ///// Instanz des Serializer-States.
-        ///// </summary>
-        //public ItemState State { get; private set; }
 
         /// <summary>
         /// Wird vom Level zur Erstellung eines einfachen Info Objektes
@@ -179,8 +158,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Wird vom Level zur Erstellung des Item Status aufgerufen. Es wird
-        ///     empfohlen zum Füllen die Prefill-Methode aufzurufen.
+        /// Returns an Instance of 
         /// </summary>
         /// <returns>Neue Instanz des Item State</returns>
         public ItemState GetState()

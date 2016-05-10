@@ -1,26 +1,26 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Basisklasse für alle fraktionsbezogenen AntMe! Spielelemente, die vom Level
-    /// verwaltet werden. Für unabhängige Elemente existiert Item.
+    /// Base Class for all Faction related Game Items.
     /// </summary>
     public abstract class FactionItem : Item
     {
         /// <summary>
-        /// Standard Konstruktor
+        /// Default Constructor
         /// </summary>
-        /// <param name="resolver"></param>
-        /// <param name="faction"></param>
-        /// <param name="position"></param>
-        /// <param name="orientation"></param>
-        public FactionItem(ITypeResolver resolver, Faction faction, Vector2 position, Angle orientation)
-            : base(resolver, position, orientation)
+        /// <param name="resolver">Reference to the default Type Resolver</param>
+        /// <param name="faction">Reference to the related Faction</param>
+        /// <param name="position">First Position of this Item</param>
+        /// <param name="radius">Radius of this Item</param>
+        /// <param name="orientation">First Orientation of this Item</param>
+        public FactionItem(ITypeResolver resolver, Faction faction, Vector2 position, float radius, Angle orientation)
+            : base(resolver, position, radius, orientation)
         {
             Faction = faction;
         }
 
         /// <summary>
-        /// Liefert eine Referenz auf die umgebende Faction zurück.
+        /// Returns a reference to the related Faction.
         /// </summary>
         public Faction Faction { get; private set; }
     }

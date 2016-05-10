@@ -10,7 +10,7 @@ namespace AntMe.Items.Basics
     /// </summary>
     public class BugItem : FactionItem
     {
-        private const float BUG_RADIUS = 4f;
+        private const float BugRadius = 4f;
         private const int BUG_HITPOINTS = 1000;
         private const float BUG_RANGE = 5f;
         private const int BUG_ATTACK_STRENGHT = 10;
@@ -45,7 +45,7 @@ namespace AntMe.Items.Basics
         private readonly ManualResetEvent reset;
 
         public BugItem(ITypeResolver resolver, Vector2 position, Angle direction, BugFaction faction)
-            : base(resolver, faction, position, direction)
+            : base(resolver, faction, position, BugRadius, direction)
         {
             this.faction = faction;
         }

@@ -20,7 +20,7 @@ namespace AntMe.Items.Basics
         private SugarCollectableProperty _sugar;
 
         public SugarItem(ITypeResolver resolver, Vector2 position, int amount)
-            : base(resolver, position, Angle.Right)
+            : base(resolver, position, SugarRadius, Angle.Right)
         {
             Radius = SugarRadius;
 

@@ -4,6 +4,8 @@ namespace AntMe.Items.Basics
 {
     public class AppleItem : Item
     {
+        public const float AppleRadius = 15f;
+
         /// <summary>
         /// Maximale Ladung des Apfels
         /// </summary>
@@ -20,7 +22,7 @@ namespace AntMe.Items.Basics
         public const float ApplePortableRadius = 15;
 
         public AppleItem(ITypeResolver resolver, Vector2 position, int amount)
-            : base(resolver, position, Angle.Right)
+            : base(resolver, position, AppleRadius, Angle.Right)
         {
             #region Apfel abtragen
 

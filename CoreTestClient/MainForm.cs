@@ -1,4 +1,5 @@
-﻿using AntMe.Runtime.Communication;
+﻿using AntMe.Runtime;
+using AntMe.Runtime.Communication;
 using CoreTestClient.Screens;
 using System;
 using System.Windows.Forms;
@@ -38,7 +39,7 @@ namespace CoreTestClient
 
         private void globalSettingsMenu_Click(object sender, EventArgs e)
         {
-            using (SettingsForm form = new SettingsForm())
+            using (SettingsForm form = new SettingsForm(ExtensionLoader.ExtensionSettings))
             {
                 form.ShowDialog(this);
             }

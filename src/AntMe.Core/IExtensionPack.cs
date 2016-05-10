@@ -32,6 +32,7 @@ namespace AntMe
         /// Hier sollten alle Fragmente im typeMapper registriert werden.
         /// </summary>
         /// <param name="typeMapper">Aktiver Type Mapper</param>
-        void Load(ITypeMapper typeMapper);
+        /// <param name="settings">Basis Settings</param>
+        void Load(ITypeMapper typeMapper, Settings settings);
     }
 }

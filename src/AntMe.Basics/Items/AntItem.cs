@@ -7,6 +7,11 @@ namespace AntMe.Items.Basics
     public class AntItem : FactionItem
     {
         /// <summary>
+        /// Default Radius for Ants.
+        /// </summary>
+        public const float AntRadius = 2f;
+
+        /// <summary>
         /// Referenz auf das Walking Property der Ameise.
         /// </summary>
         private readonly WalkingProperty _walking;
@@ -15,12 +20,10 @@ namespace AntMe.Items.Basics
 
         public AntItem(ITypeResolver resolver, Vector2 position, Angle orientation, AntFaction faction, string name,
             PrimordialCasteAttribute caste)
-            : base(resolver, faction, position, orientation)
+            : base(resolver, faction, position, AntRadius, orientation)
         {
             Caste = caste.Name;
             Name = name;
-
-            Radius = Faction.Settings.GetFloat<AntItem>("AntRadius") ?? 0f;
 
             // TODO Kasten-Management
 
