@@ -114,11 +114,11 @@
     <Compile Include="PlayerSelectorForm.Designer.cs">
       <DependentUpon>PlayerSelectorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PlaygroundRenderer.cs">
+    <Compile Include="RenderControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PlaygroundRenderer.Designer.cs">
-      <DependentUpon>PlaygroundRenderer.cs</DependentUpon>
+    <Compile Include="RenderControl.Designer.cs">
+      <DependentUpon>RenderControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -167,8 +167,8 @@
     <EmbeddedResource Include="PlayerSelectorForm.resx">
       <DependentUpon>PlayerSelectorForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PlaygroundRenderer.resx">
-      <DependentUpon>PlaygroundRenderer.cs</DependentUpon>
+    <EmbeddedResource Include="RenderControl.resx">
+      <DependentUpon>RenderControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

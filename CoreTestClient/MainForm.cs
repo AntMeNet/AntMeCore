@@ -11,7 +11,7 @@ namespace CoreTestClient
 
         private ISimulationClient CurrentClient = null;
 
-        private PlaygroundRenderer Renderer = null;
+        private RenderControl Renderer = null;
 
         public MainForm()
         {
@@ -111,7 +111,7 @@ namespace CoreTestClient
                 CurrentMode = null;
 
                 // Start Simulation
-                Renderer = new PlaygroundRenderer();
+                Renderer = new RenderControl();
                 mainPanel.Controls.Add(Renderer);
                 Renderer.Dock = DockStyle.Fill;
                 Renderer.SetSimulation(CurrentClient);

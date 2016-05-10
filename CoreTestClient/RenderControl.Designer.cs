@@ -1,6 +1,6 @@
 ﻿namespace CoreTestClient
 {
-    partial class PlaygroundRenderer
+    partial class RenderControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,22 +29,26 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Level");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Map");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Factions");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Items");
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.mainSplitter = new System.Windows.Forms.SplitContainer();
             this.renderScreen = new System.Windows.Forms.PictureBox();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.roundLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.itemLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.mapLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.propertySplitter = new System.Windows.Forms.SplitContainer();
-            this.ItemTree = new System.Windows.Forms.TreeView();
+            this.itemTree = new System.Windows.Forms.TreeView();
             this.gameUpdateTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitter)).BeginInit();
             this.mainSplitter.Panel1.SuspendLayout();
             this.mainSplitter.Panel2.SuspendLayout();
             this.mainSplitter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.renderScreen)).BeginInit();
-            this.statusStrip1.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.propertySplitter)).BeginInit();
             this.propertySplitter.Panel1.SuspendLayout();
             this.propertySplitter.Panel2.SuspendLayout();
@@ -69,7 +73,7 @@
             // mainSplitter.Panel1
             // 
             this.mainSplitter.Panel1.Controls.Add(this.renderScreen);
-            this.mainSplitter.Panel1.Controls.Add(this.statusStrip1);
+            this.mainSplitter.Panel1.Controls.Add(this.statusStrip);
             // 
             // mainSplitter.Panel2
             // 
@@ -87,18 +91,18 @@
             this.renderScreen.TabIndex = 0;
             this.renderScreen.TabStop = false;
             // 
-            // statusStrip1
+            // statusStrip
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.roundLabel,
             this.itemLabel,
             this.mapLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 391);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(534, 22);
-            this.statusStrip1.SizingGrip = false;
-            this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip.Location = new System.Drawing.Point(0, 391);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(534, 22);
+            this.statusStrip.SizingGrip = false;
+            this.statusStrip.TabIndex = 1;
+            this.statusStrip.Text = "statusStrip1";
             // 
             // roundLabel
             // 
@@ -127,7 +131,7 @@
             // 
             // propertySplitter.Panel1
             // 
-            this.propertySplitter.Panel1.Controls.Add(this.ItemTree);
+            this.propertySplitter.Panel1.Controls.Add(this.itemTree);
             // 
             // propertySplitter.Panel2
             // 
@@ -136,27 +140,42 @@
             this.propertySplitter.SplitterDistance = 204;
             this.propertySplitter.TabIndex = 0;
             // 
-            // ItemTree
+            // itemTree
             // 
-            this.ItemTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ItemTree.Location = new System.Drawing.Point(0, 0);
-            this.ItemTree.Name = "ItemTree";
-            this.ItemTree.Size = new System.Drawing.Size(196, 204);
-            this.ItemTree.TabIndex = 0;
-            this.ItemTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.itemTree_AfterSelect);
+            this.itemTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.itemTree.Location = new System.Drawing.Point(0, 0);
+            this.itemTree.Name = "itemTree";
+            treeNode1.Name = "levelNode";
+            treeNode1.Text = "Level";
+            treeNode2.Name = "mapNode";
+            treeNode2.Text = "Map";
+            treeNode3.Name = "factionsNode";
+            treeNode3.Text = "Factions";
+            treeNode4.Name = "itemsNode";
+            treeNode4.Text = "Items";
+            this.itemTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4});
+            this.itemTree.Size = new System.Drawing.Size(196, 204);
+            this.itemTree.TabIndex = 0;
+            this.itemTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.itemTree_AfterSelect);
             // 
             // gameUpdateTimer
             // 
+            this.gameUpdateTimer.Enabled = true;
             this.gameUpdateTimer.Interval = 20;
+            this.gameUpdateTimer.Tick += new System.EventHandler(this.gameUpdateTimer_Tick);
             // 
-            // PlaygroundRenderer
+            // RenderControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.Controls.Add(this.mainSplitter);
             this.DoubleBuffered = true;
-            this.Name = "PlaygroundRenderer";
+            this.Name = "RenderControl";
             this.Size = new System.Drawing.Size(734, 413);
             this.mainSplitter.Panel1.ResumeLayout(false);
             this.mainSplitter.Panel1.PerformLayout();
@@ -164,8 +183,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitter)).EndInit();
             this.mainSplitter.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.renderScreen)).EndInit();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.propertySplitter.Panel1.ResumeLayout(false);
             this.propertySplitter.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.propertySplitter)).EndInit();
@@ -180,11 +199,11 @@
         private System.Windows.Forms.SplitContainer mainSplitter;
         private System.Windows.Forms.PictureBox renderScreen;
         private System.Windows.Forms.SplitContainer propertySplitter;
-        protected System.Windows.Forms.TreeView ItemTree;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel roundLabel;
         private System.Windows.Forms.ToolStripStatusLabel itemLabel;
         private System.Windows.Forms.ToolStripStatusLabel mapLabel;
         private System.Windows.Forms.Timer gameUpdateTimer;
+        private System.Windows.Forms.TreeView itemTree;
     }
 }
