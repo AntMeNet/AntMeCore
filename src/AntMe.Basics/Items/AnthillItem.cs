@@ -4,8 +4,14 @@ using System;
 
 namespace AntMe.Items.Basics
 {
+    /// <summary>
+    /// Represents an AntHill.
+    /// </summary>
     public class AnthillItem : FactionItem
     {
+        /// <summary>
+        /// Default Radius for an AntHill.
+        /// </summary>
         public const float HillRadius = 20f;
 
         private readonly SugarCollectableProperty _sugar;

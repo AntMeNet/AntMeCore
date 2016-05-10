@@ -11,6 +11,11 @@ namespace AntMe.Items.Basics
 
         }
 
+        public BugState(ClassicBugItem item) : base(item)
+        {
+
+        }
+
         public override void SerializeFirst(BinaryWriter stream, byte version)
         {
             base.SerializeFirst(stream, version);

@@ -14,7 +14,7 @@
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
         public FactionItem(ITypeResolver resolver, Faction faction, Vector2 position, float radius, Angle orientation)
-            : base(resolver, position, radius, orientation)
+            : base(resolver, faction.Settings, faction.Random, position, radius, orientation)
         {
             Faction = faction;
         }

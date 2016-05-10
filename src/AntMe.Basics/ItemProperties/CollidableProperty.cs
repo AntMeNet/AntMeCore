@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace AntMe.ItemProperties.Basics
 {
     /// <summary>
-    ///     Property für Spielelemente, die miteinander kollidieren können.
+    /// Property for collidable Items.
     /// </summary>
     public sealed class CollidableProperty : ItemProperty
     {
@@ -15,7 +15,7 @@ namespace AntMe.ItemProperties.Basics
         /// <summary>
         ///     Erstellt eine fixierte Masse mit angegebenem Radius.
         /// </summary>
-        /// <param name="item">Radius</param>
+        /// <param name="item">Reference to the Item</param>
         public CollidableProperty(Item item) : base(item)
         {
             CollisionRadius = item.Radius;
@@ -31,7 +31,7 @@ namespace AntMe.ItemProperties.Basics
         /// <summary>
         ///     Erstellt eine bewegliche Masse mit angegebenem Radius.
         /// </summary>
-        /// <param name="radius">Radius</param>
+        /// <param name="item"></param>
         /// <param name="mass">Masse</param>
         public CollidableProperty(Item item, float mass) : this(item)
         {

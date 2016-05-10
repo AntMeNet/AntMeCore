@@ -1,74 +1,71 @@
 ﻿using AntMe.ItemProperties.Basics;
+using System;
 
 namespace AntMe.Items.Basics
 {
+    /// <summary>
+    /// Game Item that represents an Apple.
+    /// </summary>
     public class AppleItem : Item
     {
-        public const float AppleRadius = 15f;
+        /// <summary>
+        /// Inner Radius of an Apple (Collision-Radius).
+        /// </summary>
+        public const float AppleInnerRadius = 10f;
 
         /// <summary>
-        /// Maximale Ladung des Apfels
+        /// Default Radius of an Apple (Visibility, Portable,...).
         /// </summary>
-        public const int AppleMaxAmount = 250;
+        public const float AppleOuterRadius = 15f;
 
-        /// <summary>
-        /// Kollisionsradius des Apfels
-        /// </summary>
-        public const float AppleInnerRadius = 10;
-
-        /// <summary>
-        /// Trageradius
-        /// </summary>
-        public const float ApplePortableRadius = 15;
-
-        public AppleItem(ITypeResolver resolver, Vector2 position, int amount)
-            : base(resolver, position, AppleRadius, Angle.Right)
+        public AppleItem(ITypeResolver resolver, Settings settings, Random random, Vector2 position, int amount)
+            : base(resolver, settings, random, position, AppleOuterRadius, Angle.Right)
         {
             #region Apfel abtragen
 
-            var apple = GetProperty<AppleCollectableProperty>();
-            apple.OnAmountChanged += (good, newValue) =>
-            {
-                // Apfel entfernen, falls Value is 0
-                if (newValue <= 0)
-                    Engine.RemoveItem(this);
+            //var apple = GetProperty<AppleCollectableProperty>();
+            //apple.OnAmountChanged += (good, newValue) =>
+            //{
+            //    // Apfel entfernen, falls Value is 0
+            //    if (newValue <= 0)
+            //        Engine.RemoveItem(this);
 
-                // Capacity sollte sich auch ändern
-                good.Capacity = newValue;
-            };
+            //    // Capacity sollte sich auch ändern
+            //    good.Capacity = newValue;
+            //};
 
-            #endregion
+            //#endregion
 
-            #region Ameisenhügel -> Apfel Interaktion
+            //#region Ameisenhügel -> Apfel Interaktion
 
-            var collidable = GetProperty<CollidableProperty>();
-            collidable.OnCollision += (item, newValue) =>
-            {
-                if (newValue.ContainsProperty<CollectableProperty>())
-                {
-                    var target = newValue.GetProperty<CollectableProperty>();
+            //var collidable = GetProperty<CollidableProperty>();
+            //collidable.OnCollision += (item, newValue) =>
+            //{
+            //    if (newValue.ContainsProperty<CollectableProperty>())
+            //    {
+            //        var target = newValue.GetProperty<CollectableProperty>();
 
-                    var targetGood = target.GetCollectableGood<AppleCollectableProperty>();
+            //        var targetGood = target.GetCollectableGood<AppleCollectableProperty>();
 
-                    // Prüfen, ob Apfel grundsätzlich aufgenommen werden kann
-                    if (targetGood == null)
-                        return;
+            //        // Prüfen, ob Apfel grundsätzlich aufgenommen werden kann
+            //        if (targetGood == null)
+            //            return;
 
-                    if (targetGood.Capacity - targetGood.Amount < apple.Amount)
-                    {
-                        // Apfel passt nicht vollständig in den Bau
-                        var diff = targetGood.Capacity - targetGood.Amount;
-                        apple.Amount -= diff;
-                        targetGood.Amount += diff;
-                    }
-                    else
-                    {
-                        // Apfel vollständig übertragen
-                        targetGood.Amount += apple.Amount;
-                        apple.Amount = 0;
-                    }
-                }
-            };
+            //        if (targetGood.Capacity - targetGood.Amount < apple.Amount)
+            //        {
+            //            // Apfel passt nicht vollständig in den Bau
+            //            var diff = targetGood.Capacity - targetGood.Amount;
+            //            apple.Amount -= diff;
+            //            targetGood.Amount += diff;
+            //        }
+            //        else
+            //        {
+            //            // Apfel vollständig übertragen
+            //            targetGood.Amount += apple.Amount;
+            //            apple.Amount = 0;
+            //        }
+            //    }
+            //};
 
             #endregion
         }

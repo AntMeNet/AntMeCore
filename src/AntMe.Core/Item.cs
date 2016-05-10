@@ -23,12 +23,16 @@ namespace AntMe
         /// Default Constructor.
         /// </summary>
         /// <param name="resolver">Reference to the default Type Resolver</param>
+        /// <param name="settings">Settings</param>
+        /// <param name="random">Random Generator</param>
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public Item(ITypeResolver resolver, Vector2 position, float radius, Angle orientation)
+        public Item(ITypeResolver resolver, Settings settings, Random random, Vector2 position, float radius, Angle orientation)
         {
             this.resolver = resolver;
+            Settings = settings;
+            Random = random;
             Orientation = orientation;
             Radius = radius;
             Position = new Vector3(position.X, position.Y, 0);
@@ -41,6 +45,16 @@ namespace AntMe
         /// Reference to the attached Engine.
         /// </summary>
         public Engine Engine { get { return engine; } }
+
+        /// <summary>
+        /// Private Copy of the related Settings.
+        /// </summary>
+        public Settings Settings { get; private set; }
+
+        /// <summary>
+        /// Random Generator.
+        /// </summary>
+        public Random Random { get; private set; }
 
         /// <summary>
         /// Id of this Game Item.

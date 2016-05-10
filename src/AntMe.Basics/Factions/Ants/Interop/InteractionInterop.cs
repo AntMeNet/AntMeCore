@@ -160,7 +160,7 @@ namespace AntMe.Simulation.Factions.Ants.Interop
             // Drop Sugar
             int amount = _sugar.Amount;
             if (_settings.ANT_DROP_SUGARHEAP)
-                _antItem.Engine.InsertItem(new SugarItem(_antItem.Engine.TypeResolver, _antItem.Position.ToVector2XY(), amount));
+                _antItem.Engine.InsertItem(new SugarItem(_antItem.Engine.TypeResolver, _antItem.Settings, _antItem.Random, _antItem.Position.ToVector2XY(), amount));
         }
 
         /// <summary>

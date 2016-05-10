@@ -1,14 +1,15 @@
 ﻿using AntMe.ItemProperties.Basics;
+using System;
 
 namespace AntMe.Items.Basics
 {
     /// <summary>
-    /// Der Zucker-Hügel.
+    /// Represents an Sugar Hill.
     /// </summary>
     public class SugarItem : Item
     {
         /// <summary>
-        /// Radius des Zucker-Berges, egal wie viel Ladung er hat.
+        /// Default Radius for a Sugar Hill.
         /// </summary>
         public const float SugarRadius = 10f;
 
@@ -19,21 +20,19 @@ namespace AntMe.Items.Basics
 
         private SugarCollectableProperty _sugar;
 
-        public SugarItem(ITypeResolver resolver, Vector2 position, int amount)
-            : base(resolver, position, SugarRadius, Angle.Right)
+        public SugarItem(ITypeResolver resolver, Settings settings, Random random, Vector2 position, int amount)
+            : base(resolver, settings, random, position, SugarRadius, Angle.Right)
         {
-            Radius = SugarRadius;
-
             // Todesbedingung
-            _sugar = GetProperty<SugarCollectableProperty>();
-            _sugar.OnAmountChanged += (good, newValue) =>
-            {
-                if (newValue <= 0)
-                {
-                    // Entfernen von der Landkarte
-                    Engine.RemoveItem(this);
-                }
-            };
+            //_sugar = GetProperty<SugarCollectableProperty>();
+            //_sugar.OnAmountChanged += (good, newValue) =>
+            //{
+            //    if (newValue <= 0)
+            //    {
+            //        // Entfernen von der Landkarte
+            //        Engine.RemoveItem(this);
+            //    }
+            //};
         }
     }
 }

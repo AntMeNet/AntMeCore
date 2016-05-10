@@ -90,7 +90,7 @@ namespace AntMe
         public float Radian
         {
             get { return value; }
-            set { value = NormalizeRadian(value); }
+            set { this.value = NormalizeRadian(value); }
         }
 
         /// <summary>

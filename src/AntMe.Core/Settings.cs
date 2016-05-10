@@ -90,7 +90,9 @@ namespace AntMe
         {
             foreach (var key in settings.global.Keys)
             {
-                Apply(key, settings.global[key], settings.descriptions[key]);
+                string description = null;
+                settings.descriptions.TryGetValue(key, out description);
+                Apply(key, settings.global[key], description);
             }
         }
 

@@ -1305,34 +1305,35 @@ namespace AntMe.Runtime
             }
 
             var extensions = enginePropertyContainer.OrderBy(e => e.Rank).ToArray();
-            EngineProperty[] result = new EngineProperty[extensions.Length];
-
             for (int i = 0; i < extensions.Length; i++)
             {
                 EnginePropertyContainer item = extensions[i];
 
                 tracer.Trace(TraceEventType.Information, 12, "Try to apply Extension {0}", item.Name);
 
+                EngineProperty property = null;
                 if (item.ExtenderDelegate != null)
                 {
                     // Benutze CreateDelegate
                     tracer.Trace(TraceEventType.Information, 13, "Use Delegate");
-                    result[i] = item.ExtenderDelegate(engine);
+                    property = item.ExtenderDelegate(engine);
                 }
                 else
                 {
                     // Automatische Instanz
                     tracer.Trace(TraceEventType.Information, 14, "Use Activator");
-                    result[i] = Activator.CreateInstance(item.Type, engine) as EngineProperty;
+                    property = Activator.CreateInstance(item.Type, engine) as EngineProperty;
                 }
 
                 // Existenz prüfen
-                if (result[i] == null)
+                if (property == null)
                 {
                     tracer.Trace(TraceEventType.Critical, 15, "Could not create Extension '{0}'", item.Name);
                     throw new NullReferenceException(
                         string.Format("Es konnte keine Instanz der Engine Extension {0} erstellt werden.", item.Name));
                 }
+
+                engine.AddProperty(property);
 
                 tracer.Trace(TraceEventType.Information, 13, "Apply Extension Successful {0}", item.Name);
             }

@@ -1,5 +1,6 @@
 ﻿using AntMe.Items.Basics;
 using System;
+using System.Collections.Generic;
 
 namespace AntMe.Levelpack.Levels
 {
@@ -18,6 +19,7 @@ namespace AntMe.Levelpack.Levels
     {
         private SugarItem sugar = null;
         private AppleItem apple = null;
+        private List<ClassicBugItem> bugs = new List<ClassicBugItem>();
 
         public ClassicLevel(ITypeResolver resolver, Settings settings) : base(resolver, settings) { }
 
@@ -61,7 +63,7 @@ namespace AntMe.Levelpack.Levels
                 Vector2 pos = new Vector2(
                     ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
                     ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
-                sugar = new SugarItem(Resolver, pos, 1000);
+                sugar = new SugarItem(Resolver, Settings, Random, pos, 1000);
                 Engine.InsertItem(sugar);
             }
 
@@ -70,8 +72,19 @@ namespace AntMe.Levelpack.Levels
                 Vector2 pos = new Vector2(
                     ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
                     ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
-                apple = new AppleItem(Resolver, pos, 250);
+                apple = new AppleItem(Resolver, Settings, Random, pos, 250);
                 Engine.InsertItem(apple);
+            }
+
+            if (bugs.Count < 3)
+            {
+                Vector2 pos = new Vector2(
+                    ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
+                    ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
+                Angle orientation = Angle.FromDegree(Random.Next(0, 359));
+                ClassicBugItem bug = new ClassicBugItem(Resolver, Settings, Random, pos, orientation);
+                bugs.Add(bug);
+                Engine.InsertItem(bug);
             }
         }
 
@@ -81,6 +94,8 @@ namespace AntMe.Levelpack.Levels
                 sugar = null;
             if (item == apple)
                 apple = null;
+            if (item is ClassicBugItem)
+                bugs.Remove(item as ClassicBugItem);
         }
     }
 }

@@ -7,5 +7,10 @@ namespace AntMe.Items.Basics
             : base(item, observer)
         {
         }
+
+        public BugInfo(ClassicBugItem item, Item observer)
+            : base(item, observer)
+        {
+        }
     }
 }
