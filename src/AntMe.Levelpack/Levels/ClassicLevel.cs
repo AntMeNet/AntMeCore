@@ -21,17 +21,7 @@ namespace AntMe.Levelpack.Levels
         private AppleItem apple = null;
         private List<ClassicBugItem> bugs = new List<ClassicBugItem>();
 
-        public ClassicLevel(ITypeResolver resolver, Settings settings) : base(resolver, settings) { }
-
-        protected override void DoSettings()
-        {
-            base.DoSettings();
-        }
-
-        protected override void OnInit()
-        {
-            base.OnInit();
-        }
+        public ClassicLevel(SimulationContext context) : base(context) { }
 
         protected override void OnUpdate()
         {
@@ -63,7 +53,7 @@ namespace AntMe.Levelpack.Levels
                 Vector2 pos = new Vector2(
                     ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
                     ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
-                sugar = new SugarItem(Resolver, Settings, Random, pos, 1000);
+                sugar = new SugarItem(Context, pos, 1000);
                 Engine.InsertItem(sugar);
             }
 
@@ -72,7 +62,7 @@ namespace AntMe.Levelpack.Levels
                 Vector2 pos = new Vector2(
                     ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
                     ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
-                apple = new AppleItem(Resolver, Settings, Random, pos, 250);
+                apple = new AppleItem(Context, pos, 250);
                 Engine.InsertItem(apple);
             }
 
@@ -82,7 +72,7 @@ namespace AntMe.Levelpack.Levels
                     ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
                     ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
                 Angle orientation = Angle.FromDegree(Random.Next(0, 359));
-                ClassicBugItem bug = new ClassicBugItem(Resolver, Settings, Random, pos, orientation);
+                ClassicBugItem bug = new ClassicBugItem(Context, pos, orientation);
                 bugs.Add(bug);
                 Engine.InsertItem(bug);
             }

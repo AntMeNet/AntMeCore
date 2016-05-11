@@ -18,8 +18,8 @@ namespace AntMe.Factions.Ants
         private int _antRespawnDelay;
         private int totalAntCount = 0;
 
-        public AntFaction(ITypeResolver resolver, Settings settings, Type factoryType, Level level)
-            : base(resolver, settings, factoryType, level)
+        public AntFaction(SimulationContext context, Type factoryType, Level level)
+            : base(context, factoryType, level)
         {
             // TODO: Check Factory Type?
 
@@ -69,7 +69,7 @@ namespace AntMe.Factions.Ants
 
         private void CreateAntHill(Vector2 position)
         {
-            var hill = new AnthillItem(Resolver, this, position);
+            var hill = new AnthillItem(Context, this, position);
             Level.Engine.InsertItem(hill);
             _antHills.Add(hill.Id, hill);
         }
@@ -138,8 +138,8 @@ namespace AntMe.Factions.Ants
 
             // AntItem erstellen
             AntUnit antUnit = (AntUnit)Activator.CreateInstance(antType);
-            AntItem antItem = new AntItem(Resolver, position, Angle.FromDegree(_random.Next(0, 359)), this, name, caste);
-            AntUnitInterop unitInterop = Resolver.CreateUnitInterop(this) as AntUnitInterop;
+            AntItem antItem = new AntItem(Context, position, Angle.FromDegree(_random.Next(0, 359)), this, name, caste);
+            AntUnitInterop unitInterop = Context.Resolver.CreateUnitInterop(this) as AntUnitInterop;
             antUnit.Init(unitInterop);
 
             Level.Engine.InsertItem(antItem);

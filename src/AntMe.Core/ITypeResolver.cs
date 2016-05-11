@@ -48,11 +48,11 @@ namespace AntMe
         /// Erstellt eine neue Faction auf Basis des übergebenen Factory Types oder null, 
         /// falls keine passende Faction gefunden werden konnte.
         /// </summary>
+        /// <param name="context">Faction Context</param>
         /// <param name="factoryType">Typ der Spieler Factory</param>
-        /// <param name="settings">Settings</param>
         /// <param name="level">Level</param>
         /// <returns>Neue Faction-Instanz</returns>
-        Faction CreateFaction(Type factoryType, Settings settings, Level level);
+        Faction CreateFaction(SimulationContext context, Type factoryType, Level level);
 
         /// <summary>
         /// Füllt eine neue Faction mit den registrierten Properties.

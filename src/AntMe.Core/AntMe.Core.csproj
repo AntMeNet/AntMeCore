@@ -106,6 +106,7 @@
     <Compile Include="PropertyList.cs" />
     <Compile Include="ReadOnlyDictionary.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SimulationContext.cs" />
     <Compile Include="StateDeserializer.cs" />
     <Compile Include="StateProperty.cs" />
     <Compile Include="StateSerializer.cs" />

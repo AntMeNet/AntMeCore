@@ -20,8 +20,8 @@ namespace AntMe.Items.Basics
 
         private SugarCollectableProperty _sugar;
 
-        public SugarItem(ITypeResolver resolver, Settings settings, Random random, Vector2 position, int amount)
-            : base(resolver, settings, random, position, SugarRadius, Angle.Right)
+        public SugarItem(SimulationContext context, Vector2 position, int amount)
+            : base(context, position, SugarRadius, Angle.Right)
         {
             // Todesbedingung
             //_sugar = GetProperty<SugarCollectableProperty>();

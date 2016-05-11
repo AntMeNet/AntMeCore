@@ -44,8 +44,8 @@ namespace AntMe.Items.Basics
         private readonly Thread thread;
         private readonly ManualResetEvent reset;
 
-        public BugItem(ITypeResolver resolver, Vector2 position, Angle direction, BugFaction faction)
-            : base(resolver, faction, position, BugRadius, direction)
+        public BugItem(SimulationContext context, Vector2 position, Angle direction, BugFaction faction)
+            : base(context, faction, position, BugRadius, direction)
         {
             this.faction = faction;
         }

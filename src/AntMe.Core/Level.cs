@@ -16,11 +16,6 @@ namespace AntMe
         public const byte MAX_SLOTS = 8;
 
         /// <summary>
-        /// Referenz auf den Type Resolver.
-        /// </summary>
-        protected readonly ITypeResolver Resolver;
-
-        /// <summary>
         /// Anzahl Simulationsframes pro Sekunde
         /// </summary>
         public const int FRAMES_PER_SECOND = 20;
@@ -35,26 +30,28 @@ namespace AntMe
         /// </summary>
         private MapState mapState = null;
 
+        /// <summary>
+        /// Specialized Settings for different slots.
+        /// </summary>
+        private Settings[] slotSettings;
+
         // Last ID: 0
         private readonly Tracer tracer = new Tracer("AntMe.Level");
 
         /// <summary>
         /// Standard-Konstruktor.
         /// </summary>
-        /// <param name="resolver">Referenz auf den Type Resolver.</param>
-        /// <param name="settings">Globale Settings</param>
-        protected Level(ITypeResolver resolver, Settings settings)
+        protected Level(SimulationContext context)
         {
-            Resolver = resolver;
-            Settings = settings;
+            Context = new SimulationContext(context.Resolver, context.Settings);
 
             // Clone Settings for Slots
-            FactionSettings = new Settings[MAX_SLOTS];
+            slotSettings = new Settings[MAX_SLOTS];
             for (int i = 0; i < MAX_SLOTS; i++)
-                FactionSettings[i] = Settings.Clone();
+                slotSettings[i] = Settings.Clone();
 
             // Give the Level Designer the chance to change Faction/Slot Settings.
-            DoSettings();
+            DoSettings(Settings, slotSettings);
 
             Mode = LevelMode.Uninit;
 
@@ -69,8 +66,13 @@ namespace AntMe
             LevelDescription = (LevelDescriptionAttribute)levelDescriptions[0];
 
             // Level-Extensions
-            resolver.ResolveLevel(this);
+            context.Resolver.ResolveLevel(this);
         }
+
+        /// <summary>
+        /// Holds the current Simulation Context for this Level.
+        /// </summary>
+        public SimulationContext Context { get; private set; }
 
         /// <summary>
         /// Gibt die Level-Beschreibung (Instanz des Level-Attributes) zurück.
@@ -95,12 +97,7 @@ namespace AntMe
         /// <summary>
         /// Global Settings for the whole Level.
         /// </summary>
-        public Settings Settings { get; private set; }
-
-        /// <summary>
-        /// Faction/Slot-Specific Settings.
-        /// </summary>
-        public Settings[] FactionSettings { get; private set; }
+        public Settings Settings { get { return Context.Settings; } }
 
         /// <summary>
         /// Referenz auf die grundlegende Engine
@@ -115,7 +112,7 @@ namespace AntMe
         /// zufällig platzierter Elemente oder ähnlichem verwenden, damit eine
         /// deterministrische Simulation sichergestellt werden kann.
         /// </summary>
-        protected Random Random { get; private set; }
+        public Random Random { get { return Context.Random; } }
 
         /// <summary>
         /// Gibt den aktuellen Mode des Levels zurück. Hieran lässt sich
@@ -176,7 +173,12 @@ namespace AntMe
             RandomSeed = (int)DateTime.Now.Ticks;
             if (randomSeed != 0)
                 RandomSeed = randomSeed;
-            Random = new Random(RandomSeed);
+
+            // Recreates the Simulation Context including Randomizer.
+            Context = new SimulationContext(
+                Context.Resolver, 
+                Context.Settings,
+                new Random(RandomSeed));
 
             // Parameter checken
             if (slots.Length > MAX_SLOTS)
@@ -185,7 +187,7 @@ namespace AntMe
                 throw new ArgumentOutOfRangeException();
             }
 
-            engine = new Engine(Resolver);
+            engine = new Engine(Context.Resolver);
 
             // Erstelle Karte und prüfe Karte auf Korrektheit
             Map map = LevelDescription.Map;
@@ -271,16 +273,6 @@ namespace AntMe
                     map.GetPlayerCount()));
             }
 
-            try
-            {
-                DoSettings();
-            }
-            catch (Exception)
-            {
-                Mode = LevelMode.InitFailed;
-                throw;
-            }
-
             // Factions erzeugen
             Factions = new Faction[MAX_SLOTS];
             for (int i = 0; i < slots.Length; i++)
@@ -288,8 +280,10 @@ namespace AntMe
                 if (slots[i] == null)
                     continue;
 
+                SimulationContext factionContext = new SimulationContext(Context.Resolver, slotSettings[i]);
+
                 // Identify Faction
-                Factions[i] = Resolver.CreateFaction(slots[i].FactoryType, FactionSettings[i], this);
+                Factions[i] = Context.Resolver.CreateFaction(factionContext, slots[i].FactoryType, this);
 
                 // Falls Faction nicht gefunden werden konnte
                 if (Factions[i] == null)
@@ -411,7 +405,7 @@ namespace AntMe
         /// <summary>
         /// Gives the Level Designer the chance to change Settings.
         /// </summary>
-        protected virtual void DoSettings()
+        protected virtual void DoSettings(Settings levelSettings, Settings[] slotSettings)
         {
         }
 
@@ -496,7 +490,7 @@ namespace AntMe
             // Create a new Instance of State
             if (State == null)
             {
-                State = Resolver.CreateLevelState(this);
+                State = Context.Resolver.CreateLevelState(this);
                 State.Map = mapState;
 
                 // Collect all Faction States

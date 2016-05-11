@@ -16,9 +16,12 @@ namespace AntMe.Runtime.Communication
         {
             Assembly levelAssembly = Assembly.Load(level.Type.AssemblyFile);
             Type levelType = levelAssembly.GetType(level.Type.TypeName);
-            simulation = Activator.CreateInstance(levelType, 
+
+            SimulationContext context = new SimulationContext(
                 ExtensionLoader.DefaultTypeResolver, 
-                ExtensionLoader.DefaultTypeResolver.GetGlobalSettings()) as Level;
+                ExtensionLoader.ExtensionSettings);
+
+            simulation = Activator.CreateInstance(levelType, context) as Level;
 
             // Player erzeugen
             LevelSlot[] levelSlots = new LevelSlot[8];

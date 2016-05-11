@@ -111,7 +111,7 @@ namespace AntMe.Simulation.Factions.Ants.Interop
                 return false;
 
             // Marker erstellen
-            var marker = new MarkerItem(_antItem.Engine.TypeResolver, _antItem.Faction,
+            var marker = new MarkerItem(_antItem.Faction.Context, _antItem.Faction,
                 _antItem.Position.ToVector2XY(),
                 size, information);
 

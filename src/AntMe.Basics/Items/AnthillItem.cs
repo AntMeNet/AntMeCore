@@ -18,8 +18,8 @@ namespace AntMe.Items.Basics
         private readonly AppleCollectableProperty _apple;
         private readonly AttackableProperty _attackable;
 
-        public AnthillItem(ITypeResolver resolver, AntFaction faction, Vector2 position)
-            : base(resolver, faction, position, HillRadius, Angle.Right)
+        public AnthillItem(SimulationContext context, AntFaction faction, Vector2 position)
+            : base(context, faction, position, HillRadius, Angle.Right)
         {
             AntFactionSettings settings = new AntFactionSettings();
 

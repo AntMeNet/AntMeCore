@@ -13,30 +13,23 @@ namespace AntMe
         /// </summary>
         private Type factoryType;
 
-        /// <summary>
-        /// Reference to the global Type Resolver.
-        /// </summary>
-        protected readonly ITypeResolver Resolver;
-
         private readonly Dictionary<Item, FactionInfo> factionInfos = new Dictionary<Item, FactionInfo>();
         private FactionState state;
 
         /// <summary>
         /// Standard-Konstruktor für Factions.
         /// </summary>
-        /// <param name="resolver">Referenz auf den Resolver</param>
-        /// <param name="settings">Settings</param>
+        /// <param name="context">Simulation Context</param>
         /// <param name="factoryType"></param>
         /// <param name="level">Reference to the Level</param>
-        protected Faction(ITypeResolver resolver, Settings settings, Type factoryType, Level level)
+        protected Faction(SimulationContext context, Type factoryType, Level level)
         {
+            Context = context;
             UnitInterops = new Dictionary<int, FactionUnitInteropGroup>();
-            Resolver = resolver;
-            Settings = settings;
             Level = level;
             this.factoryType = factoryType;
 
-            resolver.ResolveFaction(this);
+            Context.Resolver.ResolveFaction(this);
         }
 
         /// <summary>
@@ -77,14 +70,19 @@ namespace AntMe
         /// <summary>
         /// Factory/Slot-Spezifische Kopie der Settings.
         /// </summary>
-        public Settings Settings { get; private set; }
+        public Settings Settings { get { return Context.Settings; } }
+
+        /// <summary>
+        /// Current Simulation Context for this Faction.
+        /// </summary>
+        public SimulationContext Context { get; private set; }
 
         /// <summary>
         ///     Der Zufallszahlengenerator für diese Fraktion. Bitte immer
         ///     verwenden, um eine deterministrische Simulation zu
         ///     gewährleisten.
         /// </summary>
-        public Random Random { get; private set; }
+        public Random Random { get { return Context.Random; } }
 
         /// <summary>
         /// Instanz der Factory Klasse.
@@ -111,11 +109,13 @@ namespace AntMe
             TeamIndex = teamIndex;
             Name = name;
             PlayerColor = color;
-            Random = random;
             Home = home;
 
+            // Creates the Simulation Context for this Faction
+            Context = new SimulationContext(Context.Resolver, Context.Settings, random);
+
             // Factory für Ameisen erzeugen
-            FactoryInterop = Resolver.CreateFactoryInterop(this);
+            FactoryInterop = Context.Resolver.CreateFactoryInterop(this);
             Factory = (FactionFactory)Activator.CreateInstance(factoryType);
             Factory.Init(FactoryInterop);
 
@@ -163,7 +163,7 @@ namespace AntMe
         {
             FactionInfo result;
             if (!factionInfos.TryGetValue(observer, out result))
-                result = Resolver.CreateFactionInfo(this, observer);
+                result = Context.Resolver.CreateFactionInfo(this, observer);
             return result;
         }
 
@@ -175,7 +175,7 @@ namespace AntMe
         public FactionState GetFactionState()
         {
             if (state == null)
-                state = Resolver.CreateFactionState(this);
+                state = Context.Resolver.CreateFactionState(this);
             return state;
         }
 

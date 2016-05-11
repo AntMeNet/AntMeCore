@@ -18,8 +18,8 @@ namespace AntMe.Factions.Bugs
         private BugFaction Nest;
         private BugFactoryInterop NestInterop;
 
-        public BugFaction(ITypeResolver resolver, Settings settings, Type factoryType, Level level)
-            : base(resolver, settings, factoryType, level)
+        public BugFaction(SimulationContext context, Type factoryType, Level level)
+            : base(context, factoryType, level)
         {
             // TODO: Check factory Type?
         }

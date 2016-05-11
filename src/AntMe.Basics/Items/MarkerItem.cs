@@ -13,8 +13,8 @@ namespace AntMe.Items.Basics
 
         private readonly float _step;
 
-        public MarkerItem(ITypeResolver resolver, Faction faction, Vector2 position, float radius, int information)
-            : base(resolver, faction, position, radius, Angle.Right)
+        public MarkerItem(SimulationContext context, Faction faction, Vector2 position, float radius, int information)
+            : base(context, faction, position, radius, Angle.Right)
         {
             Information = information;
 

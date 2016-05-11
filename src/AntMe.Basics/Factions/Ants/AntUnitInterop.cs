@@ -33,7 +33,7 @@ namespace AntMe.Factions.Ants
         /// <summary>
         ///     Liefert die Faction-weite Instanz eines Zufallsgenerators.
         /// </summary>
-        public Random Random { get { return Faction.Random; } }
+        public Random Random { get { return Faction.Context.Random; } }
 
         /// <summary>
         /// Gibt den Namen der Kaste zurück, zu der diese Ameise gehört.

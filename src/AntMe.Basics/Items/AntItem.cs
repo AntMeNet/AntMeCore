@@ -18,9 +18,9 @@ namespace AntMe.Items.Basics
 
         private readonly SightingProperty sighting;
 
-        public AntItem(ITypeResolver resolver, Vector2 position, Angle orientation, AntFaction faction, string name,
+        public AntItem(SimulationContext context, Vector2 position, Angle orientation, AntFaction faction, string name,
             PrimordialCasteAttribute caste)
-            : base(resolver, faction, position, AntRadius, orientation)
+            : base(context, faction, position, AntRadius, orientation)
         {
             Caste = caste.Name;
             Name = name;

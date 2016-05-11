@@ -17,9 +17,8 @@ namespace AntMe.Items.Basics
 
         private int roundsToWalk = 0;
 
-        public ClassicBugItem(ITypeResolver resolver,
-            Settings settings, Random random, Vector2 position, Angle orientation)
-            : base(resolver, settings, random, position, BugRadius, orientation)
+        public ClassicBugItem(SimulationContext context, Vector2 position, Angle orientation)
+            : base(context, position, BugRadius, orientation)
         {
             walking = GetProperty<WalkingProperty>();
             if (walking != null)

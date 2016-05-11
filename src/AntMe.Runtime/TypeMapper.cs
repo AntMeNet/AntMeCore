@@ -1572,15 +1572,15 @@ namespace AntMe.Runtime
         /// Erstellt eine neue Faction auf Basis des übergebenen Factory Types oder null, 
         /// falls keine passende Faction gefunden werden konnte.
         /// </summary>
+        /// <param name="context">Simulation Context</param>
         /// <param name="factoryType">Typ der Spieler Factory</param>
-        /// <param name="settings">Settings</param>
         /// <param name="level">Level</param>
         /// <returns>Neue Faction-Instanz</returns>
-        public Faction CreateFaction(Type factoryType, Settings settings, Level level)
+        public Faction CreateFaction(SimulationContext context, Type factoryType, Level level)
         {
             var faction = factions.FirstOrDefault(f => factoryType.IsSubclassOf(f.FactoryType));
             if (faction != null)
-                return Activator.CreateInstance(faction.Type, this, settings, factoryType, level) as Faction;
+                return Activator.CreateInstance(faction.Type, context, factoryType, level) as Faction;
             return null;
         }
 

@@ -18,8 +18,8 @@ namespace AntMe.Items.Basics
         /// </summary>
         public const float AppleOuterRadius = 15f;
 
-        public AppleItem(ITypeResolver resolver, Settings settings, Random random, Vector2 position, int amount)
-            : base(resolver, settings, random, position, AppleOuterRadius, Angle.Right)
+        public AppleItem(SimulationContext context, Vector2 position, int amount)
+            : base(context, position, AppleOuterRadius, Angle.Right)
         {
             #region Apfel abtragen
 

@@ -8,7 +8,6 @@ namespace AntMe
     /// </summary>
     public abstract class Item : PropertyList<ItemProperty>
     {
-        private ITypeResolver resolver;
         private Engine engine;
         private int id;
         private readonly Dictionary<Item, ItemInfo> _itemInfos = new Dictionary<Item, ItemInfo>();
@@ -22,23 +21,19 @@ namespace AntMe
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        /// <param name="resolver">Reference to the default Type Resolver</param>
-        /// <param name="settings">Settings</param>
-        /// <param name="random">Random Generator</param>
+        /// <param name="context">Current Simulation Context</param>
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public Item(ITypeResolver resolver, Settings settings, Random random, Vector2 position, float radius, Angle orientation)
+        public Item(SimulationContext context, Vector2 position, float radius, Angle orientation)
         {
-            this.resolver = resolver;
-            Settings = settings;
-            Random = random;
+            Context = context;
             Orientation = orientation;
             Radius = radius;
             Position = new Vector3(position.X, position.Y, 0);
 
             // Resolve Item Properties and Extender
-            resolver.ResolveItem(this);
+            Context.Resolver.ResolveItem(this);
         }
 
         /// <summary>
@@ -47,14 +42,19 @@ namespace AntMe
         public Engine Engine { get { return engine; } }
 
         /// <summary>
-        /// Private Copy of the related Settings.
+        /// Current Simulation Context
         /// </summary>
-        public Settings Settings { get; private set; }
+        public SimulationContext Context { get; private set; }
 
         /// <summary>
-        /// Random Generator.
+        /// Settings for this Item
         /// </summary>
-        public Random Random { get; private set; }
+        public Settings Settings { get { return Context.Settings; } }
+
+        /// <summary>
+        /// Randomizer
+        /// </summary>
+        public Random Random { get { return Context.Random; } }
 
         /// <summary>
         /// Id of this Game Item.
@@ -153,7 +153,7 @@ namespace AntMe
                 return _itemInfos[observer];
 
             // Neue Instanz erzeugen
-            ItemInfo info = resolver.CreateItemInfo(this, observer);
+            ItemInfo info = Context.Resolver.CreateItemInfo(this, observer);
             if (info == null)
                 throw new NotSupportedException("Could not create new Game Item Info");
 
@@ -179,7 +179,7 @@ namespace AntMe
         {
             // Beim ersten Aufruf muss der State neu gefüllt werden
             if (state == null)
-                state = resolver.CreateItemState(this);
+                state = Context.Resolver.CreateItemState(this);
             OnBeforeState(state);
             return state;
         }
