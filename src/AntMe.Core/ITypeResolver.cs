@@ -111,15 +111,5 @@ namespace AntMe
         LevelState CreateLevelState(Level level);
 
         #endregion
-
-        #region Settings
-
-        /// <summary>
-        /// Liefert die Standard-Einstellungen für alle registrierten Elemente
-        /// </summary>
-        /// <returns></returns>
-        Settings GetGlobalSettings();
-
-        #endregion
     }
 }

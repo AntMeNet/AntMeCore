@@ -1950,25 +1950,5 @@ namespace AntMe.Runtime
         }
 
         #endregion
-
-        #region Settings
-
-        /// <summary>
-        /// Liefert die Standard-Einstellungen für alle registrierten Elemente
-        /// </summary>
-        /// <returns></returns>
-        public Settings GetGlobalSettings()
-        {
-            Settings result = new Settings();
-
-            // TODO: Add Engine Extensions
-            // TODO: Add Faction Extensions
-            // TODO: Add Item Extensions
-            // TODO: Add Property Extension
-
-            return result;
-        }
-
-        #endregion
     }
 }

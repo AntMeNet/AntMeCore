@@ -28,7 +28,7 @@ namespace CoreTestClient
             }
         }
 
-        public SettingsForm() : this(ExtensionLoader.DefaultTypeResolver.GetGlobalSettings()) { }
+        public SettingsForm() : this(ExtensionLoader.ExtensionSettings) { }
 
         private void typeList_SelectedIndexChanged(object sender, System.EventArgs e)
         {
