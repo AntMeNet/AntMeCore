@@ -1,10 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace AntMe.ItemProperties.Basics
 {
     /// <summary>
-    ///     Property für Items, die angreifbare Items angreifen können.
+    /// Property for all attacking Items.
     /// </summary>
     public sealed class AttackerProperty : ItemProperty
     {
@@ -13,19 +12,15 @@ namespace AntMe.ItemProperties.Basics
         private int attackStrength;
         private AttackableProperty attackTarget;
 
-        public AttackerProperty(Item item) : base(item)
-        {
-            // AttackRecoveryTime = recoveryTime;
-            //AttackRecoveryTime = 0;
-            //AttackRange = range;
-            //AttackStrength = strength;
-        }
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="item">Item</param>
+        public AttackerProperty(Item item) : base(item) { }
 
         /// <summary>
-        ///     Liefert den Angriffsradius des Spielelements oder legt diesen fest.
+        /// Gets or sets the Attack Range.
         /// </summary>
-        [DisplayName("Attack Range")]
-        [Description("")]
         public float AttackRange
         {
             get { return attackRange; }
@@ -38,10 +33,8 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Liefert die Wartezeit zwischen zwei Angriffen oder legt diese fest.
+        /// Gets or sets the recovery time.
         /// </summary>
-        [DisplayName("Attack Recover Time")]
-        [Description("")]
         public int AttackRecoveryTime
         {
             get { return attackRecoveryTime; }
@@ -54,10 +47,8 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Liefert die Anzahl Lebenspunkte, die die Einheit bei einem Angriff abziehen kann.
+        /// Gets or sets the Attack Strength.
         /// </summary>
-        [DisplayName("Attack Strength")]
-        [Description("")]
         public int AttackStrength
         {
             get { return attackStrength; }
@@ -70,10 +61,8 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Liefert das Element, das aktuell angegriffen wird.
+        /// Returns the current Target.
         /// </summary>
-        [DisplayName("Target")]
-        [Description("")]
         public AttackableProperty AttackTarget
         {
             get { return attackTarget; }
@@ -85,48 +74,60 @@ namespace AntMe.ItemProperties.Basics
             }
         }
 
+        #region Internal Methods
+
         /// <summary>
-        ///     Internes Feld zur Berechnung der Recovery-Zeit. Fängt bei 0 an zu
-        ///     zählen (Reset bei jedem Target-Wechsel oder EIntritt in den
-        ///     Angriffsradius) und feuert bei >= Attacker.RecoveryTime
+        /// Internal Property to hold the Recovery time. It starts at 0 after a hit or a 
+        /// Target Change and counts up every round. If it is equal RecoveryTime a hit happens.
         /// </summary>
         internal int RecoveryCounter { get; set; }
+
+        /// <summary>
+        /// Internal call to perform a hit.
+        /// </summary>
+        /// <param name="item">Attacked Item</param>
+        /// <param name="hitpoints">Hitpoints</param>
+        internal void AttackHit(AttackableProperty item, int hitpoints)
+        {
+            if (OnAttackHit != null)
+                OnAttackHit(item.Item, hitpoints);
+        }
+
+        #endregion
 
         #region Events
 
         /// <summary>
-        ///     Muss geworfen werden, wenn sich der Angriffsradius der Einheit
-        ///     geändert hat.
+        /// Signal for a changed Attack Range.
         /// </summary>
         public event ValueChanged<float> OnAttackRangeChanged;
 
         /// <summary>
-        ///     Muss aufgerufen werden, wenn sich das aktuelle Angriffsziel ändert.
+        /// Signal for a changed Target.
         /// </summary>
         public event ValueChanged<AttackableProperty> OnAttackTargetChanged;
 
         /// <summary>
-        ///     Informiert über die Änderung der Erholungszeit.
+        /// Signal for a changed Recovery Time.
         /// </summary>
         public event ValueChanged<int> OnAttackRecoveryTimeChanged;
 
         /// <summary>
-        ///     Informiert über die Änderung der Attackenstärke.
+        /// Signal for a changed Attack Strength.
         /// </summary>
         public event ValueChanged<int> OnAttackStrengthChanged;
 
         /// <summary>
-        ///     Informiert über einen erfolgreichen Schlag.
+        /// Signal for a succeeded hit.
         /// </summary>
         public event ValueChanged<int> OnAttackHit;
 
         #endregion
 
         /// <summary>
-        ///     Legt das Angriffsziel auf das angegebene Item. Ein Erfolgreicher
-        ///     Angriff ist aber immernoch anhängig von der Entfernung zum Ziel.
+        /// Attacks the given Item.
         /// </summary>
-        /// <param name="item">Anzugreifendes Ziel</param>
+        /// <param name="item">Item</param>
         public void Attack(AttackableProperty item)
         {
             // Handling des alten Ziels
@@ -160,7 +161,7 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Bricht einen Angriff auf das aktuelle Ziel ab.
+        /// Stops fighting.
         /// </summary>
         public void StopAttack()
         {
@@ -173,15 +174,6 @@ namespace AntMe.ItemProperties.Basics
             }
         }
 
-        /// <summary>
-        ///     Wird von der Extension aufgerufen um das Event für einen erfolgreichen Schlag aufzurufen.
-        /// </summary>
-        /// <param name="item">getroffenes Item</param>
-        /// <param name="hitpoints">Menge an Hitpoints</param>
-        internal void AttackHit(AttackableProperty item, int hitpoints)
-        {
-            if (OnAttackHit != null)
-                OnAttackHit(item.Item, hitpoints);
-        }
+        
     }
 }

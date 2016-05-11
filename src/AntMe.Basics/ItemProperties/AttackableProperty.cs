@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace AntMe.ItemProperties.Basics
 {
     /// <summary>
-    ///     Property für angreifbare Spielelemente
+    /// Property of all attackable Items.
     /// </summary>
     public sealed class AttackableProperty : ItemProperty
     {
@@ -15,20 +14,18 @@ namespace AntMe.ItemProperties.Basics
         private int attackableMaximumHealth;
         private float attackableRadius;
 
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="item">Item</param>
         public AttackableProperty(Item item) : base(item)
         {
-            //AttackableRadius = radius;
-            //AttackableHealth = health;
-            //AttackableMaximumHealth = maximumHealth;
+            AttackableRadius = item.Radius;
         }
 
         /// <summary>
-        ///     Liefert die aktuellen Hitpoints des Elements oder legt diesen fest.
-        ///     Erreicht dieser Wert kleiner gleich 0, wird dieses Element
-        ///     automatisch aus der Liste enternt.
+        /// Gets or sets the current Health.
         /// </summary>
-        [DisplayName("Health")]
-        [Description("")]
         public int AttackableHealth
         {
             get { return attackableHealth; }
@@ -41,12 +38,8 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Liefert die aktuellen Hitpoints des Elements oder legt diesen fest.
-        ///     Erreicht dieser Wert kleiner gleich 0, wird dieses Element
-        ///     automatisch aus der Liste enternt.
+        /// Gets or sets the maximum Health.
         /// </summary>
-        [DisplayName(" Maximum Health")]
-        [Description("")]
         public int AttackableMaximumHealth
         {
             get { return attackableMaximumHealth; }
@@ -59,20 +52,16 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Liefert eine Liste der angreifenden Spielelemente.
+        /// List of all attacking Items.
         /// </summary>
-        [Browsable(false)]
         public ReadOnlyCollection<AttackerProperty> AttackerItems
         {
             get { return attackerItems.AsReadOnly(); }
         }
 
         /// <summary>
-        ///     Liefert den Angreifbaren Radius des Elements oder legt diesen fest.
-        ///     Dies entspricht in der Regel dem Radius des Körpers.
+        /// Gets or sets the attackable Radius.
         /// </summary>
-        [DisplayName("Attackable Radius")]
-        [Description("")]
         public float AttackableRadius
         {
             get { return attackableRadius; }
@@ -87,10 +76,9 @@ namespace AntMe.ItemProperties.Basics
         #region Internal Calls
 
         /// <summary>
-        ///     Wird von der Engine aufgerufen, wenn ein Attacker dieses Element
-        ///     als Angriffsziel gewählt hat.
+        /// Internal Call to add another Attacker to the List.
         /// </summary>
-        /// <param name="item">Neuer Angreifer</param>
+        /// <param name="item">New Attacker</param>
         internal void AddAttackerItem(AttackerProperty item)
         {
             if (!attackerItems.Contains(item))
@@ -102,10 +90,9 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Engine aufgerufen, wenn ein Element sich aus dem
-        ///     sichtbaren Radius entfernt.
+        /// Internal Call to remove an Attacker from the List.
         /// </summary>
-        /// <param name="item">Angreifer</param>
+        /// <param name="item">Lost Attacker</param>
         internal void RemoveAttackerItem(AttackerProperty item)
         {
             if (attackerItems.Remove(item))
@@ -116,9 +103,9 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Engine in jeder Runde für jedes angreifende Element aufgerufen.
+        /// Internal Call for every Attacker per Round.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">Attacker</param>
         internal void NoteAttackerItem(AttackerProperty item)
         {
             if (OnAttackerItem != null)
@@ -126,10 +113,10 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Engine aufgerufen, wenn ein Schlag durchgeführt wurde.
+        /// Internal Call for a Attacker Hit.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="hitpoints"></param>
+        /// <param name="item">Attacker</param>
+        /// <param name="hitpoints">Hitpoints</param>
         internal void AttackerHit(AttackerProperty item, int hitpoints)
         {
             if (OnAttackerHit != null)
@@ -137,8 +124,7 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Engine aufgerufen, um dem Attackable den eigenen Tod
-        ///     zu signalisieren.
+        /// Internal Call to Kill the Item.
         /// </summary>
         internal void Kill()
         {
@@ -151,42 +137,42 @@ namespace AntMe.ItemProperties.Basics
         #region Events
 
         /// <summary>
-        ///     Informiert über die Änderung der Lebenspunkte dieser Einheit.
+        /// Signal for a changed Health.
         /// </summary>
         public event ValueChanged<int> OnAttackableHealthChanged;
 
         /// <summary>
-        ///     Informiert über die Änderung der maximalen Lebenspunkte dieser Einheit.
+        /// Signal for a changed maximum Health.
         /// </summary>
         public event ValueChanged<int> OnAttackableMaximumHealthChanged;
 
         /// <summary>
-        ///     Informiert über die Änderung des angreifbaren Radius dieser Einheit.
+        /// Signal for a changed Attackable Radius.
         /// </summary>
         public event ValueChanged<float> OnAttackableRadiusChanged;
 
         /// <summary>
-        ///     Informiert über einen neuen Angreifer.
+        /// Signal for a new Attacker.
         /// </summary>
         public event ChangeItem<AttackerProperty> OnNewAttackerItem;
 
         /// <summary>
-        ///     Informiert über einen verlorenen Angreifer.
+        /// Signal for a lost Attacker.
         /// </summary>
         public event ChangeItem<AttackerProperty> OnLostAttackerItem;
 
         /// <summary>
-        ///     Wird in jeder Runde für jedes angreifende Element aufgerufen.
+        /// Signal for every Attacker per Round.
         /// </summary>
         public event ChangeItem<AttackerProperty> OnAttackerItem;
 
         /// <summary>
-        ///     Gibt einen Treffer durch einen Angreifer bekannt.
+        /// Signal for a Hit.
         /// </summary>
         public event ValueChanged<int> OnAttackerHit;
 
         /// <summary>
-        ///     Signalisiert den Tod durch einen Angriff.
+        /// Signal for a Kill.
         /// </summary>
         public event ChangeItem OnKill;
 

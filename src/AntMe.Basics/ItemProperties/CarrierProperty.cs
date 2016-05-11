@@ -1,29 +1,24 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace AntMe.ItemProperties.Basics
 {
     /// <summary>
-    ///     Property für Items, die in der Lage sein sollen, tragbare Elemente
-    ///     aufzunehmen und abzutransportieren.
+    /// Property for Carrier Items.
     /// </summary>
     public sealed class CarrierProperty : ItemProperty
     {
         private PortableProperty carrierLoad;
         private float carrierStrength;
 
-        public CarrierProperty(Item item) : base(item)
-        {
-            // CarrierStrength = strength;
-        }
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="item">Item</param>
+        public CarrierProperty(Item item) : base(item) { }
 
         /// <summary>
-        ///     Gibt die Stärke der Einheit zurück oder legt diese fest. Bestimmt,
-        ///     wie viel Masse die Einheit ohne Geschwindigkeitsverlust aufnehmen
-        ///     kann.
+        /// Gets or sets the Strength of this Item.
         /// </summary>
-        [DisplayName("Carrier Strength")]
-        [Description("")]
         public float CarrierStrength
         {
             get { return carrierStrength; }
@@ -36,10 +31,8 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Referenz auf die aktuell getragene Last.
+        /// Gets the current Load of this Ant.
         /// </summary>
-        [DisplayName("Load")]
-        [Description("")]
         public PortableProperty CarrierLoad
         {
             get { return carrierLoad; }
@@ -52,53 +45,53 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Nimmt das angegebene Element auf.
+        /// Pick up a new Item.
         /// </summary>
-        /// <param name="item">Aufzunehmendes Objekt</param>
+        /// <param name="item">Portable Item</param>
         public bool Carry(PortableProperty item)
         {
-            // Carry null wird als Drop interpretiert.
+            // item == null means a Drop
             if (item == null)
             {
                 Drop();
                 return true;
             }
 
-            // Verarbeitung eines aktuell getragenen Objektes
+            // Handle the old Load
             if (CarrierLoad != null)
             {
-                // Falls bereits aufgeladen hier abbrechen
+                // Ignore if old load the same as the new load
                 if (CarrierLoad == item)
                     return true;
 
-                // Altes Objekt fallen lassen
+                // Drop the old load
                 Drop();
             }
 
-            // Prüfen, ob Carrier Teil der Simulation ist
+            // Check if the new load is part of the simulation
             if (Item.Engine == null)
                 throw new NotSupportedException("Carrier is not Part of the Simulation");
-
-            // Prüfen, ob Portable Teil der Simulation ist
             if (item.Item.Engine == null || item.Item.Engine != Item.Engine)
                 throw new NotSupportedException("Portable is not Part of the same Simulation");
 
-            // Prüfen, ob Träger und Getragener das selbe element ist.
+            // Check if the load is not the carrier
             if (item.Item == Item)
                 throw new NotSupportedException("Carrier can not carry itself");
 
-            // Prüfen, ob das neue Objekt nah genug ist
+            // TODO: Check for circular references (Carrier/Portable <-> Carrier/Portable)
+
+            // Check if load is close enought
             if (item.PortableRadius < Item.GetDistance(Item, item.Item))
                 return false;
 
-            // Item aufnehmen
+            // Pick up Item
             CarrierLoad = item;
             item.AddCarrier(this);
             return true;
         }
 
         /// <summary>
-        ///     Lässt das aktuell getragene Objekt fallen.
+        /// Drops the current Load.
         /// </summary>
         public void Drop()
         {
@@ -110,12 +103,12 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Event, das über die Änderung der Stärke informiert.
+        /// Signal for a changed Strength.
         /// </summary>
         public event ValueChanged<float> OnCarrierStrengthChanged;
 
         /// <summary>
-        ///     Event, das über die Änderung des getragenen Objektes informiert.
+        /// Signal for a changed Load.
         /// </summary>
         public event ValueChanged<PortableProperty> OnCarrierLoadChanged;
     }

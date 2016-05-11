@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace AntMe.ItemProperties.Basics
 {
     /// <summary>
-    ///     Property für Items, die in der Lage sein sollen, von Trägern weggetragen
-    ///     zu werden. Das trifft beispielsweise für Äpfel zu.
+    /// Property for all portable Items.
     /// </summary>
     public sealed class PortableProperty : ItemProperty
     {
@@ -15,27 +13,26 @@ namespace AntMe.ItemProperties.Basics
         private float portableRadius;
         private float portableWeight;
 
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="item">Item</param>
         public PortableProperty(Item item) : base(item)
         {
             PortableRadius = item.Radius;
-            PortableWeight = 100;
         }
 
         /// <summary>
-        ///     Liste der tragenden Elemente
+        /// List of all carriing Items.
         /// </summary>
-        [Browsable(false)]
         public ReadOnlyCollection<CarrierProperty> CarrierItems
         {
             get { return carrierItems.AsReadOnly(); }
         }
 
         /// <summary>
-        ///     Gibt den Radius des Items zurück, in dem das Objekt aufgenommen
-        ///     werden kann oder legt diesen fest.
+        /// Gets or sets the Pickup Radius.
         /// </summary>
-        [DisplayName("Pickup Radius")]
-        [Description("")]
         public float PortableRadius
         {
             get { return portableRadius; }
@@ -48,10 +45,8 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Gibt die Gesamtmasse des Elementes zurück oder legt diese fest.
+        /// Gets or sets the Weight of this Item.
         /// </summary>
-        [DisplayName("Weight")]
-        [Description("")]
         public float PortableWeight
         {
             get { return portableWeight; }
@@ -63,36 +58,12 @@ namespace AntMe.ItemProperties.Basics
             }
         }
 
-        #region Events
+        #region Internal Calls
 
         /// <summary>
-        ///     Event, das die Änderung des Trageradius signalisiert.
+        /// Internal Call to add another Carrier to the List.
         /// </summary>
-        public event ValueChanged<float> OnPortableRadiusChanged;
-
-        /// <summary>
-        ///     Event, das die Änderung der Masse signalisiert.
-        /// </summary>
-        public event ValueChanged<float> OnPortableWeightChanged;
-
-        /// <summary>
-        ///     Wird geworfen, wenn das Objekt von einem weiteren Träger aufgenommen
-        ///     wurde.
-        /// </summary>
-        public event ChangeItem<CarrierProperty> OnNewCarrierItem;
-
-        /// <summary>
-        ///     Wird geworfen, wenn ein Träger das Objekt fallen gelassen hat.
-        /// </summary>
-        public event ChangeItem<CarrierProperty> OnLostCarrierItem;
-
-        #endregion
-
-        /// <summary>
-        ///     Wird von der Extension aufgerufen, um einen Träger in die Liste der
-        ///     tragenden Einheiten einzufügen.
-        /// </summary>
-        /// <param name="carrier">Neuer Träger</param>
+        /// <param name="carrier">New Item</param>
         internal void AddCarrier(CarrierProperty carrier)
         {
             if (carrierItems.Contains(carrier))
@@ -104,10 +75,9 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Extension aufgerufen, um einen Träger aus der Liste
-        ///     der tragenden Einheiten zu entfernen.
+        /// Internal Call to remove a Carrier.
         /// </summary>
-        /// <param name="carrier">Träger</param>
+        /// <param name="carrier">Lost Carrier</param>
         internal void RemoveCarrier(CarrierProperty carrier)
         {
             if (!carrierItems.Contains(carrier))
@@ -117,5 +87,31 @@ namespace AntMe.ItemProperties.Basics
             if (OnLostCarrierItem != null)
                 OnLostCarrierItem(carrier);
         }
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Signal about a changed Portable Radius.
+        /// </summary>
+        public event ValueChanged<float> OnPortableRadiusChanged;
+
+        /// <summary>
+        /// Signal for a changed Weight.
+        /// </summary>
+        public event ValueChanged<float> OnPortableWeightChanged;
+
+        /// <summary>
+        /// Signal for a new Carrier.
+        /// </summary>
+        public event ChangeItem<CarrierProperty> OnNewCarrierItem;
+
+        /// <summary>
+        /// Signal for a lost Carrier.
+        /// </summary>
+        public event ChangeItem<CarrierProperty> OnLostCarrierItem;
+
+        #endregion
     }
 }

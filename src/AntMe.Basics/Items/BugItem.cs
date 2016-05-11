@@ -12,14 +12,9 @@ namespace AntMe.Items.Basics
     {
         private const float BugRadius = 4f;
 
-        private const int BUG_HITPOINTS = 1000;
-        private const float BUG_RANGE = 5f;
-        private const int BUG_ATTACK_STRENGHT = 10;
         private const bool BUG_HEAL_BY_SUGAR = false;
         private const bool BUG_HEAL_BY_APPLE = false;
         private const bool BUG_HEAL_BY_ANT = false;
-        private const int BUG_SUGAR_CAPACITY = 4;
-        private const int BUG_APPLE_CAPACITY = 2;
         private const int BUG_ROTATIONSPEED = 25;
         private const int BUG_ZICKZACKANGLE = 10;
         private const int BUG_ZICKZACKRANGE = 30;

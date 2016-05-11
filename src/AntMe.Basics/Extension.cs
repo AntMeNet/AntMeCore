@@ -110,10 +110,24 @@ namespace AntMe.Extension.Basics
                 return property;
             });
 
-            typeMapper.AttachItemProperty<AppleItem, PortableProperty>(this, "Apple Portable");
+            // Portable
+            settings.Apply<AppleItem>("Weight", 200f, "Weight of an Apple");
+            typeMapper.AttachItemProperty<AppleItem, PortableProperty>(this, "Apple Portable", (i) =>
+            {
+                PortableProperty property = new PortableProperty(i);
+
+                // Set Weight
+                property.PortableWeight = settings.GetFloat<AppleItem>("Weight").Value;
+
+                // Bind Portable Radius to the Item Radius
+                property.PortableRadius = i.Radius;
+                i.RadiusChanged += (item, v) => { property.PortableRadius = v; };
+
+                return property;
+            });
+
             typeMapper.AttachItemProperty<AppleItem, CollectableProperty>(this, "Apple Collectable");
             typeMapper.AttachItemProperty<AppleItem, AppleCollectableProperty>(this, "Apple Collectable"); // TODO: Amounts (amount))
-
         }
 
         /// <summary>
@@ -154,9 +168,8 @@ namespace AntMe.Extension.Basics
                 return property;
             });
 
-            typeMapper.AttachItemProperty<SugarItem, CollectableProperty>(this, "Sugar Collectable");
-            typeMapper.AttachItemProperty<SugarItem, SugarCollectableProperty>(this, "Sugar Collectable"); // TODO: Amounts (SugarMaxCapacity, Math.Min(SugarMaxCapacity, amount))
-
+            //typeMapper.AttachItemProperty<SugarItem, CollectableProperty>(this, "Sugar Collectable");
+            //typeMapper.AttachItemProperty<SugarItem, SugarCollectableProperty>(this, "Sugar Collectable"); // TODO: Amounts (SugarMaxCapacity, Math.Min(SugarMaxCapacity, amount))
         }
 
         /// <summary>
@@ -197,10 +210,31 @@ namespace AntMe.Extension.Basics
                 return property;
             });
 
-            typeMapper.AttachItemProperty<AnthillItem, AttackableProperty>(this, "Anthill Attackable"); // TODO: Optional, wenn Settings angreifbar sind
-            typeMapper.AttachItemProperty<AnthillItem, CollectableProperty>(this, "Anthill Collectable"); // TODO: Radius, Vermutlich entfernen
-            typeMapper.AttachItemProperty<AnthillItem, SugarCollectableProperty>(this, "Anthill Sugarsafe"); // TODO: Radius
-            typeMapper.AttachItemProperty<AnthillItem, AppleCollectableProperty>(this, "Anthill Applesafe"); // TODO: Radius
+            // Attackable
+            settings.Apply<AnthillItem>("Attackable", false, "Enables the possibility to destroy Anthills");
+            settings.Apply<AnthillItem>("MaxHealth", 1000, "Maximum Health of an Anthill");
+            typeMapper.AttachItemProperty<AnthillItem, AttackableProperty>(this, "Anthill Attackable", (i) =>
+            {
+                // Check Attackable Switch
+                if (i.Settings.GetBool<AnthillItem>("Attackable").Value)
+                    return null;
+
+                AttackableProperty property = new AttackableProperty(i);
+
+                // Bind Attackable Radius to Item Radius
+                property.AttackableRadius = i.Radius;
+                i.RadiusChanged += (item, v) => { property.AttackableRadius = v; };
+
+                // Health
+                property.AttackableMaximumHealth = settings.GetInt<AnthillItem>("MaxHealth").Value;
+                property.AttackableHealth = settings.GetInt<AnthillItem>("MaxHealth").Value;
+
+                return property;
+            });
+
+            //typeMapper.AttachItemProperty<AnthillItem, CollectableProperty>(this, "Anthill Collectable"); // TODO: Radius, Vermutlich entfernen
+            //typeMapper.AttachItemProperty<AnthillItem, SugarCollectableProperty>(this, "Anthill Sugarsafe"); // TODO: Radius
+            //typeMapper.AttachItemProperty<AnthillItem, AppleCollectableProperty>(this, "Anthill Applesafe"); // TODO: Radius
         }
 
         /// <summary>
@@ -305,11 +339,39 @@ namespace AntMe.Extension.Basics
             // Sniffer
             typeMapper.AttachItemProperty<BugItem, SnifferProperty>(this, "Bug Sniffer");
 
-            typeMapper.AttachItemProperty<BugItem, AttackableProperty>(this, "Bug Attackable"); //  BUG_RADIUS, BUG_HITPOINTS, BUG_HITPOINTS);
-            typeMapper.AttachItemProperty<BugItem, AttackerProperty>(this, "Bug Attacker"); // BUG_RANGE, BUG_ATTACK_STRENGHT);
-            typeMapper.AttachItemProperty<BugItem, CollectorProperty>(this, "Bug Collector"); // BUG_RANGE);
-            typeMapper.AttachItemProperty<BugItem, SugarCollectableProperty>(this, "Bug Sugar Collectable"); // , BUG_SUGAR_CAPACITY, 0);
-            typeMapper.AttachItemProperty<BugItem, AppleCollectableProperty>(this, "Bug Apple Collectable"); // BUG_APPLE_CAPACITY, 0);
+            // Attackable
+            settings.Apply<BugItem>("MaxHealth", 1000, "Maximum Health of a Bug");
+            typeMapper.AttachItemProperty<BugItem, AttackableProperty>(this, "Bug Attackable", (i) =>
+            {
+                AttackableProperty property = new AttackableProperty(i);
+
+                // Bind Attackable Radius to Item Radius
+                property.AttackableRadius = i.Radius;
+                i.RadiusChanged += (item, v) => { property.AttackableRadius = v; };
+
+                // Health
+                property.AttackableMaximumHealth = settings.GetInt<BugItem>("MaxHealth").Value;
+                property.AttackableHealth = settings.GetInt<BugItem>("MaxHealth").Value;
+
+                return property;
+            });
+
+            // Attacker
+            settings.Apply<BugItem>("AttackRange", 5f, "Attack Range for a Bug");
+            settings.Apply<BugItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Bug");
+            settings.Apply<BugItem>("AttackStrength", 10, "Attach Strength for a Bug");
+            typeMapper.AttachItemProperty<BugItem, AttackerProperty>(this, "Bug Attacker", (i) =>
+            {
+                AttackerProperty property = new AttackerProperty(i);
+                property.AttackRange = i.Settings.GetFloat<BugItem>("AttackRange").Value;
+                property.AttackRecoveryTime = i.Settings.GetInt<BugItem>("RecoveryTime").Value;
+                property.AttackStrength = i.Settings.GetInt<BugItem>("AttackStrength").Value;
+                return property;
+            });
+
+            //typeMapper.AttachItemProperty<BugItem, CollectorProperty>(this, "Bug Collector"); // BUG_RANGE);
+            //typeMapper.AttachItemProperty<BugItem, SugarCollectableProperty>(this, "Bug Sugar Collectable"); // , BUG_SUGAR_CAPACITY, 0);
+            //typeMapper.AttachItemProperty<BugItem, AppleCollectableProperty>(this, "Bug Apple Collectable"); // BUG_APPLE_CAPACITY, 0);
         }
 
         /// <summary>
@@ -388,8 +450,35 @@ namespace AntMe.Extension.Basics
             // Sniffer
             typeMapper.AttachItemProperty<ClassicBugItem, SnifferProperty>(this, "Classic Bug Sniffer");
 
-            typeMapper.AttachItemProperty<ClassicBugItem, AttackableProperty>(this, "Classic Bug Attackable"); //  BUG_RADIUS, BUG_HITPOINTS, BUG_HITPOINTS);
-            typeMapper.AttachItemProperty<ClassicBugItem, AttackerProperty>(this, "Classic Bug Attacker"); // BUG_RANGE, BUG_ATTACK_STRENGHT);
+            // Attackable
+            settings.Apply<ClassicBugItem>("MaxHealth", 1000, "Maximum Health of a Classic Bug");
+            typeMapper.AttachItemProperty<ClassicBugItem, AttackableProperty>(this, "Classic Bug Attackable", (i) =>
+            {
+                AttackableProperty property = new AttackableProperty(i);
+
+                // Bind Attackable Radius to Item Radius
+                property.AttackableRadius = i.Radius;
+                i.RadiusChanged += (item, v) => { property.AttackableRadius = v; };
+
+                // Health
+                property.AttackableMaximumHealth = settings.GetInt<ClassicBugItem>("MaxHealth").Value;
+                property.AttackableHealth = settings.GetInt<ClassicBugItem>("MaxHealth").Value;
+
+                return property;
+            });
+
+            // Attacker
+            settings.Apply<ClassicBugItem>("AttackRange", 5f, "Attack Range for a Bug");
+            settings.Apply<ClassicBugItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Bug");
+            settings.Apply<ClassicBugItem>("AttackStrength", 10, "Attach Strength for a Bug");
+            typeMapper.AttachItemProperty<ClassicBugItem, AttackerProperty>(this, "Classic Bug Attacker", (i) =>
+            {
+                AttackerProperty property = new AttackerProperty(i);
+                property.AttackRange = i.Settings.GetFloat<ClassicBugItem>("AttackRange").Value;
+                property.AttackRecoveryTime = i.Settings.GetInt<ClassicBugItem>("RecoveryTime").Value;
+                property.AttackStrength = i.Settings.GetInt<ClassicBugItem>("AttackStrength").Value;
+                return property;
+            });
         }
 
         /// <summary>
@@ -469,12 +558,48 @@ namespace AntMe.Extension.Basics
             // Sniffer
             typeMapper.AttachItemProperty<AntItem, SnifferProperty>(this, "Ant Sniffer");
 
-            typeMapper.AttachItemProperty<AntItem, AttackableProperty>(this, "Ant Attackable"); // _settings.ANT_RADIUS, _settings.ANT_HITPOINTS, _settings.ANT_HITPOINTS);
-            typeMapper.AttachItemProperty<AntItem, AttackerProperty>(this, "Ant Attacker"); // _settings.ANT_RANGE, _settings.ANT_ATTACK_STRENGHT, _settings.ANT_ATTACK_RECOVERY);
-            typeMapper.AttachItemProperty<AntItem, CarrierProperty>(this, "Ant Carrier"); //  _settings.ANT_STRENGHT);
-            typeMapper.AttachItemProperty<AntItem, CollectorProperty>(this, "Ant Collector"); // _settings.ANT_RANGE);
-            typeMapper.AttachItemProperty<AntItem, SugarCollectableProperty>(this, "Ant Sugar Collectable"); // _settings.ANT_SUGAR_CAPACITY, 0);
-            typeMapper.AttachItemProperty<AntItem, AppleCollectableProperty>(this, "Ant Apple Collectable"); // TODO: Optional, wenn _settings.ANT_APPLECOLLECT | _settings.ANT_APPLE_CAPACITY, 0);
+            // Carrier
+            settings.Apply<AntItem>("CarrierStrength", 10f, "Carrier Strength of an Ant");
+            typeMapper.AttachItemProperty<AntItem, CarrierProperty>(this, "Ant Carrier", (i) =>
+            {
+                CarrierProperty property = new CarrierProperty(i);
+                property.CarrierStrength = i.Settings.GetFloat<AntItem>("CarrierStrength").Value;
+                return property;
+            });
+
+            // Attackable
+            settings.Apply<AntItem>("MaxHealth", 100f, "Maximum Health for an Ant");
+            typeMapper.AttachItemProperty<AntItem, AttackableProperty>(this, "Ant Attackable", (i) =>
+            {
+                AttackableProperty property = new AttackableProperty(i);
+
+                // Bind Attackable Radius to Item Radius
+                property.AttackableRadius = i.Radius;
+                i.RadiusChanged += (item, v) => { property.AttackableRadius = v; };
+
+                // Health
+                property.AttackableMaximumHealth = settings.GetInt<AntItem>("MaxHealth").Value;
+                property.AttackableHealth = settings.GetInt<AntItem>("MaxHealth").Value;
+
+                return property;
+            });
+
+            // Attacker
+            settings.Apply<AntItem>("AttackRange", 5f, "Attack Range for a Bug");
+            settings.Apply<AntItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Bug");
+            settings.Apply<AntItem>("AttackStrength", 10, "Attach Strength for a Bug");
+            typeMapper.AttachItemProperty<AntItem, AttackerProperty>(this, "Ant Attacker", (i) =>
+            {
+                AttackerProperty property = new AttackerProperty(i);
+                property.AttackRange = i.Settings.GetFloat<AntItem>("AttackRange").Value;
+                property.AttackRecoveryTime = i.Settings.GetInt<AntItem>("RecoveryTime").Value;
+                property.AttackStrength = i.Settings.GetInt<AntItem>("AttackStrength").Value;
+                return property;
+            });
+
+            //typeMapper.AttachItemProperty<AntItem, CollectorProperty>(this, "Ant Collector"); // _settings.ANT_RANGE);
+            //typeMapper.AttachItemProperty<AntItem, SugarCollectableProperty>(this, "Ant Sugar Collectable"); // _settings.ANT_SUGAR_CAPACITY, 0);
+            //typeMapper.AttachItemProperty<AntItem, AppleCollectableProperty>(this, "Ant Apple Collectable"); // TODO: Optional, wenn _settings.ANT_APPLECOLLECT | _settings.ANT_APPLE_CAPACITY, 0);
         }
     }
 }

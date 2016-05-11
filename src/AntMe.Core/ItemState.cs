@@ -162,7 +162,7 @@ namespace AntMe
         /// <returns></returns>
         public override string ToString()
         {
-            return GetType().Name;
+            return string.Format("{0} ({1})", GetType().Name, Id);
         }
     }
 }
