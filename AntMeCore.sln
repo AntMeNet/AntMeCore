@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreTestClient", "CoreTestClient\CoreTestClient.csproj", "{81852336-3F17-4E67-8A44-658E04D77606}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FC17801C-CF46-4612-915D-98704F9C11D4} = {FC17801C-CF46-4612-915D-98704F9C11D4}
+		{35291C6D-97EC-450D-907A-66F52F6BAF56} = {35291C6D-97EC-450D-907A-66F52F6BAF56}
+		{0D4186A3-2123-4744-853B-53A48B3C9B55} = {0D4186A3-2123-4744-853B-53A48B3C9B55}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Core", "src\AntMe.Core\AntMe.Core.csproj", "{A2A811C2-600D-451B-AA15-346BF7ECED4A}"
 EndProject

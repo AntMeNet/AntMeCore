@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace AntMe.ItemProperties.Basics
 {
     /// <summary>
-    ///     Property für alle sehenden Spielelemente. Diese Eigenschaft
-    ///     lässt das Spielelement die Umgebung betrachten (Bodenbeschaffenheit,
-    ///     Höhenkarte und Randerkennung) und erlaubt das Erkennen von Elementen
-    ///     mit VisibleProperty.
+    /// Property for all sighting Items. This allows to see the Environment, Borders and Visible Items.
     /// </summary>
     public sealed class SightingProperty : ItemProperty
     {
@@ -19,6 +15,10 @@ namespace AntMe.ItemProperties.Basics
         private float viewangle;
         private float viewrange;
 
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="item">Item</param>
         public SightingProperty(Item item) : base(item)
         {
             //ViewRange = range;
@@ -29,10 +29,8 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Liefert den Sichtradius des Elementes.
+        /// Gets or sets the Viewrange.
         /// </summary>
-        [DisplayName("View Range")]
-        [Description("")]
         public float ViewRange
         {
             get { return viewrange; }
@@ -45,10 +43,8 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Liefert die Sichtrichtung des Elements.
+        /// Gets or sets the View Direction of this Item.
         /// </summary>
-        [DisplayName("View Direction")]
-        [Description("")]
         public Angle ViewDirection
         {
             get { return viewDirection; }
@@ -61,13 +57,11 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Liefert den Öffnungswinkel des Sichtkegels.
-        ///     0 = Element kann nichts sehen
-        ///     90 = Sieht Elemente die sich zwischen -45 bis 45 Grad seiner Blickrichtung befinden
-        ///     360 = Sieht alle Elemente innerhalb des Sichtradius
+        /// Gets or sets the View Angle.
+        /// 0 = Item can't see anything
+        /// 90 = View Range is between -45 and 45 Degrees to the Direction
+        /// 360 = No Limitations within the View Radius
         /// </summary>
-        [DisplayName("View Angle")]
-        [Description("")]
         public float ViewAngle
         {
             get { return viewangle; }
@@ -80,22 +74,16 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Liefert die sichtbare Umgebung in Form eines Zellengrids. Ist die
-        ///     Zelle null, befindet sich an dieser Stelle der Abgrund. Ansonsten
-        ///     enthält die Zelle Informationen zur Höhe und zum Fortbewegungs-
-        ///     modifikator.
+        /// Returns a Snapshot of the current Environment.
         /// </summary>
-        [DisplayName("Environment")]
-        [Description("")]
         public VisibleEnvironment Environment
         {
             get { return environment; }
         }
 
         /// <summary>
-        ///     Öffentlich sichtbare readonly list von visibleItems
+        /// List of all visible Items.
         /// </summary>
-        [Browsable(false)]
         public ReadOnlyCollection<VisibleProperty> VisibleItems
         {
             get { return visibleItems.AsReadOnly(); }
@@ -104,10 +92,9 @@ namespace AntMe.ItemProperties.Basics
         #region Internal Calls
 
         /// <summary>
-        ///     Wird von der Extension aufgerufen, wenn sich ein Element in den
-        ///     sichtbaren Radius bewegt.
+        /// Internal Call to add another visible Item to the List.
         /// </summary>
-        /// <param name="item">Neu sichtbares Element</param>
+        /// <param name="item">VisibleProperty of a new visible Item</param>
         internal void AddVisibleItem(VisibleProperty item)
         {
             if (!visibleItems.Contains(item))
@@ -120,10 +107,9 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Extension aufgerufen, wenn ein Element sich aus dem
-        ///     sichtbaren Radius entfernt.
+        /// Internal Call to remove a visible Item from the List.
         /// </summary>
-        /// <param name="item">Nicht mehr sichtbares Element</param>
+        /// <param name="item">Property to remove</param>
         internal void RemoveVisibleItem(VisibleProperty item)
         {
             if (visibleItems.Contains(item))
@@ -136,9 +122,9 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Extension in jeder Runde für jedes sichtbare Element aufgerufen.
+        /// Internal call for every visible item per Round.
         /// </summary>
-        /// <param name="item">Sichtbares Element</param>
+        /// <param name="item">Visible Item</param>
         internal void NoteVisibleItem(VisibleProperty item)
         {
             if (OnVisibleItem != null)
@@ -146,8 +132,7 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Extension aufgerufen, wenn die Zelle sich ändert und
-        ///     die Umgebung von der Extension geändert wurde.
+        /// Internal in case of a Cell Switch and a new Environment.
         /// </summary>
         internal void RefreshEnvironment()
         {
@@ -160,39 +145,37 @@ namespace AntMe.ItemProperties.Basics
         #region Events
 
         /// <summary>
-        ///     Event, das bei Änderung der Viewrange geworfen werden muss.
+        /// Signal for a changed View Range.
         /// </summary>
         public event ValueChanged<float> OnViewRangeChanged;
 
         /// <summary>
-        ///     Event, das bei Änderung der Sichtrichtung geworfen werden muss.
+        /// Signal for a changed View Direction.
         /// </summary>
         public event ValueChanged<Angle> OnViewDirectionChanged;
 
         /// <summary>
-        ///     Event, das bei Änderung des Sichtkegels geworfen werden muss.
+        /// Signal for a changed View Angle.
         /// </summary>
         public event ValueChanged<float> OnViewAngleChanged;
 
         /// <summary>
-        ///     Event, das die Änderung der Umgebung (durch Zellenwechsel) ankündigt.
+        /// Signal for a changed Environment.
         /// </summary>
         public event ValueChanged<VisibleEnvironment> OnEnvironmentChanged;
 
         /// <summary>
-        ///     Event, das über ein sichtbares Item informiert, das neu in die
-        ///     Liste gekommen ist.
+        /// Signal for a new Item in the List of visible Items.
         /// </summary>
         public event ChangeItem<VisibleProperty> OnNewVisibleItem;
 
         /// <summary>
-        ///     Event, das über ein sichtbares Item informiert, das aus der Liste
-        ///     geflogen ist.
+        /// Signal for a lost Item in the List of visible Items.
         /// </summary>
         public event ChangeItem<VisibleProperty> OnLostVisibleItem;
 
         /// <summary>
-        ///     Event, das über ein sichtbares Item informiert, jeden Tick in dem es sichtbar ist.
+        /// Signal for every visible Item per Round.
         /// </summary>
         public event ChangeItem<VisibleProperty> OnVisibleItem;
 

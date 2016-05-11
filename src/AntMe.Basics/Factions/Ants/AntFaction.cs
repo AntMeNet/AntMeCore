@@ -138,7 +138,7 @@ namespace AntMe.Factions.Ants
 
             // AntItem erstellen
             AntUnit antUnit = (AntUnit)Activator.CreateInstance(antType);
-            AntItem antItem = new AntItem(Context, position, Angle.FromDegree(_random.Next(0, 359)), this, name, caste);
+            AntItem antItem = new AntItem(Context, this, position, Angle.FromDegree(_random.Next(0, 359)), name);
             AntUnitInterop unitInterop = Context.Resolver.CreateUnitInterop(this) as AntUnitInterop;
             antUnit.Init(unitInterop);
 

@@ -205,18 +205,18 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 if (!InternalTotalAntsPerType.ContainsKey(ant.GetType()))
                     InternalTotalAntsPerType.Add(ant.GetType(), 0);
                 InternalTotalAntsPerType[ant.GetType()]++;
-                if (!InternalTotalAntsPerCaste.ContainsKey(ant.Caste))
-                    InternalTotalAntsPerCaste.Add(ant.Caste, 0);
-                InternalTotalAntsPerCaste[ant.Caste]++;
+                //if (!InternalTotalAntsPerCaste.ContainsKey(ant.Caste))
+                //    InternalTotalAntsPerCaste.Add(ant.Caste, 0);
+                //InternalTotalAntsPerCaste[ant.Caste]++;
 
                 // Current Ants
                 CurrentAnts++;
                 if (!InternalCurrentAntsPerType.ContainsKey(ant.GetType()))
                     InternalCurrentAntsPerType.Add(ant.GetType(), 0);
                 InternalCurrentAntsPerType[ant.GetType()]++;
-                if (!InternalCurrentAntsPerCaste.ContainsKey(ant.Caste))
-                    InternalCurrentAntsPerCaste.Add(ant.Caste, 0);
-                InternalCurrentAntsPerCaste[ant.Caste]++;
+                //if (!InternalCurrentAntsPerCaste.ContainsKey(ant.Caste))
+                //    InternalCurrentAntsPerCaste.Add(ant.Caste, 0);
+                //InternalCurrentAntsPerCaste[ant.Caste]++;
 
                 // Recent
                 int century = Faction.Level.Engine.Round / 100;
@@ -225,17 +225,17 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 if (!InternalRecentAntsPerTypeCache[century].ContainsKey(ant.GetType()))
                     InternalRecentAntsPerTypeCache[century].Add(ant.GetType(), 0);
                 InternalRecentAntsPerTypeCache[century][ant.GetType()]++;
-                if (!InternalRecentAntsPerCasteCache[century].ContainsKey(ant.Caste))
-                    InternalRecentAntsPerCasteCache[century].Add(ant.Caste, 0);
-                InternalRecentAntsPerCasteCache[century][ant.Caste]++;
+                //if (!InternalRecentAntsPerCasteCache[century].ContainsKey(ant.Caste))
+                //    InternalRecentAntsPerCasteCache[century].Add(ant.Caste, 0);
+                //InternalRecentAntsPerCasteCache[century][ant.Caste]++;
 
                 RecentAnts++;
                 if (!InternalRecentAntsPerType.ContainsKey(ant.GetType()))
                     InternalRecentAntsPerType.Add(ant.GetType(), 0);
                 InternalRecentAntsPerType[ant.GetType()]++;
-                if (!InternalRecentAntsPerCaste.ContainsKey(ant.Caste))
-                    InternalRecentAntsPerCaste.Add(ant.Caste, 0);
-                InternalRecentAntsPerCaste[ant.Caste]++;
+                //if (!InternalRecentAntsPerCaste.ContainsKey(ant.Caste))
+                //    InternalRecentAntsPerCaste.Add(ant.Caste, 0);
+                //InternalRecentAntsPerCaste[ant.Caste]++;
             }
         }
 
@@ -250,9 +250,9 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 if (!InternalCurrentAntsPerType.ContainsKey(ant.GetType()))
                     InternalCurrentAntsPerType.Add(ant.GetType(), 0);
                 InternalCurrentAntsPerType[ant.GetType()]--;
-                if (!InternalCurrentAntsPerCaste.ContainsKey(ant.Caste))
-                    InternalCurrentAntsPerCaste.Add(ant.Caste, 0);
-                InternalCurrentAntsPerCaste[ant.Caste]--;
+                //if (!InternalCurrentAntsPerCaste.ContainsKey(ant.Caste))
+                //    InternalCurrentAntsPerCaste.Add(ant.Caste, 0);
+                //InternalCurrentAntsPerCaste[ant.Caste]--;
 
                 if (RecentCenturies > 0)
                 {
@@ -260,9 +260,9 @@ namespace AntMe.Basics.Factions.Ants.Interop
                     if (!InternalRecentAntsPerType.ContainsKey(ant.GetType()))
                         InternalRecentAntsPerType.Add(ant.GetType(), 0);
                     InternalRecentAntsPerType[ant.GetType()]--;
-                    if (!InternalRecentAntsPerCaste.ContainsKey(ant.Caste))
-                        InternalRecentAntsPerCaste.Add(ant.Caste, 0);
-                    InternalRecentAntsPerCaste[ant.Caste]--;
+                    //if (!InternalRecentAntsPerCaste.ContainsKey(ant.Caste))
+                    //    InternalRecentAntsPerCaste.Add(ant.Caste, 0);
+                    //InternalRecentAntsPerCaste[ant.Caste]--;
                 }
 
                 int century = Faction.Level.Engine.Round / 100;
@@ -278,9 +278,9 @@ namespace AntMe.Basics.Factions.Ants.Interop
 
                 if (InternalRecentAntsPerCasteCache.Count <= century)
                     InternalRecentAntsPerCasteCache.Add(new Dictionary<string, int>());
-                if (!InternalRecentAntsPerCasteCache[century].ContainsKey(ant.Caste))
-                    InternalRecentAntsPerCasteCache[century].Add(ant.Caste, 0);
-                InternalRecentAntsPerCasteCache[century][ant.Caste]--;
+                //if (!InternalRecentAntsPerCasteCache[century].ContainsKey(ant.Caste))
+                //    InternalRecentAntsPerCasteCache[century].Add(ant.Caste, 0);
+                //InternalRecentAntsPerCasteCache[century][ant.Caste]--;
             }
         }
     }

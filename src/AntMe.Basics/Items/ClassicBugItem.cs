@@ -3,13 +3,20 @@ using System;
 
 namespace AntMe.Items.Basics
 {
+    /// <summary>
+    /// Represents a Classic Bug (like in AntMe! 1.0)
+    /// </summary>
     public class ClassicBugItem : Item
     {
+        /// <summary>
+        /// Default Radius of a Bug.
+        /// </summary>
         public const float BugRadius = 4f;
 
+        /// <summary>
+        /// Default Rotation Speed of a Bug (Degrees per Round).
+        /// </summary>
         public const int BugRotationSpeed = 10;
-
-        public const float BugWalkingSpeed = 1f;
 
         private WalkingProperty walking;
 
@@ -21,8 +28,8 @@ namespace AntMe.Items.Basics
             : base(context, position, BugRadius, orientation)
         {
             walking = GetProperty<WalkingProperty>();
-            if (walking != null)
-                walking.MaximumSpeed = BugWalkingSpeed;
+            if (walking == null)
+                throw new NotSupportedException("Classic Bug does not have a Walking Property");
         }
 
         protected override void OnUpdate()
@@ -51,7 +58,7 @@ namespace AntMe.Items.Basics
             {
                 if (roundsToTurn == 0 && roundsToWalk > 0)
                 {
-                    walking.Speed = BugWalkingSpeed;
+                    walking.Speed = walking.MaximumSpeed;
                 }
                 else
                 {

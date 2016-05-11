@@ -120,6 +120,16 @@ namespace AntMe
             Apply(FullKey<T>(key), value.ToString(), description);
         }
 
+        public void Apply<T>(string key, float value, string description = null)
+        {
+            Apply(FullKey<T>(key), value.ToString(), description);
+        }
+
+        public void Apply<T>(string key, bool value, string description = null)
+        {
+            Apply(FullKey<T>(key), value.ToString(), description);
+        }
+
         /// <summary>
         /// Fügt den angegebenen Key ein.
         /// </summary>

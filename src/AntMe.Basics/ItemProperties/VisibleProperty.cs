@@ -1,33 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace AntMe.ItemProperties.Basics
 {
     /// <summary>
-    ///     Item Property für alle sichtbaren Items
+    /// Property for all visible Items.
     /// </summary>
     public sealed class VisibleProperty : ItemProperty
     {
         private readonly List<SightingProperty> sightingItems = new List<SightingProperty>();
         private float visibilityRadius;
 
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="item">Item</param>
         public VisibleProperty(Item item) : base(item)
         {
             VisibilityRadius = item.Radius;
-            item.RadiusChanged += (i, v) =>
-            {
-                VisibilityRadius = v;
-            };
         }
 
         /// <summary>
-        ///     Liefert den Sichtbarkeitsradius des Spielelementes. Entspricht in
-        ///     der Regel der Größe des Körpers.
+        /// Gets or sets the Visibility Radius.
         /// </summary>
-        [DisplayName("Visibility Radius")]
-        [Description("")]
         public float VisibilityRadius
         {
             get { return visibilityRadius; }
@@ -40,9 +36,8 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Öffentlich sichtbare readonly list von visibleItems
+        /// List of Items that are able to see this Item.
         /// </summary>
-        [Browsable(false)]
         public ReadOnlyCollection<SightingProperty> SightingItems
         {
             get { return sightingItems.AsReadOnly(); }

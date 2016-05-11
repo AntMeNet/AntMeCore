@@ -42,8 +42,8 @@ namespace AntMe.Simulation.Factions.Ants.Interop
                 _collidedItems.Add((value as Item).GetItemInfo(_antItem));
 
                 // Prüfen, ob es sich um das aktuelle Ziel handelt.
-                if (_antItem.CurrentTarget != null && 
-                    Item == _antItem.GetItemFromInfo(_antItem.CurrentTarget))
+                if (_antItem.CurrentDestination != null && 
+                    Item == _antItem.GetItemFromInfo(_antItem.CurrentDestination))
                 {
                     // Alles anhalten und Reach melden
                     _antItem.Stop();
@@ -182,7 +182,7 @@ namespace AntMe.Simulation.Factions.Ants.Interop
         ///     konkretes Ziel hat.
         /// </summary>
 
-        public ItemInfo CurrentTarget { get { return _antItem.CurrentTarget; }}
+        public ItemInfo CurrentTarget { get { return _antItem.CurrentDestination; }}
 
         /// <summary>
         /// Gibt die maximale Geschwindigkeit der Ameise zurück.

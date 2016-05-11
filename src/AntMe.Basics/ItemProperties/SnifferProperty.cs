@@ -1,22 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace AntMe.ItemProperties.Basics
 {
     /// <summary>
-    ///     Property für alle riechenden Einheiten.
+    /// Property for all sniffing Items.
     /// </summary>
     public sealed class SnifferProperty : ItemProperty
     {
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="item">Item</param>
         public SnifferProperty(Item item) : base(item) { }
 
         private readonly List<SmellableProperty> smellableItems = new List<SmellableProperty>();
 
         /// <summary>
-        ///     Öffentlich sichtbare readonly list von Smellable Items
+        /// List of all sniffed Items.
         /// </summary>
-        [Browsable(false)]
         public ReadOnlyCollection<SmellableProperty> SmellableItems
         {
             get { return smellableItems.AsReadOnly(); }
@@ -25,10 +27,9 @@ namespace AntMe.ItemProperties.Basics
         #region Internal Calls
 
         /// <summary>
-        ///     Wird von der Extension aufgerufen, wenn sich ein Element in den
-        ///     Riechradius bewegt.
+        /// Internal Call to Add a new smellable Item to the List.
         /// </summary>
-        /// <param name="item">Neu riechbares Element</param>
+        /// <param name="item">Property of the new Item</param>
         internal void AddSmellableItem(SmellableProperty item)
         {
             if (!smellableItems.Contains(item))
@@ -41,10 +42,9 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Extension aufgerufen, wenn ein Element sich aus dem
-        ///     Riechradius entfernt.
+        /// Internal Call to remove a smellable Item from the List.
         /// </summary>
-        /// <param name="item">Nicht mehr riechbares Element</param>
+        /// <param name="item">Property of the removed Item</param>
         internal void RemoveSmellableItem(SmellableProperty item)
         {
             if (smellableItems.Remove(item))
@@ -55,10 +55,9 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Wird von der Extension so lange in jeder Runde aufgerufen, solange
-        ///     sich das Element im Riechradius befindet.
+        /// Internal call for every sniffed item per Round.
         /// </summary>
-        /// <param name="item">Riechbares Element</param>
+        /// <param name="item">Sniffed Item</param>
         internal void NoteSmellableItem(SmellableProperty item)
         {
             if (OnSmellableItem != null)
@@ -70,20 +69,17 @@ namespace AntMe.ItemProperties.Basics
         #region Events
 
         /// <summary>
-        ///     Event, das über ein riechbares Item informiert, das neu in die
-        ///     Liste gekommen ist.
+        /// Signal for a new sniffed Item in the List.
         /// </summary>
         public event ChangeItem<SmellableProperty> OnNewSmellableItem;
 
         /// <summary>
-        ///     Event, das über ein riechbares Item informiert, das aus der Liste
-        ///     geflogen ist.
+        /// Signal for a lost sniffed Item in the List.
         /// </summary>
         public event ChangeItem<SmellableProperty> OnLostSmellableItem;
 
         /// <summary>
-        ///     Event, das über ein riechbares Item informiert, jeden Tick in dem
-        ///     es riechbar ist.
+        /// Signal for every sniffed Item per Round.
         /// </summary>
         public event ChangeItem<SmellableProperty> OnSmellableItem;
 

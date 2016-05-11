@@ -36,11 +36,6 @@ namespace AntMe.Factions.Ants
         public Random Random { get { return Faction.Context.Random; } }
 
         /// <summary>
-        /// Gibt den Namen der Kaste zurück, zu der diese Ameise gehört.
-        /// </summary>
-        public string Caste { get { return Item.Caste; } }
-
-        /// <summary>
         /// Gibt die Ausrichtung der Ameise zurück.
         /// </summary>
         public Angle Orientation { get { return Item.Orientation; }}

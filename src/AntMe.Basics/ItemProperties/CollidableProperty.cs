@@ -19,11 +19,6 @@ namespace AntMe.ItemProperties.Basics
         public CollidableProperty(Item item) : base(item)
         {
             CollisionRadius = item.Radius;
-            item.RadiusChanged += (i, v) =>
-            {
-                CollisionRadius = v;
-            };
-
             CollisionFixed = true;
             CollisionMass = 0f;
         }

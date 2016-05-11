@@ -11,6 +11,7 @@ namespace AntMe.Items.Basics
     public class BugItem : FactionItem
     {
         private const float BugRadius = 4f;
+
         private const int BUG_HITPOINTS = 1000;
         private const float BUG_RANGE = 5f;
         private const int BUG_ATTACK_STRENGHT = 10;
@@ -19,25 +20,9 @@ namespace AntMe.Items.Basics
         private const bool BUG_HEAL_BY_ANT = false;
         private const int BUG_SUGAR_CAPACITY = 4;
         private const int BUG_APPLE_CAPACITY = 2;
-        private const float BUG_MAX_SPEED = 2f;
-        private const float BUG_VIEWRANGE = 20f;
         private const int BUG_ROTATIONSPEED = 25;
         private const int BUG_ZICKZACKANGLE = 10;
         private const int BUG_ZICKZACKRANGE = 30;
-
-        private readonly WalkingProperty moving;
-        private readonly CollidableProperty collidable;
-
-        private readonly SightingProperty sighting;
-        private readonly SnifferProperty sniffer;
-        private readonly VisibleProperty visible;
-
-        private readonly AttackableProperty attackable;
-        private readonly AttackerProperty attacker;
-        private readonly CollectorProperty collector;
-
-        private readonly SugarCollectableProperty sugar;
-        private readonly AppleCollectableProperty apple;
 
         private readonly BugFaction faction;
 

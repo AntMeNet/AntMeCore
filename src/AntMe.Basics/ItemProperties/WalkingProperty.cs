@@ -1,20 +1,22 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace AntMe.ItemProperties.Basics
 {
     /// <summary>
-    ///     Eigenschaft für eigenstädig laufenden Elemente.
+    /// Property for all walking Elements.
     /// </summary>
     public sealed class WalkingProperty : ItemProperty
     {
-        private Angle _direction;
-        private float _maxSpeed;
-        private float _speed;
+        private Angle direction;
+        private float maxSpeed;
+        private float speed;
 
+        /// <summary>
+        /// Creates a new Instance of a Walking Property.
+        /// </summary>
+        /// <param name="item">Reference to the related Item</param>
         public WalkingProperty(Item item) : base(item)
         {
-            // MaximumSpeed = maxSpeed;
             Direction = Angle.Right;
             Speed = 0f;
         }
@@ -22,66 +24,51 @@ namespace AntMe.ItemProperties.Basics
         #region Properties
 
         /// <summary>
-        ///     Gibt die gewünschte Bewegungsrichtung an. Dieser Wert kann
-        ///     gewaltsam von der Engine geändert werden, falls das
-        ///     Spielelement gegen eine reflektierende Wand läuft.
+        /// Gets or sets the Walking Direction.
         /// </summary>
-        [DisplayName("Direction")]
-        [Description("")]
         public Angle Direction
         {
-            get { return _direction; }
+            get { return direction; }
             set
             {
-                _direction = value;
+                direction = value;
                 if (OnMoveDirectionChanged != null)
-                    OnMoveDirectionChanged(Item, _direction);
+                    OnMoveDirectionChanged(Item, direction);
             }
         }
 
         /// <summary>
-        ///     Gibt die Bewegungsgeschwindigkeit des Elementes zurück. Dabei
-        ///     handelt es sich um die Basisgeschwindigkeit. Die Engine rechnet
-        ///     anschließend noch die Modifikatoren der Map hinzu. Ein Malus
-        ///     durch Last muss vom Spielelement behandelt werden.
+        /// Gets or sets the current Walking Speed limited by the current Max Speed.
         /// </summary>
-        [DisplayName("Speed")]
-        [Description("")]
         public float Speed
         {
-            get { return _speed; }
+            get { return speed; }
             set
             {
-                _speed = Math.Max(value, 0f);
+                speed = Math.Max(value, 0f);
                 if (OnMoveSpeedChanged != null)
-                    OnMoveSpeedChanged(Item, _speed);
+                    OnMoveSpeedChanged(Item, speed);
             }
         }
 
         /// <summary>
-        ///     Gibt die maximale Bewegungsgeschwindigkeit des Elementes im Lauf-Modus zurück.
+        /// Gets or sets the maximum Speed.
         /// </summary>
-        [DisplayName("Maximum Speed")]
-        [Description("")]
         public float MaximumSpeed
         {
-            get { return _maxSpeed; }
+            get { return maxSpeed; }
             set
             {
-                _maxSpeed = Math.Max(value, 0f);
+                maxSpeed = Math.Max(value, 0f);
                 if (OnMaximumMoveSpeedChanged != null)
-                    OnMaximumMoveSpeedChanged(Item, _maxSpeed);
+                    OnMaximumMoveSpeedChanged(Item, maxSpeed);
             }
         }
 
 
         /// <summary>
-        ///     Kann von anderen Extensions verwendet werden, um einen Malus auf
-        ///     die Bewegungsgeschwindigkeit anzuwenden. Der Standard-Wert ist 1f.
-        ///     Eine Extension, die die Geschwindigkeit der Einheit halbieren
-        ///     will, multipliziert diesen Wert in jeder Runde mit 0.5f.
+        /// Sets the current Speed Multiplier.
         /// </summary>
-        [Browsable(false)]
         public float MoveMalus { get; set; }
 
         #endregion
@@ -89,9 +76,9 @@ namespace AntMe.ItemProperties.Basics
         #region Internal Calls
 
         /// <summary>
-        ///     Interner Aufruf beim Auftreffen auf eine Wand.
+        /// Internal Call for hitting a Wall.
         /// </summary>
-        /// <param name="direction">Richtung der Wand</param>
+        /// <param name="direction">Direction</param>
         internal void HitWall(Compass direction)
         {
             if (OnHitWall != null)
@@ -99,9 +86,9 @@ namespace AntMe.ItemProperties.Basics
         }
 
         /// <summary>
-        ///     Interner Aufruf beim Auftreffen an den Rand der Welt.
+        /// Internal Call for hitting the Map Border.
         /// </summary>
-        /// <param name="direction">Richtung der Wand</param>
+        /// <param name="direction">Direction</param>
         internal void HitBorder(Compass direction)
         {
             if (OnHitBorder != null)
@@ -113,29 +100,27 @@ namespace AntMe.ItemProperties.Basics
         #region Events
 
         /// <summary>
-        ///     Event, das beim Richtungswechsel geworfen werden muss.
+        /// Event for a Direction Change.
         /// </summary>
         public event ValueChanged<Angle> OnMoveDirectionChanged;
 
         /// <summary>
-        ///     Event, das beim Geschwindigkeitswechsel geworfen werden muss.
+        /// Event for Speed Change.
         /// </summary>
         public event ValueChanged<float> OnMoveSpeedChanged;
 
         /// <summary>
-        ///     Event, das beim Wechsel der Maximalgeschwindigkeit geworfen werden muss.
+        /// Event for Maximum Speed Change.
         /// </summary>
         public event ValueChanged<float> OnMaximumMoveSpeedChanged;
 
         /// <summary>
-        ///     Event, das aufgerufen wird, wenn das Item an den Rand der Welt
-        ///     stößt.
+        /// Event for hitting the Map Border.
         /// </summary>
         public event ValueChanged<Compass> OnHitBorder;
 
         /// <summary>
-        ///     Event wird aufgerufen, wenn das Item an eine unüberwindbare
-        ///     Zellengrenze anstößt.
+        /// Event for hitting a Wall.
         /// </summary>
         public event ValueChanged<Compass> OnHitWall;
 

@@ -3,50 +3,48 @@ using System;
 
 namespace AntMe.Items.Basics
 {
+    /// <summary>
+    /// Represents a Ant Marker.
+    /// </summary>
     public class MarkerItem : FactionItem
     {
-        public const float MARKER_MINIMUM_RADIUS = 20f;
-        public const float MARKER_MAXIMUM_RADIUS = 200f;
-        public const float MARKER_VOLUME = 2000f;
+        private readonly SmellableProperty smellable;
 
-        private SmellableProperty _smellable;
+        private readonly float step;
 
-        private readonly float _step;
+        private readonly float minRadius;
 
         public MarkerItem(SimulationContext context, Faction faction, Vector2 position, float radius, int information)
             : base(context, faction, position, radius, Angle.Right)
         {
             Information = information;
 
-            _smellable = GetProperty<SmellableProperty>();
+            smellable = GetProperty<SmellableProperty>();
+            if (smellable == null)
+                throw new NotSupportedException("Marker has no Smellable Property");
 
-            float finalRadius = Math.Max(MARKER_MINIMUM_RADIUS, Math.Min(MARKER_MAXIMUM_RADIUS, radius));
-            TotalAge = (int)(MARKER_VOLUME / finalRadius);
-            _step = (finalRadius - MARKER_MINIMUM_RADIUS) / TotalAge;
+            minRadius = Settings.GetFloat<MarkerItem>("MinRadius").Value;
+            float maxRadius = Settings.GetFloat<MarkerItem>("MaxRadius").Value;
+            float volume = Settings.GetFloat<MarkerItem>("Volume").Value;
+
+            float finalRadius = Math.Max(minRadius, Math.Min(maxRadius, radius));
+            TotalAge = (int)(volume / finalRadius);
+            step = (finalRadius - minRadius) / TotalAge;
             CurrentAge = 0;
         }
 
         /// <summary>
-        /// Gibt das maximale alter dieser Markierung in Runden zurück.
+        /// Returns the total Age of this Marker.
         /// </summary>
         public int TotalAge { get; private set; }
 
         /// <summary>
-        /// Gibt das aktuelle Alter der Markierung in Runden zurück.
+        /// Returns the current Age of this Marker.
         /// </summary>
         public int CurrentAge { get; private set; }
 
         /// <summary>
-        ///     Gibt den aktuellen Radius dieser Markierung zurück.
-        /// </summary>
-        public new float Radius
-        {
-            get { return _smellable.SmellableRadius; }
-            private set { _smellable.SmellableRadius = value; }
-        }
-
-        /// <summary>
-        ///     Gibt die enthaltene Information dieser Markierung zurück.
+        /// Gets the Marker Information.
         /// </summary>
         public int Information { get; private set; }
 
@@ -54,7 +52,7 @@ namespace AntMe.Items.Basics
         {
             // Marker vergrößern
             CurrentAge++;
-            Radius = MARKER_MINIMUM_RADIUS + (CurrentAge * _step);
+            Radius = minRadius + (CurrentAge * step);
 
             // Marker entfernen
             if (CurrentAge >= TotalAge)
