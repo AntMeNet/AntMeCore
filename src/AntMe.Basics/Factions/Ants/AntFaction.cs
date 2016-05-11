@@ -7,42 +7,53 @@ using System.Linq;
 
 namespace AntMe.Factions.Ants
 {
+    /// <summary>
+    /// Faction for Ants.
+    /// </summary>
     public sealed class AntFaction : Faction
     {
-        private readonly Dictionary<int, AnthillItem> _antHills = new Dictionary<int, AnthillItem>();
-        private readonly Type _colonyType;
-        private readonly string[] _names;
+        private readonly Dictionary<int, AnthillItem> antHills = new Dictionary<int, AnthillItem>();
+        private readonly string[] names;
 
-        private readonly Random _random = new Random();
         private readonly AntFactionState _state = new AntFactionState();
         private int _antRespawnDelay;
         private int totalAntCount = 0;
 
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="context">Simulation Context</param>
+        /// <param name="factoryType">Type of the Player Factory</param>
+        /// <param name="level">Reference to the Level</param>
         public AntFaction(SimulationContext context, Type factoryType, Level level)
             : base(context, factoryType, level)
         {
             // TODO: Check Factory Type?
 
-            _names = AntGeneratorFiles.femaleNames.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            // Load all possible Ant Names
+            names = AntGeneratorFiles.femaleNames.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        /// <summary>
+        /// Initialize a Faction.
+        /// </summary>
         protected override void OnInit()
         {
             Level.Engine.OnRemoveItem += Level_RemovedItem;
 
             // Ameisenhügel erstellen und platzieren
-            if (Settings.GetBool<AntFaction>("InitialAntHill") ?? false)
+            if (Settings.GetBool<AntFaction>("InitialAntHill").Value)
                 CreateAntHill(Home);
 
             // Erste Gruppe Ameisen erstellen
-            for (var i = 0; i < Settings.GetInt<AntFaction>("AntCount"); i++)
+            for (var i = 0; i < Settings.GetInt<AntFaction>("InitialAntCount").Value; i++)
                 CreateAnt();
         }
 
         private void Level_RemovedItem(Item item)
         {
-            if (UnitInterops.ContainsKey(item.Id))
-                UnitInterops.Remove(item.Id);
+            if (UnitInterops.ContainsKey(item))
+                UnitInterops.Remove(item);
         }
 
         protected override void OnUpdate(int round)
@@ -52,18 +63,18 @@ namespace AntMe.Factions.Ants
             // - die Anzahl gleichzeitiger Ameisen muss kleiner dem maximalwert sein
             // - die Anzahl ingesamt erstellter Ameisen muss kleiner als der maximalwert sein
             if (_antRespawnDelay-- <= 0 &&
-                UnitInterops.Count < Settings.GetInt<AntFaction>("AntMaxConcurrentCount") &&
-                totalAntCount < Settings.GetInt<AntFaction>("AntMaxTotalCount"))
+                UnitInterops.Count < Settings.GetInt<AntFaction>("ConcurrentAntCount").Value &&
+                totalAntCount < Settings.GetInt<AntFaction>("TotalAntCount").Value)
             {
                 CreateAnt();
             }
 
             // Neuer Punktestand berechnen
             Points = 0;
-            foreach (var anthill in _antHills.Values)
+            foreach (var anthill in antHills.Values)
             {
-                Points += anthill.AppleAmount;
-                Points += anthill.SugarAmount;
+                //Points += anthill.AppleAmount;
+                //Points += anthill.SugarAmount;
             }
         }
 
@@ -71,7 +82,7 @@ namespace AntMe.Factions.Ants
         {
             var hill = new AnthillItem(Context, this, position);
             Level.Engine.InsertItem(hill);
-            _antHills.Add(hill.Id, hill);
+            antHills.Add(hill.Id, hill);
         }
 
         private void CreateAnt()
@@ -80,7 +91,7 @@ namespace AntMe.Factions.Ants
             // auch bestimmen, in welchem Ameisenhügel die Ameise erscheint.
             float range = 10f;
             Vector2 position = Home +
-                               new Vector2(range * (float)_random.NextDouble(), range * (float)_random.NextDouble()) -
+                               new Vector2(range * (float)Random.NextDouble(), range * (float)Random.NextDouble()) -
                                new Vector2(5, 5);
 
             // Type anfragen
@@ -134,16 +145,16 @@ namespace AntMe.Factions.Ants
             }
 
             // Namen erzeugen
-            string name = _names[_random.Next(0, _names.Length - 1)];
+            string name = names[Random.Next(0, names.Length - 1)];
 
             // AntItem erstellen
             AntUnit antUnit = (AntUnit)Activator.CreateInstance(antType);
-            AntItem antItem = new AntItem(Context, this, position, Angle.FromDegree(_random.Next(0, 359)), name);
-            AntUnitInterop unitInterop = Context.Resolver.CreateUnitInterop(this) as AntUnitInterop;
+            AntItem antItem = new AntItem(Context, this, position, Angle.FromDegree(Random.Next(0, 359)), name);
+            AntUnitInterop unitInterop = Context.Resolver.CreateUnitInterop(this, antItem) as AntUnitInterop;
             antUnit.Init(unitInterop);
 
             Level.Engine.InsertItem(antItem);
-            UnitInterops.Add(antItem.Id, new FactionUnitInteropGroup()
+            UnitInterops.Add(antItem, new FactionUnitInteropGroup()
             {
                 Item = antItem,
                 Interop = unitInterop,
@@ -155,7 +166,7 @@ namespace AntMe.Factions.Ants
 
 
             // Stats
-            _antRespawnDelay = Settings.GetInt<AntFaction>("AntRespawnDelay") ?? 0;
+            _antRespawnDelay = Settings.GetInt<AntFaction>("AntRespawnDelay").Value;
         }
 
         /// <summary>
@@ -166,7 +177,7 @@ namespace AntMe.Factions.Ants
         /// <returns>Instanz des nächstgelegenen Ameisenbaus</returns>
         public AnthillInfo GetClosestAnthill(AntItem item)
         {
-            return _antHills.Values.
+            return antHills.Values.
                 Select(anthill => anthill.GetItemInfo(item) as AnthillInfo).
                 OrderBy(i => i.Distance).
                 FirstOrDefault();

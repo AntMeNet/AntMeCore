@@ -1863,10 +1863,44 @@ namespace AntMe.Runtime
         /// Erzeugt eine neue Instanz eines passenden Unit Interop.
         /// </summary>
         /// <param name="faction"></param>
+        /// <param name="item"></param>
         /// <returns></returns>
-        public UnitInterop CreateUnitInterop(Faction faction)
+        public UnitInterop CreateUnitInterop(Faction faction, FactionItem item)
         {
-            throw new NotImplementedException();
+            if (faction == null)
+                throw new ArgumentNullException("faction");
+
+            // Search for the related Faction Definition
+            var factionDefintion = factions.FirstOrDefault(f => f.Type == faction.GetType());
+            if (factionDefintion == null)
+                throw new ArgumentException("Faction is not registered");
+
+            // Creates a new Instance of the registered Interop Type
+            UnitInterop result = Activator.CreateInstance(factionDefintion.UnitInteropType, faction, item) as UnitInterop;
+            if (result == null)
+                throw new Exception("Error during Factory Interop Creation.");
+
+            // Creates all Attachment Properties for the selected Interop Type
+            foreach (var attachment in unitInteropAttachments.Where(a => a.Type == result.GetType()))
+            {
+                UnitInteropProperty property = null;
+                if (attachment.CreateDelegate != null)
+                    property = attachment.CreateDelegate(result);
+                else
+                {
+                    property = Activator.CreateInstance(attachment.AttachmentType, faction, item, result) as UnitInteropProperty;
+                    if (property == null)
+                        throw new Exception("Error during Factory Interop Property Creation.");
+                }
+            }
+
+            // Execute all Extender for the selected Interop Type.
+            foreach (var extender in unitInteropExtender.Where(e => e.Type == result.GetType()).OrderBy(e => e.Rank))
+            {
+                extender.ExtenderDelegate(result);
+            }
+
+            return result;
         }
 
         #endregion

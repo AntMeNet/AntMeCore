@@ -14,7 +14,7 @@ namespace AntMe.Extension.Community.Players
 
         private Type AntInterop_OnCreateMember()
         {
-            throw new NotImplementedException();
+            return typeof(DefaultAnt);
         }
     }
 }

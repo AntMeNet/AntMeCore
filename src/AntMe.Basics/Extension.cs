@@ -52,7 +52,13 @@ namespace AntMe.Extension.Basics
             // ##########################
 
             // Basics
+            settings.Apply<AntFaction>("InitialAntHill", true, "Enables the creation of a initial Anthill");
+            settings.Apply<AntFaction>("InitialAntCount", 0, "Number of initial Ants");
+            settings.Apply<AntFaction>("ConcurrentAntCount", 100, "Number of concurrent Ants");
+            settings.Apply<AntFaction>("TotalAntCount", int.MaxValue, "Total Number of Ants per Simulation");
+            settings.Apply<AntFaction>("AntRespawnDelay", 1, "Number of Rounds until another Respawn");
             typeMapper.RegisterFaction<AntFaction, AntFactionState, FactionInfo, AntFactory, AntFactoryInterop, AntUnit, AntUnitInterop>(this, "Ants");
+
             typeMapper.RegisterFaction<BugFaction, BugFactionState, FactionInfo, BugFactory, BugFactoryInterop, BugUnit, BugUnitInterop>(this, "Bugs");
 
             // Faction Extensions

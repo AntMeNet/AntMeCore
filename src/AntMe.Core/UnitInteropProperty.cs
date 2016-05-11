@@ -9,12 +9,12 @@ namespace AntMe
     {
         protected readonly Faction Faction;
 
-        protected readonly FactionItem Item;
+        protected readonly UnitInterop Interop;
 
-        public UnitInteropProperty(Faction faction, FactionItem item)
+        public UnitInteropProperty(Faction faction, UnitInterop interop)
         {
             Faction = faction;
-            Item = item;
+            Interop = Interop;
         }
     }
 }

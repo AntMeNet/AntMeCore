@@ -90,8 +90,9 @@ namespace AntMe
         /// Erzeugt eine neue Instanz eines passenden Unit Interop.
         /// </summary>
         /// <param name="faction"></param>
+        /// <param name="item"></param>
         /// <returns></returns>
-        UnitInterop CreateUnitInterop(Faction faction);
+        UnitInterop CreateUnitInterop(Faction faction, FactionItem item);
 
         #endregion
 

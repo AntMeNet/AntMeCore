@@ -25,7 +25,7 @@ namespace AntMe
         protected Faction(SimulationContext context, Type factoryType, Level level)
         {
             Context = context;
-            UnitInterops = new Dictionary<int, FactionUnitInteropGroup>();
+            UnitInterops = new Dictionary<Item, FactionUnitInteropGroup>();
             Level = level;
             this.factoryType = factoryType;
 
@@ -97,7 +97,7 @@ namespace AntMe
         /// <summary>
         /// Liste der Unit/Interop/Item Bindung auf Basis der Item-Id.
         /// </summary>
-        public Dictionary<int, FactionUnitInteropGroup> UnitInterops { get; private set; }
+        public Dictionary<Item, FactionUnitInteropGroup> UnitInterops { get; private set; }
 
         /// <summary>
         ///     Methode wird vom Level zur Initialisierung der Fraktion aufgerufen.

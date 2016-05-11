@@ -7,7 +7,7 @@ namespace AntMe.Extension.Community.Players
     {
         public override void Init(UnitInterop interop)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

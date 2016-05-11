@@ -14,77 +14,21 @@ namespace AntMe.Items.Basics
         /// </summary>
         public const float HillRadius = 20f;
 
-        private readonly SugarCollectableProperty _sugar;
-        private readonly AppleCollectableProperty _apple;
-        private readonly AttackableProperty _attackable;
-
         public AnthillItem(SimulationContext context, AntFaction faction, Vector2 position)
             : base(context, faction, position, HillRadius, Angle.Right)
         {
             AntFactionSettings settings = new AntFactionSettings();
 
-            #region Property
-
-            var collidable = new CollidableProperty(this, HillRadius);
-            AddProperty(collidable);
-
-            if (settings.AntHillDestructable)
+            var attackable = new AttackableProperty(this);
+            if (attackable != null)
             {
-                _attackable = new AttackableProperty(this);
-                AddProperty(_attackable);
-            }
-
-            _sugar = new SugarCollectableProperty(this);
-            _apple = new AppleCollectableProperty(this);
-            var collectable = new CollectableProperty(this);
-            AddProperty(collectable);
-            AddProperty(_sugar);
-            AddProperty(_apple);
-
-            var visible = new VisibleProperty(this);
-            AddProperty(visible);
-
-            #endregion
-
-            #region Todesbedingung
-
-            if (settings.AntHillDestructable && _attackable != null)
-            {
-                _attackable.OnAttackableHealthChanged += (item, value) =>
+                attackable.OnAttackableHealthChanged += (item, value) =>
                 {
                     // Sollten die Hitpoints unter 0 kommen, ist der Ameisenhügel zerstört
                     if (value <= 0)
                         Engine.RemoveItem(this);
                 };
             }
-
-            #endregion
         }
-
-        /// <summary>
-        /// Liefert den aktuellen Zuckerstand dieses Ameisenhügels zurück.
-        /// </summary>
-        public int SugarAmount {
-            get { return _sugar.Amount; }
-        }
-
-        /// <summary>
-        /// Liefert den aktuellen Apfelstand dieses Ameisenhügels zurück.
-        /// </summary>
-        public int AppleAmount {
-            get { return _apple.Amount; }
-        }
-
-        /// <summary>
-        /// Gibt den aktuellen Gesundheitszustand des Ameisenhügels zurück.
-        /// </summary>
-        public int Hitpoints {
-            get { return _attackable != null ? _attackable.AttackableHealth : 0; }
-        }
-
-        /// <summary>
-        /// Gibt den maximalen Gesundheitszustand des Ameisenhügels zurück.
-        /// </summary>
-        public int MaximumHitpoints { get { return _attackable != null ? _attackable.AttackableMaximumHealth : 0; } }
     }
 }

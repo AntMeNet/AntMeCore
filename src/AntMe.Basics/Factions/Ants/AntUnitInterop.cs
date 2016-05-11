@@ -13,9 +13,9 @@ namespace AntMe.Factions.Ants
         public AntUnitInterop(AntFaction faction, AntItem item) : base(faction, item)
         {
             // Feste Properties
-            AddProperty(new PhysicsInterop(item));
-            AddProperty(new InteractionInterop(item));
-            AddProperty(new RecognitionInterop(item));
+            //AddProperty(new PhysicsInterop(item));
+            //AddProperty(new InteractionInterop(item));
+            //AddProperty(new RecognitionInterop(item));
         }
 
         /// <summary>

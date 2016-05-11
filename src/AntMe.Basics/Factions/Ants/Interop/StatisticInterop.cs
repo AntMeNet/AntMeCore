@@ -112,7 +112,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
 
         #endregion
 
-        public StatisticInterop(Faction faction, FactoryInterop interop) : base(faction, interop)
+        public StatisticInterop(Faction faction, FactionItem item, FactoryInterop interop) : base(faction, item, interop)
         {
             RecentCenturies = RECENT_CENTURIES_DEFAULT;
 

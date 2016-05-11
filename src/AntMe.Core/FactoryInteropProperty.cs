@@ -6,12 +6,17 @@
     public abstract class FactoryInteropProperty : InteropProperty
     {
         /// <summary>
-        /// Referenz auf die zugehörige Faction.
+        /// Related Faction.
         /// </summary>
         protected readonly Faction Faction;
 
         /// <summary>
-        /// Referenz auf das zugehörige Interop Objekt.
+        /// Related Game Item.
+        /// </summary>
+        protected readonly FactionItem Item;
+
+        /// <summary>
+        /// Basic Interop.
         /// </summary>
         protected readonly FactoryInterop Interop;
 
@@ -19,10 +24,12 @@
         /// Konstruktor des Factory Interop Properties.
         /// </summary>
         /// <param name="faction">Referenz auf die Faction.</param>
+        /// <param name="item"></param>
         /// <param name="interop">Referenz auf das Interop.</param>
-        public FactoryInteropProperty(Faction faction, FactoryInterop interop)
+        public FactoryInteropProperty(Faction faction, FactionItem item, FactoryInterop interop)
         {
             Faction = faction;
+            Item = item;
             Interop = interop;
         }
     }
