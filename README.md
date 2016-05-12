@@ -1,5 +1,7 @@
 # AntMeCore
 
+[![Build Status](https://travis-ci.org/AntMeNet/AntMeCore.svg?branch=master)](https://travis-ci.org/AntMeNet/AntMeCore)
+
 This repository includes the whole simulation/backend Part of the AntMe! Engine and the AntMe! Simulation Calculation.
 
 ##AntMe!
