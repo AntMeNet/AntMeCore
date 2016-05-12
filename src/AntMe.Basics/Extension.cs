@@ -12,14 +12,31 @@ namespace AntMe.Extension.Basics
     /// </summary>
     public sealed class Extension : IExtensionPack
     {
+        /// <summary>
+        /// Name of the Author.
+        /// </summary>
         public string Author { get { return "Tom Wendel @ AntMe! GmbH"; } }
 
+        /// <summary>
+        /// Short description of this Extension.
+        /// </summary>
         public string Description { get { return "Basic Extension with all the Core AntMe! Elements."; } }
 
+        /// <summary>
+        /// Name of this Extension.
+        /// </summary>
         public string Name { get { return "AntMe! Basics"; } }
 
+        /// <summary>
+        /// Extension Version.
+        /// </summary>
         public Version Version { get { return new Version(2, 0); } }
 
+        /// <summary>
+        /// Startup Delegate to register all Types and Settings.
+        /// </summary>
+        /// <param name="typeMapper">Reference to the Type Mapper</param>
+        /// <param name="settings">Reference to the Extension Settings</param>
         public void Load(ITypeMapper typeMapper, Settings settings)
         {
             // ##########################
@@ -474,9 +491,9 @@ namespace AntMe.Extension.Basics
             });
 
             // Attacker
-            settings.Apply<ClassicBugItem>("AttackRange", 5f, "Attack Range for a Bug");
-            settings.Apply<ClassicBugItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Bug");
-            settings.Apply<ClassicBugItem>("AttackStrength", 10, "Attach Strength for a Bug");
+            settings.Apply<ClassicBugItem>("AttackRange", 5f, "Attack Range for a Classic Bug");
+            settings.Apply<ClassicBugItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Classic Bug");
+            settings.Apply<ClassicBugItem>("AttackStrength", 10, "Attach Strength for a Classic Bug");
             typeMapper.AttachItemProperty<ClassicBugItem, AttackerProperty>(this, "Classic Bug Attacker", (i) =>
             {
                 AttackerProperty property = new AttackerProperty(i);

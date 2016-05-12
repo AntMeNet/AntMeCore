@@ -5,59 +5,55 @@ using System.IO;
 namespace AntMe
 {
     /// <summary>
-    ///     Basisklasse für die Übertragung eines beliebigen Item States. Für die
-    ///     Übertragung von fraktionsbezogenen Items bitte FactionItemState verwenden.
+    /// Base Class for all Item States.
     /// </summary>
     public class ItemState : PropertyList<StateProperty>, ISerializableState
     {
         /// <summary>
-        ///     Gibt die Id des Spielelements an oder legt diese fest.
+        /// Item Id.
         /// </summary>
         [DisplayName("ID")]
-        [Description("")]
+        [Description("Id of this Item")]
         [ReadOnly(true)]
         [Category("Static")]
         public int Id { get; set; }
 
         /// <summary>
-        ///     Gibt die absolute Position des Spielelements an oder legt diese fest.
+        /// Item Position.
         /// </summary>
         [DisplayName("Position")]
-        [Description("")]
+        [Description("Item Position")]
         [ReadOnly(true)]
         [Category("Dynamic")]
         public Vector3 Position { get; set; }
 
         /// <summary>
-        /// Gibt den Radius eines Spielelements an oder liegt diesen fest.
+        /// Item Radius.
         /// </summary>
         [DisplayName("Radius")]
-        [Description("")]
+        [Description("Item Radius")]
         [ReadOnly(true)]
         [Category("Dynamic")]
         public float Radius { get; set; }
 
         /// <summary>
-        /// Gibt die Blickrichtung des Spielelementes an.
+        /// Item Orientation.
         /// </summary>
         [DisplayName("Orientation")]
-        [Description("")]
+        [Description("Item Orientation")]
         [ReadOnly(true)]
         [Category("Dynamic")]
         public short Orientation { get; set; }
 
         /// <summary>
-        /// Itemlose Instanz (Client)
+        /// Default Constructor for the Deserializer.
         /// </summary>
-        public ItemState()
-        {
-
-        }
+        public ItemState() { }
 
         /// <summary>
-        /// Itembezogene Instanz (Server)
+        /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">Reference to the related Engine Item</param>
         public ItemState(Item item)
         {
             if (item == null)
@@ -74,9 +70,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Methode, die beim ersten Serialisieren dieser Instanz aufgerufen wird. 
-        /// Dieser Call kann auch lange nach der Erstellung passieren, wenn 
-        /// beispielsweise neue Zuschauer die States beobachten wollen.
+        /// Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -87,18 +81,10 @@ namespace AntMe
             stream.Write(Position.Z);
             stream.Write(Radius);
             stream.Write(Orientation);
-
-            // Properties
-            foreach (var property in Properties)
-                property.SerializeFirst(stream, version);
         }
 
         /// <summary>
-        /// Methode, die beim erneuten Serialisieren dieser Instanz aufgerufen 
-        /// wird. Hier müssen nur noch veränderbare Daten geschickt werden. Dieser 
-        /// Call muss nicht zwangsläufig in jedem Frame stattfinden, wird aber 
-        /// ganz sicher immer vom selben Client abgerufen - es können also diffs 
-        /// gesendet werden.
+        /// Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -109,16 +95,10 @@ namespace AntMe
             stream.Write(Position.Z);
             stream.Write(Radius);
             stream.Write(Orientation);
-
-            // Properties
-            foreach (var property in Properties)
-                property.SerializeUpdate(stream, version);
         }
 
         /// <summary>
-        /// Methode, die beim ersten Erstellen aus einem Stream heraus aufgerufen 
-        /// wird. dieser Call sollte alle Grundinformationen des States herstellen 
-        /// und muss nicht dem State des ersten Frames entsprechen.
+        /// Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -130,15 +110,10 @@ namespace AntMe
                 stream.ReadSingle());
             Radius = stream.ReadSingle();
             Orientation = stream.ReadInt16();
-
-            // Properties
-            foreach (var property in Properties)
-                property.DeserializeFirst(stream, version);
         }
 
         /// <summary>
-        /// Methode, die bei einem Folgeframe aufgerufen wird, nachdem der 
-        /// State bereits initialisiert wurde.
+        /// Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -150,16 +125,12 @@ namespace AntMe
                 stream.ReadSingle());
             Radius = stream.ReadSingle();
             Orientation = stream.ReadInt16();
-
-            // Properties
-            foreach (var property in Properties)
-                property.DeserializeUpdate(stream, version);
         }
 
         /// <summary>
-        /// Liefert einen spechenden Namen für den ItemState (Name des Types) zurück.
+        /// Returns a representive String for this State.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>State Description</returns>
         public override string ToString()
         {
             return string.Format("{0} ({1})", GetType().Name, Id);

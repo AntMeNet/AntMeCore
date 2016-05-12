@@ -1,52 +1,61 @@
-﻿using System.ComponentModel;
-using System.IO;
+﻿using System.IO;
 
 namespace AntMe.Items.Basics
 {
+    /// <summary>
+    /// State for Sugar.
+    /// </summary>
     public sealed class SugarState : ItemState
     {
+        /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
         public SugarState() : base() { }
 
-        public SugarState(SugarItem item) : base(item)
-        {
-        }
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="item">Related Engine Item</param>
+        public SugarState(SugarItem item) : base(item) { }
 
         /// <summary>
-        /// Gibt die Menge an Zucker an oder legt diese fest.
+        /// Serializes the first Frame of this State.
         /// </summary>
-        [DisplayName("Amount")]
-        [Description("")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public int Amount { get; set; }
-
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void SerializeFirst(BinaryWriter stream, byte version)
         {
             base.SerializeFirst(stream, version);
-            stream.Write(Amount);
         }
 
+        /// <summary>
+        /// Serializes following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void SerializeUpdate(BinaryWriter stream, byte version)
         {
             base.SerializeUpdate(stream, version);
-            stream.Write(Amount);
         }
 
+        /// <summary>
+        /// Deserializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void DeserializeFirst(BinaryReader stream, byte version)
         {
             base.DeserializeFirst(stream, version);
-            Amount = stream.ReadInt32();
         }
 
+        /// <summary>
+        /// Deserializes all following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void DeserializeUpdate(BinaryReader stream, byte version)
         {
             base.DeserializeUpdate(stream, version);
-            Amount = stream.ReadInt32();
-        }
-
-        public override string ToString()
-        {
-            return "Sugar (" + Id + ")";
         }
     }
 }

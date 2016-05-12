@@ -6,55 +6,57 @@ using System.IO;
 namespace AntMe
 {
     /// <summary>
-    ///     Root Klasse für die Erstellung eines AntMe! Level States. Durch Vererbung
-    ///     können Map Packs weitere Informationen hier unterbringen.
+    /// Root Element for the State Tree, the Level State.
     /// </summary>
     public sealed class LevelState : PropertyList<LevelStateProperty>, ISerializableState
     {
         /// <summary>
-        ///     Gibt den Zeitpunkt der Erstellung an oder legt dieses fest.
+        /// Original Create Date for this Frame.
         /// </summary>
         [DisplayName("Create Date")]
-        [Description("")]
+        [Description("Original Create Date for this Frame.")]
         [ReadOnly(true)]
         [Category("Dynamic")]
         public DateTimeOffset Date { get; set; }
 
         /// <summary>
-        ///     Liefert eine Liste der beteiligten Fraktionen oder legt diese fest.
+        /// List of all Factions.
         /// </summary>
+        [Browsable(false)]
         public IList<FactionState> Factions;
 
         /// <summary>
-        ///     Liefert eine Liste der beteiligten Spiel-Elemente oder legt diese fest.
+        /// List of all Items.
         /// </summary>
+        [Browsable(false)]
         public IList<ItemState> Items;
 
         /// <summary>
-        ///     Gibt Map Informationen oder legt diese fest.
+        /// Map State.
         /// </summary>
+        [Browsable(false)]
         public MapState Map;
 
         /// <summary>
-        ///     Gibt den Modus des Spiels an.
+        /// Game Mode for this State.
         /// </summary>
         [DisplayName("State")]
-        [Description("")]
+        [Description("Game Mode for this State")]
         [ReadOnly(true)]
         [Category("Dynamic")]
         public LevelMode Mode { get; set; }
 
         /// <summary>
-        ///     Gibt die aktuelle Runde an oder legt diese fest.
+        /// Current Round.
         /// </summary>
         [DisplayName("Round")]
-        [Description("")]
+        [Description("Current Round")]
         [ReadOnly(true)]
         [Category("Dynamic")]
         public int Round { get; set; }
 
         /// <summary>
-        /// Parameterloser Konstruktor für den Deserializer.
+        /// Default Constructor for the Deserializer.
         /// </summary>
         public LevelState()
         {
@@ -68,9 +70,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Methode, die beim ersten Serialisieren dieser Instanz aufgerufen wird. 
-        /// Dieser Call kann auch lange nach der Erstellung passieren, wenn 
-        /// beispielsweise neue Zuschauer die States beobachten wollen.
+        /// Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -82,11 +82,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Methode, die beim erneuten Serialisieren dieser Instanz aufgerufen 
-        /// wird. Hier müssen nur noch veränderbare Daten geschickt werden. Dieser 
-        /// Call muss nicht zwangsläufig in jedem Frame stattfinden, wird aber 
-        /// ganz sicher immer vom selben Client abgerufen - es können also diffs 
-        /// gesendet werden.
+        /// Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -98,9 +94,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Methode, die beim ersten Erstellen aus einem Stream heraus aufgerufen 
-        /// wird. dieser Call sollte alle Grundinformationen des States herstellen 
-        /// und muss nicht dem State des ersten Frames entsprechen.
+        /// Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -112,8 +106,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Methode, die bei einem Folgeframe aufgerufen wird, nachdem der 
-        /// State bereits initialisiert wurde.
+        /// Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

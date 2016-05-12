@@ -5,30 +5,29 @@ using System.IO;
 namespace AntMe
 {
     /// <summary>
-    ///     Klasse für die Haltung des Map States. Durch Vererbung
-    ///     können Map Packs weitere Informationen hier unterbringen.
+    /// Map State.
     /// </summary>
-    public class MapState : ISerializableState
+    public sealed class MapState : ISerializableState
     {
         /// <summary>
-        /// Gibt an, ob der Rand die Spiel-Elemente blockiert.
+        /// Is Border blocked.
         /// </summary>
         [DisplayName("Border Block")]
-        [Description("")]
+        [Description("Is Border blocked.")]
         [ReadOnly(true)]
         [Category("Static")]
         public bool BlockBorder { get; set; }
 
         /// <summary>
-        /// Gibt die Zelleninformationen in einem 2-dimensionalen Array zurück 
-        /// oder legt diese fest.
+        /// Cell Description for the Map as a 2D Array of Map Tiles.
         /// </summary>
-        public MapTile[,] Tiles;
+        [Browsable(false)]
+        public MapTile[,] Tiles { get; set; }
 
         /// <summary>
-        /// Gibt die Anzahl an Zeilen und Spalten zurück.
+        /// Returns the Cell Count of this Map.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Cell Count</returns>
         public Index2 GetCellCount()
         {
             if (Tiles != null)
@@ -37,9 +36,9 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Berechnet die Gesamtgröße der Karte in Simulationseinheiten.
+        /// Calculcates the real Map Size in World Units.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Size of tha Map in World Units</returns>
         public Vector2 GetSize()
         {
             Index2 cells = GetCellCount();
@@ -47,36 +46,42 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Liefert die Zellenhöhe an der angefragten Position.
+        /// Calculates the Z Coordinate in World Units at the given Position.
         /// </summary>
-        /// <param name="x">X-Koordinate</param>
-        /// <param name="y">Y-Koordinate</param>
-        /// <returns>Höhe der Zelle</returns>
+        /// <param name="x">X Position</param>
+        /// <param name="y">Y Position</param>
+        /// <returns>Z Coordinate</returns>
         public float GetHeight(float x, float y)
         {
             return GetHeight(new Vector2(x, y));
         }
 
         /// <summary>
-        /// Liefert die Zellenhöhe an der angefragten Position.
+        /// Calculates the Z Coordinate in World Units at the given Position.
         /// </summary>
         /// <param name="point">Koordinate</param>
-        /// <returns>Höhe der Zelle</returns>
+        /// <returns>Z Coordinate</returns>
         public float GetHeight(Vector2 point)
         {
-            // Falls keien Map vorhanden ist...
             if (Tiles == null)
-                return 0f;
+                throw new NotSupportedException("Map is not Initialized");
 
+            // Determinate the right Cell
             Index2 cellCount = GetCellCount();
             Index2 cell = Map.GetCellIndex(point, cellCount);
 
+            // Calculate Height based on the Cell Type
             return Map.GetHeight(Tiles[cell.X, cell.Y],
                 new Vector2(
                     point.X - (cell.X * Map.CELLSIZE), 
                     point.Y - (cell.Y * Map.CELLSIZE)));
         }
 
+        /// <summary>
+        /// Serializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
         public void SerializeFirst(BinaryWriter stream, byte version)
         {
             if (Tiles == null)
@@ -95,10 +100,20 @@ namespace AntMe
                 }
         }
 
+        /// <summary>
+        /// Serializes following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
         public void SerializeUpdate(BinaryWriter stream, byte version)
         {
         }
 
+        /// <summary>
+        /// Deserializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
         public void DeserializeFirst(BinaryReader stream, byte version)
         {
             BlockBorder = stream.ReadBoolean();
@@ -118,6 +133,11 @@ namespace AntMe
                 }
         }
 
+        /// <summary>
+        /// Deserializes all following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
         public void DeserializeUpdate(BinaryReader stream, byte version)
         {
         }

@@ -225,7 +225,7 @@ namespace AntMe
                         FactionItemState factionItemState = item as FactionItemState;
                         _writer.Write((byte)SerializerPackage.ItemFactionFirst);
                         _writer.Write(item.Id);
-                        _writer.Write((byte)factionItemState.PlayerIndex);
+                        _writer.Write((byte)factionItemState.SlotIndex);
                     }
                     else
                     {

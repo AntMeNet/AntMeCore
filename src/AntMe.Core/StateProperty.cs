@@ -3,39 +3,46 @@
 namespace AntMe
 {
     /// <summary>
-    /// Basis-Klasse für alle State Properties.
+    /// Base Class for all State Properties.
     /// </summary>
     public abstract class StateProperty : Property, ISerializableState
     {
+        /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
         public StateProperty() { }
 
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="property">Reference to the related Engine Property</param>
         public StateProperty(Property property) { }
 
         /// <summary>
-        /// Serializer-Methode für das erste Vorkommen dieser Instanz.
+        /// Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
         public abstract void SerializeFirst(BinaryWriter stream, byte version);
 
         /// <summary>
-        /// Serializer-Methode für das erneute Vorkommen dieser Instanz.
+        /// Serializes following Frames of this State.
         /// </summary>
-        /// <param name="stream">Output-Stream</param>
+        /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
         public abstract void SerializeUpdate(BinaryWriter stream, byte version);
 
         /// <summary>
-        /// Deserializer-Methode für das erste Vorkommen dieser Instanz.
+        /// Deserializes the first Frame of this State.
         /// </summary>
-        /// <param name="stream">Input-Stream</param>
+        /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
         public abstract void DeserializeFirst(BinaryReader stream, byte version);
 
         /// <summary>
-        /// Deserializer-Methode für das erneute Vorkommen dieser Instanz.
+        /// Deserializes all following Frames of this State.
         /// </summary>
-        /// <param name="stream">Input-Stream</param>
+        /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
         public abstract void DeserializeUpdate(BinaryReader stream, byte version);
     }

@@ -1,5 +1,4 @@
-﻿using AntMe.ItemProperties.Basics;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace AntMe.ItemProperties.Basics
 {

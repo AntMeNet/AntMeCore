@@ -1,19 +1,20 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Basis-Klasse für alle Item State Properties.
+    /// Base Class for all Item State Properties.
     /// </summary>
     public abstract class ItemStateProperty : StateProperty
     {
         /// <summary>
-        /// Parameterloser Konstruktor für den Deserializer.
+        /// Default Constructor for the Deserializer.
         /// </summary>
         public ItemStateProperty() : base() { }
 
         /// <summary>
-        /// Standard-Konstruktor.
+        /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="property">Referenz auf das zugehörige Item Property.</param>
+        /// <param name="item">Related Engine Item</param>
+        /// <param name="property">Related Engine Property</param>
         public ItemStateProperty(Item item, ItemProperty property) : base(property) { }
     }
 }

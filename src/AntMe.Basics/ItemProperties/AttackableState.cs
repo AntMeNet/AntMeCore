@@ -1,31 +1,41 @@
-﻿using AntMe.ItemProperties.Basics;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 
 namespace AntMe.ItemProperties.Basics
 {
+    /// <summary>
+    /// State for all attackable Items.
+    /// </summary>
     public sealed class AttackableState : ItemStateProperty
     {
         /// <summary>
-        /// Gibt die Hitpoints dieses Ameisenhügels zurück.
+        /// Current Health.
         /// </summary>
         [DisplayName("Health")]
-        [Description("")]
+        [Description("Current Health")]
         [ReadOnly(true)]
         [Category("Dynamic")]
         public int Health { get; set; }
 
         /// <summary>
-        /// Gibt die maximale Menge an Hitpoints zurück.
+        /// Maximum Health.
         /// </summary>
         [DisplayName("Maximum Health")]
-        [Description("")]
+        [Description("Maximum Health")]
         [ReadOnly(true)]
         [Category("Static")]
         public int MaximumHealth { get; set; }
 
+        /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
         public AttackableState() : base() { }
 
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="item">Related Engine Item</param>
+        /// <param name="property">Related Engine Property</param>
         public AttackableState(Item item, AttackableProperty property) : base(item, property)
         {
             MaximumHealth = property.AttackableMaximumHealth;
@@ -34,24 +44,44 @@ namespace AntMe.ItemProperties.Basics
             property.OnAttackableMaximumHealthChanged += (i, v) => { MaximumHealth = v; };
         }
 
+        /// <summary>
+        /// Serializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void SerializeFirst(BinaryWriter stream, byte version)
         {
             stream.Write(MaximumHealth);
             stream.Write(Health);
         }
 
+        /// <summary>
+        /// Serializes following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void SerializeUpdate(BinaryWriter stream, byte version)
         {
             stream.Write(MaximumHealth);
             stream.Write(Health);
         }
 
+        /// <summary>
+        /// Deserializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void DeserializeFirst(BinaryReader stream, byte version)
         {
             MaximumHealth = stream.ReadInt32();
             Health = stream.ReadInt32();
         }
 
+        /// <summary>
+        /// Deserializes all following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void DeserializeUpdate(BinaryReader stream, byte version)
         {
             MaximumHealth = stream.ReadInt32();

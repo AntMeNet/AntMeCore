@@ -4,12 +4,12 @@ using System.IO;
 namespace AntMe
 {
     /// <summary>
-    ///     State Klasse zur Übertragung von Fraktionsstatus.
+    /// Base State Class for all Faction States.
     /// </summary>
     public class FactionState : PropertyList<FactionStateProperty>, ISerializableState
     {
         /// <summary>
-        ///     Gibt den Name der Fraktion zurück oder legt diesen fest.
+        /// Name of the Player.
         /// </summary>
         [DisplayName("Name")]
         [Description("Name of the Player")]
@@ -18,7 +18,7 @@ namespace AntMe
         public string Name { get; set; }
 
         /// <summary>
-        ///     Gibt den Spieler Index zurück oder legt diesen fest.
+        /// Slot Index.
         /// </summary>
         [DisplayName("Slot")]
         [Description("Slot Index")]
@@ -27,7 +27,7 @@ namespace AntMe
         public byte SlotIndex { get; set; }
 
         /// <summary>
-        /// Gibt den Namen der zugrunde liegenden Faction zurück oder legt diesen fest.
+        /// Faction Name.
         /// </summary>
         [DisplayName("Faction Name")]
         [Description("Name of the Faction")]
@@ -36,7 +36,7 @@ namespace AntMe
         public string FactionName { get; set; }
 
         /// <summary>
-        /// Gibt die Farbe des Spielers an oder legt diese fest.
+        /// Player Color.
         /// </summary>
         [DisplayName("Color")]
         [Description("Player Color")]
@@ -45,7 +45,7 @@ namespace AntMe
         public PlayerColor PlayerColor { get; set; }
 
         /// <summary>
-        /// Gibt die Startposition des Spielers zurück oder legt diesen fest.
+        /// Start Point on Map.
         /// </summary>
         [DisplayName("Start Point")]
         [Description("Start Point")]
@@ -54,8 +54,7 @@ namespace AntMe
         public Vector2 StartPoint { get; set; }
 
         /// <summary>
-        ///     Gibt den aktuellen Punktestand dieser Fraktion zurück oder legt
-        ///     diese fest.
+        /// Total Points.
         /// </summary>
         [DisplayName("Points")]
         [Description("Total Points")]
@@ -64,9 +63,7 @@ namespace AntMe
         public int Points { get; set; }
 
         /// <summary>
-        /// Methode, die beim ersten Serialisieren dieser Instanz aufgerufen wird. 
-        /// Dieser Call kann auch lange nach der Erstellung passieren, wenn 
-        /// beispielsweise neue Zuschauer die States beobachten wollen.
+        /// Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -81,11 +78,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Methode, die beim erneuten Serialisieren dieser Instanz aufgerufen 
-        /// wird. Hier müssen nur noch veränderbare Daten geschickt werden. Dieser 
-        /// Call muss nicht zwangsläufig in jedem Frame stattfinden, wird aber 
-        /// ganz sicher immer vom selben Client abgerufen - es können also diffs 
-        /// gesendet werden.
+        /// Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -95,9 +88,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Methode, die beim ersten Erstellen aus einem Stream heraus aufgerufen 
-        /// wird. dieser Call sollte alle Grundinformationen des States herstellen 
-        /// und muss nicht dem State des ersten Frames entsprechen.
+        /// Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -113,8 +104,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Methode, die bei einem Folgeframe aufgerufen wird, nachdem der 
-        /// State bereits initialisiert wurde.
+        /// Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -123,6 +113,10 @@ namespace AntMe
             Points = stream.ReadInt32();
         }
 
+        /// <summary>
+        /// Returns a representive String for this State.
+        /// </summary>
+        /// <returns>State Description</returns>
         public override string ToString()
         {
             return string.Format("{0} ({1})", Name, FactionName);
@@ -130,52 +124,52 @@ namespace AntMe
     }
 
     /// <summary>
-    /// Liste der möglichen Spielerfarben.
+    /// List of all possible Player Colors.
     /// </summary>
     public enum PlayerColor
     {
         /// <summary>
-        /// Schwarzer Spieler.
+        /// Black
         /// </summary>
         Black = 0,
 
         /// <summary>
-        /// Roter Spieler.
+        /// Red
         /// </summary>
         Red = 1,
 
         /// <summary>
-        /// Blauer Spieler.
+        /// Blue
         /// </summary>
         Blue = 2,
 
         /// <summary>
-        /// Hellblauer Spieler.
+        /// Cyan
         /// </summary>
         Cyan = 3,
 
         /// <summary>
-        /// Lila Spieler.
+        /// Purple
         /// </summary>
         Purple = 4,
 
         /// <summary>
-        /// Orangener Spieler.
+        /// Orange
         /// </summary>
         Orange = 5,
 
         /// <summary>
-        /// Grüner Spieler.
+        /// Green
         /// </summary>
         Green = 6,
 
         /// <summary>
-        /// Weisser Spieler.
+        /// White
         /// </summary>
         White = 7,
 
         /// <summary>
-        /// Undefinierte Spielerfarbe.
+        /// Undefined
         /// </summary>
         Undefined = 8
     }

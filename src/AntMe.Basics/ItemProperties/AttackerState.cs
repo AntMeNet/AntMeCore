@@ -1,34 +1,50 @@
-﻿using AntMe.ItemProperties.Basics;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 
 namespace AntMe.ItemProperties.Basics
 {
+    /// <summary>
+    /// State Property for all Attacker Items.
+    /// </summary>
     public sealed class AttackerState : ItemStateProperty
     {
         /// <summary>
-        /// Liefert den Angriffsradius des Spielelements oder legt diesen fest.
+        /// Attack Range.
         /// </summary>
         [DisplayName("Attack Range")]
-        [Description("")]
+        [Description("Attack Range")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
         public float AttackRange { get; set; }
 
         /// <summary>
-        /// Liefert die Wartezeit zwischen zwei Angriffen oder legt diese fest.
+        /// Recovery Time between Hits.
         /// </summary>
         [DisplayName("Attack Recover Time")]
-        [Description("")]
+        [Description("Recovery Time between Hits")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
         public int AttackRecoveryTime { get; set; }
 
         /// <summary>
-        /// Liefert die Anzahl Lebenspunkte, die die Einheit bei einem Angriff abziehen kann.
+        /// Attacker Strength.
         /// </summary>
         [DisplayName("Attack Strength")]
-        [Description("")]
+        [Description("Attacker Strength")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
         public int AttackStrength { get; set; }
 
+        /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
         public AttackerState() : base() { }
 
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="item">Related Engine Item</param>
+        /// <param name="property">Related Engine Property</param>
         public AttackerState(Item item, AttackerProperty property) : base(item, property)
         {
             AttackRange = property.AttackRange;
@@ -40,6 +56,11 @@ namespace AntMe.ItemProperties.Basics
             property.OnAttackStrengthChanged += (i, v) => { AttackStrength = v; };
         }
 
+        /// <summary>
+        /// Serializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void SerializeFirst(BinaryWriter stream, byte version)
         {
             stream.Write(AttackStrength);
@@ -47,6 +68,11 @@ namespace AntMe.ItemProperties.Basics
             stream.Write(AttackRange);
         }
 
+        /// <summary>
+        /// Serializes following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void SerializeUpdate(BinaryWriter stream, byte version)
         {
             stream.Write(AttackStrength);
@@ -54,6 +80,11 @@ namespace AntMe.ItemProperties.Basics
             stream.Write(AttackRange);
         }
 
+        /// <summary>
+        /// Deserializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void DeserializeFirst(BinaryReader stream, byte version)
         {
             AttackStrength = stream.ReadInt32();
@@ -61,6 +92,11 @@ namespace AntMe.ItemProperties.Basics
             AttackRange = stream.ReadSingle();
         }
 
+        /// <summary>
+        /// Deserializes all following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
         public override void DeserializeUpdate(BinaryReader stream, byte version)
         {
             AttackStrength = stream.ReadInt32();

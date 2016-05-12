@@ -7,17 +7,6 @@ namespace AntMe.Factions.Bugs
     /// </summary>
     public sealed class BugFaction : Faction
     {
-        //    private readonly Dictionary<int, BugBase> Bugs = new Dictionary<int, BugBase>();
-
-        //    private readonly Random random = new Random();
-        //    private int BugCounter;
-        //    private int BugRespawnDelay;
-        //    private BugNestBase Colony;
-        //    private readonly Type colonyType;
-
-        private BugFaction Nest;
-        private BugFactoryInterop NestInterop;
-
         public BugFaction(SimulationContext context, Type factoryType, Level level)
             : base(context, factoryType, level)
         {

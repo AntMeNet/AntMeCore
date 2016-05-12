@@ -391,7 +391,7 @@ namespace AntMe
             {
                 state = Activator.CreateInstance(_knownItemTypes[type]) as FactionItemState;
                 state.Id = id;
-                state.PlayerIndex = faction;
+                state.SlotIndex = faction;
                 ValidatedDeserialisation(state.DeserializeFirst);
             }
             else

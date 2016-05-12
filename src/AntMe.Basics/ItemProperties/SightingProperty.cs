@@ -19,14 +19,7 @@ namespace AntMe.ItemProperties.Basics
         /// Default Constructor.
         /// </summary>
         /// <param name="item">Item</param>
-        public SightingProperty(Item item) : base(item)
-        {
-            //ViewRange = range;
-            //ViewAngle = 360;
-            //ViewDirection = Angle.Right;
-            //ViewAngle = angle;
-            //ViewDirection = direction;
-        }
+        public SightingProperty(Item item) : base(item) { }
 
         /// <summary>
         /// Gets or sets the Viewrange.

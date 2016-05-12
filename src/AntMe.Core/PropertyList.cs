@@ -6,98 +6,100 @@ using System.ComponentModel;
 namespace AntMe
 {
     /// <summary>
-    /// Auflistung von Properties für Game Items, States und Infos.
+    /// Base Type for Types with additional Properties.
     /// </summary>
-    /// <typeparam name="T">Property-Basistyp</typeparam>
+    /// <typeparam name="T">Property Type</typeparam>
     public abstract class PropertyList<T> : IEnumerable<T> where T : Property
     {
-        private readonly Dictionary<Type, T> _properties = new Dictionary<Type, T>();
+        private readonly Dictionary<Type, T> properties = new Dictionary<Type, T>();
 
         /// <summary>
-        /// Direkter Zugriff auf bestimmte Property-Types.
+        /// Gets the Property of the given Type.
         /// </summary>
-        /// <param name="type">Gesuchter Property-Type.</param>
-        /// <returns>Property-Instanz oder null, falls nicht vorhanden.</returns>
+        /// <param name="type">Requested Property Type</param>
+        /// <returns>Property Instance or null</returns>
         public T this[Type type]
         {
             get
             {
-                if (_properties.ContainsKey(type))
-                    return _properties[type];
+                T result;
+                if (properties.TryGetValue(type, out result))
+                    return result;
                 return null;
             }
         }
 
         /// <summary>
-        ///     Listet die enthaltenen Properties auf.
+        /// List of all Properties.
         /// </summary>
         [Browsable(false)]
         public IEnumerable<T> Properties
         {
-            get { return _properties.Values; }
+            get { return properties.Values; }
         }
 
         /// <summary>
-        /// Liefert einen Enumerator für die Auflistung von Properties zurück.
+        /// Generates an Enumerator for all Properties.
         /// </summary>
         /// <returns>Enumerator</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            return _properties.Values.GetEnumerator();
+            return properties.Values.GetEnumerator();
         }
 
         /// <summary>
-        /// Liefert einen Enumerator für die Auflistung von Properties zurück.
+        /// Generates an Enumerator for all Properties.
         /// </summary>
         /// <returns>Enumerator</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _properties.Values.GetEnumerator();
+            return properties.Values.GetEnumerator();
         }
 
         /// <summary>
-        ///     Fügt dem Item eine neue Eigenschaft hinzu.
+        /// Adds the given Property to the List.
         /// </summary>
-        /// <param name="property">Hinzuzufügende Eigenschaft</param>
+        /// <param name="property">New Property</param>
         public void AddProperty(T property)
         {
             if (property == null)
                 throw new ArgumentNullException("property");
 
+            // Check for Type Collisions
             Type type = property.GetType();
-            if (_properties.ContainsKey(type))
+            if (properties.ContainsKey(type))
                 throw new InvalidOperationException("Property Type already added");
 
             ValidateAddProperty(property);
 
-            _properties.Add(type, property);
+            properties.Add(type, property);
         }
 
         /// <summary>
-        /// Überschreibbarer Validator für neu hinzugefügte Properties.
+        /// Overwritable Validator for new Properties.
         /// </summary>
-        /// <param name="property">Neue hinzugefügtes Property</param>
+        /// <param name="property">New Property</param>
         protected virtual void ValidateAddProperty(T property) { }
 
         /// <summary>
-        ///     Prüft, ob das Item über die angefragte Eigenschaft verfügt.
+        /// Checks if the Property is part of the List.
         /// </summary>
-        /// <typeparam name="V">Type der zu überprüfende Eigenschaft</typeparam>
-        /// <returns>Ist die Eigenschaft enthalten</returns>
+        /// <typeparam name="V">Property Type to check</typeparam>
+        /// <returns>Is in List</returns>
         public bool ContainsProperty<V>() where V : T
         {
-            return _properties.ContainsKey(typeof(V));
+            return properties.ContainsKey(typeof(V));
         }
 
         /// <summary>
-        ///     Gibt die angefragte Eigenschaft des Items zurück oder null, falls nicht vorhanden.
+        /// Gets the Property with the requested Type.
         /// </summary>
-        /// <typeparam name="V">Datentyp der Eigenschaft</typeparam>
-        /// <returns>Referenz auf die Eigenschaft oder null</returns>
+        /// <typeparam name="V">Property Type</typeparam>
+        /// <returns>Instance of this Type or null</returns>
         public V GetProperty<V>() where V : T
         {
-            if (_properties.ContainsKey(typeof(V)))
-                return _properties[typeof(V)] as V;
+            if (properties.ContainsKey(typeof(V)))
+                return properties[typeof(V)] as V;
             return null;
         }
     }
