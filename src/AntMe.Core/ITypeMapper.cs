@@ -335,7 +335,7 @@ namespace AntMe
         /// <param name="name"></param>
         /// <param name="createPropertyDelegate"></param>
         void AttachFactoryInteropProperty<T, P>(IExtensionPack extensionPack, string name,
-            Func<FactoryInterop, P> createPropertyDelegate = null)
+            Func<Faction, FactoryInterop, P> createPropertyDelegate = null)
             where T : FactoryInterop
             where P : FactoryInteropProperty;
 

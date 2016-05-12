@@ -1,4 +1,6 @@
-﻿using AntMe.EngineExtensions.Basics;
+﻿using AntMe.Basics.Factions;
+using AntMe.Basics.Factions.Ants.Interop;
+using AntMe.EngineExtensions.Basics;
 using AntMe.Factions.Ants;
 using AntMe.Factions.Bugs;
 using AntMe.ItemProperties.Basics;
@@ -64,11 +66,15 @@ namespace AntMe.Extension.Basics
             typeMapper.RegisterItemPropertyS<AppleCollectableProperty, AppleCollectableState>(this, "Apple Collectable");
             typeMapper.RegisterItemPropertyS<SugarCollectableProperty, SugarCollectableState>(this, "Sugar Collectable");
 
+            typeMapper.RegisterFactoryInteropProperty<TotalStatisticsInterop>(this, "Factory Total Statistics");
+            typeMapper.RegisterFactoryInteropProperty<ByTypeStatisticsInterop>(this, "Factory By Type Statistics");
+            typeMapper.RegisterFactoryInteropProperty<ByCasteStatisticsInterop>(this, "Factory By Caste Statistics");
+
             // ##########################
             // Factions registrieren
             // ##########################
 
-            // Basics
+            // Ant Faction
             settings.Apply<AntFaction>("InitialAntHill", true, "Enables the creation of a initial Anthill");
             settings.Apply<AntFaction>("InitialAntCount", 0, "Number of initial Ants");
             settings.Apply<AntFaction>("ConcurrentAntCount", 100, "Number of concurrent Ants");
@@ -76,7 +82,32 @@ namespace AntMe.Extension.Basics
             settings.Apply<AntFaction>("AntRespawnDelay", 1, "Number of Rounds until another Respawn");
             typeMapper.RegisterFaction<AntFaction, AntFactionState, FactionInfo, AntFactory, AntFactoryInterop, AntUnit, AntUnitInterop>(this, "Ants");
 
+            // Ant Factory Interops
+            typeMapper.AttachFactoryInteropProperty<AntFactoryInterop, TotalStatisticsInterop>(this, "Ant Total Statistics", (f, i) =>
+            {
+                return new TotalStatisticsInterop(f, i, typeof(AntItem));
+            });
+            typeMapper.AttachFactoryInteropProperty<AntFactoryInterop, ByTypeStatisticsInterop>(this, "Ant By Type Statistics", (f, i) =>
+            {
+                return new ByTypeStatisticsInterop(f, i, typeof(AntItem));
+            });
+            typeMapper.AttachFactoryInteropProperty<AntFactoryInterop, ByCasteStatisticsInterop>(this, "Ant By Caste Statistics", (f, i) =>
+            {
+                return new ByCasteStatisticsInterop(f, i, typeof(AntItem));
+            });
+
+            // Bug Faction
             typeMapper.RegisterFaction<BugFaction, BugFactionState, FactionInfo, BugFactory, BugFactoryInterop, BugUnit, BugUnitInterop>(this, "Bugs");
+
+            // Bug Factory Interops
+            typeMapper.AttachFactoryInteropProperty<BugFactoryInterop, TotalStatisticsInterop>(this, "Bug Total Statistics", (f, i) =>
+            {
+                return new TotalStatisticsInterop(f, i, typeof(BugItem));
+            });
+            typeMapper.AttachFactoryInteropProperty<BugFactoryInterop, ByTypeStatisticsInterop>(this, "Bug By Type Statistics", (f, i) =>
+            {
+                return new ByTypeStatisticsInterop(f, i, typeof(BugItem));
+            });
 
             // Faction Extensions
 
