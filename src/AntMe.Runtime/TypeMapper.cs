@@ -1078,7 +1078,7 @@ namespace AntMe.Runtime
 
         #region Interop Attachment Properties
 
-        private class FactoryAttchmentTypeMap : AttachmentTypeMap<Func<FactoryInterop, FactoryInteropProperty>> { }
+        private class FactoryAttchmentTypeMap : AttachmentTypeMap<Func<Faction, FactoryInterop, FactoryInteropProperty>> { }
 
         private class UnitAttchmentTypeMap : AttachmentTypeMap<Func<UnitInterop, UnitInteropProperty>> { }
 
@@ -1099,7 +1099,7 @@ namespace AntMe.Runtime
         /// <param name="name"></param>
         /// <param name="createPropertyDelegate"></param>
         public void AttachFactoryInteropProperty<T, P>(IExtensionPack extensionPack, string name,
-            Func<FactoryInterop, P> createPropertyDelegate = null)
+            Func<Faction, FactoryInterop, P> createPropertyDelegate = null)
             where T : FactoryInterop
             where P : FactoryInteropProperty
         {
@@ -1841,7 +1841,7 @@ namespace AntMe.Runtime
             {
                 FactoryInteropProperty property = null;
                 if (item.CreateDelegate != null)
-                    property = item.CreateDelegate(result);
+                    property = item.CreateDelegate(faction, result);
                 else
                 {
                     property = Activator.CreateInstance(item.AttachmentType, faction, result) as FactoryInteropProperty;

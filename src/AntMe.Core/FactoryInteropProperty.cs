@@ -24,12 +24,10 @@
         /// Konstruktor des Factory Interop Properties.
         /// </summary>
         /// <param name="faction">Referenz auf die Faction.</param>
-        /// <param name="item"></param>
         /// <param name="interop">Referenz auf das Interop.</param>
-        public FactoryInteropProperty(Faction faction, FactionItem item, FactoryInterop interop)
+        public FactoryInteropProperty(Faction faction, FactoryInterop interop)
         {
             Faction = faction;
-            Item = item;
             Interop = interop;
         }
     }

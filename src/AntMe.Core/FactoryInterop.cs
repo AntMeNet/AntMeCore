@@ -3,26 +3,49 @@
 namespace AntMe
 {
     /// <summary>
-    /// Basis-Klasse für alle Factory Interop Klassen.
+    /// Empty Base Class for all Factory Interops.
     /// </summary>
-    public abstract class FactoryInterop : Interop { }
+    public abstract class FactoryInterop : Interop
+    {
+        /// <summary>
+        /// Current Game Round.
+        /// </summary>
+        public int Round { get; private set; }
+
+        /// <summary>
+        /// Current Game Time (based on the Frames Per Second Constant).
+        /// </summary>
+        public TimeSpan GameTime { get; private set; }
+
+        /// <summary>
+        /// Updates the current Interop.
+        /// </summary>
+        /// <param name="round">Current Simulation Round</param>
+        protected override void Update(int round)
+        {
+            Round = round;
+            GameTime = TimeSpan.FromSeconds((double)round / Level.FRAMES_PER_SECOND);
+
+            base.Update(round);
+        }
+    }
 
     /// <summary>
-    /// Konkretisierte Basis-Klasse für Factory Interops.
+    /// Specialized Base Class for all Factory Interops.
     /// </summary>
-    /// <typeparam name="F">Typ der dazugehörigen Faction</typeparam>
-    public abstract class FactoryInterop<F> : FactoryInterop 
+    /// <typeparam name="F">Type of related Faction</typeparam>
+    public abstract class FactoryInterop<F> : FactoryInterop
         where F : Faction
     {
         /// <summary>
-        /// Referenz auf die zugrundeliegende Faction.
+        /// Protected Reference to the related Faction.
         /// </summary>
         protected readonly F Faction;
 
         /// <summary>
-        /// Konstruktur der Interop-Klasse.
+        /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="faction">Instanz der zugehörigen Faction.</param>
+        /// <param name="faction">Instance of the related Faction</param>
         public FactoryInterop(F faction)
         {
             if (faction == null)

@@ -46,7 +46,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Factions\Ants\Interop\StatisticInterop.cs" />
+    <Compile Include="Factions\Ants\Interop\ByCasteStatisticsInterop.cs" />
+    <Compile Include="Factions\ByTypeStatisticsInterop.cs" />
+    <Compile Include="Factions\StatisticsInterop.cs" />
+    <Compile Include="Factions\TotalStatisticsInterop.cs" />
     <Compile Include="ItemProperties\AttackableProperty.cs" />
     <Compile Include="ItemProperties\AttackableState.cs" />
     <Compile Include="ItemProperties\AttackerProperty.cs" />
