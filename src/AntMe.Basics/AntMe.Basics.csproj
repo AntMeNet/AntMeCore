@@ -102,7 +102,7 @@
     <Compile Include="Factions\Ants\CasteAttribute.cs" />
     <Compile Include="Factions\Ants\CasteAttributeMappingAttribute.cs" />
     <Compile Include="Factions\Ants\Interop\InteractionInterop.cs" />
-    <Compile Include="Factions\Ants\Interop\PhysicsInterop.cs" />
+    <Compile Include="Factions\Ants\Interop\AntMovementInterop.cs" />
     <Compile Include="Factions\Ants\Interop\RecognitionInterop.cs" />
     <Compile Include="Items\ClassicBugItem.cs" />
     <Compile Include="Items\MarkerInfo.cs" />

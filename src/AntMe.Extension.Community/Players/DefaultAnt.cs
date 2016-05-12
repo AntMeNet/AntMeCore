@@ -1,4 +1,5 @@
 ﻿using AntMe.Factions.Ants;
+using AntMe.Simulation.Factions.Ants.Interop;
 using System;
 
 namespace AntMe.Extension.Community.Players
@@ -7,7 +8,6 @@ namespace AntMe.Extension.Community.Players
     {
         public override void Init(UnitInterop interop)
         {
-            
         }
     }
 }

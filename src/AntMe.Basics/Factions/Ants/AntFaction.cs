@@ -175,8 +175,9 @@ namespace AntMe.Factions.Ants
         /// </summary>
         /// <param name="item">Aufrufende Ameise</param>
         /// <returns>Instanz des nächstgelegenen Ameisenbaus</returns>
-        public AnthillInfo GetClosestAnthill(AntItem item)
+        public AnthillInfo GetClosestAnthill(Item item)
         {
+            // TODO: Check for a smarter Way without Info Object
             return antHills.Values.
                 Select(anthill => anthill.GetItemInfo(item) as AnthillInfo).
                 OrderBy(i => i.Distance).

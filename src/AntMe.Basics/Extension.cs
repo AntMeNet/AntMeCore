@@ -5,6 +5,7 @@ using AntMe.Factions.Ants;
 using AntMe.Factions.Bugs;
 using AntMe.ItemProperties.Basics;
 using AntMe.Items.Basics;
+using AntMe.Simulation.Factions.Ants.Interop;
 using System;
 
 namespace AntMe.Extension.Basics
@@ -70,6 +71,8 @@ namespace AntMe.Extension.Basics
             typeMapper.RegisterFactoryInteropProperty<ByTypeStatisticsInterop>(this, "Factory By Type Statistics");
             typeMapper.RegisterFactoryInteropProperty<ByCasteStatisticsInterop>(this, "Factory By Caste Statistics");
 
+            typeMapper.RegisterUnitInteropProperty<AntMovementInterop>(this, "Ant Unit Movement");
+
             // ##########################
             // Factions registrieren
             // ##########################
@@ -95,6 +98,9 @@ namespace AntMe.Extension.Basics
             {
                 return new ByCasteStatisticsInterop(f, i, typeof(AntItem));
             });
+
+            // Ant Unit Interops
+            typeMapper.AttachUnitInteropProperty<AntUnitInterop, AntMovementInterop>(this, "Ant Movement Interop");
 
             // Bug Faction
             typeMapper.RegisterFaction<BugFaction, BugFactionState, FactionInfo, BugFactory, BugFactoryInterop, BugUnit, BugUnitInterop>(this, "Bugs");
@@ -270,7 +276,7 @@ namespace AntMe.Extension.Basics
             typeMapper.AttachItemProperty<AnthillItem, AttackableProperty>(this, "Anthill Attackable", (i) =>
             {
                 // Check Attackable Switch
-                if (i.Settings.GetBool<AnthillItem>("Attackable").Value)
+                if (!i.Settings.GetBool<AnthillItem>("Attackable").Value)
                     return null;
 
                 AttackableProperty property = new AttackableProperty(i);
@@ -543,6 +549,9 @@ namespace AntMe.Extension.Basics
         private void RegisterAnt(ITypeMapper typeMapper, Settings settings)
         {
             // Ant Item
+            settings.Apply<AntItem>("ZickZackAngle", 10, "Correction Angle after Sprint");
+            settings.Apply<AntItem>("ZickZackRange", 100f, "Distance to go every Sprint");
+            settings.Apply<AntItem>("RotationSpeed", 10, "Maximum Rotation Angle per Round");
             typeMapper.RegisterItem<AntItem, AntState, AntInfo>(this, "Ant");
 
             // Walking

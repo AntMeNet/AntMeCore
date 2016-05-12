@@ -168,6 +168,10 @@ namespace AntMe
         /// <returns>Das zugrunde liegende Item</returns>
         public Item GetItemFromInfo(ItemInfo info)
         {
+            // Check for Cheaters
+            if (Engine != info.GetItem().Engine)
+                throw new NotSupportedException("Invalid GetItemFromInfo call");
+
             return info.GetItem();
         }
 
