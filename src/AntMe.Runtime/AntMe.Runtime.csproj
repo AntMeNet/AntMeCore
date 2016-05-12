@@ -35,13 +35,6 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\AntMe.Runtime.XML</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
@@ -95,13 +88,6 @@
     <Compile Include="TypeInfo.cs" />
     <Compile Include="TypeMapper.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj">
-      <Project>{9eaa79fb-f688-421b-b3f7-dd2aeca5923d}</Project>
-      <Name>AntMe.Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -111,4 +97,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj">
+      <Project>{A2A811C2-600D-451B-AA15-346BF7ECED4A}</Project>
+      <Name>AntMe.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
