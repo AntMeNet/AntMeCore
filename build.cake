@@ -39,7 +39,7 @@ Task("build")
         {
             cfg.Configuration = Configuration;
             cfg.Verbosity = BuildVerbosity;
-        });
+        }); 
     });
 
 /// <summary>
@@ -50,6 +50,7 @@ Task("clean")
     .Does(() =>
     {
         CleanDirectories("./output");
+        CleanDirectories("./bin");
         CleanDirectories(string.Format("./src/**/obj/{0}", Configuration));
         CleanDirectories(string.Format("./src/**/bin/{0}", Configuration));
         CleanDirectories(string.Format("./tests/**/obj/{0}", Configuration));
