@@ -1,4 +1,5 @@
-﻿using AntMe.Runtime;
+﻿using AntMe;
+using AntMe.Runtime;
 using AntMe.Runtime.Communication;
 using CoreTestClient.Screens;
 using System;
@@ -87,6 +88,7 @@ namespace CoreTestClient
         {
             startToolButton.Enabled = CurrentMode != null && CurrentMode.CanStart;
 
+            // Display Simulation State in Status Bar
             if (CurrentClient != null)
             {
                 stateLabel.Text = CurrentClient.ServerState.ToString();
@@ -94,6 +96,16 @@ namespace CoreTestClient
             else
             {
                 stateLabel.Text = "No Client";
+            }
+
+            // Display Game Time in Status Bar
+            if (CurrentClient != null && CurrentClient.CurrentState != null)
+            {
+                timeLabel.Text = TimeSpan.FromSeconds((double)CurrentClient.CurrentState.Round / Level.FRAMES_PER_SECOND).ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                timeLabel.Text = string.Empty;
             }
         }
 
@@ -123,8 +135,9 @@ namespace CoreTestClient
             }
         }
 
-        private void CurrentClient_OnSimulationChanged(ISimulationClient client, AntMe.Runtime.SimulationState parameter1, byte parameter2)
+        private void CurrentClient_OnSimulationChanged(ISimulationClient client, SimulationState simulationState, byte frames)
         {
+            framesToolButton.Text = string.Format("{0} fps", frames);
             // throw new NotImplementedException();
         }
 
@@ -139,6 +152,49 @@ namespace CoreTestClient
             {
                 form.ShowDialog(this);
             }
+        }
+
+        private void frames1ToolButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentClient != null && CurrentClient.IsMaster)
+                CurrentClient.PitchSimulation(1);
+        }
+
+        private void frames5ToolButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentClient != null && CurrentClient.IsMaster)
+                CurrentClient.PitchSimulation(5);
+
+        }
+
+        private void frames10ToolButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentClient != null && CurrentClient.IsMaster)
+                CurrentClient.PitchSimulation(10);
+        }
+
+        private void frames20ToolButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentClient != null && CurrentClient.IsMaster)
+                CurrentClient.PitchSimulation(20);
+        }
+
+        private void frames40ToolButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentClient != null && CurrentClient.IsMaster)
+                CurrentClient.PitchSimulation(40);
+        }
+
+        private void frames80ToolButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentClient != null && CurrentClient.IsMaster)
+                CurrentClient.PitchSimulation(80);
+        }
+
+        private void framesMaxToolButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentClient != null && CurrentClient.IsMaster)
+                CurrentClient.PitchSimulation(byte.MaxValue);
         }
     }
 }

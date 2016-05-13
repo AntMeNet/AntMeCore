@@ -38,6 +38,7 @@
             this.loaderMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.extensionsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.globalSettingsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.codeGeneratorMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stateLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.timeLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -45,7 +46,14 @@
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.startToolButton = new System.Windows.Forms.ToolStripButton();
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.codeGeneratorMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.framesToolButton = new System.Windows.Forms.ToolStripDropDownButton();
+            this.frames1ToolButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.frames5ToolButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.frames10ToolButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.frames20ToolButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.frames40ToolButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.frames80ToolButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.framesMaxToolButton = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -75,19 +83,19 @@
             // singleGameMenu
             // 
             this.singleGameMenu.Name = "singleGameMenu";
-            this.singleGameMenu.Size = new System.Drawing.Size(140, 22);
+            this.singleGameMenu.Size = new System.Drawing.Size(152, 22);
             this.singleGameMenu.Text = "Single Game";
             this.singleGameMenu.Click += new System.EventHandler(this.singleGameMenu_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(137, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
             // 
             // closeMenu
             // 
             this.closeMenu.Name = "closeMenu";
-            this.closeMenu.Size = new System.Drawing.Size(140, 22);
+            this.closeMenu.Size = new System.Drawing.Size(152, 22);
             this.closeMenu.Text = "Close";
             this.closeMenu.Click += new System.EventHandler(this.closeMenu_Click);
             // 
@@ -114,6 +122,13 @@
             this.globalSettingsMenu.Size = new System.Drawing.Size(157, 22);
             this.globalSettingsMenu.Text = "Global Settings";
             this.globalSettingsMenu.Click += new System.EventHandler(this.globalSettingsMenu_Click);
+            // 
+            // codeGeneratorMenu
+            // 
+            this.codeGeneratorMenu.Name = "codeGeneratorMenu";
+            this.codeGeneratorMenu.Size = new System.Drawing.Size(157, 22);
+            this.codeGeneratorMenu.Text = "Code Generator";
+            this.codeGeneratorMenu.Click += new System.EventHandler(this.codeGeneratorMenu_Click);
             // 
             // statusStrip
             // 
@@ -149,7 +164,8 @@
             // toolStrip
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.startToolButton});
+            this.startToolButton,
+            this.framesToolButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(784, 25);
@@ -171,12 +187,71 @@
             this.timer.Enabled = true;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
-            // codeGeneratorMenu
+            // framesToolButton
             // 
-            this.codeGeneratorMenu.Name = "codeGeneratorMenu";
-            this.codeGeneratorMenu.Size = new System.Drawing.Size(157, 22);
-            this.codeGeneratorMenu.Text = "Code Generator";
-            this.codeGeneratorMenu.Click += new System.EventHandler(this.codeGeneratorMenu_Click);
+            this.framesToolButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.framesToolButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.frames1ToolButton,
+            this.frames5ToolButton,
+            this.frames10ToolButton,
+            this.frames20ToolButton,
+            this.frames40ToolButton,
+            this.frames80ToolButton,
+            this.framesMaxToolButton});
+            this.framesToolButton.Image = ((System.Drawing.Image)(resources.GetObject("framesToolButton.Image")));
+            this.framesToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.framesToolButton.Name = "framesToolButton";
+            this.framesToolButton.Size = new System.Drawing.Size(51, 22);
+            this.framesToolButton.Text = "20 fps";
+            // 
+            // frames1ToolButton
+            // 
+            this.frames1ToolButton.Name = "frames1ToolButton";
+            this.frames1ToolButton.Size = new System.Drawing.Size(153, 22);
+            this.frames1ToolButton.Text = "1 fps";
+            this.frames1ToolButton.Click += new System.EventHandler(this.frames1ToolButton_Click);
+            // 
+            // frames5ToolButton
+            // 
+            this.frames5ToolButton.Name = "frames5ToolButton";
+            this.frames5ToolButton.Size = new System.Drawing.Size(153, 22);
+            this.frames5ToolButton.Text = "5 fps";
+            this.frames5ToolButton.Click += new System.EventHandler(this.frames5ToolButton_Click);
+            // 
+            // frames10ToolButton
+            // 
+            this.frames10ToolButton.Name = "frames10ToolButton";
+            this.frames10ToolButton.Size = new System.Drawing.Size(153, 22);
+            this.frames10ToolButton.Text = "10 fps";
+            this.frames10ToolButton.Click += new System.EventHandler(this.frames10ToolButton_Click);
+            // 
+            // frames20ToolButton
+            // 
+            this.frames20ToolButton.Name = "frames20ToolButton";
+            this.frames20ToolButton.Size = new System.Drawing.Size(153, 22);
+            this.frames20ToolButton.Text = "20 fps (default)";
+            this.frames20ToolButton.Click += new System.EventHandler(this.frames20ToolButton_Click);
+            // 
+            // frames40ToolButton
+            // 
+            this.frames40ToolButton.Name = "frames40ToolButton";
+            this.frames40ToolButton.Size = new System.Drawing.Size(153, 22);
+            this.frames40ToolButton.Text = "40 fps";
+            this.frames40ToolButton.Click += new System.EventHandler(this.frames40ToolButton_Click);
+            // 
+            // frames80ToolButton
+            // 
+            this.frames80ToolButton.Name = "frames80ToolButton";
+            this.frames80ToolButton.Size = new System.Drawing.Size(153, 22);
+            this.frames80ToolButton.Text = "80 fps";
+            this.frames80ToolButton.Click += new System.EventHandler(this.frames80ToolButton_Click);
+            // 
+            // framesMaxToolButton
+            // 
+            this.framesMaxToolButton.Name = "framesMaxToolButton";
+            this.framesMaxToolButton.Size = new System.Drawing.Size(153, 22);
+            this.framesMaxToolButton.Text = "Max";
+            this.framesMaxToolButton.Click += new System.EventHandler(this.framesMaxToolButton_Click);
             // 
             // MainForm
             // 
@@ -222,6 +297,14 @@
         private System.Windows.Forms.ToolStripStatusLabel stateLabel;
         private System.Windows.Forms.ToolStripStatusLabel timeLabel;
         private System.Windows.Forms.ToolStripMenuItem codeGeneratorMenu;
+        private System.Windows.Forms.ToolStripDropDownButton framesToolButton;
+        private System.Windows.Forms.ToolStripMenuItem frames1ToolButton;
+        private System.Windows.Forms.ToolStripMenuItem frames5ToolButton;
+        private System.Windows.Forms.ToolStripMenuItem frames10ToolButton;
+        private System.Windows.Forms.ToolStripMenuItem frames20ToolButton;
+        private System.Windows.Forms.ToolStripMenuItem frames40ToolButton;
+        private System.Windows.Forms.ToolStripMenuItem frames80ToolButton;
+        private System.Windows.Forms.ToolStripMenuItem framesMaxToolButton;
     }
 }
 

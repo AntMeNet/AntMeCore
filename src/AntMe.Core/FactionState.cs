@@ -119,7 +119,7 @@ namespace AntMe
         /// <returns>State Description</returns>
         public override string ToString()
         {
-            return string.Format("{0} ({1})", Name, FactionName);
+            return string.Format("{0} ({1}/{2})", Name, FactionName, SlotIndex);
         }
     }
 

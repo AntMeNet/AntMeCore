@@ -147,7 +147,7 @@ namespace CoreTestClient
                         }
                     }
 
-                    foreach (var item in treeState)
+                    foreach (var item in state.Items.ToArray())
                     {
                         float x = (item.Position.X * scale) + offsetX;
                         float y = (item.Position.Y * scale) + offsetY;

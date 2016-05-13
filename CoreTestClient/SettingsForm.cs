@@ -20,7 +20,7 @@ namespace CoreTestClient
             string[] keytemp = settings.Keys.ToArray();
 
             var typeKeys = keytemp.Select(k => k.Substring(0, k.IndexOf(':'))).Distinct();
-            foreach (var key in typeKeys)
+            foreach (var key in typeKeys.OrderBy(k => k))
             {
                 var item = typeList.Items.Add(key);
                 item.Tag = key;
@@ -36,7 +36,7 @@ namespace CoreTestClient
             if (typeList.SelectedItems.Count > 0)
             {
                 string key = typeList.SelectedItems[0].Tag as string;
-                foreach (var k in keys[key])
+                foreach (var k in keys[key].OrderBy(k => k))
                 {
                     var item = valuesList.Items.Add(k);
                     string fullkey = string.Format("{0}:{1}", key, k);

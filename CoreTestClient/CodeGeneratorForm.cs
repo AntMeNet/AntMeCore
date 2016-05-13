@@ -48,21 +48,24 @@ namespace CoreTestClient
 
         private void CodeGeneratorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            try
+            if (DialogResult == DialogResult.OK)
             {
-                templateGenerator.Generate(
-                    nameTextBox.Text, 
-                    authorTextBox.Text, 
-                    (string)factionCombo.SelectedItem, 
-                    (string)languageCombo.SelectedItem, 
-                    (string)programmingLanguageCombo.SelectedItem,
-                    (string)environmentComboBox.SelectedItem,
-                    outputTextBox.Text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                e.Cancel = true;
+                try
+                {
+                    templateGenerator.Generate(
+                        nameTextBox.Text,
+                        authorTextBox.Text,
+                        (string)factionCombo.SelectedItem,
+                        (string)languageCombo.SelectedItem,
+                        (string)programmingLanguageCombo.SelectedItem,
+                        (string)environmentComboBox.SelectedItem,
+                        outputTextBox.Text);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    e.Cancel = true;
+                }
             }
         }
 
