@@ -533,7 +533,7 @@ namespace AntMe.Runtime
             {
                 levelInfo.FactionFilter[i] = new LevelFilterInfo()
                 {
-                    PlayerIndex = filterAttributes[i].PlayerIndex,
+                    SlotIndex = filterAttributes[i].SlotIndex,
                     Comment = filterAttributes[i].Comment,
                     Type = new TypeInfo()
                     {

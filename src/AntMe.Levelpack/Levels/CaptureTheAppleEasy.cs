@@ -42,7 +42,7 @@ namespace AntMe.Levelpack.Levels
     //            foreach (var faction in Factions)
     //            {
     //                if (faction.Points > 0)
-    //                    winner = faction.PlayerIndex;
+    //                    winner = faction.SlotIndex;
     //            }
 
     //            if (winner > -1)

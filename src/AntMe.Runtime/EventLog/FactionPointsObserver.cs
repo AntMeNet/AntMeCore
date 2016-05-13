@@ -20,7 +20,7 @@ namespace AntMe.Runtime.EventLog
                     if (OnNewEvent != null)
                         OnNewEvent(new FactionPointsEntry() { 
                             Round = state.Round, 
-                            PlayerIndex = faction.SlotIndex, 
+                            SlotIndex = faction.SlotIndex, 
                             Points = faction.Points 
                         });
                 }
@@ -36,7 +36,7 @@ namespace AntMe.Runtime.EventLog
                         OnNewEvent(new FactionPointsEntry()
                         {
                             Round = state.Round,
-                            PlayerIndex = faction.SlotIndex,
+                            SlotIndex = faction.SlotIndex,
                             Points = faction.Points
                         });
                 }

@@ -43,7 +43,7 @@ namespace AntMe.Levelpack.Levels
     //    {
     //        if (param is FactionItem)
     //        {
-    //            Finish((param as FactionItem).Faction.PlayerIndex);
+    //            Finish((param as FactionItem).Faction.SlotIndex);
     //        }
     //    }
     //}

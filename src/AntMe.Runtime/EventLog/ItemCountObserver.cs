@@ -27,7 +27,7 @@ namespace AntMe.Runtime.EventLog
                             OnNewEvent(new AddFactionItemEntry() { 
                                 Round = state.Round, 
                                 Id = fi.Id, 
-                                PlayerIndex = fi.SlotIndex 
+                                SlotIndex = fi.SlotIndex 
                             });
                     }
                     else

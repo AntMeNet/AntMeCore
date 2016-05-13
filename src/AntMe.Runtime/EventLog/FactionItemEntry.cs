@@ -10,6 +10,6 @@ namespace AntMe.Runtime.EventLog
     /// </summary>
     public abstract class FactionItemEntry : ItemEntry
     {
-        public int PlayerIndex { get; set; }
+        public int SlotIndex { get; set; }
     }
 }

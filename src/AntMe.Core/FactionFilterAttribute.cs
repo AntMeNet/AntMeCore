@@ -23,6 +23,6 @@ namespace AntMe
         /// <summary>
         /// ID des Slots für den der Filter gilt.
         /// </summary>
-        public int PlayerIndex;
+        public int SlotIndex;
     }
 }

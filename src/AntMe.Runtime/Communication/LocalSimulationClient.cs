@@ -550,7 +550,7 @@ namespace AntMe.Runtime.Communication
                     }
 
                     // Prüfen, ob Faction Filter aktiv ist
-                    var filter = level.FactionFilter.Where(f => f.PlayerIndex == i);
+                    var filter = level.FactionFilter.Where(f => f.SlotIndex == i);
                     if (filter.Count() > 0)
                     {
                         if (filter.Where(f => f.Type.TypeName == players[i].FactionType).Count() == 0)

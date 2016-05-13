@@ -123,7 +123,7 @@ namespace AntMe
 
         /// <summary>
         /// Liefert eine Auflistung der Factions in einem 8-Elemente Array -
-        /// zugeordnet nach PlayerIndex.
+        /// zugeordnet nach SlotIndex.
         /// </summary>
         public Faction[] Factions { get; private set; }
 
@@ -206,9 +206,9 @@ namespace AntMe
             //var filters = new Dictionary<int, List<FactionFilterAttribute>>();
             //foreach (FactionFilterAttribute item in levelFilters)
             //{
-            //    if (!filters.ContainsKey(item.PlayerIndex))
-            //        filters.Add(item.PlayerIndex, new List<FactionFilterAttribute>());
-            //    filters[item.PlayerIndex].Add(item);
+            //    if (!filters.ContainsKey(item.SlotIndex))
+            //        filters.Add(item.SlotIndex, new List<FactionFilterAttribute>());
+            //    filters[item.SlotIndex].Add(item);
             //}
 
             // Doppelte Farben prüfen
@@ -534,23 +534,23 @@ namespace AntMe
         /// <summary>
         ///     Beendet das Spiel mit dem angegebenen Sieger.
         /// </summary>
-        /// <param name="playerIndex">Sieger</param>
-        protected void Finish(int playerIndex)
+        /// <param name="slotIndex">Sieger</param>
+        protected void Finish(int slotIndex)
         {
             // Only allowed in running mode
             if (Mode != LevelMode.Running)
                 throw new NotSupportedException("Level is not running");
 
-            // Prüfen, ob Playerindex gültig ist
-            if (playerIndex < 0 && playerIndex >= MAX_SLOTS)
-                throw new ArgumentOutOfRangeException("playerIndex", "PlayerIndex must be between 0 and 7");
+            // Prüfen, ob Slot gültig ist
+            if (slotIndex < 0 && slotIndex >= MAX_SLOTS)
+                throw new ArgumentOutOfRangeException("slotIndex", "SlotIndex must be between 0 and 7");
 
             // Prüfen, ob der entsprechende Player auch existiert
-            if (Factions[playerIndex] == null)
-                throw new ArgumentException("PlayerIndex does not exist");
+            if (Factions[slotIndex] == null)
+                throw new ArgumentException("SlotIndex does not exist");
 
             // State setzen
-            switch (playerIndex)
+            switch (slotIndex)
             {
                 case 0:
                     Mode = LevelMode.FinishedPlayer1;
@@ -582,22 +582,22 @@ namespace AntMe
         /// <summary>
         ///     Beendet das Spiel mit dem angegebenen Verlierer.
         /// </summary>
-        /// <param name="playerIndex">Verlierer</param>
-        protected void Fail(int playerIndex)
+        /// <param name="slotIndex">Verlierer</param>
+        protected void Fail(int slotIndex)
         {
             // Only allowed in running mode
             if (Mode != LevelMode.Running)
                 throw new NotSupportedException("Level is not running");
 
-            // Prüfen, ob Playerindex gültig ist
-            if (playerIndex < 0 && playerIndex >= MAX_SLOTS)
-                throw new ArgumentOutOfRangeException("playerIndex", "PlayerIndex must be between 0 and 7");
+            // Prüfen, ob Slot gültig ist
+            if (slotIndex < 0 && slotIndex >= MAX_SLOTS)
+                throw new ArgumentOutOfRangeException("slotIndex", "SlotIndex must be between 0 and 7");
 
             // Prüfen, ob der entsprechende Player auch existiert
-            if (Factions[playerIndex] == null)
-                throw new ArgumentException("PlayerIndex does not exist");
+            if (Factions[slotIndex] == null)
+                throw new ArgumentException("SlotIndex does not exist");
 
-            switch (playerIndex)
+            switch (slotIndex)
             {
                 case 0:
                     Mode = LevelMode.FailedPlayer1;

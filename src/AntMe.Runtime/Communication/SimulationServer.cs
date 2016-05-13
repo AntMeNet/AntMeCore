@@ -833,7 +833,7 @@ namespace AntMe.Runtime.Communication
                                 throw new InvalidOperationException("Slot " + i + " is not ready");
 
                             // Faction Filter
-                            if (levelInfo.FactionFilter.Where(f => f.PlayerIndex == i).Count() > 0)
+                            if (levelInfo.FactionFilter.Where(f => f.SlotIndex == i).Count() > 0)
                             {
                                 var playerInfo = playerInfos[i];
                                 // TODO: Faction Filter

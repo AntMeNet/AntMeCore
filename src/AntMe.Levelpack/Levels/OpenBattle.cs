@@ -56,7 +56,7 @@ namespace AntMe.Levelpack.Levels
     //            }
 
     //            if (winner != null)
-    //                Finish(winner.PlayerIndex);
+    //                Finish(winner.SlotIndex);
     //            else
     //                Draw();
     //        }

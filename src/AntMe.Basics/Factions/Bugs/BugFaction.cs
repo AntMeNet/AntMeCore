@@ -68,7 +68,7 @@ namespace AntMe.Factions.Bugs
         //        var bug = (BugBase)Activator.CreateInstance(Colony.CreateMember());
 
         //        // TODO: change the player index when the bug management by players is clear
-        //        bug.EntityItem = new BugItem(PlayerIndex, position);
+        //        bug.EntityItem = new BugItem(SlotIndex, position);
 
         //        bug.Faction = this;
         //        bug.EntityItem.Orientation = Angle.FromDegree(random.Next(0, 359));
