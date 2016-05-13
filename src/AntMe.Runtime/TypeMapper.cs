@@ -67,12 +67,6 @@ namespace AntMe.Runtime
             foreach (var item in factionExtender.Where(c => c.ExtensionPack == extensionPack).ToArray())
                 factionExtender.Remove(item);
 
-            // Interop Properties
-            foreach (var item in factoryInteropProperties.Where(c => c.ExtensionPack == extensionPack).ToArray())
-                factoryInteropProperties.Remove(item);
-            foreach (var item in unitInteropProperties.Where(c => c.ExtensionPack == extensionPack).ToArray())
-                unitInteropProperties.Remove(item);
-
             // Interop Attachment Properties
             foreach (var item in factoryInteropAttachments.Where(c => c.ExtensionPack == extensionPack).ToArray())
                 factoryInteropAttachments.Remove(item);
@@ -1022,60 +1016,6 @@ namespace AntMe.Runtime
 
         #endregion
 
-        #region Interop Properties
-
-        private List<TypeMap> factoryInteropProperties = new List<TypeMap>();
-
-        private List<TypeMap> unitInteropProperties = new List<TypeMap>();
-
-        /// <summary>
-        /// Liste aller registrierten Factory Interop Properties.
-        /// </summary>
-        public IEnumerable<ITypeMapperEntry> FactoryInteropProperties { get { return factoryInteropProperties; } }
-
-        /// <summary>
-        /// Liste aller registrierten Unit Interop Properties.
-        /// </summary>
-        public IEnumerable<ITypeMapperEntry> UnitInteropProperties { get { return unitInteropProperties; } }
-
-        /// <summary>
-        /// Registriert ein Property für den Factory Interop
-        /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="extensionPack">Referenz auf die Extension</param>
-        /// <param name="name">Name des Properties</param>
-        public void RegisterFactoryInteropProperty<T>(IExtensionPack extensionPack, string name)
-            where T : FactoryInteropProperty
-        {
-            // TODO: Prüfungen
-            factoryInteropProperties.Add(new TypeMap()
-            {
-                ExtensionPack = extensionPack,
-                Name = name,
-                Type = typeof(T)
-            });
-        }
-
-        /// <summary>
-        /// Registriert ein Property für den Unit Interop
-        /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="extensionPack">Extension Pack</param>
-        /// <param name="name">name des Properties</param>
-        public void RegisterUnitInteropProperty<T>(IExtensionPack extensionPack, string name)
-            where T : UnitInteropProperty
-        {
-            // TODO: Prüfungen
-            unitInteropProperties.Add(new TypeMap()
-            {
-                ExtensionPack = extensionPack,
-                Name = name,
-                Type = typeof(T)
-            });
-        }
-
-        #endregion
-
         #region Interop Attachment Properties
 
         private class FactoryAttchmentTypeMap : AttachmentTypeMap<Func<Faction, FactoryInterop, FactoryInteropProperty>> { }
@@ -1841,13 +1781,21 @@ namespace AntMe.Runtime
             {
                 FactoryInteropProperty property = null;
                 if (item.CreateDelegate != null)
+                {
+                    // Create by Delegate
                     property = item.CreateDelegate(faction, result);
+                }
                 else
                 {
+                    // Create by Default
                     property = Activator.CreateInstance(item.AttachmentType, faction, result) as FactoryInteropProperty;
                     if (property == null)
                         throw new Exception("Error during Factory Interop Property Creation.");
                 }
+
+                // Attach created Property
+                if (property != null)
+                    result.AddProperty(property);
             }
 
             // Execute all Extender for the selected Interop Type.
@@ -1885,13 +1833,21 @@ namespace AntMe.Runtime
             {
                 UnitInteropProperty property = null;
                 if (attachment.CreateDelegate != null)
+                {
+                    // Create by Delegate
                     property = attachment.CreateDelegate(result);
+                }
                 else
                 {
+                    // Create by Default
                     property = Activator.CreateInstance(attachment.AttachmentType, faction, item, result) as UnitInteropProperty;
                     if (property == null)
                         throw new Exception("Error during Factory Interop Property Creation.");
                 }
+
+                // Attach
+                if (property != null)
+                    result.AddProperty(property);
             }
 
             // Execute all Extender for the selected Interop Type.

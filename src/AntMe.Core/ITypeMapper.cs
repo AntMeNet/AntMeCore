@@ -288,38 +288,6 @@ namespace AntMe
 
         #endregion
 
-        #region Interop Properties
-
-        /// <summary>
-        /// Liste aller registrierten Factory Interop Properties.
-        /// </summary>
-        IEnumerable<ITypeMapperEntry> FactoryInteropProperties { get; }
-
-        /// <summary>
-        /// Liste aller registrierten Unit Interop Properties.
-        /// </summary>
-        IEnumerable<ITypeMapperEntry> UnitInteropProperties { get; }
-
-        /// <summary>
-        /// Registriert ein Property für den Factory Interop
-        /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="extensionPack">Referenz auf die Extension</param>
-        /// <param name="name">Name des Properties</param>
-        void RegisterFactoryInteropProperty<T>(IExtensionPack extensionPack, string name)
-            where T : FactoryInteropProperty;
-
-        /// <summary>
-        /// Registriert ein Property für den Unit Interop
-        /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="extensionPack">Extension Pack</param>
-        /// <param name="name">name des Properties</param>
-        void RegisterUnitInteropProperty<T>(IExtensionPack extensionPack, string name)
-            where T : UnitInteropProperty;
-
-        #endregion
-
         #region Interop Attachment Properties
 
         IEnumerable<IAttachmentTypeMapperEntry> FactoryInteropAttachments { get; }

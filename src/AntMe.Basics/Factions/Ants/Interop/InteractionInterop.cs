@@ -11,7 +11,6 @@ namespace AntMe.Simulation.Factions.Ants.Interop
     public sealed class InteractionInterop : InteropProperty
     {
         private readonly AntItem _antItem;
-        private readonly AntFactionSettings _settings;
 
         private readonly CollectorProperty _collector;
         private readonly CarrierProperty _carrier;
@@ -25,7 +24,6 @@ namespace AntMe.Simulation.Factions.Ants.Interop
         public InteractionInterop(AntItem antItem)
         {
             _antItem = antItem;
-            _settings = new AntFactionSettings();
 
             #region Collector
 
@@ -159,7 +157,7 @@ namespace AntMe.Simulation.Factions.Ants.Interop
 
             // Drop Sugar
             int amount = _sugar.Amount;
-            if (_settings.ANT_DROP_SUGARHEAP)
+            if (_antItem.Settings.GetBool<AntItem>("DropSugar").Value)
             {
                 _antItem.Engine.InsertItem(new SugarItem(_antItem.Faction.Level.Context, _antItem.Position.ToVector2XY(), amount));
             }

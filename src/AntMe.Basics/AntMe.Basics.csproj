@@ -85,7 +85,6 @@
     <Compile Include="Extension.cs" />
     <Compile Include="Factions\Ants\AntFactoryInterop.cs" />
     <Compile Include="Factions\Ants\AntFaction.cs" />
-    <Compile Include="Factions\Ants\AntFactionSettings.cs" />
     <Compile Include="Factions\Ants\AntFactionState.cs" />
     <Compile Include="Factions\Ants\AntGeneratorFiles.Designer.cs">
       <DependentUpon>AntGeneratorFiles.resx</DependentUpon>
@@ -112,7 +111,6 @@
     <Compile Include="Factions\Ants\AntFactory.cs" />
     <Compile Include="Factions\Ants\PrimordialCasteAttribute.cs" />
     <Compile Include="Factions\Bugs\BugFaction.cs" />
-    <Compile Include="Factions\Bugs\BugFactionSettings.cs" />
     <Compile Include="Factions\Bugs\BugFactionState.cs" />
     <Compile Include="Factions\Bugs\BugGeneratorFiles.Designer.cs">
       <DependentUpon>BugGeneratorFiles.resx</DependentUpon>

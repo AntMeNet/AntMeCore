@@ -17,8 +17,6 @@ namespace AntMe.Items.Basics
         public AnthillItem(SimulationContext context, AntFaction faction, Vector2 position)
             : base(context, faction, position, HillRadius, Angle.Right)
         {
-            AntFactionSettings settings = new AntFactionSettings();
-
             var attackable = new AttackableProperty(this);
             if (attackable != null)
             {

@@ -42,8 +42,11 @@ namespace AntMe.Factions.Ants
             Level.Engine.OnRemoveItem += Level_RemovedItem;
 
             // Ameisenhügel erstellen und platzieren
-            if (Settings.GetBool<AntFaction>("InitialAntHill").Value)
+            for (int i = 0; i < Settings.GetInt<AntFaction>("InitialAnthillCount").Value; i++)
+            {
+                // TODO: Random Positions (on i > 1)
                 CreateAntHill(Home);
+            }
 
             // Erste Gruppe Ameisen erstellen
             for (var i = 0; i < Settings.GetInt<AntFaction>("InitialAntCount").Value; i++)

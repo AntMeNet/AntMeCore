@@ -47,6 +47,9 @@ namespace AntMe.Extension.Basics
             // ##########################
             typeMapper.RegisterEngineProperty<InteractionExtension>(this, "Interaction Extension (Core)", 70);
             typeMapper.RegisterEngineProperty<PhysicsExtension>(this, "Physics Extension (Core)", 100);
+
+            settings.Apply<RecognitionExtension>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
+            settings.Apply<RecognitionExtension>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
             typeMapper.RegisterEngineProperty<RecognitionExtension>(this, "Recognition Extension (Core)", 150);
 
             // ##########################
@@ -67,21 +70,17 @@ namespace AntMe.Extension.Basics
             typeMapper.RegisterItemPropertyS<AppleCollectableProperty, AppleCollectableState>(this, "Apple Collectable");
             typeMapper.RegisterItemPropertyS<SugarCollectableProperty, SugarCollectableState>(this, "Sugar Collectable");
 
-            typeMapper.RegisterFactoryInteropProperty<TotalStatisticsInterop>(this, "Factory Total Statistics");
-            typeMapper.RegisterFactoryInteropProperty<ByTypeStatisticsInterop>(this, "Factory By Type Statistics");
-            typeMapper.RegisterFactoryInteropProperty<ByCasteStatisticsInterop>(this, "Factory By Caste Statistics");
-
-            typeMapper.RegisterUnitInteropProperty<AntMovementInterop>(this, "Ant Unit Movement");
-
             // ##########################
             // Factions registrieren
             // ##########################
 
             // Ant Faction
-            settings.Apply<AntFaction>("InitialAntHill", true, "Enables the creation of a initial Anthill");
+            settings.Apply<AntFaction>("InitialAnthillCount", 1, "Number of initial Anthills");
             settings.Apply<AntFaction>("InitialAntCount", 0, "Number of initial Ants");
             settings.Apply<AntFaction>("ConcurrentAntCount", 100, "Number of concurrent Ants");
+            settings.Apply<AntFaction>("ConcurrentAnthillCount", 1, "Number of concurrent Anthills");
             settings.Apply<AntFaction>("TotalAntCount", int.MaxValue, "Total Number of Ants per Simulation");
+            settings.Apply<AntFaction>("TotalAnthillCount", 1, "Number of total Anthills per Simulation");
             settings.Apply<AntFaction>("AntRespawnDelay", 1, "Number of Rounds until another Respawn");
             typeMapper.RegisterFaction<AntFaction, AntFactionState, FactionInfo, AntFactory, AntFactoryInterop, AntUnit, AntUnitInterop>(this, "Ants");
 
@@ -186,6 +185,8 @@ namespace AntMe.Extension.Basics
                 return property;
             });
 
+            settings.Apply<AppleItem>("Collectable", false, "Will an Apple be collectable");
+
             typeMapper.AttachItemProperty<AppleItem, CollectableProperty>(this, "Apple Collectable");
             typeMapper.AttachItemProperty<AppleItem, AppleCollectableProperty>(this, "Apple Collectable"); // TODO: Amounts (amount))
         }
@@ -273,6 +274,7 @@ namespace AntMe.Extension.Basics
             // Attackable
             settings.Apply<AnthillItem>("Attackable", false, "Enables the possibility to destroy Anthills");
             settings.Apply<AnthillItem>("MaxHealth", 1000, "Maximum Health of an Anthill");
+            settings.Apply<AnthillItem>("Buildable", false, "Can an Anthill build by ants");
             typeMapper.AttachItemProperty<AnthillItem, AttackableProperty>(this, "Anthill Attackable", (i) =>
             {
                 // Check Attackable Switch
@@ -550,8 +552,9 @@ namespace AntMe.Extension.Basics
         {
             // Ant Item
             settings.Apply<AntItem>("ZickZackAngle", 10, "Correction Angle after Sprint");
-            settings.Apply<AntItem>("ZickZackRange", 100f, "Distance to go every Sprint");
-            settings.Apply<AntItem>("RotationSpeed", 10, "Maximum Rotation Angle per Round");
+            settings.Apply<AntItem>("ZickZackRange", 30f, "Distance to go every Sprint");
+            settings.Apply<AntItem>("RotationSpeed", 20, "Maximum Rotation Angle per Round");
+            settings.Apply<AntItem>("DropSugar", false, "Will an Ant leave a small Sugar on Drop");
             typeMapper.RegisterItem<AntItem, AntState, AntInfo>(this, "Ant");
 
             // Walking
@@ -648,9 +651,9 @@ namespace AntMe.Extension.Basics
             });
 
             // Attacker
-            settings.Apply<AntItem>("AttackRange", 5f, "Attack Range for a Bug");
-            settings.Apply<AntItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Bug");
-            settings.Apply<AntItem>("AttackStrength", 10, "Attach Strength for a Bug");
+            settings.Apply<AntItem>("AttackRange", 3f, "Attack Range for a Bug");
+            settings.Apply<AntItem>("RecoveryTime", 2, "Recovery Time in Rounds for a Bug");
+            settings.Apply<AntItem>("AttackStrength", 5, "Attach Strength for a Bug");
             typeMapper.AttachItemProperty<AntItem, AttackerProperty>(this, "Ant Attacker", (i) =>
             {
                 AttackerProperty property = new AttackerProperty(i);
@@ -660,6 +663,8 @@ namespace AntMe.Extension.Basics
                 return property;
             });
 
+            settings.Apply<AntItem>("SugarCapacity", 5, "Maximum Capacity for Sugar");
+            settings.Apply<AntItem>("AppleCapacity", 2, "Maximum Capacity for Apple");
             //typeMapper.AttachItemProperty<AntItem, CollectorProperty>(this, "Ant Collector"); // _settings.ANT_RANGE);
             //typeMapper.AttachItemProperty<AntItem, SugarCollectableProperty>(this, "Ant Sugar Collectable"); // _settings.ANT_SUGAR_CAPACITY, 0);
             //typeMapper.AttachItemProperty<AntItem, AppleCollectableProperty>(this, "Ant Apple Collectable"); // TODO: Optional, wenn _settings.ANT_APPLECOLLECT | _settings.ANT_APPLE_CAPACITY, 0);

@@ -18,13 +18,12 @@ namespace CoreTestClient
         private TreeNode factionAttachmentPropertiesNode;
         private TreeNode factionExtenderNode;
 
-        private TreeNode interopNode;
-        private TreeNode factoryInteropPropertiesNode;
+        private TreeNode factoryInteropNode;
         private TreeNode factoryInteropAttachmentPropertiesNode;
         private TreeNode factoryInteropExtenderNode;
-        private TreeNode UnitInteropPropertiesNode;
-        private TreeNode UnitInteropAttachmentPropertiesNode;
-        private TreeNode UnitInteropExtenderNode;
+        private TreeNode unitInteropNode;
+        private TreeNode unitInteropAttachmentPropertiesNode;
+        private TreeNode unitInteropExtenderNode;
         
         private TreeNode levelNode;
         private TreeNode levelPropertiesNode;
@@ -48,13 +47,13 @@ namespace CoreTestClient
             factionAttachmentPropertiesNode = factionsNode.Nodes["factionAttachmentPropertiesNode"];
             factionExtenderNode = factionsNode.Nodes["factionExtenderNode"];
 
-            interopNode = treeView.Nodes["interopNode"];
-            factoryInteropPropertiesNode = interopNode.Nodes["factoryInteropPropertiesNode"];
-            factoryInteropAttachmentPropertiesNode = interopNode.Nodes["factoryInteropAttachmentPropertiesNode"];
-            factoryInteropExtenderNode = interopNode.Nodes["factoryInteropExtenderNode"];
-            UnitInteropPropertiesNode = interopNode.Nodes["UnitInteropPropertiesNode"];
-            UnitInteropAttachmentPropertiesNode = interopNode.Nodes["UnitInteropAttachmentPropertiesNode"];
-            UnitInteropExtenderNode = interopNode.Nodes["UnitInteropExtenderNode"];
+            factoryInteropNode = treeView.Nodes["factoryInteropNode"];
+            factoryInteropAttachmentPropertiesNode = factoryInteropNode.Nodes["factoryInteropAttachmentPropertiesNode"];
+            factoryInteropExtenderNode = factoryInteropNode.Nodes["factoryInteropExtenderNode"];
+
+            unitInteropNode = treeView.Nodes["unitInteropNode"];
+            unitInteropAttachmentPropertiesNode = unitInteropNode.Nodes["UnitInteropAttachmentPropertiesNode"];
+            unitInteropExtenderNode = unitInteropNode.Nodes["UnitInteropExtenderNode"];
 
             levelNode = treeView.Nodes["levelNode"];
             levelPropertiesNode = levelNode.Nodes["levelPropertiesNode"];
@@ -156,15 +155,6 @@ namespace CoreTestClient
                         node.SubItems.Add(item.ExtensionPack.Name);
                     }
                 }
-                else if (treeView.SelectedNode == factoryInteropPropertiesNode)
-                {
-                    foreach (var item in ExtensionLoader.DefaultTypeMapper.FactoryInteropProperties)
-                    {
-                        var node = listView.Items.Add(item.Name);
-                        node.SubItems.Add(item.Type.FullName);
-                        node.SubItems.Add(item.ExtensionPack.Name);
-                    }
-                }
                 else if (treeView.SelectedNode == factoryInteropAttachmentPropertiesNode)
                 {
                     foreach (var item in ExtensionLoader.DefaultTypeMapper.FactoryInteropAttachments)
@@ -183,16 +173,7 @@ namespace CoreTestClient
                         node.SubItems.Add(item.ExtensionPack.Name);
                     }
                 }
-                else if (treeView.SelectedNode == UnitInteropPropertiesNode)
-                {
-                    foreach (var item in ExtensionLoader.DefaultTypeMapper.UnitInteropProperties)
-                    {
-                        var node = listView.Items.Add(item.Name);
-                        node.SubItems.Add(item.Type.FullName);
-                        node.SubItems.Add(item.ExtensionPack.Name);
-                    }
-                }
-                else if (treeView.SelectedNode == UnitInteropAttachmentPropertiesNode)
+                else if (treeView.SelectedNode == unitInteropAttachmentPropertiesNode)
                 {
                     foreach (var item in ExtensionLoader.DefaultTypeMapper.UnitInteropAttachments)
                     {
@@ -201,7 +182,7 @@ namespace CoreTestClient
                         node.SubItems.Add(item.ExtensionPack.Name);
                     }
                 }
-                else if (treeView.SelectedNode == UnitInteropExtenderNode)
+                else if (treeView.SelectedNode == unitInteropExtenderNode)
                 {
                     foreach (var item in ExtensionLoader.DefaultTypeMapper.UnitInteropExtender)
                     {
