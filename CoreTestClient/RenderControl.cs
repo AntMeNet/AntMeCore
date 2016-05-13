@@ -14,16 +14,25 @@ namespace CoreTestClient
         private float offsetX = 0;
         private float offsetY = 0;
 
-        private Pen playgroundLines = new Pen(Color.Black);
         private Font playgroundText = new Font("Courier New", 7f);
         private Brush playgroundTextBrush = new SolidBrush(Color.Black);
 
-        private Brush itemBodyBrush = new SolidBrush(Color.Red);
-        private Pen itemCenterPen = new Pen(Color.Black);
+        private Brush itemBodyBrush = new SolidBrush(Color.FromArgb(128, 50, 50, 50));
+        private Pen itemDirectionPen = new Pen(Color.Black);
+        private Pen[] itemFactionPens = new[] {
+            new Pen(Color.Black),
+            new Pen(Color.Red),
+            new Pen(Color.Blue),
+            new Pen(Color.Yellow),
+            new Pen(Color.Purple),
+            new Pen(Color.Orange),
+            new Pen(Color.Green),
+            new Pen(Color.White),
+        };
+        private Pen[] slotPens = new Pen[8];
 
         private ISimulationClient simulation;
         private LevelState currentState;
-        private Color[] colors = new Color[8];
 
         public RenderControl()
         {
@@ -71,12 +80,10 @@ namespace CoreTestClient
         {
             if (currentState == null)
             {
-                foreach (var faction in levelState.Factions)
-                    colors[faction.SlotIndex] = Convert(faction.PlayerColor);
-
                 SetScale(levelState.Map.GetCellCount());
+                foreach (var faction in levelState.Factions)
+                    slotPens[faction.SlotIndex] = itemFactionPens[(int)faction.PlayerColor];
             }
-
             currentState = levelState;
         }
 
@@ -147,46 +154,21 @@ namespace CoreTestClient
 
                         // Kollisionsbody
                         float rad = item.Radius * scale;
-                        e.Graphics.FillEllipse(new SolidBrush(Color.Gray), x - rad, y - rad, rad * 2, rad * 2);
+                        e.Graphics.FillEllipse(itemBodyBrush, x - rad, y - rad, rad * 2, rad * 2);
 
+                        // Orientation
+                        Vector2 angle = Vector2.FromAngle(Angle.FromDegree(item.Orientation)) * rad;
+                        e.Graphics.DrawLine(itemDirectionPen, x, y, x + angle.X, y + angle.Y);
+
+                        // Faction-colored Outline
                         if (item is FactionItemState)
                         {
                             FactionItemState factionItem = item as FactionItemState;
-                            // e.Graphics.DrawEllipse((borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines), x - rad, y - rad, rad * 2, rad * 2);
+                            Pen slotPen = slotPens[factionItem.SlotIndex];
+                            e.Graphics.DrawEllipse(slotPen, x - rad, y - rad, rad * 2, rad * 2);
                         }
 
-                        //    // Sichtkegel zeichnen
-                        //    if (viewerRange.HasValue)
-                        //    {
-                        //        float rad = viewerRange.Value * scale;
-                        //        Pen pen = (borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines);
-                        //        g.DrawEllipse(pen, x - rad, y - rad, rad * 2, rad * 2);
-
-                        //        if (viewerDirection.HasValue)
-                        //        {
-                        //            Vector2 vector = Vector2.FromAngle(Angle.FromRadian(viewerDirection.Value)) * rad;
-                        //            g.DrawLine(pen, x, y, x + vector.X, y + vector.Y);
-                        //        }
-                        //    }
-
-                        //    // Movement
-                        //    if (bodyDirection.HasValue && bodySpeed.HasValue)
-                        //    {
-                        //        Vector2 vector = Vector2.FromAngle(Angle.FromRadian(bodyDirection.Value)) * (bodySpeed.Value * scale);
-                        //        g.DrawLine(itemCenterPen, x, y, x + vector.X, y + vector.Y);
-                        //    }
-
-                        //    // Riechradius zeichnen
-                        //    if (smellableRange.HasValue)
-                        //    {
-                        //        float rad = smellableRange.Value * scale;
-                        //        Pen pen = (borderColor.HasValue ? new Pen(borderColor.Value) : playgroundLines);
-                        //        g.FillEllipse(new SolidBrush(Color.FromArgb(40, 255, 238, 58)), x - rad, y - rad, rad * 2, rad * 2);
-                        //        g.DrawEllipse(pen, x - rad, y - rad, rad * 2, rad * 2);
-                        //    }
-
-                        // Zentrum und ID
-                        e.Graphics.DrawRectangle(itemCenterPen, x, y, 1, 1);
+                        // ID
                         e.Graphics.DrawString(item.Id.ToString(), playgroundText, playgroundTextBrush, x, y);
                     }
                 }
@@ -258,22 +240,22 @@ namespace CoreTestClient
             UpdateTree();
         }
 
-        private Color Convert(PlayerColor color)
-        {
-            switch (color)
-            {
-                case PlayerColor.Black: return Color.Black;
-                case PlayerColor.Blue: return Color.Blue;
-                case PlayerColor.Cyan: return Color.Yellow;
-                case PlayerColor.Green: return Color.Green;
-                case PlayerColor.Orange: return Color.Orange;
-                case PlayerColor.Purple: return Color.Purple;
-                case PlayerColor.Red: return Color.Red;
-                case PlayerColor.White: return Color.White;
-            }
+        //private Color Convert(PlayerColor color)
+        //{
+        //    switch (color)
+        //    {
+        //        case PlayerColor.Black: return Color.Black;
+        //        case PlayerColor.Blue: return Color.Blue;
+        //        case PlayerColor.Cyan: return Color.Yellow;
+        //        case PlayerColor.Green: return Color.Green;
+        //        case PlayerColor.Orange: return Color.Orange;
+        //        case PlayerColor.Purple: return Color.Purple;
+        //        case PlayerColor.Red: return Color.Red;
+        //        case PlayerColor.White: return Color.White;
+        //    }
 
-            return Color.Black;
-        }
+        //    return Color.Black;
+        //}
 
         private Index2 _mapCells;
         private Vector2 _mapSize;
@@ -428,7 +410,7 @@ namespace CoreTestClient
                 }
             }
 
-            
+
         }
     }
 }

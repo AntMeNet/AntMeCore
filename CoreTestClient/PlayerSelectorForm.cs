@@ -55,9 +55,10 @@ namespace CoreTestClient
 
                 foreach (var player in result.Players)
                 {
+                    player.Type.AssemblyFile = file;
                     var item = playerList.Items.Add(player.Name);
                     item.Tag = player;
-                    item.ToolTipText = player.Author;
+                    item.SubItems.Add(player.Author);
                 }
             }
         }

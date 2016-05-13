@@ -38,6 +38,7 @@ namespace CoreTestClient
 
                 foreach (var level in result.Levels)
                 {
+                    level.Type.AssemblyFile = file;
                     var item = levelList.Items.Add(level.LevelDescription.Name);
                     item.Tag = level;
                     item.ToolTipText = level.LevelDescription.Description;
