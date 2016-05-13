@@ -68,6 +68,12 @@
     <Compile Include="CampaignPreview.Designer.cs">
       <DependentUpon>CampaignPreview.cs</DependentUpon>
     </Compile>
+    <Compile Include="CodeGeneratorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CodeGeneratorForm.Designer.cs">
+      <DependentUpon>CodeGeneratorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="LevelSelectorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -144,6 +150,9 @@
     </Compile>
     <EmbeddedResource Include="CampaignPreview.resx">
       <DependentUpon>CampaignPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CodeGeneratorForm.resx">
+      <DependentUpon>CodeGeneratorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LevelSelectorForm.resx">
       <DependentUpon>LevelSelectorForm.cs</DependentUpon>

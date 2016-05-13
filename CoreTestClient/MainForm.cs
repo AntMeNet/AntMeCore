@@ -132,5 +132,13 @@ namespace CoreTestClient
         {
             MessageBox.Show(message);
         }
+
+        private void codeGeneratorMenu_Click(object sender, EventArgs e)
+        {
+            using (CodeGeneratorForm form = new CodeGeneratorForm())
+            {
+                form.ShowDialog(this);
+            }
+        }
     }
 }

@@ -39,12 +39,13 @@
             this.extensionsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.globalSettingsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.stateLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timeLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.mainPanel = new System.Windows.Forms.Panel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.startToolButton = new System.Windows.Forms.ToolStripButton();
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.stateLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.timeLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.codeGeneratorMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -94,7 +95,8 @@
             // 
             this.loaderMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.extensionsMenu,
-            this.globalSettingsMenu});
+            this.globalSettingsMenu,
+            this.codeGeneratorMenu});
             this.loaderMenu.Name = "loaderMenu";
             this.loaderMenu.Size = new System.Drawing.Size(55, 20);
             this.loaderMenu.Text = "Loader";
@@ -102,14 +104,14 @@
             // extensionsMenu
             // 
             this.extensionsMenu.Name = "extensionsMenu";
-            this.extensionsMenu.Size = new System.Drawing.Size(153, 22);
+            this.extensionsMenu.Size = new System.Drawing.Size(157, 22);
             this.extensionsMenu.Text = "Extensions";
             this.extensionsMenu.Click += new System.EventHandler(this.extensionsMenu_Click);
             // 
             // globalSettingsMenu
             // 
             this.globalSettingsMenu.Name = "globalSettingsMenu";
-            this.globalSettingsMenu.Size = new System.Drawing.Size(153, 22);
+            this.globalSettingsMenu.Size = new System.Drawing.Size(157, 22);
             this.globalSettingsMenu.Text = "Global Settings";
             this.globalSettingsMenu.Click += new System.EventHandler(this.globalSettingsMenu_Click);
             // 
@@ -123,6 +125,18 @@
             this.statusStrip.Size = new System.Drawing.Size(784, 22);
             this.statusStrip.TabIndex = 1;
             this.statusStrip.Text = "statusStrip1";
+            // 
+            // stateLabel
+            // 
+            this.stateLabel.Name = "stateLabel";
+            this.stateLabel.Size = new System.Drawing.Size(40, 17);
+            this.stateLabel.Text = "[state]";
+            // 
+            // timeLabel
+            // 
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(39, 17);
+            this.timeLabel.Text = "[time]";
             // 
             // mainPanel
             // 
@@ -157,17 +171,12 @@
             this.timer.Enabled = true;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
-            // stateLabel
+            // codeGeneratorMenu
             // 
-            this.stateLabel.Name = "stateLabel";
-            this.stateLabel.Size = new System.Drawing.Size(40, 17);
-            this.stateLabel.Text = "[state]";
-            // 
-            // timeLabel
-            // 
-            this.timeLabel.Name = "timeLabel";
-            this.timeLabel.Size = new System.Drawing.Size(39, 17);
-            this.timeLabel.Text = "[time]";
+            this.codeGeneratorMenu.Name = "codeGeneratorMenu";
+            this.codeGeneratorMenu.Size = new System.Drawing.Size(157, 22);
+            this.codeGeneratorMenu.Text = "Code Generator";
+            this.codeGeneratorMenu.Click += new System.EventHandler(this.codeGeneratorMenu_Click);
             // 
             // MainForm
             // 
@@ -212,6 +221,7 @@
         private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.ToolStripStatusLabel stateLabel;
         private System.Windows.Forms.ToolStripStatusLabel timeLabel;
+        private System.Windows.Forms.ToolStripMenuItem codeGeneratorMenu;
     }
 }
 
