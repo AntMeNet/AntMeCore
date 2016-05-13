@@ -1,0 +1,12 @@
+init:
+  - git config --global core.autocrlf true
+
+version: '{build}'
+
+build_script:
+- ps: ./build
+
+# Build cache
+cache:
+- packages -> src\**\packages.config
+- tools -> tools\packages.config
