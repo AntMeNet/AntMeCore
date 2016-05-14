@@ -1,7 +1,7 @@
-﻿using AntMe.ItemProperties.Basics;
+﻿using AntMe.Basics.ItemProperties;
 using System.Collections.Generic;
 
-namespace AntMe.EngineExtensions.Basics
+namespace AntMe.Basics.EngineExtensions
 {
     /// <summary>
     ///     Basis Extension für jegliche Art von Bewegung, Kollision und

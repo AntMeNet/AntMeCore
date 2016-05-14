@@ -1,4 +1,4 @@
-﻿namespace AntMe.Items.Basics
+﻿namespace AntMe.Basics.Items
 {
     public sealed class AnthillState : FactionItemState
     {

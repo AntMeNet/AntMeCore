@@ -1,21 +1,20 @@
-﻿
-namespace AntMe.Basics.ItemProperties
+﻿namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// State for a Apple Collectable Properties.
+    /// State for all Apple Collector Properties.
     /// </summary>
-    public sealed class AppleCollectableState : CollectableState
+    public sealed class AppleCollectorState : CollectorState
     {
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public AppleCollectableState() : base() { }
+        public AppleCollectorState() : base() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         /// <param name="property">Related Engine Property</param>
-        public AppleCollectableState(Item item, AppleCollectableProperty property) : base(item, property) { }
+        public AppleCollectorState(Item item, AppleCollectorProperty property) : base(item, property) { }
     }
 }

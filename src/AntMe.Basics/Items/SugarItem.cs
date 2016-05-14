@@ -1,7 +1,4 @@
-﻿using AntMe.ItemProperties.Basics;
-using System;
-
-namespace AntMe.Items.Basics
+﻿namespace AntMe.Basics.Items
 {
     /// <summary>
     /// Represents an Sugar Hill.
@@ -17,8 +14,6 @@ namespace AntMe.Items.Basics
         /// Maximale Ladung eines Zuckerberges.
         /// </summary>
         public const int SugarMaxCapacity = 1000;
-
-        private SugarCollectableProperty _sugar;
 
         public SugarItem(SimulationContext context, Vector2 position, int amount)
             : base(context, position, SugarRadius, Angle.Right)

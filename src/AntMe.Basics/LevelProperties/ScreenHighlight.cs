@@ -1,4 +1,4 @@
-﻿namespace AntMe
+﻿namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
     ///     Klasse zur Repräsentanz von UI Highlights zur Weitergabe im State.

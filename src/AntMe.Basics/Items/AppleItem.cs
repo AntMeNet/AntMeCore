@@ -1,7 +1,4 @@
-﻿using AntMe.ItemProperties.Basics;
-using System;
-
-namespace AntMe.Items.Basics
+﻿namespace AntMe.Basics.Items
 {
     /// <summary>
     /// Game Item that represents an Apple.

@@ -1,4 +1,4 @@
-﻿namespace AntMe
+﻿namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
     ///     Klasse zur Anzeige eines überblendenden Dialogs.

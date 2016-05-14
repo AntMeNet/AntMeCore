@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.IO;
 
-namespace AntMe.ItemProperties.Basics
+namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
     /// State Property for all portable Items.

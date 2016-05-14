@@ -1,4 +1,4 @@
-﻿namespace AntMe
+﻿namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
     ///     Klasse zur Signalisierung einem Bereich auf der Karte.

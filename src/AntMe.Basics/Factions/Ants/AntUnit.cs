@@ -1,4 +1,4 @@
-﻿namespace AntMe.Factions.Ants
+﻿namespace AntMe.Basics.Factions.Ants
 {
     public abstract class AntUnit : FactionUnit
     {

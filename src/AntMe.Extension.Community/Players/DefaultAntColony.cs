@@ -1,4 +1,4 @@
-﻿using AntMe.Factions.Ants;
+﻿using AntMe.Basics.Factions.Ants;
 using System;
 
 namespace AntMe.Extension.Community.Players

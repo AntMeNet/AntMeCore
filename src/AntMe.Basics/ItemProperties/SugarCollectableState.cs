@@ -1,14 +1,20 @@
-﻿using AntMe.ItemProperties.Basics;
-
-namespace AntMe.ItemProperties.Basics
+﻿namespace AntMe.Basics.ItemProperties
 {
-    public sealed class SugarCollectableState : CollectableGoodState
+    /// <summary>
+    /// State Property for all Collectable Sugar Properties.
+    /// </summary>
+    public sealed class SugarCollectableState : CollectableState
     {
+        /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
         public SugarCollectableState() : base() { }
 
-        public SugarCollectableState(Item item, SugarCollectableProperty property) : base(item, property)
-        {
-
-        }
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="item">Related Engine Item</param>
+        /// <param name="property">Related Engine Property</param>
+        public SugarCollectableState(Item item, SugarCollectableProperty property) : base(item, property) { }
     }
 }

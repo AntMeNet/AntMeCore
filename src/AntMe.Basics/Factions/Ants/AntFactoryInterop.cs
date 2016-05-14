@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AntMe.Factions.Ants
+namespace AntMe.Basics.Factions.Ants
 {
     /// <summary>
     /// Interop Klasse zwischen der Runtime und der User-Implementierung.

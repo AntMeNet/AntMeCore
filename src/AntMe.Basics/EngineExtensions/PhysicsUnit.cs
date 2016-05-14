@@ -1,10 +1,10 @@
-﻿using AntMe.ItemProperties.Basics;
+﻿using AntMe.Basics.ItemProperties;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AntMe.EngineExtensions.Basics
+namespace AntMe.Basics.EngineExtensions
 {
     /// <summary>
     ///     Wrapper um bewegliche Elemente

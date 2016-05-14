@@ -1,4 +1,4 @@
-﻿namespace AntMe
+﻿namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
     ///     Trigger zur Benachrichtigung bei einer bestimmten Rundenzahl.

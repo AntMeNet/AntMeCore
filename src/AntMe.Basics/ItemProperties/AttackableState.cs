@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.IO;
 
-namespace AntMe.ItemProperties.Basics
+namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
     /// State for all attackable Items.

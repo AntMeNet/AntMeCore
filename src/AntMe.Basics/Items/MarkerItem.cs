@@ -1,7 +1,7 @@
-﻿using AntMe.ItemProperties.Basics;
+﻿using AntMe.Basics.ItemProperties;
 using System;
 
-namespace AntMe.Items.Basics
+namespace AntMe.Basics.Items
 {
     /// <summary>
     /// Represents a Ant Marker.

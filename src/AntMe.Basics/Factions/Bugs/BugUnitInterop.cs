@@ -1,9 +1,7 @@
-﻿using AntMe.Items.Basics;
-using AntMe.Simulation;
-using System;
+﻿using AntMe.Basics.Items;
 using System.Collections.Generic;
 
-namespace AntMe.Factions.Bugs
+namespace AntMe.Basics.Factions.Bugs
 {
     public sealed class BugUnitInterop : UnitInterop<BugFaction, BugItem>
     {

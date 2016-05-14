@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AntMe.Factions.Ants
+namespace AntMe.Basics.Factions.Ants
 {
     [AttributeUsage(
         AttributeTargets.Class, 

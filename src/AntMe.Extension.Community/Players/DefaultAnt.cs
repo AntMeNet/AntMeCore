@@ -1,6 +1,5 @@
-﻿using AntMe.Factions.Ants;
-using AntMe.Simulation.Factions.Ants.Interop;
-using System;
+﻿using AntMe.Basics.Factions.Ants;
+using AntMe.Basics.Factions.Ants.Interop;
 
 namespace AntMe.Extension.Community.Players
 {

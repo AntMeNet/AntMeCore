@@ -1,4 +1,4 @@
-﻿using AntMe.Items.Basics;
+﻿using AntMe.Basics.Items;
 using System;
 
 namespace AntMe.Basics.Factions.Ants.Interop

@@ -1,8 +1,7 @@
-﻿using AntMe.Factions.Bugs;
-using AntMe.ItemProperties.Basics;
+﻿using AntMe.Basics.Factions.Bugs;
 using System.Threading;
 
-namespace AntMe.Items.Basics
+namespace AntMe.Basics.Items
 {
     /// <summary>
     /// A bug item.

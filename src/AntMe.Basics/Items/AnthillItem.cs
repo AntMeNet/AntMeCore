@@ -1,8 +1,7 @@
-﻿using AntMe.Factions.Ants;
-using AntMe.ItemProperties.Basics;
-using System;
+﻿using AntMe.Basics.Factions.Ants;
+using AntMe.Basics.ItemProperties;
 
-namespace AntMe.Items.Basics
+namespace AntMe.Basics.Items
 {
     /// <summary>
     /// Represents an AntHill.

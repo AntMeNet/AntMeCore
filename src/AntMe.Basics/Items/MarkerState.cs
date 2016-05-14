@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.IO;
 
-namespace AntMe.Items.Basics
+namespace AntMe.Basics.Items
 {
     /// <summary>
     /// State for a Marker.

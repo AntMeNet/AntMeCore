@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace AntMe.ItemProperties.Basics
+namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
     ///     Umgebungsinformationen.

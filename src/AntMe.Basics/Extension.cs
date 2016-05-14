@@ -1,14 +1,14 @@
-﻿using AntMe.Basics.Factions;
+﻿using AntMe.Basics.EngineExtensions;
+using AntMe.Basics.Factions;
+using AntMe.Basics.Factions.Ants;
 using AntMe.Basics.Factions.Ants.Interop;
-using AntMe.EngineExtensions.Basics;
-using AntMe.Factions.Ants;
-using AntMe.Factions.Bugs;
-using AntMe.ItemProperties.Basics;
-using AntMe.Items.Basics;
-using AntMe.Simulation.Factions.Ants.Interop;
+using AntMe.Basics.Factions.Bugs;
+using AntMe.Basics.ItemProperties;
+using AntMe.Basics.Items;
+
 using System;
 
-namespace AntMe.Extension.Basics
+namespace AntMe.Basics
 {
     /// <summary>
     /// Extension for the Basic AntMe! Items.
@@ -58,7 +58,6 @@ namespace AntMe.Extension.Basics
             typeMapper.RegisterItemPropertyS<AttackableProperty, AttackableState>(this, "Attackable");
             typeMapper.RegisterItemPropertyS<AttackerProperty, AttackerState>(this, "Attacker");
             typeMapper.RegisterItemPropertyS<CarrierProperty, CarrierState>(this, "Carrier");
-            typeMapper.RegisterItemPropertyS<CollectorProperty, CollectorState>(this, "Collector");
             typeMapper.RegisterItemPropertyS<CollidableProperty, CollidableState>(this, "Collidable");
             typeMapper.RegisterItemPropertyS<PortableProperty, PortableState>(this, "Portable");
             typeMapper.RegisterItemPropertyS<SightingProperty, SightingState>(this, "Sighting");
@@ -66,7 +65,8 @@ namespace AntMe.Extension.Basics
             typeMapper.RegisterItemPropertyS<SnifferProperty, SnifferState>(this, "Sniffer");
             typeMapper.RegisterItemPropertyS<VisibleProperty, VisibleState>(this, "Visible");
             typeMapper.RegisterItemPropertyS<WalkingProperty, WalkingState>(this, "Walking");
-            typeMapper.RegisterItemPropertyS<CollectableProperty, CollectableState>(this, "Collectable");
+            typeMapper.RegisterItemPropertyS<AppleCollectorProperty, AppleCollectorState>(this, "Apple Collector");
+            typeMapper.RegisterItemPropertyS<SugarCollectorProperty, SugarCollectorState>(this, "Sugar Collector");
             typeMapper.RegisterItemPropertyS<AppleCollectableProperty, AppleCollectableState>(this, "Apple Collectable");
             typeMapper.RegisterItemPropertyS<SugarCollectableProperty, SugarCollectableState>(this, "Sugar Collectable");
 
@@ -100,6 +100,7 @@ namespace AntMe.Extension.Basics
 
             // Ant Unit Interops
             typeMapper.AttachUnitInteropProperty<AntUnitInterop, AntMovementInterop>(this, "Ant Movement Interop");
+            typeMapper.AttachUnitInteropProperty<AntUnitInterop, RecognitionInterop>(this, "Ant Recognition Interop");
 
             // Bug Faction
             typeMapper.RegisterFaction<BugFaction, BugFactionState, FactionInfo, BugFactory, BugFactoryInterop, BugUnit, BugUnitInterop>(this, "Bugs");
@@ -186,9 +187,17 @@ namespace AntMe.Extension.Basics
             });
 
             settings.Apply<AppleItem>("Collectable", false, "Will an Apple be collectable");
+            settings.Apply<AppleItem>("Amount", 250, "Amount of Apple Units");
+            typeMapper.AttachItemProperty<AppleItem, AppleCollectableProperty>(this, "Apple Collectable", (i) =>
+            {
+                if (!i.Settings.GetBool<AppleItem>("Collectable").Value)
+                    return null;
 
-            typeMapper.AttachItemProperty<AppleItem, CollectableProperty>(this, "Apple Collectable");
-            typeMapper.AttachItemProperty<AppleItem, AppleCollectableProperty>(this, "Apple Collectable"); // TODO: Amounts (amount))
+                AppleCollectableProperty property = new AppleCollectableProperty(i);
+                property.Capacity = i.Settings.GetInt<AppleItem>("Amount").Value;
+                property.Amount = i.Settings.GetInt<AppleItem>("Amount").Value;
+                return property;
+            });
         }
 
         /// <summary>
@@ -229,8 +238,8 @@ namespace AntMe.Extension.Basics
                 return property;
             });
 
-            //typeMapper.AttachItemProperty<SugarItem, CollectableProperty>(this, "Sugar Collectable");
-            //typeMapper.AttachItemProperty<SugarItem, SugarCollectableProperty>(this, "Sugar Collectable"); // TODO: Amounts (SugarMaxCapacity, Math.Min(SugarMaxCapacity, amount))
+            // Collectable
+            typeMapper.AttachItemProperty<SugarItem, SugarCollectableProperty>(this, "Sugar Collectable"); // TODO: Amounts (SugarMaxCapacity, Math.Min(SugarMaxCapacity, amount))
         }
 
         /// <summary>
@@ -294,9 +303,9 @@ namespace AntMe.Extension.Basics
                 return property;
             });
 
-            //typeMapper.AttachItemProperty<AnthillItem, CollectableProperty>(this, "Anthill Collectable"); // TODO: Radius, Vermutlich entfernen
-            //typeMapper.AttachItemProperty<AnthillItem, SugarCollectableProperty>(this, "Anthill Sugarsafe"); // TODO: Radius
-            //typeMapper.AttachItemProperty<AnthillItem, AppleCollectableProperty>(this, "Anthill Applesafe"); // TODO: Radius
+            // Collectable
+            typeMapper.AttachItemProperty<AnthillItem, SugarCollectableProperty>(this, "Anthill Sugarsafe"); // TODO: Radius
+            typeMapper.AttachItemProperty<AnthillItem, AppleCollectableProperty>(this, "Anthill Applesafe"); // TODO: Radius
         }
 
         /// <summary>
@@ -555,6 +564,7 @@ namespace AntMe.Extension.Basics
             settings.Apply<AntItem>("ZickZackRange", 30f, "Distance to go every Sprint");
             settings.Apply<AntItem>("RotationSpeed", 20, "Maximum Rotation Angle per Round");
             settings.Apply<AntItem>("DropSugar", false, "Will an Ant leave a small Sugar on Drop");
+            settings.Apply<AntItem>("MarkerDelay", 10, "Time in Rounds between Marker-Drops");
             typeMapper.RegisterItem<AntItem, AntState, AntInfo>(this, "Ant");
 
             // Walking
@@ -663,11 +673,21 @@ namespace AntMe.Extension.Basics
                 return property;
             });
 
+            // Collector
             settings.Apply<AntItem>("SugarCapacity", 5, "Maximum Capacity for Sugar");
             settings.Apply<AntItem>("AppleCapacity", 2, "Maximum Capacity for Apple");
-            //typeMapper.AttachItemProperty<AntItem, CollectorProperty>(this, "Ant Collector"); // _settings.ANT_RANGE);
-            //typeMapper.AttachItemProperty<AntItem, SugarCollectableProperty>(this, "Ant Sugar Collectable"); // _settings.ANT_SUGAR_CAPACITY, 0);
-            //typeMapper.AttachItemProperty<AntItem, AppleCollectableProperty>(this, "Ant Apple Collectable"); // TODO: Optional, wenn _settings.ANT_APPLECOLLECT | _settings.ANT_APPLE_CAPACITY, 0);
+            typeMapper.AttachItemProperty<AntItem, SugarCollectorProperty>(this, "Ant Sugar Collectable", (i) =>
+            {
+                SugarCollectorProperty property = new SugarCollectorProperty(i);
+                property.Capacity = i.Settings.GetInt<AntItem>("SugarCapacity").Value;
+                return property;
+            });
+            typeMapper.AttachItemProperty<AntItem, AppleCollectorProperty>(this, "Ant Apple Collectable", (i) =>
+            {
+                AppleCollectorProperty property = new AppleCollectorProperty(i);
+                property.Capacity = i.Settings.GetInt<AntItem>("AppleCapacity").Value;
+                return property;
+            }); // TODO: Optional, wenn _settings.ANT_APPLECOLLECT | _settings.ANT_APPLE_CAPACITY, 0);
         }
     }
 }

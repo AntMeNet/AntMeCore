@@ -1,11 +1,10 @@
-﻿using AntMe.Factions.Ants;
-using AntMe.ItemProperties.Basics;
-using AntMe.Items.Basics;
+﻿using AntMe.Basics.ItemProperties;
+using AntMe.Basics.Items;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace AntMe.Simulation.Factions.Ants.Interop
+namespace AntMe.Basics.Factions.Ants.Interop
 {
     /// <summary>
     /// Physics Interop for Ants.

@@ -1,12 +1,14 @@
-﻿using AntMe.ItemProperties.Basics;
-
-namespace AntMe.ItemProperties.Basics
+﻿namespace AntMe.Basics.ItemProperties
 {
-    public sealed class SugarCollectableProperty : CollectableGoodProperty
+    /// <summary>
+    /// Item Property for all Collectable Sugar Items.
+    /// </summary>
+    public sealed class SugarCollectableProperty : CollectableProperty<SugarCollectorProperty>
     {
-        public SugarCollectableProperty(Item item) : base(item)
-        {
-            // Amount?
-        }
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="item">Item</param>
+        public SugarCollectableProperty(Item item) : base(item) { }
     }
 }

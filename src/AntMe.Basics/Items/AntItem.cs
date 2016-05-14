@@ -1,8 +1,8 @@
-﻿using AntMe.Factions.Ants;
-using AntMe.ItemProperties.Basics;
+﻿using AntMe.Basics.Factions.Ants;
+using AntMe.Basics.ItemProperties;
 using System;
 
-namespace AntMe.Items.Basics
+namespace AntMe.Basics.Items
 {
     /// <summary>
     /// Represents an Ant.

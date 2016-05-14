@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AntMe.ItemProperties.Basics
+namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
     /// State Property for Carrier Items.

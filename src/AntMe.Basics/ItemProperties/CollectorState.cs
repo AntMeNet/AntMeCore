@@ -1,42 +1,79 @@
 ﻿using System.ComponentModel;
+using System.IO;
 
-namespace AntMe.ItemProperties.Basics
+namespace AntMe.Basics.ItemProperties
 {
-    public sealed class CollectorState : ItemStateProperty
+    /// <summary>
+    /// Base State for all Good Collector Properties.
+    /// </summary>
+    public abstract class CollectorState : GoodsState
     {
         /// <summary>
-        /// Liefert den Sammelradius des Spielelements oder legt diesen fest.
+        /// Gets the Collector Range.
         /// </summary>
         [DisplayName("Collector Range")]
-        [Description("")]
+        [Description("Gets the Collector Range.")]
+        [ReadOnly(true)]
+        [Category("static")]
         public float CollectorRange { get; set; }
 
+        /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
         public CollectorState() : base() { }
 
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="item">Related Engine Item</param>
+        /// <param name="property">Related Engine Property</param>
         public CollectorState(Item item, CollectorProperty property) : base(item, property)
         {
+            // Bind Range
             CollectorRange = property.CollectorRange;
             property.OnCollectorRangeChanged += (i, v) => { CollectorRange = v; };
         }
 
-        public override void SerializeFirst(System.IO.BinaryWriter stream, byte version)
+        /// <summary>
+        /// Serializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public override void SerializeFirst(BinaryWriter stream, byte version)
         {
+            base.SerializeFirst(stream, version);
             stream.Write(CollectorRange);
         }
 
-        public override void SerializeUpdate(System.IO.BinaryWriter stream, byte version)
+        /// <summary>
+        /// Serializes following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public override void SerializeUpdate(BinaryWriter stream, byte version)
         {
-            stream.Write(CollectorRange);
+            base.SerializeUpdate(stream, version);
         }
 
-        public override void DeserializeFirst(System.IO.BinaryReader stream, byte version)
+        /// <summary>
+        /// Deserializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public override void DeserializeFirst(BinaryReader stream, byte version)
         {
+            base.DeserializeFirst(stream, version);
             CollectorRange = stream.ReadSingle();
         }
 
-        public override void DeserializeUpdate(System.IO.BinaryReader stream, byte version)
+        /// <summary>
+        /// Deserializes all following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public override void DeserializeUpdate(BinaryReader stream, byte version)
         {
-            CollectorRange = stream.ReadSingle();
+            base.DeserializeUpdate(stream, version);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace AntMe.Factions.Ants
+namespace AntMe.Basics.Factions.Ants
 {
     /// <summary>
     /// State for the Ant Faction.

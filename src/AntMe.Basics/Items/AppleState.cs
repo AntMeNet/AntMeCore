@@ -1,4 +1,4 @@
-﻿namespace AntMe.Items.Basics
+﻿namespace AntMe.Basics.Items
 {
     /// <summary>
     /// State for an Apple Item.

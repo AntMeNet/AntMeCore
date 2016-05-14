@@ -1,14 +1,14 @@
 ﻿namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Item Property for all Apple Collector Items 
+    /// Item Property for all Sugar Collector Items.
     /// </summary>
-    public sealed class AppleCollectableProperty : CollectableProperty<AppleCollectorProperty>
+    public sealed class SugarCollectorProperty : CollectorProperty<SugarCollectableProperty>
     {
         /// <summary>
         /// Default Constructor.
         /// </summary>
         /// <param name="item">Item</param>
-        public AppleCollectableProperty(Item item) : base(item) { }
+        public SugarCollectorProperty(Item item) : base(item) { }
     }
 }

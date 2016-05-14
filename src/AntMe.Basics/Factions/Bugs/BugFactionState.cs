@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace AntMe.Factions.Bugs
+namespace AntMe.Basics.Factions.Bugs
 {
     /// <summary>
     /// State for the Bug Faction.

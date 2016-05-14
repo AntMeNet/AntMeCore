@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AntMe.Factions.Ants
+namespace AntMe.Basics.Factions.Ants
 {
     [AttributeUsage(
         AttributeTargets.Class,

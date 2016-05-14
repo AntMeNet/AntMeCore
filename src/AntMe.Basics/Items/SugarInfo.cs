@@ -1,7 +1,7 @@
 ﻿
-using AntMe.ItemProperties.Basics;
+using AntMe.Basics.ItemProperties;
 
-namespace AntMe.Items.Basics
+namespace AntMe.Basics.Items
 {
     public class SugarInfo : ItemInfo
     {

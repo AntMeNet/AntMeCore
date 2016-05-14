@@ -50,14 +50,14 @@
     <Compile Include="Factions\ByTypeStatisticsInterop.cs" />
     <Compile Include="Factions\StatisticsInterop.cs" />
     <Compile Include="Factions\TotalStatisticsInterop.cs" />
+    <Compile Include="ItemProperties\AppleCollectorProperty.cs" />
+    <Compile Include="ItemProperties\AppleCollectorState.cs" />
     <Compile Include="ItemProperties\AttackableProperty.cs" />
     <Compile Include="ItemProperties\AttackableState.cs" />
     <Compile Include="ItemProperties\AttackerProperty.cs" />
     <Compile Include="ItemProperties\AttackerState.cs" />
     <Compile Include="ItemProperties\CarrierProperty.cs" />
     <Compile Include="ItemProperties\CarrierState.cs" />
-    <Compile Include="ItemProperties\CollectableGoodProperty.cs" />
-    <Compile Include="ItemProperties\CollectableGoodState.cs" />
     <Compile Include="ItemProperties\CollectableProperty.cs" />
     <Compile Include="ItemProperties\CollectableState.cs" />
     <Compile Include="ItemProperties\CollectorProperty.cs" />
@@ -67,6 +67,8 @@
     <Compile Include="EngineExtensions\InteractionExtension.cs" />
     <Compile Include="EngineExtensions\PhysicsExtension.cs" />
     <Compile Include="EngineExtensions\PhysicsUnit.cs" />
+    <Compile Include="ItemProperties\GoodsProperty.cs" />
+    <Compile Include="ItemProperties\GoodsState.cs" />
     <Compile Include="ItemProperties\PortableProperty.cs" />
     <Compile Include="ItemProperties\PortableState.cs" />
     <Compile Include="EngineExtensions\RecognitionExtension.cs" />
@@ -76,6 +78,8 @@
     <Compile Include="ItemProperties\SmellableState.cs" />
     <Compile Include="ItemProperties\SnifferProperty.cs" />
     <Compile Include="ItemProperties\SnifferState.cs" />
+    <Compile Include="ItemProperties\SugarCollectorProperty.cs" />
+    <Compile Include="ItemProperties\SugarCollectorState.cs" />
     <Compile Include="ItemProperties\VisibleCell.cs" />
     <Compile Include="ItemProperties\VisibleEnvironment.cs" />
     <Compile Include="ItemProperties\VisibleProperty.cs" />

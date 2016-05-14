@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AntMe.ItemProperties.Basics
+namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
     /// Property for Carrier Items.

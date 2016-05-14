@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AntMe.Factions.Bugs
+namespace AntMe.Basics.Factions.Bugs
 {
     public abstract class BugFactoryInterop : FactoryInterop
     {

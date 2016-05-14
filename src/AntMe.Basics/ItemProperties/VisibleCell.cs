@@ -1,4 +1,4 @@
-﻿namespace AntMe.ItemProperties.Basics
+﻿namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
     ///     Information zu einer Umgebungszelle

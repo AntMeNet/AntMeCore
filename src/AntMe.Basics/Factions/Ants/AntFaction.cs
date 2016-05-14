@@ -1,11 +1,10 @@
-﻿using AntMe.Basics.Factions.Ants;
-using AntMe.Items.Basics;
-
+﻿
+using AntMe.Basics.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AntMe.Factions.Ants
+namespace AntMe.Basics.Factions.Ants
 {
     /// <summary>
     /// Faction for Ants.

@@ -1,8 +1,7 @@
-﻿using AntMe.ItemProperties.Basics;
-
+﻿using AntMe.Basics.ItemProperties;
 using System.Collections.Generic;
 
-namespace AntMe.EngineExtensions.Basics
+namespace AntMe.Basics.EngineExtensions
 {
     /// <summary>
     ///     Extension zur Behandlung aller aktiven Interaktionen wie das Angreifen,
