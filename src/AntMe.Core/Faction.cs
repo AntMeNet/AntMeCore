@@ -25,7 +25,7 @@ namespace AntMe
         protected Faction(SimulationContext context, Type factoryType, Level level)
         {
             Context = context;
-            UnitInterops = new Dictionary<Item, FactionUnitInteropGroup>();
+            Units = new Dictionary<Item, UnitGroup>();
             Level = level;
             this.factoryType = factoryType;
 
@@ -85,19 +85,14 @@ namespace AntMe
         public Random Random { get { return Context.Random; } }
 
         /// <summary>
-        /// Instanz der Factory Klasse.
+        /// Group of Factory Interop-Instances.
         /// </summary>
-        public FactionFactory Factory { get; private set; }
+        public FactoryGroup Factory { get; private set; }
 
         /// <summary>
-        /// Interop Instanz der Factory Klasse.
+        /// List of all Groups for Unit Interop-Instances.
         /// </summary>
-        public FactoryInterop FactoryInterop { get; set; }
-
-        /// <summary>
-        /// Liste der Unit/Interop/Item Bindung auf Basis der Item-Id.
-        /// </summary>
-        public Dictionary<Item, FactionUnitInteropGroup> UnitInterops { get; private set; }
+        public Dictionary<Item, UnitGroup> Units { get; private set; }
 
         /// <summary>
         ///     Methode wird vom Level zur Initialisierung der Fraktion aufgerufen.
@@ -115,13 +110,33 @@ namespace AntMe
             Context = new SimulationContext(Context.Resolver, Context.Settings, random);
 
             // Factory für Ameisen erzeugen
-            FactoryInterop = Context.Resolver.CreateFactoryInterop(this);
-            Factory = (FactionFactory)Activator.CreateInstance(factoryType);
-            Factory.Init(FactoryInterop);
+            Factory = new FactoryGroup()
+            {
+                Factory = (FactionFactory)Activator.CreateInstance(factoryType),
+                Interop = Context.Resolver.CreateFactoryInterop(this)
+            };
+            Factory.Factory.Init(Factory.Interop);
 
             // TODO: Types checken!
 
             OnInit();
+        }
+
+        protected UnitGroup CreateUnit(FactionUnit unit, FactionItem item)
+        {
+            UnitInterop unitInterop = Context.Resolver.CreateUnitInterop(this, item) as UnitInterop;
+            unit.Init(unitInterop);
+
+            var group = new UnitGroup()
+            {
+                Item = item,
+                Interop = unitInterop,
+                Unit = unit
+            };
+
+            Units.Add(item, group);
+
+            return group;
         }
 
         /// <summary>
@@ -140,10 +155,10 @@ namespace AntMe
             OnUpdate(round);
 
             // Faction Interop Update
-            FactoryInterop.InternalUpdate(round);
+            Factory.Interop.InternalUpdate(round);
 
             // Unit Interop Updates
-            foreach (var unit in UnitInterops.Values)
+            foreach (var unit in Units.Values)
                 unit.Interop.InternalUpdate(round);
         }
 
@@ -199,22 +214,38 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Interop Gruppierung von Unit, Interop und Item
+        /// Class to hold the group of relating Interop- and Factory-Instances.
         /// </summary>
-        public sealed class FactionUnitInteropGroup
+        public sealed class FactoryGroup
         {
             /// <summary>
-            /// Referenz auf Interop
+            /// Reference to the Interop Instance.
+            /// </summary>
+            public FactoryInterop Interop { get; set; }
+
+            /// <summary>
+            /// Reference to the Factory Instance.
+            /// </summary>
+            public FactionFactory Factory { get; set; }
+        }
+
+        /// <summary>
+        /// Class to hold the group of relating Interop-, Item- and Unit-Instances.
+        /// </summary>
+        public sealed class UnitGroup
+        {
+            /// <summary>
+            /// Reference to the Interop Instance.
             /// </summary>
             public UnitInterop Interop { get; set; }
 
             /// <summary>
-            /// Referenz auf die Unit Instanz
+            /// Refernce to the Unit Instance.
             /// </summary>
             public FactionUnit Unit { get; set; }
 
             /// <summary>
-            /// Referenz auf das Item
+            /// Reference to the Item Instance.
             /// </summary>
             public FactionItem Item { get; set; }
         }

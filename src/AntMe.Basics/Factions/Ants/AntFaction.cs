@@ -54,8 +54,8 @@ namespace AntMe.Basics.Factions.Ants
 
         private void Level_RemovedItem(Item item)
         {
-            if (UnitInterops.ContainsKey(item))
-                UnitInterops.Remove(item);
+            if (Units.ContainsKey(item))
+                Units.Remove(item);
         }
 
         protected override void OnUpdate(int round)
@@ -65,7 +65,7 @@ namespace AntMe.Basics.Factions.Ants
             // - die Anzahl gleichzeitiger Ameisen muss kleiner dem maximalwert sein
             // - die Anzahl ingesamt erstellter Ameisen muss kleiner als der maximalwert sein
             if (_antRespawnDelay-- <= 0 &&
-                UnitInterops.Count < Settings.GetInt<AntFaction>("ConcurrentAntCount").Value &&
+                Units.Count < Settings.GetInt<AntFaction>("ConcurrentAntCount").Value &&
                 totalAntCount < Settings.GetInt<AntFaction>("TotalAntCount").Value)
             {
                 CreateAnt();
@@ -97,7 +97,7 @@ namespace AntMe.Basics.Factions.Ants
                                new Vector2(5, 5);
 
             // Type anfragen
-            Type antType = (FactoryInterop as AntFactoryInterop).RequestCreateMember();
+            Type antType = (Factory.Interop as AntFactoryInterop).RequestCreateMember();
             if (antType == null)
             {
                 // Spieler will offensichtlich keine Ameise erstellen
@@ -150,22 +150,15 @@ namespace AntMe.Basics.Factions.Ants
             string name = names[Random.Next(0, names.Length - 1)];
 
             // AntItem erstellen
-            AntUnit antUnit = (AntUnit)Activator.CreateInstance(antType);
             AntItem antItem = new AntItem(Context, this, position, Angle.FromDegree(Random.Next(0, 359)), name);
-            AntUnitInterop unitInterop = Context.Resolver.CreateUnitInterop(this, antItem) as AntUnitInterop;
-            antUnit.Init(unitInterop);
+            AntUnit antUnit = (AntUnit)Activator.CreateInstance(antType);
+
+            CreateUnit(antUnit, antItem);
 
             Level.Engine.InsertItem(antItem);
-            UnitInterops.Add(antItem, new FactionUnitInteropGroup()
-            {
-                Item = antItem,
-                Interop = unitInterop,
-                Unit = antUnit
-            });
             totalAntCount++;
 
             // TODO: Kosten
-
 
             // Stats
             _antRespawnDelay = Settings.GetInt<AntFaction>("AntRespawnDelay").Value;
