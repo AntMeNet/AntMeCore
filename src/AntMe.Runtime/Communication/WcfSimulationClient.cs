@@ -14,7 +14,7 @@ namespace AntMe.Runtime.Communication
     {
         private int masterId = -1;
         private List<UserProfile> users = new List<UserProfile>();
-        private List<Slot> slots = new List<Slot>(8);
+        private List<Slot> slots = new List<Slot>(AntMe.Level.MAX_SLOTS);
         private StateDeserializer _deserializer;
         private SimulationState _serverState = SimulationState.Stopped;
         private LevelState _currentState;
@@ -55,7 +55,7 @@ namespace AntMe.Runtime.Communication
             this.callback.OnUserlistChanged += callback_OnUserlistChanged;
             this.callback.OnUsernameChanged += callback_OnUsernameChanged;
 
-            for (byte i = 0; i < 8; i++)
+            for (byte i = 0; i < AntMe.Level.MAX_SLOTS; i++)
                 slots.Add(new Slot() { Id = i });
         }
 

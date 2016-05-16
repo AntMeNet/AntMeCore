@@ -37,9 +37,9 @@ namespace AntMe.Runtime.Communication
             users.Add(master);
 
             // Slots erstellen
-            slots = new Slot[8];
-            players = new PlayerInfo[8];
-            for (byte i = 0; i < 8; i++)
+            slots = new Slot[AntMe.Level.MAX_SLOTS];
+            players = new PlayerInfo[AntMe.Level.MAX_SLOTS];
+            for (byte i = 0; i < AntMe.Level.MAX_SLOTS; i++)
                 slots[i] = new Slot() { Id = i, ColorKey = (PlayerColor)i };
 
             // Defaults
@@ -436,7 +436,7 @@ namespace AntMe.Runtime.Communication
             PlayerColor oldColor = slots[slot].ColorKey;
             if (oldColor != color)
             {
-                for (byte i = 0; i < 8; i++)
+                for (byte i = 0; i < AntMe.Level.MAX_SLOTS; i++)
                 {
                     // Nachschauen, welcher Spieler die neue Farbe vorher hatte 
                     // und mit aktueller Farbe wechseln
@@ -466,7 +466,7 @@ namespace AntMe.Runtime.Communication
 
         private void ResetSlots()
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < AntMe.Level.MAX_SLOTS; i++)
             {
                 slots[i].ColorKey = (PlayerColor)i;
                 slots[i].PlayerInfo = false;
@@ -539,7 +539,7 @@ namespace AntMe.Runtime.Communication
 
             // Player zählen
             int count = 0;
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < AntMe.Level.MAX_SLOTS; i++)
             {
                 if (players[i] != null)
                 {

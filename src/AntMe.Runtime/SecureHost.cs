@@ -23,15 +23,15 @@ namespace AntMe.Runtime
             if (settings.Level == null)
                 throw new ArgumentNullException("settings", "Leve is null");
 
-            if (settings.Player.Length != 8)
-                throw new ArgumentException("Player-Array must have a length of 8");
+            if (settings.Player.Length != Level.MAX_SLOTS)
+                throw new ArgumentException(string.Format("Player-Array must have a length of {0}", Level.MAX_SLOTS));
 
-            if (settings.Colors.Length != 8)
-                throw new ArgumentException("Player-Array must have a length of 8");
+            if (settings.Colors.Length != Level.MAX_SLOTS)
+                throw new ArgumentException(string.Format("Player-Array must have a length of {0}", Level.MAX_SLOTS));
 
             // Eindeutigkeit der Farben prüfen
             var colors = new List<PlayerColor>();
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < Level.MAX_SLOTS; i++)
             {
                 if (settings.Colors[i] == PlayerColor.Undefined)
                     throw new ArgumentException("Undefined is not a valid color for slot " + i, "settings");
@@ -58,8 +58,8 @@ namespace AntMe.Runtime
             _level = lvl;
 
             // Player erzeugen
-            LevelSlot[] levelSlots = new LevelSlot[8];
-            for (int i = 0; i < 8; i++)
+            LevelSlot[] levelSlots = new LevelSlot[Level.MAX_SLOTS];
+            for (int i = 0; i < Level.MAX_SLOTS; i++)
             {
                 // Skipp, falls nicht vorhanden
                 if (settings.Player[i] == null)

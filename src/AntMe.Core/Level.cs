@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace AntMe
 {
     /// <summary>
-    /// Basisklasse für alle AntMe! Levels.
+    /// Base Class for all AntMe! Levels.
     /// </summary>
     public abstract class Level : PropertyList<LevelProperty>
     {
@@ -16,7 +15,7 @@ namespace AntMe
         public const byte MAX_SLOTS = 8;
 
         /// <summary>
-        /// Anzahl Simulationsframes pro Sekunde
+        /// Frames per Second for a realtime Simulation.
         /// </summary>
         public const int FRAMES_PER_SECOND = 20;
 
@@ -31,7 +30,7 @@ namespace AntMe
         private MapState mapState = null;
 
         /// <summary>
-        /// Specialized Settings for different slots.
+        /// Slot specific Settings.
         /// </summary>
         private Settings[] slotSettings;
 
@@ -39,7 +38,65 @@ namespace AntMe
         private readonly Tracer tracer = new Tracer("AntMe.Level");
 
         /// <summary>
-        /// Standard-Konstruktor.
+        /// Holds the current Simulation Context for this Level.
+        /// </summary>
+        public SimulationContext Context { get; private set; }
+
+        /// <summary>
+        /// Holds the Level Description from the Attribute.
+        /// </summary>
+        public LevelDescriptionAttribute LevelDescription { get; private set; }
+
+        /// <summary>
+        /// Returns the last occured Exception (on Failure)
+        /// </summary>
+        public Exception LastException { get; private set; }
+
+        /// <summary>
+        /// Returns the latest State.
+        /// </summary>
+        public LevelState State { get; private set; }
+
+        /// <summary>
+        /// Returns the Random Seed for the current instance.
+        /// </summary>
+        public int RandomSeed { get; private set; }
+
+        /// <summary>
+        /// Global Settings for the whole Level.
+        /// </summary>
+        public Settings Settings { get { return Context.Settings; } }
+
+        /// <summary>
+        /// Reference to the Simulation Engine.
+        /// </summary>
+        public Engine Engine { get { return engine; } }
+
+        /// <summary>
+        /// Level related Randomizer. Should be used for random generated Items 
+        /// for the common level. All Factions have own Randomizer to use for 
+        /// Faction-relatved stuff.
+        /// </summary>
+        public Random Random { get { return Context.Random; } }
+
+        /// <summary>
+        /// Returns the current Status of the Level.
+        /// </summary>
+        public LevelMode Mode { get; private set; }
+
+        /// <summary>
+        /// Returns a list of Slots related to the current Mode. e.g. On Mode 
+        /// Finish the LevelModeSlots contains the winning Slots.
+        /// </summary>
+        public byte[] LevelModeSlots { get; private set; }
+
+        /// <summary>
+        /// List of Factions, ordered by Slot-Number.
+        /// </summary>
+        public Faction[] Factions { get; private set; }
+
+        /// <summary>
+        /// Default Constructor.
         /// </summary>
         protected Level(SimulationContext context)
         {
@@ -69,132 +126,57 @@ namespace AntMe
             context.Resolver.ResolveLevel(this);
         }
 
-        /// <summary>
-        /// Holds the current Simulation Context for this Level.
-        /// </summary>
-        public SimulationContext Context { get; private set; }
-
-        /// <summary>
-        /// Gibt die Level-Beschreibung (Instanz des Level-Attributes) zurück.
-        /// </summary>
-        public LevelDescriptionAttribute LevelDescription { get; private set; }
-
-        /// <summary>
-        /// Gibt die letzte Exception zurück, die aufgetreten ist.
-        /// </summary>
-        public Exception LastException { get; private set; }
-
-        /// <summary>
-        /// Gibt den aktuellen State zurück.
-        /// </summary>
-        public LevelState State { get; private set; }
-
-        /// <summary>
-        /// Gibt den zugrundeliegenden Seed für den Zufallsgenerator zurück.
-        /// </summary>
-        public int RandomSeed { get; private set; }
-
-        /// <summary>
-        /// Global Settings for the whole Level.
-        /// </summary>
-        public Settings Settings { get { return Context.Settings; } }
-
-        /// <summary>
-        /// Referenz auf die grundlegende Engine
-        /// </summary>
-        public Engine Engine
-        {
-            get { return engine; }
-        }
-
-        /// <summary>
-        /// Leveleigener Zufallsgenerator. Bitte unbedingt bei der Erstellung
-        /// zufällig platzierter Elemente oder ähnlichem verwenden, damit eine
-        /// deterministrische Simulation sichergestellt werden kann.
-        /// </summary>
-        public Random Random { get { return Context.Random; } }
-
-        /// <summary>
-        /// Gibt den aktuellen Mode des Levels zurück. Hieran lässt sich
-        /// ablesen, ob das Spiel noch iniziailsiert werden muss oder welcher
-        /// Spieler gewonnen hat.
-        /// </summary>
-        public LevelMode Mode { get; private set; }
-
-        /// <summary>
-        /// Liefert eine Auflistung der Factions in einem 8-Elemente Array -
-        /// zugeordnet nach SlotIndex.
-        /// </summary>
-        public Faction[] Factions { get; private set; }
-
         #region Init
 
         /// <summary>
-        ///     Level Initialisierung. Hier wird eine Engine erstellt, die
-        ///     Fraktionen gebildet und das Spiel begonnen.
+        /// Initializes the Level.
         /// </summary>
-        /// <exception cref="System.ArgumentOutOfRangeException">
-        ///     Sollten mehr
-        ///     als 8 Factions übergeben worden sein.
-        /// </exception>
-        /// <exception cref="System.NotSupportedException">
-        ///     Tritt auf, wenn
-        ///     LevelDescription und übergebene Faction-List nicht übereinstimmen
-        ///     oder das Level nicht im richtigen Modus ist.
-        /// </exception>
-        /// <param name="slot">Liste der Spieler</param>
-        public void Init(params LevelSlot[] slot)
+        /// <param name="slots">List of Slots</param>
+        public void Init(params LevelSlot[] slots)
         {
-            Init(0, slot);
+            Init(0, slots);
         }
 
         /// <summary>
-        ///     Level Initialisierung. Hier wird eine Engine erstellt, die
-        ///     Fraktionen gebildet und das Spiel begonnen.
+        /// Initializes the Level.
         /// </summary>
-        /// <exception cref="System.ArgumentOutOfRangeException">
-        ///     Sollten mehr
-        ///     als 8 Factions übergeben worden sein.
-        /// </exception>
-        /// <exception cref="System.NotSupportedException">
-        ///     Tritt auf, wenn
-        ///     LevelDescription und übergebene Faction-List nicht übereinstimmen
-        ///     oder das Level nicht im richtigen Modus ist.
-        /// </exception>
-        /// <param name="randomSeed">Initialwert des Zufallsgenerators. 0 = Random</param>
-        /// <param name="slots">Liste der involvierten Factions</param>
+        /// <param name="randomSeed">Randomizer Seed</param>
+        /// <param name="slots">List of Slots</param>
         public void Init(int randomSeed, params LevelSlot[] slots)
         {
-            // Level muss Uninit sein
+            // Init only allowed in Uninit-Mode.
             if (Mode != LevelMode.Uninit)
                 throw new NotSupportedException("Level is not ready for init");
 
-            // Zufallsgenerator initialisieren
+            // Initialize the Randomizer.
             RandomSeed = (int)DateTime.Now.Ticks;
             if (randomSeed != 0)
                 RandomSeed = randomSeed;
 
-            // Recreates the Simulation Context including Randomizer.
+            // Generate the Simulation Context for this Level.
             Context = new SimulationContext(
-                Context.Resolver, 
+                Context.Resolver,
                 Context.Settings,
                 new Random(RandomSeed));
 
-            // Parameter checken
+            // Check for the right number of Slots.
             if (slots.Length > MAX_SLOTS)
             {
-                Mode = LevelMode.InitFailed;
-                throw new ArgumentOutOfRangeException();
+                var exception = new ArgumentOutOfRangeException("There are too many Slots");
+                SetMode(LevelMode.InitFailed, exception);
+                throw exception;
             }
 
+            // Generate Engine
             engine = new Engine(Context.Resolver);
 
-            // Erstelle Karte und prüfe Karte auf Korrektheit
+            // Generate Map and validate.
             Map map = LevelDescription.Map;
             if (map == null)
             {
-                Mode = LevelMode.InitFailed;
-                throw new NotSupportedException("No Map was created");
+                var exception = new NotSupportedException("No Map was created");
+                SetMode(LevelMode.InitFailed, exception);
+                throw exception;
             }
             map.CheckMap();
 
@@ -211,7 +193,7 @@ namespace AntMe
             //    filters[item.SlotIndex].Add(item);
             //}
 
-            // Doppelte Farben prüfen
+            // Check for Color Collisions.
             var colors = new List<PlayerColor>();
             foreach (var slot in slots)
             {
@@ -219,8 +201,9 @@ namespace AntMe
                 {
                     if (colors.Contains(slot.Color))
                     {
-                        Mode = LevelMode.InitFailed;
-                        throw new NotSupportedException("There are two Players with the same color");
+                        var exception = new NotSupportedException("There are two Players with the same color");
+                        SetMode(LevelMode.InitFailed, exception);
+                        throw exception;
                     }
                     colors.Add(slot.Color);
                 }
@@ -255,22 +238,23 @@ namespace AntMe
             // Faction Counts mit Map- und Level-Requirements gegenchecken
             if (playerCount < minPlayer)
             {
-                Mode = LevelMode.InitFailed;
-                throw new NotSupportedException(string.Format("Too less player. Requires {0} Player", minPlayer));
+                var exception = new NotSupportedException(string.Format("Not enought player. Requires {0} Player", minPlayer));
+                SetMode(LevelMode.InitFailed, exception);
+                throw exception;
             }
 
             if (playerCount > maxPlayer)
             {
-                Mode = LevelMode.InitFailed;
-                throw new NotSupportedException(string.Format("Too many player. Requires a Maximum of {0} Player",
-                    maxPlayer));
+                var exception = new NotSupportedException(string.Format("Too many player. Requires a Maximum of {0} Player", maxPlayer));
+                SetMode(LevelMode.InitFailed, exception);
+                throw exception;
             }
 
             if (highestSlot > map.GetPlayerCount())
             {
-                Mode = LevelMode.InitFailed;
-                throw new NotSupportedException(string.Format("Too many Slots used. Map has only {0} Slots",
-                    map.GetPlayerCount()));
+                var exception = new NotSupportedException(string.Format("Too many Slots used. Map has only {0} Slots", map.GetPlayerCount()));
+                SetMode(LevelMode.InitFailed, exception);
+                throw exception;
             }
 
             // Factions erzeugen
@@ -282,14 +266,24 @@ namespace AntMe
 
                 SimulationContext factionContext = new SimulationContext(Context.Resolver, slotSettings[i]);
 
-                // Identify Faction
-                Factions[i] = Context.Resolver.CreateFaction(factionContext, slots[i].FactoryType, this);
+                // Identify and generate Faction
+                try
+                {
+                    Factions[i] = Context.Resolver.CreateFaction(factionContext, slots[i].FactoryType, this);
+                }
+                catch (Exception ex)
+                {
+                    SetMode(LevelMode.InitFailed, ex);
+                    throw;
+                }
 
-                // Falls Faction nicht gefunden werden konnte
+                // In Case the Faction could not be found...
                 if (Factions[i] == null)
-                    throw new Exception(string.Format("Cound not identify Faction for player {0}.",
-                        slots[i].Name));
-
+                {
+                    var exception = new Exception(string.Format("Cound not identify Faction for player {0}.", slots[i].Name));
+                    SetMode(LevelMode.InitFailed, exception);
+                    throw exception;
+                }
             }
 
             // State erzeugen
@@ -308,35 +302,9 @@ namespace AntMe
                 {
                     InitFaction(i, slots[i], Factions[i]);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    switch (i)
-                    {
-                        case 0:
-                            Mode = LevelMode.FailedPlayer1;
-                            break;
-                        case 1:
-                            Mode = LevelMode.FailedPlayer2;
-                            break;
-                        case 2:
-                            Mode = LevelMode.FailedPlayer3;
-                            break;
-                        case 3:
-                            Mode = LevelMode.FailedPlayer4;
-                            break;
-                        case 4:
-                            Mode = LevelMode.FailedPlayer5;
-                            break;
-                        case 5:
-                            Mode = LevelMode.FailedPlayer6;
-                            break;
-                        case 6:
-                            Mode = LevelMode.FailedPlayer7;
-                            break;
-                        case 7:
-                            Mode = LevelMode.FailedPlayer8;
-                            break;
-                    }
+                    SetMode(LevelMode.PlayerException, ex, i);
                     Factions = null;
                     throw;
                 }
@@ -347,35 +315,24 @@ namespace AntMe
             {
                 OnInit();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Mode = LevelMode.InitFailed;
+                SetMode(LevelMode.InitFailed, ex);
                 Factions = null;
                 throw;
             }
 
-            // Mode wechseln, damit OnInit() bereits berechnungen durchführen kann.
-            Mode = LevelMode.Running;
+            SetMode(LevelMode.Running);
         }
 
         private void engine_OnInsertItem(Item item)
         {
-            // Sicher stellen, dass nur Items verarbeitet werden
-            if (!(item is Item))
-                throw new NotSupportedException("Item of a wrong type was inserted");
-
             OnInsertItem(item);
         }
 
         private void engine_OnRemoveItem(Item item)
         {
-            // Sicher stellen, dass nur Items verarbeitet werden
-            if (!(item is Item))
-                throw new NotSupportedException("Item of a wrong type was deleted");
-
-            var Item = item as Item;
-
-            OnRemoveItem(Item);
+            OnRemoveItem(item);
         }
 
         /// <summary>
@@ -405,45 +362,30 @@ namespace AntMe
         /// <summary>
         /// Gives the Level Designer the chance to change Settings.
         /// </summary>
-        protected virtual void DoSettings(Settings levelSettings, Settings[] slotSettings)
-        {
-        }
+        protected virtual void DoSettings(Settings levelSettings, Settings[] slotSettings) { }
 
         /// <summary>
-        ///     Wird vom System aufgerufen, um das Level zu initialisieren. Das
-        ///     hier kann verwendet werden, um Listen, Trigger und Caches zu
-        ///     initialisieren.
-        ///     - Trigger registrieren
-        ///     - Start Einheiten erzeugen
+        /// This Method will be called after the basic Initialization to gives the 
+        /// Level Designer the chance to add additional stuff like Triggers.
         /// </summary>
-        protected virtual void OnInit()
-        {
-        }
+        protected virtual void OnInit() { }
 
         /// <summary>
-        ///     Wird vom System vor dem Engine-Update in jeder Simulationsrunde aufgerufen. An dieser
-        ///     Stelle kann die Level Logik reagieren.
+        /// This Method will be called after every Simulation Update.
         /// </summary>
-        protected virtual void OnUpdate()
-        {
-        }
+        protected virtual void OnUpdate() { }
 
         /// <summary>
-        /// Wird aufgerufen, wenn ein neues Item in das Level eingefügt wird.
+        /// This Method will be called for every added Item in the Simulation.
         /// </summary>
-        /// <param name="item"></param>
-        protected virtual void OnInsertItem(Item item)
-        {
-        }
+        /// <param name="item">New Item</param>
+        protected virtual void OnInsertItem(Item item) { }
 
         /// <summary>
-        ///     Wird vom System aufgerufen, wenn Elemente aus der Simulation
-        ///     entfernt wurden.
+        /// This Method will be called for every removed Item.
         /// </summary>
-        /// <param name="item">Entferntes Element</param>
-        protected virtual void OnRemoveItem(Item item)
-        {
-        }
+        /// <param name="item">Removed Item</param>
+        protected virtual void OnRemoveItem(Item item) { }
 
         /// <summary>
         ///     Führt die nächste Simulationsrunde durch und liefert anschließend
@@ -454,38 +396,37 @@ namespace AntMe
         public LevelState NextState()
         {
             // Alle Pre-Running States
-            if ((int)Mode < 10)
-                throw new NotSupportedException("Level is not running yet");
+            if (Mode != LevelMode.Running)
+                throw new NotSupportedException("Level is not running");
 
-            if (Mode == LevelMode.Running)
+            // TODO: try/catch für Programmierfehler
+            // TODO: Watchdog für Laufzeit-Überschreitung
+
+            engine.Update();
+
+            // Updates der Factions
+            for (int i = 0; i < MAX_SLOTS; i++)
             {
-                // TODO: try/catch für Programmierfehler
-                // TODO: Watchdog für Laufzeit-Überschreitung
-                engine.Update();
-
-                // Updates der Factions
-                for (int i = 0; i < MAX_SLOTS; i++)
+                if (Factions[i] != null)
                 {
-                    if (Factions[i] != null)
-                    {
-                        Factions[i].Update(engine.Round);
-                    }
-                }
-
-                // Level- und Trigger Update
-                try
-                {
-                    OnUpdate();
-
-                    foreach (var property in Properties)
-                        property.OnUpdate();
-                }
-                catch (Exception ex)
-                {
-                    Mode = LevelMode.FailedSystem;
-                    LastException = ex;
+                    Factions[i].Update(engine.Round);
                 }
             }
+
+            try
+            {
+                // Update Level Properties
+                foreach (var property in Properties)
+                    property.OnUpdate();
+
+                OnUpdate();
+
+            }
+            catch (Exception ex)
+            {
+                SetMode(LevelMode.SystemException, ex);
+            }
+
 
             // Create a new Instance of State
             if (State == null)
@@ -506,11 +447,6 @@ namespace AntMe
             State.Round = engine.Round;
             State.Mode = Mode;
 
-            // TODO: Property States sammeln
-            // Fügt die Screenhighlights ein
-            //while (screenHighlights.Count > 0)
-            //    state.ScreenHighlights.Add(screenHighlights.Dequeue());
-
             // Remove old Items
             foreach (var item in State.Items.ToArray())
             {
@@ -529,105 +465,121 @@ namespace AntMe
             return State;
         }
 
+        /// <summary>
+        /// Switches Game Mode and attaches the additional Information.
+        /// </summary>
+        /// <param name="mode">New Level Mode</param>
+        private void SetMode(LevelMode mode) { SetMode(mode, null, null); }
+
+        /// <summary>
+        /// Switches Game Mode and attaches the additional Information.
+        /// </summary>
+        /// <param name="mode">New Level Mode</param>
+        /// <param name="exception">Optional Exception for <see cref="LastException"/></param>
+        private void SetMode(LevelMode mode, Exception exception) { SetMode(mode, exception, null); }
+
+        /// <summary>
+        /// Switches Game Mode and attaches the additional Information.
+        /// </summary>
+        /// <param name="mode">New Level Mode</param>
+        /// <param name="slots">Optional Slot Marker for <see cref="LevelModeSlots"/></param>
+        private void SetMode(LevelMode mode, params byte[] slots) { SetMode(mode, null, slots); }
+
+        /// <summary>
+        /// Switches Game Mode and attaches the additional Information.
+        /// </summary>
+        /// <param name="mode">New Level Mode</param>
+        /// <param name="exception">Optional Exception for <see cref="LastException"/></param>
+        /// <param name="slots">Optional Slot Marker for <see cref="LevelModeSlots"/></param>
+        private void SetMode(LevelMode mode, Exception exception, params byte[] slots)
+        {
+            // Replace null with empty Array.
+            if (slots == null)
+                slots = new byte[0];
+
+            Mode = mode;
+            LastException = exception;
+            LevelModeSlots = slots;
+        }
+
         #region Story Telling
 
         /// <summary>
-        ///     Beendet das Spiel mit dem angegebenen Sieger.
+        /// Finishes the Level with the given Slots as Winner.
         /// </summary>
-        /// <param name="slotIndex">Sieger</param>
-        protected void Finish(int slotIndex)
+        /// <param name="slots">List of Winner</param>
+        protected void FinishPlayer(params byte[] slots)
         {
             // Only allowed in running mode
             if (Mode != LevelMode.Running)
                 throw new NotSupportedException("Level is not running");
 
-            // Prüfen, ob Slot gültig ist
-            if (slotIndex < 0 && slotIndex >= MAX_SLOTS)
-                throw new ArgumentOutOfRangeException("slotIndex", "SlotIndex must be between 0 and 7");
+            // Make shure there is a winner
+            if (slots.Length < 1)
+                throw new ArgumentException("No Winner selected", "slots");
 
-            // Prüfen, ob der entsprechende Player auch existiert
-            if (Factions[slotIndex] == null)
-                throw new ArgumentException("SlotIndex does not exist");
-
-            // State setzen
-            switch (slotIndex)
+            for (int i = 0; i < slots.Length; i++)
             {
-                case 0:
-                    Mode = LevelMode.FinishedPlayer1;
-                    break;
-                case 1:
-                    Mode = LevelMode.FinishedPlayer2;
-                    break;
-                case 2:
-                    Mode = LevelMode.FinishedPlayer3;
-                    break;
-                case 3:
-                    Mode = LevelMode.FinishedPlayer4;
-                    break;
-                case 4:
-                    Mode = LevelMode.FinishedPlayer5;
-                    break;
-                case 5:
-                    Mode = LevelMode.FinishedPlayer6;
-                    break;
-                case 6:
-                    Mode = LevelMode.FinishedPlayer7;
-                    break;
-                case 7:
-                    Mode = LevelMode.FinishedPlayer8;
-                    break;
+                // Check for valid Slot Index
+                if (slots[i] < 0 && slots[i] >= MAX_SLOTS)
+                    throw new ArgumentException(string.Format("Slot must be between 0 and {0}", MAX_SLOTS - 1), "slots");
+
+                // Check for existing Faction
+                if (Factions[slots[i]] == null)
+                    throw new ArgumentException("Slot has no valid Faction");
             }
+
+            SetMode(LevelMode.Finished, slots);
         }
 
         /// <summary>
-        ///     Beendet das Spiel mit dem angegebenen Verlierer.
+        /// Finishes the Level with the given Teams as Winner.
         /// </summary>
-        /// <param name="slotIndex">Verlierer</param>
-        protected void Fail(int slotIndex)
+        /// <param name="teams">List of Winner Teams</param>
+        protected void FinishTeam(params byte[] teams)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Finishes the Level with the given slots as Woser.
+        /// </summary>
+        /// <param name="slots">List of Loser</param>
+        protected void FailPlayer(params byte[] slots)
         {
             // Only allowed in running mode
             if (Mode != LevelMode.Running)
                 throw new NotSupportedException("Level is not running");
 
-            // Prüfen, ob Slot gültig ist
-            if (slotIndex < 0 && slotIndex >= MAX_SLOTS)
-                throw new ArgumentOutOfRangeException("slotIndex", "SlotIndex must be between 0 and 7");
+            // Make shure there is a winner
+            if (slots.Length < 1)
+                throw new ArgumentException("No Winner selected", "slots");
 
-            // Prüfen, ob der entsprechende Player auch existiert
-            if (Factions[slotIndex] == null)
-                throw new ArgumentException("SlotIndex does not exist");
-
-            switch (slotIndex)
+            for (int i = 0; i < slots.Length; i++)
             {
-                case 0:
-                    Mode = LevelMode.FailedPlayer1;
-                    break;
-                case 1:
-                    Mode = LevelMode.FailedPlayer2;
-                    break;
-                case 2:
-                    Mode = LevelMode.FailedPlayer3;
-                    break;
-                case 3:
-                    Mode = LevelMode.FailedPlayer4;
-                    break;
-                case 4:
-                    Mode = LevelMode.FailedPlayer5;
-                    break;
-                case 5:
-                    Mode = LevelMode.FailedPlayer6;
-                    break;
-                case 6:
-                    Mode = LevelMode.FailedPlayer7;
-                    break;
-                case 7:
-                    Mode = LevelMode.FailedPlayer8;
-                    break;
+                // Check for valid Slot Index
+                if (slots[i] < 0 && slots[i] >= MAX_SLOTS)
+                    throw new ArgumentException(string.Format("Slot must be between 0 and {0}", MAX_SLOTS - 1), "slots");
+
+                // Check for existing Faction
+                if (Factions[slots[i]] == null)
+                    throw new ArgumentException("Slot has no valid Faction");
             }
+
+            SetMode(LevelMode.Failed, slots);
         }
 
         /// <summary>
-        ///     Beendet das Spiel mit einem untentschieden.
+        /// Finishes the Level with the given slots as Woser.
+        /// </summary>
+        /// <param name="teams">List of Loser Teams</param>
+        protected void FailTeam(params byte[] teams)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Finishes the Level mithout Winner nor Loser.
         /// </summary>
         protected void Draw()
         {
@@ -635,7 +587,7 @@ namespace AntMe
             if (Mode != LevelMode.Running)
                 throw new NotSupportedException("Level is not running");
 
-            Mode = LevelMode.Draw;
+            SetMode(LevelMode.Draw);
         }
 
         #endregion

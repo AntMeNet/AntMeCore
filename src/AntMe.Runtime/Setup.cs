@@ -13,10 +13,10 @@ namespace AntMe.Runtime
         /// </summary>
         public Setup()
         {
-            Player = new TypeInfo[8];
-            Colors = new PlayerColor[8];
-            Teams = new byte[8];
-            for (byte i = 0; i < 8; i++)
+            Player = new TypeInfo[AntMe.Level.MAX_SLOTS];
+            Colors = new PlayerColor[AntMe.Level.MAX_SLOTS];
+            Teams = new byte[AntMe.Level.MAX_SLOTS];
+            for (byte i = 0; i < AntMe.Level.MAX_SLOTS; i++)
             {
                 Colors[i] = (PlayerColor)i;
                 Teams[i] = i;

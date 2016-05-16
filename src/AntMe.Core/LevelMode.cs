@@ -1,133 +1,53 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    ///     Liste der möglichen Modi eines Levels.
+    /// List of possible Level States.
     /// </summary>
     public enum LevelMode
     {
-        #region Pre-Running (<10)
-
         /// <summary>
-        ///     Das Level wurde zwar erstellt, aber noch nicht initialisiert.
+        /// Level is new generated and uninitialized.
         /// </summary>
         Uninit = 0,
 
         /// <summary>
-        /// Gibt an, dass die Initialisierung fehlgeschlagen ist.
+        /// Initialization failed. Check <see cref="Level.LastException"/> for more Information.
         /// </summary>
         InitFailed = 1,
 
-        #endregion
+        /// <summary>
+        /// Simulation Init was successful. Level is ready to simulate.
+        /// </summary>
+        Running = 5,
 
         /// <summary>
-        ///     Das Level wurde initialisiert und läuft.
+        /// Simulation finished with a Winner. See <see cref="Level.LevelModeSlots"/> for more Information.
         /// </summary>
-        Running = 10,
-
-        #region Finished (>20)
-
-        #region Success (2x)
+        Finished = 10,
 
         /// <summary>
-        ///     Spieler 1 hat gewonnen.
+        /// Player failed to achieve Mission. See <see cref="Level.LevelModeSlots"/> for more Information.
         /// </summary>
-        FinishedPlayer1 = 21,
+        Failed = 11,
 
         /// <summary>
-        ///     Spieler 2 hat gewonnen.
+        /// Simulation finished without a Winner or Loser.
         /// </summary>
-        FinishedPlayer2 = 22,
-
-        /// <summary>
-        ///     Spieler 3 hat gewonnen.
-        /// </summary>
-        FinishedPlayer3 = 23,
-
-        /// <summary>
-        ///     Spieler 4 hat gewonnen.
-        /// </summary>
-        FinishedPlayer4 = 24,
-
-        /// <summary>
-        ///     Spieler 5 hat gewonnen.
-        /// </summary>
-        FinishedPlayer5 = 25,
-
-        /// <summary>
-        ///     Spieler 6 hat gewonnen.
-        /// </summary>
-        FinishedPlayer6 = 26,
-
-        /// <summary>
-        ///     Spieler 7 hat gewonnen.
-        /// </summary>
-        FinishedPlayer7 = 27,
-
-        /// <summary>
-        ///     Spieler 8 hat gewonnen.
-        /// </summary>
-        FinishedPlayer8 = 28,
-
-        #endregion
-
-        #region Failed (3x)
-
-        /// <summary>
-        ///     Spieler 1 hat verloren.
-        /// </summary>
-        FailedPlayer1 = 31,
-
-        /// <summary>
-        ///     Spieler 2 hat verloren.
-        /// </summary>
-        FailedPlayer2 = 32,
-
-        /// <summary>
-        ///     Spieler 3 hat verloren.
-        /// </summary>
-        FailedPlayer3 = 33,
-
-        /// <summary>
-        ///     Spieler 4 hat verloren.
-        /// </summary>
-        FailedPlayer4 = 34,
-
-        /// <summary>
-        ///     Spieler 5 hat verloren.
-        /// </summary>
-        FailedPlayer5 = 35,
-
-        /// <summary>
-        ///     Spieler 6 hat verloren.
-        /// </summary>
-        FailedPlayer6 = 36,
-
-        /// <summary>
-        ///     Spieler 7 hat verloren.
-        /// </summary>
-        FailedPlayer7 = 37,
-
-        /// <summary>
-        ///     Spieler 8 hat verloren.
-        /// </summary>
-        FailedPlayer8 = 38,
+        Draw = 12,
 
         /// <summary>
         /// Durch einen Fehler im System wurde die Simulation abgebrochen.
         /// </summary>
-        FailedSystem = 39,
-
-        #endregion
-
-        #region Draw (4x)
+        SystemException = 20,
 
         /// <summary>
-        /// Ein unentschiedener Spielausgang.
+        /// One Player caused an Exception. See <see cref="Level.LastException"/> for Excecption and <see cref="Level.LevelModeSlots"/> for the responsible Slot.
         /// </summary>
-        Draw = 41
+        PlayerException = 21,
 
-        #endregion
-
-        #endregion
+        /// <summary>
+        /// The simulation detected a Cheat. See <see cref="Level.LastException"/> for Excecption and <see cref="Level.LevelModeSlots"/> for the responsible Slot.
+        /// </summary>
+        PlayerCheating = 22,
     }
 }

@@ -78,7 +78,7 @@ namespace AntMe
             Map = map;
 
             MinPlayerCount = 0;
-            MaxPlayerCount = 8;
+            MaxPlayerCount = Level.MAX_SLOTS;
             Hidden = false;
         }
 
@@ -140,12 +140,12 @@ namespace AntMe
             Map.CheckMap();
 
             // Min Player
-            if (MinPlayerCount < 0 || MinPlayerCount > 8)
-                throw new ArgumentOutOfRangeException("MinPlayerCount muss zwischen 0 und 8 liegen.");
+            if (MinPlayerCount < 0 || MinPlayerCount > Level.MAX_SLOTS)
+                throw new ArgumentOutOfRangeException(string.Format("MinPlayerCount muss zwischen 0 und {0} liegen.", Level.MAX_SLOTS));
 
             // Max Player
-            if (MaxPlayerCount < 0 || MaxPlayerCount > 8)
-                throw new ArgumentOutOfRangeException("MaxPlayerCount muss zwischen 0 und 8 liegen.");
+            if (MaxPlayerCount < 0 || MaxPlayerCount > Level.MAX_SLOTS)
+                throw new ArgumentOutOfRangeException(string.Format("MaxPlayerCount muss zwischen 0 und {0} liegen.", Level.MAX_SLOTS));
         }
     }
 }

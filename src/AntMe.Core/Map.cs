@@ -46,7 +46,7 @@ namespace AntMe
         /// <summary>
         ///     Maximale Anzahl Startpunkte einer Karte.
         /// </summary>
-        public const int MAX_STARTPOINTS = 8;
+        public const int MAX_STARTPOINTS = Level.MAX_SLOTS;
 
         /// <summary>
         ///     Minimaler Höhenwert von Einheiten.
