@@ -3,11 +3,8 @@ using System.Collections.Generic;
 
 namespace AntMe.Basics.Factions.Bugs
 {
-    public sealed class BugUnitInterop : UnitInterop<BugFaction, BugItem>
+    public sealed class BugUnitInterop : UnitInterop
     {
-        private readonly BugItem bugItem;
-        private readonly BugFaction faction;
-
         private List<ItemInfo> visibleItems = new List<ItemInfo>();
         private List<ItemInfo> smellableItems = new List<ItemInfo>();
         private List<ItemInfo> collidedItems = new List<ItemInfo>();

@@ -196,5 +196,13 @@ namespace CoreTestClient
             if (CurrentClient != null && CurrentClient.IsMaster)
                 CurrentClient.PitchSimulation(byte.MaxValue);
         }
+
+        private void localizationMenu_Click(object sender, EventArgs e)
+        {
+            using (LocalizationForm form = new LocalizationForm())
+            {
+                form.ShowDialog(this);
+            }
+        }
     }
 }

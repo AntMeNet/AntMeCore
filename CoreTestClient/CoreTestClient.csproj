@@ -98,6 +98,12 @@
     <Compile Include="LevelPreview.Designer.cs">
       <DependentUpon>LevelPreview.cs</DependentUpon>
     </Compile>
+    <Compile Include="LocalizationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LocalizationForm.Designer.cs">
+      <DependentUpon>LocalizationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -165,6 +171,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LevelPreview.resx">
       <DependentUpon>LevelPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LocalizationForm.resx">
+      <DependentUpon>LocalizationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

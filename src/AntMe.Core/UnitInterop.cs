@@ -2,17 +2,13 @@
 
 namespace AntMe
 {
-    public abstract class UnitInterop : Interop { }
-
-    public abstract class UnitInterop<F, I> : UnitInterop
-        where F : Faction
-        where I : FactionItem
+    public abstract class UnitInterop : Interop
     {
-        protected readonly F Faction;
+        protected readonly Faction Faction;
 
-        protected readonly I Item;
+        protected readonly FactionItem Item;
 
-        public UnitInterop(F faction, I item)
+        public UnitInterop(Faction faction, FactionItem item)
         {
             if (faction == null)
                 throw new ArgumentNullException("faction");
@@ -24,7 +20,6 @@ namespace AntMe
             // AntItem darf nicht null sein.
             if (item == null)
                 throw new ArgumentNullException("item");
-
 
             Faction = faction;
             Item = item;

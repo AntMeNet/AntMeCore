@@ -45,7 +45,6 @@
             this.mainPanel = new System.Windows.Forms.Panel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.startToolButton = new System.Windows.Forms.ToolStripButton();
-            this.timer = new System.Windows.Forms.Timer(this.components);
             this.framesToolButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.frames1ToolButton = new System.Windows.Forms.ToolStripMenuItem();
             this.frames5ToolButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,6 +53,8 @@
             this.frames40ToolButton = new System.Windows.Forms.ToolStripMenuItem();
             this.frames80ToolButton = new System.Windows.Forms.ToolStripMenuItem();
             this.framesMaxToolButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer = new System.Windows.Forms.Timer(this.components);
+            this.localizationMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -83,19 +84,19 @@
             // singleGameMenu
             // 
             this.singleGameMenu.Name = "singleGameMenu";
-            this.singleGameMenu.Size = new System.Drawing.Size(152, 22);
+            this.singleGameMenu.Size = new System.Drawing.Size(140, 22);
             this.singleGameMenu.Text = "Single Game";
             this.singleGameMenu.Click += new System.EventHandler(this.singleGameMenu_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(137, 6);
             // 
             // closeMenu
             // 
             this.closeMenu.Name = "closeMenu";
-            this.closeMenu.Size = new System.Drawing.Size(152, 22);
+            this.closeMenu.Size = new System.Drawing.Size(140, 22);
             this.closeMenu.Text = "Close";
             this.closeMenu.Click += new System.EventHandler(this.closeMenu_Click);
             // 
@@ -104,7 +105,8 @@
             this.loaderMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.extensionsMenu,
             this.globalSettingsMenu,
-            this.codeGeneratorMenu});
+            this.codeGeneratorMenu,
+            this.localizationMenu});
             this.loaderMenu.Name = "loaderMenu";
             this.loaderMenu.Size = new System.Drawing.Size(55, 20);
             this.loaderMenu.Text = "Loader";
@@ -112,21 +114,21 @@
             // extensionsMenu
             // 
             this.extensionsMenu.Name = "extensionsMenu";
-            this.extensionsMenu.Size = new System.Drawing.Size(157, 22);
+            this.extensionsMenu.Size = new System.Drawing.Size(194, 22);
             this.extensionsMenu.Text = "Extensions";
             this.extensionsMenu.Click += new System.EventHandler(this.extensionsMenu_Click);
             // 
             // globalSettingsMenu
             // 
             this.globalSettingsMenu.Name = "globalSettingsMenu";
-            this.globalSettingsMenu.Size = new System.Drawing.Size(157, 22);
+            this.globalSettingsMenu.Size = new System.Drawing.Size(194, 22);
             this.globalSettingsMenu.Text = "Global Settings";
             this.globalSettingsMenu.Click += new System.EventHandler(this.globalSettingsMenu_Click);
             // 
             // codeGeneratorMenu
             // 
             this.codeGeneratorMenu.Name = "codeGeneratorMenu";
-            this.codeGeneratorMenu.Size = new System.Drawing.Size(157, 22);
+            this.codeGeneratorMenu.Size = new System.Drawing.Size(194, 22);
             this.codeGeneratorMenu.Text = "Code Generator";
             this.codeGeneratorMenu.Click += new System.EventHandler(this.codeGeneratorMenu_Click);
             // 
@@ -181,11 +183,6 @@
             this.startToolButton.Size = new System.Drawing.Size(35, 22);
             this.startToolButton.Text = "Start";
             this.startToolButton.Click += new System.EventHandler(this.startToolButton_Click);
-            // 
-            // timer
-            // 
-            this.timer.Enabled = true;
-            this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
             // framesToolButton
             // 
@@ -253,6 +250,18 @@
             this.framesMaxToolButton.Text = "Max";
             this.framesMaxToolButton.Click += new System.EventHandler(this.framesMaxToolButton_Click);
             // 
+            // timer
+            // 
+            this.timer.Enabled = true;
+            this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
+            // localizationMenu
+            // 
+            this.localizationMenu.Name = "localizationMenu";
+            this.localizationMenu.Size = new System.Drawing.Size(194, 22);
+            this.localizationMenu.Text = "Localization Dictionary";
+            this.localizationMenu.Click += new System.EventHandler(this.localizationMenu_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -305,6 +314,7 @@
         private System.Windows.Forms.ToolStripMenuItem frames40ToolButton;
         private System.Windows.Forms.ToolStripMenuItem frames80ToolButton;
         private System.Windows.Forms.ToolStripMenuItem framesMaxToolButton;
+        private System.Windows.Forms.ToolStripMenuItem localizationMenu;
     }
 }
 

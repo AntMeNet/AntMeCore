@@ -6,7 +6,7 @@ namespace AntMe.Basics.Factions.Ants
     /// <summary>
     /// Interop Class for the Ant Faction Units (Ants)
     /// </summary>
-    public sealed class AntUnitInterop : UnitInterop<AntFaction, AntItem>
+    public sealed class AntUnitInterop : UnitInterop
     {
         private int markerDelay;
 
