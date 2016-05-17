@@ -72,13 +72,14 @@ namespace AntMe.Basics.Factions.Ants
             }
 
             // Neuer Punktestand berechnen
-            Points = 0;
             foreach (var anthill in antHills.Values)
             {
                 //Points += anthill.AppleAmount;
                 //Points += anthill.SugarAmount;
             }
         }
+
+        protected override void OnUpdated(int round) { }
 
         private void CreateAntHill(Vector2 position)
         {

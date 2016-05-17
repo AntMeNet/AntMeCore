@@ -34,7 +34,7 @@ namespace AntMe.Levelpack.Levels
                     if (faction == null)
                         continue;
 
-                    if (winner == null || faction.Points > winner.Points)
+                    if (winner == null)
                     {
                         winner = faction;
                     }
