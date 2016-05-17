@@ -14,40 +14,37 @@ namespace AntMe
         /// Default Constructor.
         /// </summary>
         /// <param name="guid">Guid of this Level</param>
-        /// <param name="mapType">Type of the Map</param>
         /// <param name="name">Name of this Level</param>
         /// <param name="description">Short Level Description</param>
-        public LevelDescriptionAttribute(string guid, Type mapType, string name, string description)
+        public LevelDescriptionAttribute(string guid, string name, string description)
         {
-            Init(guid, mapType, name, description);
+            Init(guid, name, description);
         }
 
         /// <summary>
         /// Default Constructor.
         /// </summary>
         /// <param name="guid">Guid of this Level</param>
-        /// <param name="mapType">Type of the Map</param>
         /// <param name="resourceType">Type of Resource Class for Name and Description</param>
         /// <param name="nameKey">Resource Key for the Level Name</param>
         /// <param name="descriptionKey">Resource Key for the Level Description</param>
-        public LevelDescriptionAttribute(string guid, Type mapType, Type resourceType, string nameKey, string descriptionKey)
+        public LevelDescriptionAttribute(string guid, Type resourceType, string nameKey, string descriptionKey)
         {
             // Ressourcen auflösen und Strings auslesen
             var resourceManager = new ResourceManager(resourceType);
             string name = resourceManager.GetString(nameKey);
             string description = resourceManager.GetString(descriptionKey);
 
-            Init(guid, mapType, name, description);
+            Init(guid, name, description);
         }
 
         /// <summary>
         /// Initializes the Attribute Stuff and checks the data.
         /// </summary>
         /// <param name="guid">Guid of this Level</param>
-        /// <param name="mapType">Type of the Map</param>
         /// <param name="name">Name of this Level</param>
         /// <param name="description">Short Level Description</param>
-        private void Init(string guid, Type mapType, string name, string description)
+        private void Init(string guid, string name, string description)
         {
             // Check for valid ID
             Guid id;
@@ -62,20 +59,9 @@ namespace AntMe
             if (string.IsNullOrEmpty(description))
                 throw new ArgumentNullException("description", string.Format("The Level Desciption with the ID {0} and Name '{1}' has no valid Description", id.ToString(), name));
 
-            // Check Map
-            if (mapType == null)
-                throw new ArgumentNullException("mapType", string.Format("The Level Desciption with the Name '{0}' has no valid Map", name));
-            if (mapType.IsAbstract)
-                throw new ArgumentException(string.Format("The Level Desciption with the Name '{0}' uses an abstract Map", name));
-            if (mapType.GetConstructor(new Type[] { }) == null)
-                throw new ArgumentException(string.Format("The Level Desciption with the Name '{0}' uses a Map without a parameterless constructor", name));
-            Map map = (Map)Activator.CreateInstance(mapType);
-            map.CheckMap();
-
             Id = id;
             Name = name;
             Description = description;
-            Map = map;
 
             MinPlayerCount = 0;
             MaxPlayerCount = Level.MAX_SLOTS;
@@ -113,11 +99,6 @@ namespace AntMe
         public bool Hidden { get; set; }
 
         /// <summary>
-        /// Returns the Map for this Level.
-        /// </summary>
-        public Map Map { get; set; }
-
-        /// <summary>
         /// Validates all Level Description Properties.
         /// </summary>
         public void Validate()
@@ -133,11 +114,6 @@ namespace AntMe
             // Description prüfen
             if (string.IsNullOrEmpty(Description))
                 throw new ArgumentException("Description kann nicht leer sein");
-
-            // Map prüfen
-            if (Map == null)
-                throw new ArgumentException("Map darf nicht null sein");
-            Map.CheckMap();
 
             // Min Player
             if (MinPlayerCount < 0 || MinPlayerCount > Level.MAX_SLOTS)

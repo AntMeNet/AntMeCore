@@ -48,7 +48,6 @@
     <Compile Include="Levels\CaptureTheAppleEasy.cs" />
     <Compile Include="Levels\CaptureTheAppleHard.cs" />
     <Compile Include="Levels\ClassicLevel.cs" />
-    <Compile Include="Levels\ClassicMap.cs" />
     <Compile Include="Levels\MazeRace.cs" />
     <Compile Include="Levels\OpenBattle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

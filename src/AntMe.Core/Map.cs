@@ -9,7 +9,7 @@ namespace AntMe
     /// Represents the topological information about a level Map.
     /// </summary>
     [Serializable]
-    public abstract class Map
+    public sealed class Map
     {
         #region Constants
 

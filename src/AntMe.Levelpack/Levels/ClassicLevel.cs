@@ -9,7 +9,6 @@ namespace AntMe.Levelpack.Levels
     /// </summary>
     [LevelDescription(
         "{C2A14502-944A-4B9E-8B26-0434F0DEC190}",
-        typeof(ClassicMap),
         "AntMe! Classic",
         "This one is the classic AntMe! 1.0 Level. Static, plain Map with random resources here and there...",
         MinPlayerCount = 0,
@@ -22,6 +21,11 @@ namespace AntMe.Levelpack.Levels
         private List<ClassicBugItem> bugs = new List<ClassicBugItem>();
 
         public ClassicLevel(SimulationContext context) : base(context) { }
+
+        public override Map GetMap()
+        {
+            return new Map(30, 20, true, TileSpeed.Normal, TileHeight.Medium);
+        }
 
         protected override void OnUpdate()
         {

@@ -543,6 +543,11 @@ namespace AntMe.Runtime
                 };
             }
 
+            // Load Map
+            SimulationContext context = new SimulationContext(DefaultTypeResolver, ExtensionSettings);
+            Level level = Activator.CreateInstance(type, context) as Level;
+            levelInfo.Map = level.GetMap();
+
             // Stats anhängen
             if (!levelStatistics.ContainsKey(levelInfo.LevelDescription.Id))
                 levelStatistics.Add(levelInfo.LevelDescription.Id, new LevelStatistics() { Guid = levelInfo.LevelDescription.Id });

@@ -171,7 +171,7 @@ namespace AntMe
             engine = new Engine(Context.Resolver);
 
             // Generate Map and validate.
-            Map map = LevelDescription.Map;
+            Map map = GetMap();
             if (map == null)
             {
                 var exception = new NotSupportedException("No Map was created");
@@ -358,6 +358,12 @@ namespace AntMe
         }
 
         #endregion
+
+        /// <summary>
+        /// Generates the Map for this Level.
+        /// </summary>
+        /// <returns>Map Instance</returns>
+        public abstract Map GetMap();
 
         /// <summary>
         /// Gives the Level Designer the chance to change Settings.

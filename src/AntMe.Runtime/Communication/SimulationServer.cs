@@ -821,7 +821,7 @@ namespace AntMe.Runtime.Communication
                             count++;
 
                             // Start Positions
-                            if (i > levelInfo.LevelDescription.Map.StartPoints.Length)
+                            if (i > levelInfo.Map.StartPoints.Length)
                                 throw new InvalidOperationException("No Startpoint for Slot " + i + " on this map");
 
                             // Player File available
