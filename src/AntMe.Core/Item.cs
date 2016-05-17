@@ -8,14 +8,44 @@ namespace AntMe
     /// </summary>
     public abstract class Item : PropertyList<ItemProperty>
     {
+        /// <summary>
+        /// Reference to the Engine
+        /// </summary>
         private Engine engine;
+
+        /// <summary>
+        /// Current ID or 0 if not added.
+        /// </summary>
         private int id;
+
+        /// <summary>
+        /// Cache for Info Items.
+        /// </summary>
         private readonly Dictionary<Item, ItemInfo> _itemInfos = new Dictionary<Item, ItemInfo>();
+
+        /// <summary>
+        /// Instance of the Item State.
+        /// </summary>
         private ItemState state;
 
+        /// <summary>
+        /// Current Cell.
+        /// </summary>
         private Index2 cell = Index2.Zero;
+
+        /// <summary>
+        /// Current Orientation
+        /// </summary>
         private Angle orientation;
+
+        /// <summary>
+        /// Current Position
+        /// </summary>
         private Vector3 position;
+
+        /// <summary>
+        /// CUrrent Radius
+        /// </summary>
         private float radius;
 
         /// <summary>
@@ -136,23 +166,20 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Wird vom Level zur Erstellung eines einfachen Info Objektes
-        /// aufgerufen. Dieses Objekt wird als gekapselter Informationsaufruf
-        /// (keine direkte Referenz) zwischen Spielelementen und deren
-        /// Implementierung verwendet.
+        /// Generates an Info Object for the given Observer.
         /// </summary>
-        /// <param name="observer">betrachtendes Objekt</param>
-        /// <returns>Info zum Item</returns>
+        /// <param name="observer">Obsering Item</param>
+        /// <returns>Info Object</returns>
         public ItemInfo GetItemInfo(Item observer)
         {
             if (observer == null)
                 throw new ArgumentNullException("observer");
 
-            // Puffer prüfen
+            // Check Info Cache
             if (_itemInfos.ContainsKey(observer))
                 return _itemInfos[observer];
 
-            // Neue Instanz erzeugen
+            // Generate new Instance
             ItemInfo info = Context.Resolver.CreateItemInfo(this, observer);
             if (info == null)
                 throw new NotSupportedException("Could not create new Game Item Info");
@@ -162,10 +189,10 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Ermittelt aus dem übergebenen Info-Objekt wieder das enthaltene Item.
+        /// Returns the real Item from an Info Object.
         /// </summary>
         /// <param name="info">Info Objekt</param>
-        /// <returns>Das zugrunde liegende Item</returns>
+        /// <returns>Related Item</returns>
         public Item GetItemFromInfo(ItemInfo info)
         {
             // Check for Cheaters
@@ -176,54 +203,60 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Returns an Instance of 
+        /// Returns the Item State.
         /// </summary>
-        /// <returns>Neue Instanz des Item State</returns>
+        /// <returns>Item State</returns>
         public ItemState GetState()
         {
-            // Beim ersten Aufruf muss der State neu gefüllt werden
+            // Create new Instance one first Call.
             if (state == null)
                 state = Context.Resolver.CreateItemState(this);
+
             OnBeforeState(state);
             return state;
         }
 
+        #region Events
+
         /// <summary>
-        ///     Das Event wird geworfen, wenn sich das Element in eine andere Zelle
-        ///     bewegt hat.
+        /// Signal for a changed Cell.
         /// </summary>
         public event ValueChanged<Index2> CellChanged;
 
         /// <summary>
-        ///     Das Event wird geworfen, wenn sich die aktuelle Position des Items
-        ///     ändern sollte. Dies kann durch Extensions, das Spielelement oder
-        ///     das Level passieren.
+        /// Signal for a changed Position.
         /// </summary>
         public event ValueChanged<Vector3> PositionChanged;
 
         /// <summary>
-        ///     Das Event wird geworfen, wenn sich die aktuelle Orientierung des Items
-        ///     ändern sollte. Dies kann durch Extensions, das Spielelement oder das
-        ///     Level passieren.
+        /// Signal for a changed Orientation.
         /// </summary>
         public event ValueChanged<Angle> OrientationChanged;
 
         /// <summary>
-        /// Das event wird geworfen wenn sich der aktuelle Radius ändert.
+        /// Signal for a changed Radius.
         /// </summary>
         public event ValueChanged<float> RadiusChanged;
 
         /// <summary>
-        /// Gibt den Namen samt ID als Zeichenkette zurück.
+        /// Signal for adding Item to the Engine.
         /// </summary>
-        /// <returns>Name und ID</returns>
-        public override string ToString()
-        {
-            return string.Format("{0} ({1})", GetType().Name, Id);
-        }
+        public event ChangeItem Inserted;
+
+        /// <summary>
+        /// Signal for removing Item from Engine.
+        /// </summary>
+        public event ChangeItem Removed;
+
+        #endregion
 
         #region Engine Calls
 
+        /// <summary>
+        /// Internal Call for adding this Item to an Engine. Get called by the Engine.
+        /// </summary>
+        /// <param name="engine">Engine</param>
+        /// <param name="id">New Id</param>
         internal void InternalInsertEngine(Engine engine, int id)
         {
             this.engine = engine;
@@ -235,7 +268,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Wird von der Engine aufgerufen, wenn das Item aus der Welt entfernt wurde
+        /// Internal Call for removing this Item from its current Engine.
         /// </summary>
         internal void InternalRemoveEngine()
         {
@@ -250,7 +283,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Wird von der Engine bei jedem Rundendurchlauf aufgerufen
+        /// Internal Call before the Item gets Updated.
         /// </summary>
         internal virtual void BeforeUpdate()
         {
@@ -258,7 +291,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Wird von der Engine nach jedem Rundendurchlauf aufgerufen
+        /// Internal Call after the Item gets updated.
         /// </summary>
         internal virtual void AfterUpdate()
         {
@@ -270,9 +303,10 @@ namespace AntMe
         #region Property Management
 
         /// <summary>
-        /// Überschriebener Validator für neue Properties.
+        /// Vaidator for new Properties. The default implementation prevents 
+        /// adding new Properties to the Item if it's already part of an Engine.
         /// </summary>
-        /// <param name="property">Neues Property</param>
+        /// <param name="property">New Property.</param>
         protected override void ValidateAddProperty(ItemProperty property)
         {
             if (Engine != null)
@@ -284,71 +318,69 @@ namespace AntMe
 
         #endregion
 
-        #region Virtuelle Methoden
+        #region Virtual Methods
 
         /// <summary>
-        ///     Wird beim Einfügen in die Engine aufgerufen. Zu diesem Zeitpunkt
-        ///     ist die ID und die Engine bereits gesetzt.
+        /// Gets called after the Item was added to an Engine.
         /// </summary>
         protected virtual void OnInsert() { }
 
         /// <summary>
-        /// Kann überschrieben werden, um noch die letzten Infos in den State zu füllen
+        /// Gets called before the Engine get the Item State. This gives the 
+        /// change to add additional Information into the State.
         /// </summary>
         protected virtual void OnBeforeState(ItemState state) { }
 
         /// <summary>
-        ///     Wird vor jedem Engine Update aufgerufen.
+        /// Gets Called before the Item gets updated.
         /// </summary>
         protected virtual void OnUpdate() { }
 
         /// <summary>
-        ///     Wird nach jedem Engine Update aufgerufen.
+        /// Gets called after the Item gets updated.
         /// </summary>
         protected virtual void OnUpdated() { }
 
         /// <summary>
-        ///     Wird beim Entfernen aus der Engine aufgerufen.
+        /// Gets called before the Item will be removed from the Engine.
         /// </summary>
         protected virtual void OnRemoved() { }
-
-        /// <summary>
-        /// Signalisiert das Einfügen in eine Engine.
-        /// </summary>
-        public event ChangeItem Inserted;
-
-        /// <summary>
-        /// Event signalisiert das Entfernen dieses Items aus der Engine.
-        /// </summary>
-        public event ChangeItem Removed;
 
         #endregion
 
         #region Static Helper
 
         /// <summary>
-        ///     Liefert die Entfernung zwischen zwei Elementen zurück.
+        /// Calculates the Distance between two Items. (Center to Center)
         /// </summary>
-        /// <param name="item1">Element 1</param>
-        /// <param name="item2">Element 2</param>
-        /// <returns>Entfernung zueinander</returns>
+        /// <param name="item1">Item 1</param>
+        /// <param name="item2">Item 2</param>
+        /// <returns>Distance</returns>
         public static float GetDistance(Item item1, Item item2)
         {
-            // TODO: Optimize with cache maybe?
             return (item1.Position - item2.Position).Length();
         }
 
         /// <summary>
-        ///     Liefert die Himmelsrichtung von Element 1 zu Element 2 zurück.
+        /// Calculates the Direction from one Item to another.
         /// </summary>
-        /// <param name="item1">Element 1</param>
-        /// <param name="item2">Element 2</param>
-        /// <returns>Richtung</returns>
+        /// <param name="item1">Item 1</param>
+        /// <param name="item2">Item 2</param>
+        /// <returns>Direction from Item 1 to Item 2</returns>
         public static Angle GetDirection(Item item1, Item item2)
         {
             return (item2.Position - item1.Position).ToAngleXY();
         }
 
         #endregion
+
+        /// <summary>
+        /// Returns a readable String representation for this Item.
+        /// </summary>
+        /// <returns>Name and ID</returns>
+        public override string ToString()
+        {
+            return string.Format("{0} ({1})", GetType().Name, Id);
+        }
     }
 }

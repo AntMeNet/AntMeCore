@@ -13,14 +13,21 @@ namespace AntMe
         /// </summary>
         private Type factoryType;
 
+        /// <summary>
+        /// Local Faction Info Cache.
+        /// </summary>
         private readonly Dictionary<Item, FactionInfo> factionInfos = new Dictionary<Item, FactionInfo>();
+
+        /// <summary>
+        /// Local Instance of the Faction State.
+        /// </summary>
         private FactionState state;
 
         /// <summary>
-        /// Standard-Konstruktor für Factions.
+        /// Default Constructor for Type Mapper.
         /// </summary>
         /// <param name="context">Simulation Context</param>
-        /// <param name="factoryType"></param>
+        /// <param name="factoryType">Type of Factory Class</param>
         /// <param name="level">Reference to the Level</param>
         protected Faction(SimulationContext context, Type factoryType, Level level)
         {
@@ -53,22 +60,17 @@ namespace AntMe
         public PlayerColor PlayerColor { get; private set; }
 
         /// <summary>
-        ///     Gibt eine Referenz aufs aktuelle Level zurück.
+        /// Reference to the Level.
         /// </summary>
         public Level Level { get; private set; }
 
         /// <summary>
-        ///     Gibt den Startpunkt der Fraktion zurück.
+        /// Gets the default Start Point.
         /// </summary>
         public Vector2 Home { get; private set; }
 
         /// <summary>
-        /// Gibt den aktuellen Punktestand dieser Faction an.
-        /// </summary>
-        public int Points { get; set; }
-
-        /// <summary>
-        /// Factory/Slot-Spezifische Kopie der Settings.
+        /// Factory-specific Settings.
         /// </summary>
         public Settings Settings { get { return Context.Settings; } }
 
@@ -78,9 +80,7 @@ namespace AntMe
         public SimulationContext Context { get; private set; }
 
         /// <summary>
-        ///     Der Zufallszahlengenerator für diese Fraktion. Bitte immer
-        ///     verwenden, um eine deterministrische Simulation zu
-        ///     gewährleisten.
+        /// Gets the Randomizer for this Faction.
         /// </summary>
         public Random Random { get { return Context.Random; } }
 
@@ -95,8 +95,7 @@ namespace AntMe
         public Dictionary<Item, UnitGroup> Units { get; private set; }
 
         /// <summary>
-        ///     Methode wird vom Level zur Initialisierung der Fraktion aufgerufen.
-        ///     Ideal zur Initialisierung von Listen und Caches.
+        /// Initializes the Faction.
         /// </summary>
         public void Init(byte slotIndex, byte teamIndex, string name, PlayerColor color, Random random, Vector2 home)
         {
@@ -122,8 +121,16 @@ namespace AntMe
             OnInit();
         }
 
+        /// <summary>
+        /// Generate a Unit/Item/Interop Combination based on the Unit and Item
+        /// </summary>
+        /// <param name="unit">Unit Instance</param>
+        /// <param name="item">Item Instance</param>
+        /// <returns></returns>
         protected UnitGroup CreateUnit(FactionUnit unit, FactionItem item)
         {
+            // TODO: Check valid Types
+
             UnitInterop unitInterop = Context.Resolver.CreateUnitInterop(this, item) as UnitInterop;
             unit.Init(unitInterop);
 
@@ -140,14 +147,12 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Wird beim Initialisieren der Faction aufgerufen und kann für Faction-Spezifische 
-        /// Initialisierungen verwendet werden.
+        /// Method will be called after Initializing the Faction.
         /// </summary>
         protected abstract void OnInit();
 
         /// <summary>
-        ///     Wird vom Level in jeder Simulationsrunde aufgerufen, damit die
-        ///     Fraktion die eigene Logik anwenden kann.
+        /// Updates the Faction and all the including Properties.
         /// </summary>
         public void Update(int round)
         {
@@ -163,16 +168,21 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Wird bei jedem Faction-Update aufgerufen und kann für Faction-spezifische 
-        /// Aktivitäten pro Update genutzt werden.
+        /// Gets a call before the Faction updates itself.
         /// </summary>
-        /// <param name="round">Aktueller Runden-Counter</param>
+        /// <param name="round">Current Round</param>
         protected abstract void OnUpdate(int round);
 
         /// <summary>
-        /// Liefert die Faction Info zurück.
+        /// Gets a call after Faction Update.
         /// </summary>
-        /// <param name="observer"></param>
+        /// <param name="round">Current Round</param>
+        protected abstract void OnUpdated(int round);
+
+        /// <summary>
+        /// Generates Faction Info.
+        /// </summary>
+        /// <param name="observer">Reference to the observing Item.</param>
         /// <returns></returns>
         public FactionInfo GetFactionInfo(Item observer)
         {
@@ -183,10 +193,9 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Wird vom Level zur Erstellung des Fraktionsstatus aufgerufen. Es wird
-        ///     empfohlen zum Füllen die Prefill-Methode aufzurufen.
+        /// Generates the Faction State.
         /// </summary>
-        /// <returns>Neue Instanz des Faction States</returns>
+        /// <returns>Updated Faction State</returns>
         public FactionState GetFactionState()
         {
             if (state == null)
@@ -195,8 +204,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Füllt den übergebenen State mit den Informationen der Basis-Klasse
-        ///     wie den Spieler Index und Typ-Informationen.
+        /// Gets a call before <see cref="GetFactionState"/> returns the State Reference.
         /// </summary>
         /// <param name="state">Instanz des zu füllenden States</param>
         protected void PrefillState(FactionState state)
@@ -210,7 +218,6 @@ namespace AntMe
             state.SlotIndex = SlotIndex;
             state.PlayerColor = PlayerColor;
             state.StartPoint = Home;
-            state.Points = Points;
         }
 
         /// <summary>

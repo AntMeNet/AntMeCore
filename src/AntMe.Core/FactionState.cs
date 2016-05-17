@@ -54,15 +54,6 @@ namespace AntMe
         public Vector2 StartPoint { get; set; }
 
         /// <summary>
-        /// Total Points.
-        /// </summary>
-        [DisplayName("Points")]
-        [Description("Total Points")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public int Points { get; set; }
-
-        /// <summary>
         /// Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
@@ -74,7 +65,6 @@ namespace AntMe
             stream.Write((byte)PlayerColor);
             stream.Write(StartPoint.X);
             stream.Write(StartPoint.Y);
-            stream.Write(Points);
         }
 
         /// <summary>
@@ -84,7 +74,6 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public virtual void SerializeUpdate(BinaryWriter stream, byte version)
         {
-            stream.Write(Points);
         }
 
         /// <summary>
@@ -100,7 +89,6 @@ namespace AntMe
             StartPoint = new Vector2(
                 stream.ReadSingle(),
                 stream.ReadSingle());
-            Points = stream.ReadInt32();
         }
 
         /// <summary>
@@ -110,7 +98,6 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public virtual void DeserializeUpdate(BinaryReader stream, byte version)
         {
-            Points = stream.ReadInt32();
         }
 
         /// <summary>

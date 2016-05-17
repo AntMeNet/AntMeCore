@@ -4,69 +4,69 @@ using System.Globalization;
 namespace AntMe
 {
     /// <summary>
-    /// Datentyp zur Speicherung, Prüfung und Umrechnung von Winkelangaben.
+    /// Represents an Angle.
     /// </summary>
     public struct Angle
     {
-        #region Statische Werte
+        #region Static Values
 
         /// <summary>
-        /// Wert für PI.
+        /// Value for Pi.
         /// </summary>
         public static float Pi = (float) Math.PI;
 
         /// <summary>
-        /// Wert für PI/2.
+        /// Value for Pi over two.
         /// </summary>
         public static float PiHalf = Pi/2;
 
         /// <summary>
-        /// Wert für PI/4.
+        /// Value for Pi over four.
         /// </summary>
         public static float PiQuarter = PiHalf/2;
 
         /// <summary>
-        /// Wert für 2PI.
+        /// Value for two Pi.
         /// </summary>
         public static float TwoPi = Pi*2;
 
         /// <summary>
-        /// Winkelangabe für Rechts (Osten).
+        /// Angle to Right (East).
         /// </summary>
         public static Angle Right = new Angle(0);
 
         /// <summary>
-        /// Winkelangabe für Rechts Unten (Südosten).
+        /// Angle to lower Right (Southeast).
         /// </summary>
         public static Angle LowerRight = new Angle(PiQuarter);
 
         /// <summary>
-        /// Winkelangabe für Unten (Süden).
+        /// Angle to Down (South).
         /// </summary>
         public static Angle Down = new Angle(PiHalf);
 
         /// <summary>
-        /// Winkelangabe für Links Unten (Südwesten).
+        /// Angle to lower Left (Southwest).
         /// </summary>
         public static Angle LowerLeft = new Angle(PiQuarter*3);
 
         /// <summary>
-        /// Winkelangabe für Links (Westen).
+        /// Angle to Left (West).
         /// </summary>
         public static Angle Left = new Angle(Pi);
 
         /// <summary>
-        /// Winkelangabe für Oben Links (Nordwesten).
+        /// Angle to upper Left (Northwest).
         /// </summary>
         public static Angle UpperLeft = new Angle(PiQuarter*5);
 
         /// <summary>
-        /// Winkelangabe für Oben (Norden).
+        /// Angle to Up (North).
         /// </summary>
         public static Angle Up = new Angle(PiHalf*3);
 
         /// <summary>
-        /// Winkelangabe für Oben Rechts (Nordosten).
+        /// Angle to upper Right (Northeast).
         /// </summary>
         public static Angle UpperRight = new Angle(PiQuarter*7);
 
@@ -85,7 +85,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Wert des Winkels im Bogenmaß [0;2Pi]
+        /// Gets or sets the Radian Angle [0;2Pi]
         /// </summary>
         public float Radian
         {
@@ -94,7 +94,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Wert des Winkels in Grad [0;359]
+        /// Gets or sets the Angle in Degrees [0;359]
         /// </summary>
         public int Degree
         {
@@ -103,7 +103,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Liefert den Wert als <see cref="AntMe.Compass" /> (angenähert) oder legt diese fest.
+        /// Gets or sets the Angle as an <see cref="AntMe.Compass"/>
         /// </summary>
         public Compass Compass
         {
@@ -116,38 +116,38 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Invertiert die X-Komponente des Winkels
+        /// Inverts the X-Component of this Angle.
         /// </summary>
-        /// <returns>Der neue Angle-Wert</returns>
+        /// <returns>Inverted Angle</returns>
         public Angle InvertX()
         {
             return Vector2.FromAngle(this).InvertX().ToAngle();
         }
 
         /// <summary>
-        /// Invertiert die Y-Komponente des Winkels
+        /// Inverts the Y-Component of this Angle.
         /// </summary>
-        /// <returns>Den neuen Angle-Wert</returns>
+        /// <returns>Inverted Angle</returns>
         public Angle InvertY()
         {
             return Vector2.FromAngle(this).InvertY().ToAngle();
         }
 
         /// <summary>
-        /// Addiert den angegeben Wert in Bogenmaß zum aktuellen Angle hinzu.
+        /// Adds the given Radian to this Angle.
         /// </summary>
-        /// <param name="radian">Zu addierenden Wert in Bogenmaß</param>
-        /// <returns>Neuer Angle</returns>
+        /// <param name="radian">Additinal Radian</param>
+        /// <returns>New Angle</returns>
         public Angle AddRadian(float radian)
         {
             return new Angle(Radian + radian);
         }
 
         /// <summary>
-        /// Addiert den angegeben Wert im Gradmaß zum aktuellen Angle hinzu.
+        /// Adds the given Degrees to this Angle.
         /// </summary>
-        /// <param name="degree">Zu addierenden Wert im Gradmaß</param>
-        /// <returns>Neuer Angle</returns>
+        /// <param name="degree">Additional Degrees</param>
+        /// <returns>New Angle</returns>
         public Angle AddDegree(int degree)
         {
             return new Angle
@@ -157,20 +157,20 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Subtrahiert den angegeben Wert in Bogenmaß zum aktuellen Angle hinzu.
+        /// Substract the given Radian from this Angle.
         /// </summary>
-        /// <param name="radian">Zu subtrahierenden Wert in Bogenmaß</param>
-        /// <returns>Neuer Angle</returns>
+        /// <param name="radian">Radian to substract</param>
+        /// <returns>new Angle</returns>
         public Angle SubstractRadian(float radian)
         {
             return new Angle(Radian - radian);
         }
 
         /// <summary>
-        /// Subtrahiert den angegeben Wert in Bogenmaß zum aktuellen Angle hinzu.
+        /// Substract the given Degrees from this Angle.
         /// </summary>
-        /// <param name="degree">Zu subtrahierenden Wert im Gradmaß</param>
-        /// <returns>Neuer Angle</returns>
+        /// <param name="degree">Degrees to substract</param>
+        /// <returns>New Angle</returns>
         public Angle SubstractDegree(int degree)
         {
             return new Angle
@@ -180,19 +180,19 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Ermittelt den Hashcode dieses Winkels.
+        /// Generates the Hash Code for this Angle.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Hashcode</returns>
         public override int GetHashCode()
         {
             return value.GetHashCode();
         }
 
         /// <summary>
-        /// Vergleicht zwei
+        /// Compares to Angles
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">Other Angle</param>
+        /// <returns>Angles are equal</returns>
         public override bool Equals(object obj)
         {
             Angle other;
@@ -207,9 +207,9 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt den Wert des Winkels (Bogenmaß) als Zeichenkette zurück.
+        /// Returns Angle as String as Radian.
         /// </summary>
-        /// <returns>Bogenmaß als Zeichenkette</returns>
+        /// <returns>Radian</returns>
         public override string ToString()
         {
             return value.ToString(CultureInfo.InvariantCulture);
@@ -218,16 +218,16 @@ namespace AntMe
         #region Casting
 
         /// <summary>
-        /// Wandelt einen Angle implizit in einen Float (Bogenmaß) um.
+        /// Converts Angle to Radian (float).
         /// </summary>
-        /// <param name="angle">Eingabewinkel</param>
+        /// <param name="angle">Angle</param>
         public static implicit operator float(Angle angle)
         {
             return angle.Radian;
         }
 
         /// <summary>
-        /// Wandelt ein Bogenmaß implizit in einen Angle um.
+        /// Converts Radian (float) to Angle.
         /// </summary>
         /// <param name="angle">Bogenmaß</param>
         public static implicit operator Angle(float angle)
@@ -240,11 +240,11 @@ namespace AntMe
         #region Operator
 
         /// <summary>
-        /// Addiert einen Winkel (Bogenmaß) auf den Winkel auf.
+        /// Adds the given Radian to this Angle.
         /// </summary>
-        /// <param name="angle">Basiswinkel</param>
-        /// <param name="diff">Zusätzlicher Winkel</param>
-        /// <returns>Addierte Winkel</returns>
+        /// <param name="angle">Angle</param>
+        /// <param name="diff">Additinal Radian</param>
+        /// <returns>New Angle</returns>
         public static Angle operator +(Angle angle, float diff)
         {
             return angle.AddRadian(diff);
@@ -332,31 +332,30 @@ namespace AntMe
         #region Static Helper
 
         /// <summary>
-        ///     Rechnet eine Grad-Angabe in Bogenmaß um.
+        /// Converts Degrees to Radian.
         /// </summary>
-        /// <param name="degree">Winkelangabe in Grad</param>
-        /// <returns>Winkelangabe in Bogenmaß</returns>
+        /// <param name="degree">Degree</param>
+        /// <returns>Radian</returns>
         public static float ConvertToRadian(int degree)
         {
             return (float) degree/360*TwoPi;
         }
 
         /// <summary>
-        ///     Rechnet ein Bogenmaß in Grad um.
+        /// Converts Radian to Degree.
         /// </summary>
-        /// <param name="radian">Winkelangabe in Bogenmaß</param>
-        /// <returns>Winkelangabe in Grad</returns>
+        /// <param name="radian">Radian</param>
+        /// <returns>Degree</returns>
         public static int ConvertToDegree(float radian)
         {
-            // Math.Round is imperative since e.g. ConvertToDegree(ConvertToRadian(125)) would yield 124 instead.
             return (int) Math.Round(radian*360/TwoPi);
         }
 
         /// <summary>
-        ///     Normalisiert eine Bogenmaß Angabe auf den Wertebereich [0;2Pi].
+        /// Normalize the given Radian to the value range of [0;2Pi].
         /// </summary>
-        /// <param name="radian">Unnormalisiertes Bogenmaß</param>
-        /// <returns>Normalisiertes Bogenmaß</returns>
+        /// <param name="radian">Radian</param>
+        /// <returns>Normaized Radian</returns>
         public static float NormalizeRadian(float radian)
         {
             if (radian < 0)
@@ -368,10 +367,10 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Normalisiert eine Grad Angabe auf den Wertebereich [0;359].
+        /// Normalizes Degrees to the value range of [0;359].
         /// </summary>
-        /// <param name="degree">Unnormalisierte Grad Angabe</param>
-        /// <returns>Normalisierte Grad Angabe</returns>
+        /// <param name="degree">Degrees</param>
+        /// <returns>Normalized Degrees</returns>
         public static int NormalizeDegree(int degree)
         {
             if (degree < 0)
@@ -383,10 +382,10 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Erzeugt eine Instanz von Angle auf Basis einer Winkelangabe in Grad.
+        /// Gets an Angle from the given Degree.
         /// </summary>
-        /// <param name="degree">Winkelangabe in Grad</param>
-        /// <returns>Neue Instanz von Angle</returns>
+        /// <param name="degree">degree</param>
+        /// <returns>New Angle</returns>
         public static Angle FromDegree(int degree)
         {
             return new Angle {Degree = degree};
@@ -413,7 +412,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Ermittelt die Differenz zwischen zwei Winkelangaben.
+        /// Calculates the 
         /// </summary>
         /// <param name="a">Winkel a</param>
         /// <param name="b">Winkel b</param>
