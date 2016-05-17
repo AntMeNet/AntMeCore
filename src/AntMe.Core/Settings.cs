@@ -48,7 +48,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Initialize the Settings with another Settings as source.
+        /// Initialize the Settings with another Settings-Instance as source.
         /// </summary>
         /// <param name="settings">Source Settings</param>
         public Settings(Settings settings) : this()
@@ -56,24 +56,31 @@ namespace AntMe
             Apply(settings);
         }
 
+        /// <summary>
+        /// Generates the Full Key out of Type and Key.
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Key</param>
+        /// <returns>Full Key</returns>
         private string FullKey<T>(string key)
         {
             return string.Format("{0}:{1}", typeof(T).FullName, key);
         }
 
         /// <summary>
-        /// Fügt Settings aus einem Stream zu den aktuellen Settings hinzu.
+        /// Overwrites Settings with the given Settings in a Stream.
         /// </summary>
-        /// <param name="stream">Stream</param>
+        /// <param name="stream">Source Stream</param>
         public void Apply(Stream stream)
         {
+            // TODO: Implement File Load.
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Fügt Settings aus einer Datei zu den aktuellen Settings hinzu.
+        /// Overwrites Settings with the given Settings in a File.
         /// </summary>
-        /// <param name="filename">Datei</param>
+        /// <param name="filename">Source File</param>
         public void Apply(string filename)
         {
             using (Stream stream = File.Open(filename, FileMode.Open))
@@ -83,60 +90,74 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Fügt Settings aus einem Stream zu den aktuellen Settings hinzu.
+        /// Overwrites Settings with the given Settings Instance.
         /// </summary>
-        /// <param name="settings">Quellsettings</param>
+        /// <param name="settings">Settings</param>
         public void Apply(Settings settings)
         {
             foreach (var key in settings.global.Keys)
             {
                 string description = null;
                 settings.descriptions.TryGetValue(key, out description);
-                Apply(key, settings.global[key], description);
+                Set(key, settings.global[key], description);
             }
         }
 
         /// <summary>
-        /// Fügt den gegebenen Schlüssel in die Settings ein oder überschreibt ihn.
+        /// Sets the value for the given Key.
         /// </summary>
-        /// <typeparam name="T">Datentyp für den diese Settings gelten</typeparam>
-        /// <param name="key">Settings Name</param>
-        /// <param name="value">Settings Wert</param>
-        /// <param name="description">Optional Description for this key</param>
-        public void Apply<T>(string key, string value, string description = null)
-        {
-            Apply(FullKey<T>(key), value, description);
-        }
-
-        /// <summary>
-        /// Fügt den gegebenen Schlüssel in die Settings ein oder überschreibt ihn.
-        /// </summary>
-        /// <typeparam name="T">Datentyp für den diese Settings gelten</typeparam>
-        /// <param name="key">Settings Name</param>
-        /// <param name="value">Settings Wert</param>
-        /// <param name="description">Optional Description for this key</param>
-        public void Apply<T>(string key, int value, string description = null)
-        {
-            Apply(FullKey<T>(key), value.ToString(), description);
-        }
-
-        public void Apply<T>(string key, float value, string description = null)
-        {
-            Apply(FullKey<T>(key), value.ToString(), description);
-        }
-
-        public void Apply<T>(string key, bool value, string description = null)
-        {
-            Apply(FullKey<T>(key), value.ToString(), description);
-        }
-
-        /// <summary>
-        /// Fügt den angegebenen Key ein.
-        /// </summary>
-        /// <param name="key">Dictionary Key (inkl. Type-Prefix)</param>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Settings Key</param>
         /// <param name="value">Settings Value</param>
         /// <param name="description">Optional Description for this key</param>
-        public void Apply(string key, string value, string description = null)
+        public void Set<T>(string key, string value, string description = null)
+        {
+            Set(FullKey<T>(key), value, description);
+        }
+
+        /// <summary>
+        /// Sets the value for the given Key.
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Settings Key</param>
+        /// <param name="value">Settings Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set<T>(string key, int value, string description = null)
+        {
+            Set(FullKey<T>(key), value.ToString(), description);
+        }
+
+        /// <summary>
+        /// Sets the value for the given Key.
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Settings Key</param>
+        /// <param name="value">Settings Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set<T>(string key, float value, string description = null)
+        {
+            Set(FullKey<T>(key), value.ToString(), description);
+        }
+
+        /// <summary>
+        /// Sets the value for the given Key.
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Settings Key</param>
+        /// <param name="value">Settings Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set<T>(string key, bool value, string description = null)
+        {
+            Set(FullKey<T>(key), value.ToString(), description);
+        }
+
+        /// <summary>
+        /// Sets the value for the given Key.
+        /// </summary>
+        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <param name="value">Settings Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set(string key, string value, string description = null)
         {
             // TODO: Check right syntax (full.type.name:key)
 
@@ -147,19 +168,37 @@ namespace AntMe
                 descriptions[key] = description;
         }
 
-        public void Apply(string key, int value, string description = null)
+        /// <summary>
+        /// Sets the value for the given Key.
+        /// </summary>
+        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <param name="value">Settings Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set(string key, int value, string description = null)
         {
-            Apply(key, value.ToString(), description);
+            Set(key, value.ToString(), description);
         }
 
-        public void Apply(string key, float value, string description = null)
+        /// <summary>
+        /// Sets the value for the given Key.
+        /// </summary>
+        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <param name="value">Settings Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set(string key, float value, string description = null)
         {
-            Apply(key, value.ToString(), description);
+            Set(key, value.ToString(), description);
         }
 
-        public void Apply(string key, bool value, string description = null)
+        /// <summary>
+        /// Sets the value for the given Key.
+        /// </summary>
+        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <param name="value">Settings Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set(string key, bool value, string description = null)
         {
-            Apply(key, value.ToString(), description);
+            Set(key, value.ToString(), description);
         }
 
         /// <summary>
@@ -171,19 +210,19 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Fertigt eine Kopie der aktuellen Settings an.
+        /// Clones the full set of Settings.
         /// </summary>
-        /// <returns>Kopie der Settings</returns>
+        /// <returns>Full Copy of Settings</returns>
         public Settings Clone()
         {
             return new Settings(this);
         }
 
         /// <summary>
-        /// Erstellt einen Merge aus den aktuellen und den gegebenen Settings her.
+        /// Merge Settings with the given Settings Instance.
         /// </summary>
-        /// <param name="settings">Zusatzsettings</param>
-        /// <returns>Kopie der aktuellen Settings</returns>
+        /// <param name="settings">Additional Settings</param>
+        /// <returns>New Instance with merged Settings</returns>
         public Settings Merge(Settings settings)
         {
             Settings result = new Settings(this);
@@ -192,11 +231,11 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt den Wert des Setting-Keys zurück oder null, falls nicht vorhanden.
+        /// Sets the Value with the given Key interpreted as String.
         /// </summary>
-        /// <typeparam name="T">Aufrufender Type</typeparam>
-        /// <param name="key">Setting Key</param>
-        /// <returns>Setting Value</returns>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Settings Key</param>
+        /// <returns>Value</returns>
         public string GetString<T>(string key)
         {
             string result;
@@ -205,6 +244,11 @@ namespace AntMe
             return string.Empty;
         }
 
+        /// <summary>
+        /// Sets the Value with the given Key interpreted as String.
+        /// </summary>
+        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <returns>Value</returns>
         public string GetString(string key)
         {
             string result;
@@ -214,11 +258,11 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt den Settings Wert als Integer zurück oder null, falls nicht vorhanden.
+        /// Sets the Value with the given Key interpreted as Integer.
         /// </summary>
-        /// <typeparam name="T">Aufrufender Type</typeparam>
-        /// <param name="key">Settings key</param>
-        /// <returns>Settings Wert</returns>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Settings Key</param>
+        /// <returns>Value</returns>
         public int? GetInt<T>(string key)
         {
             string value = GetString<T>(key);
@@ -228,6 +272,11 @@ namespace AntMe
             return null;
         }
 
+        /// <summary>
+        /// Sets the Value with the given Key interpreted as Integer.
+        /// </summary>
+        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <returns>Value</returns>
         public int? GetInt(string key)
         {
             string value = GetString(key);
@@ -238,11 +287,11 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt den Settings-Wert als bool zurück oder null, falls nicht vorhanden.
+        /// Sets the Value with the given Key interpreted as Bool.
         /// </summary>
-        /// <typeparam name="T">Aufrufender Type</typeparam>
+        /// <typeparam name="T">Type</typeparam>
         /// <param name="key">Settings Key</param>
-        /// <returns>Settings Wert</returns>
+        /// <returns>Value</returns>
         public bool? GetBool<T>(string key)
         {
             string value = GetString<T>(key);
@@ -252,6 +301,11 @@ namespace AntMe
             return null;
         }
 
+        /// <summary>
+        /// Sets the Value with the given Key interpreted as Bool.
+        /// </summary>
+        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <returns>Value</returns>
         public bool? GetBool(string key)
         {
             string value = GetString(key);
@@ -262,11 +316,11 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt den Settings-Wert als float zurück oder null, falls nicht vorhanden.
+        /// Sets the Value with the given Key interpreted as Float.
         /// </summary>
-        /// <typeparam name="T">Aufrufender Type</typeparam>
+        /// <typeparam name="T">Type</typeparam>
         /// <param name="key">Settings Key</param>
-        /// <returns>Settings Value</returns>
+        /// <returns>Value</returns>
         public float? GetFloat<T>(string key)
         {
             string value = GetString<T>(key);
@@ -276,6 +330,11 @@ namespace AntMe
             return null;
         }
 
+        /// <summary>
+        /// Sets the Value with the given Key interpreted as Float.
+        /// </summary>
+        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <returns>Value</returns>
         public float? GetFloat(string key)
         {
             string value = GetString(key);
@@ -285,11 +344,22 @@ namespace AntMe
             return null;
         }
 
+        /// <summary>
+        /// Returns the Description for the Settings with the given Key.
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Settings Key</param>
+        /// <returns>Description</returns>
         public string GetDescription<T>(string key)
         {
             return GetDescription(FullKey<T>(key));
         }
 
+        /// <summary>
+        /// Returns the Description for the Settings with the given Key.
+        /// </summary>
+        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <returns>Description</returns>
         public string GetDescription(string key)
         {
             string result;
@@ -299,9 +369,9 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Speichert den aktuellen Stand der Settings in der gegebenen Datei.
+        /// Saves all Settings to a File.
         /// </summary>
-        /// <param name="filename">Dateinamen</param>
+        /// <param name="filename">Filename</param>
         public void Save(string filename)
         {
             using (Stream stream = File.Open(filename, FileMode.Create))
@@ -311,11 +381,12 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Speichert den aktuellen Stand der Settings im gegebenen Stream.
+        /// Saves all Settings to a File.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         public void Save(Stream stream)
         {
+            // TODO: Implement Settings Save
             throw new NotImplementedException();
         }
     }

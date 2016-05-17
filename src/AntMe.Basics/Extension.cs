@@ -48,8 +48,8 @@ namespace AntMe.Basics
             typeMapper.RegisterEngineProperty<InteractionExtension>(this, "Interaction Extension (Core)", 70);
             typeMapper.RegisterEngineProperty<PhysicsExtension>(this, "Physics Extension (Core)", 100);
 
-            settings.Apply<RecognitionExtension>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
-            settings.Apply<RecognitionExtension>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
+            settings.Set<RecognitionExtension>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
+            settings.Set<RecognitionExtension>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
             typeMapper.RegisterEngineProperty<RecognitionExtension>(this, "Recognition Extension (Core)", 150);
 
             // ##########################
@@ -75,13 +75,13 @@ namespace AntMe.Basics
             // ##########################
 
             // Ant Faction
-            settings.Apply<AntFaction>("InitialAnthillCount", 1, "Number of initial Anthills");
-            settings.Apply<AntFaction>("InitialAntCount", 0, "Number of initial Ants");
-            settings.Apply<AntFaction>("ConcurrentAntCount", 100, "Number of concurrent Ants");
-            settings.Apply<AntFaction>("ConcurrentAnthillCount", 1, "Number of concurrent Anthills");
-            settings.Apply<AntFaction>("TotalAntCount", int.MaxValue, "Total Number of Ants per Simulation");
-            settings.Apply<AntFaction>("TotalAnthillCount", 1, "Number of total Anthills per Simulation");
-            settings.Apply<AntFaction>("AntRespawnDelay", 1, "Number of Rounds until another Respawn");
+            settings.Set<AntFaction>("InitialAnthillCount", 1, "Number of initial Anthills");
+            settings.Set<AntFaction>("InitialAntCount", 0, "Number of initial Ants");
+            settings.Set<AntFaction>("ConcurrentAntCount", 100, "Number of concurrent Ants");
+            settings.Set<AntFaction>("ConcurrentAnthillCount", 1, "Number of concurrent Anthills");
+            settings.Set<AntFaction>("TotalAntCount", int.MaxValue, "Total Number of Ants per Simulation");
+            settings.Set<AntFaction>("TotalAnthillCount", 1, "Number of total Anthills per Simulation");
+            settings.Set<AntFaction>("AntRespawnDelay", 1, "Number of Rounds until another Respawn");
             typeMapper.RegisterFaction<AntFaction, AntFactionState, FactionInfo, AntFactory, AntFactoryInterop, AntUnit, AntUnitInterop>(this, "Ants");
 
             // Ant Factory Interops
@@ -143,7 +143,7 @@ namespace AntMe.Basics
             typeMapper.RegisterItem<AppleItem, AppleState, AppleInfo>(this, "Apple");
 
             // Collidable
-            settings.Apply<AppleItem>("Mass", 200f, "Mass of an Apple");
+            settings.Set<AppleItem>("Mass", 200f, "Mass of an Apple");
             typeMapper.AttachItemProperty<AppleItem, CollidableProperty>(this, "Apple Collidable", (i) =>
             {
                 CollidableProperty property = new CollidableProperty(i);
@@ -171,7 +171,7 @@ namespace AntMe.Basics
             });
 
             // Portable
-            settings.Apply<AppleItem>("Weight", 200f, "Weight of an Apple");
+            settings.Set<AppleItem>("Weight", 200f, "Weight of an Apple");
             typeMapper.AttachItemProperty<AppleItem, PortableProperty>(this, "Apple Portable", (i) =>
             {
                 PortableProperty property = new PortableProperty(i);
@@ -186,8 +186,8 @@ namespace AntMe.Basics
                 return property;
             });
 
-            settings.Apply<AppleItem>("Collectable", false, "Will an Apple be collectable");
-            settings.Apply<AppleItem>("Amount", 250, "Amount of Apple Units");
+            settings.Set<AppleItem>("Collectable", false, "Will an Apple be collectable");
+            settings.Set<AppleItem>("Amount", 250, "Amount of Apple Units");
             typeMapper.AttachItemProperty<AppleItem, AppleCollectableProperty>(this, "Apple Collectable", (i) =>
             {
                 if (!i.Settings.GetBool<AppleItem>("Collectable").Value)
@@ -281,9 +281,9 @@ namespace AntMe.Basics
             });
 
             // Attackable
-            settings.Apply<AnthillItem>("Attackable", false, "Enables the possibility to destroy Anthills");
-            settings.Apply<AnthillItem>("MaxHealth", 1000, "Maximum Health of an Anthill");
-            settings.Apply<AnthillItem>("Buildable", false, "Can an Anthill build by ants");
+            settings.Set<AnthillItem>("Attackable", false, "Enables the possibility to destroy Anthills");
+            settings.Set<AnthillItem>("MaxHealth", 1000, "Maximum Health of an Anthill");
+            settings.Set<AnthillItem>("Buildable", false, "Can an Anthill build by ants");
             typeMapper.AttachItemProperty<AnthillItem, AttackableProperty>(this, "Anthill Attackable", (i) =>
             {
                 // Check Attackable Switch
@@ -316,9 +316,9 @@ namespace AntMe.Basics
         private void RegisterMarker(ITypeMapper typeMapper, Settings settings)
         {
             // Marker
-            settings.Apply<MarkerItem>("MinRadius", 20f, "Minimum Radius of a Marker");
-            settings.Apply<MarkerItem>("MaxRadius", 200f, "Maximum Radius of a Marker");
-            settings.Apply<MarkerItem>("Volume", 2000f, "Total Volume of a Marker");
+            settings.Set<MarkerItem>("MinRadius", 20f, "Minimum Radius of a Marker");
+            settings.Set<MarkerItem>("MaxRadius", 200f, "Maximum Radius of a Marker");
+            settings.Set<MarkerItem>("Volume", 2000f, "Total Volume of a Marker");
             typeMapper.RegisterItem<MarkerItem, MarkerState, MarkerInfo>(this, "Marker");
 
             // Smellable
@@ -345,7 +345,7 @@ namespace AntMe.Basics
             typeMapper.RegisterItem<BugItem, BugState, BugInfo>(this, "Bug");
 
             // Walking
-            settings.Apply<BugItem>("MaxSpeed", 2f, "Maximum Speed of a Bug");
+            settings.Set<BugItem>("MaxSpeed", 2f, "Maximum Speed of a Bug");
             typeMapper.AttachItemProperty<BugItem, WalkingProperty>(this, "Bug Walking", (i) =>
             {
                 WalkingProperty property = new WalkingProperty(i);
@@ -361,7 +361,7 @@ namespace AntMe.Basics
             });
 
             // Collision
-            settings.Apply<BugItem>("Mass", 10f, "Collision Mass of a Bug");
+            settings.Set<BugItem>("Mass", 10f, "Collision Mass of a Bug");
             typeMapper.AttachItemProperty<BugItem, CollidableProperty>(this, "Bug Collidable", (i) =>
             {
                 CollidableProperty property = new CollidableProperty(i);
@@ -390,8 +390,8 @@ namespace AntMe.Basics
             });
 
             // Sighting
-            settings.Apply<BugItem>("ViewRange", 20f, "View Range of a Bug");
-            settings.Apply<BugItem>("ViewAngle", 360, "View Angle of a Bug");
+            settings.Set<BugItem>("ViewRange", 20f, "View Range of a Bug");
+            settings.Set<BugItem>("ViewAngle", 360, "View Angle of a Bug");
             typeMapper.AttachItemProperty<BugItem, SightingProperty>(this, "Bug Sighting", (i) =>
             {
                 SightingProperty property = new SightingProperty(i);
@@ -411,7 +411,7 @@ namespace AntMe.Basics
             typeMapper.AttachItemProperty<BugItem, SnifferProperty>(this, "Bug Sniffer");
 
             // Attackable
-            settings.Apply<BugItem>("MaxHealth", 1000, "Maximum Health of a Bug");
+            settings.Set<BugItem>("MaxHealth", 1000, "Maximum Health of a Bug");
             typeMapper.AttachItemProperty<BugItem, AttackableProperty>(this, "Bug Attackable", (i) =>
             {
                 AttackableProperty property = new AttackableProperty(i);
@@ -428,9 +428,9 @@ namespace AntMe.Basics
             });
 
             // Attacker
-            settings.Apply<BugItem>("AttackRange", 5f, "Attack Range for a Bug");
-            settings.Apply<BugItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Bug");
-            settings.Apply<BugItem>("AttackStrength", 10, "Attach Strength for a Bug");
+            settings.Set<BugItem>("AttackRange", 5f, "Attack Range for a Bug");
+            settings.Set<BugItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Bug");
+            settings.Set<BugItem>("AttackStrength", 10, "Attach Strength for a Bug");
             typeMapper.AttachItemProperty<BugItem, AttackerProperty>(this, "Bug Attacker", (i) =>
             {
                 AttackerProperty property = new AttackerProperty(i);
@@ -456,7 +456,7 @@ namespace AntMe.Basics
             typeMapper.RegisterItem<ClassicBugItem, BugState, BugInfo>(this, "Classic Bug");
 
             // Walking
-            settings.Apply<ClassicBugItem>("MaxSpeed", 2f, "Maximum Speed of a Classic Bug");
+            settings.Set<ClassicBugItem>("MaxSpeed", 2f, "Maximum Speed of a Classic Bug");
             typeMapper.AttachItemProperty<ClassicBugItem, WalkingProperty>(this, "Classic Bug Walking", (i) =>
             {
                 WalkingProperty property = new WalkingProperty(i);
@@ -472,7 +472,7 @@ namespace AntMe.Basics
             });
 
             // Collision
-            settings.Apply<ClassicBugItem>("Mass", 10f, "Collision Mass of a Classic Bug");
+            settings.Set<ClassicBugItem>("Mass", 10f, "Collision Mass of a Classic Bug");
             typeMapper.AttachItemProperty<ClassicBugItem, CollidableProperty>(this, "Classic Bug Collidable", (i) =>
             {
                 CollidableProperty property = new CollidableProperty(i);
@@ -501,8 +501,8 @@ namespace AntMe.Basics
             });
 
             // Sighting
-            settings.Apply<ClassicBugItem>("ViewRange", 20f, "View Range of a Classic Bug");
-            settings.Apply<ClassicBugItem>("ViewAngle", 360, "View Angle of a Classic Bug");
+            settings.Set<ClassicBugItem>("ViewRange", 20f, "View Range of a Classic Bug");
+            settings.Set<ClassicBugItem>("ViewAngle", 360, "View Angle of a Classic Bug");
             typeMapper.AttachItemProperty<ClassicBugItem, SightingProperty>(this, "Classic Bug Sighting", (i) =>
             {
                 SightingProperty property = new SightingProperty(i);
@@ -522,7 +522,7 @@ namespace AntMe.Basics
             typeMapper.AttachItemProperty<ClassicBugItem, SnifferProperty>(this, "Classic Bug Sniffer");
 
             // Attackable
-            settings.Apply<ClassicBugItem>("MaxHealth", 1000, "Maximum Health of a Classic Bug");
+            settings.Set<ClassicBugItem>("MaxHealth", 1000, "Maximum Health of a Classic Bug");
             typeMapper.AttachItemProperty<ClassicBugItem, AttackableProperty>(this, "Classic Bug Attackable", (i) =>
             {
                 AttackableProperty property = new AttackableProperty(i);
@@ -539,9 +539,9 @@ namespace AntMe.Basics
             });
 
             // Attacker
-            settings.Apply<ClassicBugItem>("AttackRange", 5f, "Attack Range for a Classic Bug");
-            settings.Apply<ClassicBugItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Classic Bug");
-            settings.Apply<ClassicBugItem>("AttackStrength", 10, "Attach Strength for a Classic Bug");
+            settings.Set<ClassicBugItem>("AttackRange", 5f, "Attack Range for a Classic Bug");
+            settings.Set<ClassicBugItem>("RecoveryTime", 5, "Recovery Time in Rounds for a Classic Bug");
+            settings.Set<ClassicBugItem>("AttackStrength", 10, "Attach Strength for a Classic Bug");
             typeMapper.AttachItemProperty<ClassicBugItem, AttackerProperty>(this, "Classic Bug Attacker", (i) =>
             {
                 AttackerProperty property = new AttackerProperty(i);
@@ -560,15 +560,15 @@ namespace AntMe.Basics
         private void RegisterAnt(ITypeMapper typeMapper, Settings settings)
         {
             // Ant Item
-            settings.Apply<AntItem>("ZickZackAngle", 10, "Correction Angle after Sprint");
-            settings.Apply<AntItem>("ZickZackRange", 30f, "Distance to go every Sprint");
-            settings.Apply<AntItem>("RotationSpeed", 20, "Maximum Rotation Angle per Round");
-            settings.Apply<AntItem>("DropSugar", false, "Will an Ant leave a small Sugar on Drop");
-            settings.Apply<AntItem>("MarkerDelay", 10, "Time in Rounds between Marker-Drops");
+            settings.Set<AntItem>("ZickZackAngle", 10, "Correction Angle after Sprint");
+            settings.Set<AntItem>("ZickZackRange", 30f, "Distance to go every Sprint");
+            settings.Set<AntItem>("RotationSpeed", 20, "Maximum Rotation Angle per Round");
+            settings.Set<AntItem>("DropSugar", false, "Will an Ant leave a small Sugar on Drop");
+            settings.Set<AntItem>("MarkerDelay", 10, "Time in Rounds between Marker-Drops");
             typeMapper.RegisterItem<AntItem, AntState, AntInfo>(this, "Ant");
 
             // Walking
-            settings.Apply<AntItem>("MaxSpeed", 1f, "Maximum Speed of an Ant");
+            settings.Set<AntItem>("MaxSpeed", 1f, "Maximum Speed of an Ant");
             typeMapper.AttachItemProperty<AntItem, WalkingProperty>(this, "Ant Walking", (i) =>
             {
                 WalkingProperty property = new WalkingProperty(i);
@@ -585,7 +585,7 @@ namespace AntMe.Basics
             });
 
             // Collision
-            settings.Apply<AntItem>("Mass", 1f, "Collision Mass of an Ant");
+            settings.Set<AntItem>("Mass", 1f, "Collision Mass of an Ant");
             typeMapper.AttachItemProperty<AntItem, CollidableProperty>(this, "Ant Collidable", (i) =>
             {
                 CollidableProperty property = new CollidableProperty(i);
@@ -614,8 +614,8 @@ namespace AntMe.Basics
             });
 
             // Sighting
-            settings.Apply<AntItem>("ViewRange", 20f, "View Range of an Ant");
-            settings.Apply<AntItem>("ViewAngle", 360, "View Angle of an Ant");
+            settings.Set<AntItem>("ViewRange", 20f, "View Range of an Ant");
+            settings.Set<AntItem>("ViewAngle", 360, "View Angle of an Ant");
             typeMapper.AttachItemProperty<AntItem, SightingProperty>(this, "Ant Sighting", (i) =>
             {
                 SightingProperty property = new SightingProperty(i);
@@ -635,7 +635,7 @@ namespace AntMe.Basics
             typeMapper.AttachItemProperty<AntItem, SnifferProperty>(this, "Ant Sniffer");
 
             // Carrier
-            settings.Apply<AntItem>("CarrierStrength", 10f, "Carrier Strength of an Ant");
+            settings.Set<AntItem>("CarrierStrength", 10f, "Carrier Strength of an Ant");
             typeMapper.AttachItemProperty<AntItem, CarrierProperty>(this, "Ant Carrier", (i) =>
             {
                 CarrierProperty property = new CarrierProperty(i);
@@ -644,7 +644,7 @@ namespace AntMe.Basics
             });
 
             // Attackable
-            settings.Apply<AntItem>("MaxHealth", 100f, "Maximum Health for an Ant");
+            settings.Set<AntItem>("MaxHealth", 100f, "Maximum Health for an Ant");
             typeMapper.AttachItemProperty<AntItem, AttackableProperty>(this, "Ant Attackable", (i) =>
             {
                 AttackableProperty property = new AttackableProperty(i);
@@ -661,9 +661,9 @@ namespace AntMe.Basics
             });
 
             // Attacker
-            settings.Apply<AntItem>("AttackRange", 3f, "Attack Range for a Bug");
-            settings.Apply<AntItem>("RecoveryTime", 2, "Recovery Time in Rounds for a Bug");
-            settings.Apply<AntItem>("AttackStrength", 5, "Attach Strength for a Bug");
+            settings.Set<AntItem>("AttackRange", 3f, "Attack Range for a Bug");
+            settings.Set<AntItem>("RecoveryTime", 2, "Recovery Time in Rounds for a Bug");
+            settings.Set<AntItem>("AttackStrength", 5, "Attach Strength for a Bug");
             typeMapper.AttachItemProperty<AntItem, AttackerProperty>(this, "Ant Attacker", (i) =>
             {
                 AttackerProperty property = new AttackerProperty(i);
@@ -674,8 +674,8 @@ namespace AntMe.Basics
             });
 
             // Collector
-            settings.Apply<AntItem>("SugarCapacity", 5, "Maximum Capacity for Sugar");
-            settings.Apply<AntItem>("AppleCapacity", 2, "Maximum Capacity for Apple");
+            settings.Set<AntItem>("SugarCapacity", 5, "Maximum Capacity for Sugar");
+            settings.Set<AntItem>("AppleCapacity", 2, "Maximum Capacity for Apple");
             typeMapper.AttachItemProperty<AntItem, SugarCollectorProperty>(this, "Ant Sugar Collectable", (i) =>
             {
                 SugarCollectorProperty property = new SugarCollectorProperty(i);
