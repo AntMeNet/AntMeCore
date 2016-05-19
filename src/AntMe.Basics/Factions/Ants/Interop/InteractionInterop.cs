@@ -1,342 +1,340 @@
 ﻿using AntMe.Basics.ItemProperties;
 using AntMe.Basics.Items;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AntMe.Basics.Factions.Ants.Interop
 {
+    /// <summary>
+    /// Interaction Interop for Ants.
+    /// </summary>
     public sealed class InteractionInterop : UnitInteropProperty
     {
-        private readonly CollectorProperty _collector;
-        private readonly CarrierProperty _carrier;
-        private readonly AttackableProperty _attackable;
-        private readonly AttackerProperty _attacker;
-        private readonly SugarCollectableProperty _sugar;
-        private readonly AppleCollectableProperty _apple;
+        private readonly CarrierProperty carrier;
+        private readonly AttackableProperty attackable;
+        private readonly AttackerProperty attacker;
+        private readonly SugarCollectorProperty sugar;
+        private readonly AppleCollectorProperty apple;
 
-        private readonly List<ItemInfo> _attackerItems = new List<ItemInfo>();
+        private readonly List<ItemInfo> attackerItems = new List<ItemInfo>();
 
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="faction">Faction</param>
+        /// <param name="item">Item</param>
+        /// <param name="interop">UnitInterop</param>
         public InteractionInterop(Faction faction, FactionItem item, UnitInterop interop) : base(faction, item, interop)
         {
-            //#region Collector
+            #region Collector
 
-            //// Relevanten Properties identifizieren
-            //_collector = _antItem.GetProperty<CollectorProperty>();
-            //if (_collector == null)
-            //    throw new ArgumentException("Item does not contain CollectorProperty");
+            sugar = item.GetProperty<SugarCollectorProperty>();
+            if (sugar == null)
+                throw new ArgumentException("Item does not contain SugarCollector");
 
-            //_sugar = _collector.GetCollectableGood<SugarCollectableProperty>();
-            //if (_sugar == null)
-            //    throw new ArgumentException("Item does not contain SugarCollectabale");
+            apple = item.GetProperty<AppleCollectorProperty>();
+            if (apple == null)
+                throw new ArgumentException("Item does not contain AppleCollector");
 
-            //_apple = _collector.GetCollectableGood<AppleCollectableProperty>();
-            //if (_apple == null)
-            //    throw new ArgumentException("Item does not contain AppleCollectable");
+            #endregion
 
-            //#endregion
+            #region Carrier
 
-            //#region Carrier
+            carrier = item.GetProperty<CarrierProperty>();
+            if (carrier == null)
+                throw new ArgumentException("Item does not contain CarrierProperty");
 
-            //_carrier = _antItem.GetProperty<CarrierProperty>();
-            //if (_carrier == null)
-            //    throw new ArgumentException("Item does not contain CarrierProperty");
+            #endregion
 
-            //#endregion
+            #region Attackable
 
-            //#region Attackable
+            attackable = item.GetProperty<AttackableProperty>();
+            if (attackable == null)
+                throw new ArgumentException("Item does not contain AttackableProperty");
 
-            //_attackable = _antItem.GetProperty<AttackableProperty>();
-            //if (_attackable == null)
-            //    throw new ArgumentException("Item does not contain AttackableProperty");
+            attackable.OnKill += i =>
+            {
+                if (OnKill != null)
+                    OnKill();
+            };
 
-            //_attackable.OnKill += item =>
-            //{
-            //    if (OnKill != null)
-            //        OnKill();
-            //};
+            attackable.OnAttackerHit += (i, value) =>
+            {
+                if (OnHit != null)
+                    OnHit(value);
+            };
 
-            //_attackable.OnAttackerHit += (item, value) =>
-            //{
-            //    if (OnHit != null)
-            //        OnHit(value);
-            //};
+            attackable.OnNewAttackerItem += i =>
+            {
+                var info = Item.GetItemInfo(i.Item);
 
-            //_attackable.OnNewAttackerItem += item =>
-            //{
-            //    var Item = (Item)item.Item;
-            //    var info = Item.GetItemInfo(antItem);
+                if (!attackerItems.Contains(info))
+                    attackerItems.Add(info);
+            };
 
-            //    if (!_attackerItems.Contains(info))
-            //        _attackerItems.Add(info);
-            //};
+            attackable.OnLostAttackerItem += i =>
+            {
+                var info = Item.GetItemInfo(i.Item);
 
-            //_attackable.OnLostAttackerItem += item =>
-            //{
-            //    var Item = (Item)item.Item;
-            //    var info = Item.GetItemInfo(antItem);
+                if (attackerItems.Contains(info))
+                    attackerItems.Remove(info);
+            };
 
-            //    if (_attackerItems.Contains(info))
-            //        _attackerItems.Remove(info);
-            //};
+            #endregion
 
-            //#endregion
+            #region Attacker
 
-            //#region Attacker
+            attacker = item.GetProperty<AttackerProperty>();
+            if (attacker == null)
+                throw new ArgumentException("Item does not contain AttackerProperty");
 
-            //_attacker = _antItem.GetProperty<AttackerProperty>();
-            //if (_attacker == null)
-            //    throw new ArgumentException("Item does not contain AttackerProperty");
+            #endregion
 
-            //#endregion
+            // Automatic Resource Transfer on Anthill Collision.
+            var collidable = item.GetProperty<CollidableProperty>();
+            if (collidable == null)
+                throw new ArgumentException("Item does not contain AttackerProperty");
 
-            //// Automatischer Collectables Handover
-            //var collidable = antItem.GetProperty<CollidableProperty>();
-            //if (collidable == null)
-            //    throw new ArgumentException("Item does not contain AttackerProperty");
+            collidable.OnCollision += (i, value) =>
+            {
+                // Ignore if it's not a Anthill
+                if (!(value is AnthillItem)) return;
 
-            //collidable.OnCollision += (item, value) =>
-            //{
-            //    // Weiter machen, wenn es sich um einen Ameisenhügel handelt.
-            //    if (!(value is AnthillItem)) return;
+                var anthill = value as AnthillItem;
 
-            //    var anthill = value as AnthillItem;
+                // Ignore if it's not the right faction
+                if (anthill.Faction != item.Faction) return;
 
-            //    // Prüfen, ob es sich um den eigenen Ameisenhügel handelt.
-            //    if (anthill.Faction != _antItem.Faction) return;
-
-            //    // Ressourcen übertragen, sofern welche da sind
-            //    Give(anthill);
-            //};
+                // Transfer all collectables
+                Give(anthill);
+            };
         }
 
-        //#region Methods
+        #region Methods
 
-        ///// <summary>
-        ///// Sammelt die passenden Ressourcen ein.
-        ///// </summary>
-        ///// <param name="food">Item, von dem eingesammelt wird.</param>
-        //public int Collect(ItemInfo food)
-        //{
-        //    // Aktuelle Last fallen lassen
-        //    if (IsLoaded)
-        //        Drop();
+        /// <summary>
+        /// Takes as much as possible Food from the Item.
+        /// </summary>
+        /// <param name="food">Item to take from</param>
+        public int Collect(ItemInfo food)
+        {
+            // Aktuelle Last fallen lassen
+            if (IsLoaded)
+                Drop();
 
-        //    var item = _antItem.GetItemFromInfo(food);
+            var i = Item.GetItemFromInfo(food);
 
-        //    // Prüfen, ob es sich überhaupt um ein Collectable handelt.
-        //    var collectable = item.GetProperty<CollectableProperty>();
-        //    if (collectable == null)
-        //        return 0;
+            // Enumerate over all Collectable Properties to find a matching Type
+            foreach (var property in i.Properties.OfType<CollectableProperty>())
+            {
+                // Search for a Collector Property fitting to the Collectable
+                var hit = Item.Properties.OfType<CollectorProperty>().
+                    FirstOrDefault(p => p.GetType() == property.AcceptedCollectorType);
+                if (hit != null)
+                {
+                    // Try to Take as much as possible
+                    int amount = hit.Take(property, int.MaxValue);
+                    if (amount > 0) return amount;
+                }
+            }
 
-        //    // Zuerst Zucker abbauen
-        //    var result = _collector.Collect<SugarCollectableProperty>(collectable);
-        //    if (result > 0)
-        //        return result;
+            return 0;
+        }
 
-        //    // Alterantiv Apfel sammeln
-        //    return _collector.Collect<AppleCollectableProperty>(collectable);
-        //}
+        /// <summary>
+        /// Drops all stuff
+        /// </summary>
+        public void Drop()
+        {
+            // Drop portable
+            carrier.Drop();
 
-        ///// <summary>
-        ///// Lässt alle aufgesammelte Nahrung fallen.
-        ///// </summary>
-        //public void Drop()
-        //{
-        //    // Drop portable
-        //    _carrier.Drop();
+            // Drops Collectables
+            apple.Amount = 0;
 
-        //    // Drop Apple
-        //    _apple.Amount = 0;
+            // Drop Sugar
+            int amount = sugar.Amount;
+            if (Item.Settings.GetBool<AntItem>("DropSugar").Value)
+            {
+                Item.Engine.InsertItem(new SugarItem(Item.Faction.Level.Context, Item.Position.ToVector2XY(), amount));
+            }
+        }
 
-        //    // Drop Sugar
-        //    int amount = _sugar.Amount;
-        //    if (_antItem.Settings.GetBool<AntItem>("DropSugar").Value)
-        //    {
-        //        _antItem.Engine.InsertItem(new SugarItem(_antItem.Faction.Level.Context, _antItem.Position.ToVector2XY(), amount));
-        //    }
-        //}
+        /// <summary>
+        /// Transfers all Collectable Ressources to the Destination.
+        /// </summary>
+        /// <param name="item">Destination</param>
+        /// <returns>Transfered Amount</returns>
+        public int Give(Item item)
+        {
+            int result = 0;
+            foreach (var property in item.Properties.OfType<CollectableProperty>())
+            {
+                var hit = Item.Properties.OfType<CollectorProperty>().
+                    FirstOrDefault(p => p.GetType() == property.AcceptedCollectorType);
+                if (hit != null)
+                {
+                    result += hit.Give(property, int.MaxValue);
+                }
+            }
+            return result;
+        }
 
-        ///// <summary>
-        ///// Gibt die aktuelle Last an das gegebene Item ab.
-        ///// </summary>
-        ///// <param name="item"></param>
-        ///// <returns></returns>
-        //public int Give(Item item)
-        //{
-        //    // Prüfen, ob es sich überhaupt um ein Collectable handelt.
-        //    var collectable = item.GetProperty<CollectableProperty>();
-        //    if (collectable == null)
-        //        return 0;
+        /// <summary>
+        /// Tries to pick up the target item.
+        /// </summary>
+        /// <param name="info">Item to pick up</param>
+        /// <returns>Success</returns>
+        public bool Carry(ItemInfo info)
+        {
+            // Drops old Items
+            if (carrier.CarrierLoad != null)
+                carrier.Drop();
 
-        //    // Gib Zucker
-        //    if (_sugar.Amount > 0)
-        //    {
-        //        var result = _collector.Give<SugarCollectableProperty>(collectable);
-        //        if (result > 0)
-        //            return result;
-        //    }
+            var item = Item.GetItemFromInfo(info);
 
-        //    // Gib Apfel
-        //    return _collector.Give<AppleCollectableProperty>(collectable);
-        //}
+            // Make sure target is portable
+            var portable = item.GetProperty<PortableProperty>();
+            if (portable == null) return false;
 
-        ///// <summary>
-        ///// Hebt das angegebene Ziel auf, sofern es sich um etwas tragbares handelt.
-        ///// </summary>
-        ///// <param name="info"></param>
-        ///// <returns></returns>
-        //public bool Carry(ItemInfo info)
-        //{
-        //    // Aktuelle Last fallen lassen
-        //    if (IsLoaded)
-        //        Drop();
+            // Take
+            return carrier.Carry(portable);
+        }
 
-        //    var item = _antItem.GetItemFromInfo(info);
+        /// <summary>
+        /// Starts to attack the target Item.
+        /// </summary>
+        /// <param name="info">Enemy</param>
+        public void Attack(ItemInfo info)
+        {
+            var item = Item.GetItemFromInfo(info);
+            var attackable = item.GetProperty<AttackableProperty>();
 
-        //    // Prüfen, ob es sich überhaupt um ein Portable handelt.
-        //    var portable = item.GetProperty<PortableProperty>();
-        //    if (portable == null)
-        //        return false;
+            // Make sure target is attackable
+            if (attackable == null) return;
 
-        //    // Aufnehmen
-        //    return _carrier.Carry(portable);
-        //}
+            // Start to attack
+            attacker.Attack(attackable);
+        }
 
-        ///// <summary>
-        ///// Startet den Angriff auf das angegebene Ziel, sofern dieses Ziel angreifbar ist und sich in Reichweite befindet.
-        ///// </summary>
-        ///// <param name="info">Gegner</param>
-        //public void Attack(ItemInfo info)
-        //{
-        //    var item = _antItem.GetItemFromInfo(info);
-        //    if (!item.ContainsProperty<AttackableProperty>())
-        //        return;
+        /// <summary>
+        /// Stop to attack Items.
+        /// </summary>
+        public void StopAttack()
+        {
+            attacker.StopAttack();
+        }
 
-        //    var property = item.GetProperty<AttackableProperty>();
-        //    _attacker.Attack(property);
-        //}
+        #endregion
 
-        ///// <summary>
-        ///// Stoppt jegliche Angriffe.
-        ///// </summary>
-        //public void StopAttack()
-        //{
-        //    _attacker.StopAttack();
-        //}
+        #region Properties
 
-        //#endregion
+        /// <summary>
+        /// List of attacking Items.
+        /// </summary>
+        public ReadOnlyCollection<ItemInfo> AttackingItems { get { return attackerItems.AsReadOnly(); } }
 
-        //#region Properties
+        /// <summary>
+        /// Gets the current Health state.
+        /// </summary>
+        public int Health { get { return attackable.AttackableHealth; } }
 
-        ///// <summary>
-        ///// Liefert eine Liste der aktuell angreifenden Einheiten.
-        ///// </summary>
-        //public ReadOnlyCollection<ItemInfo> AttackingItems { get { return _attackerItems.AsReadOnly(); } }
+        /// <summary>
+        /// Gets the maximum possible Health.
+        /// </summary>
+        public int MaximumHealth { get { return attackable.AttackableMaximumHealth; } }
 
-        ///// <summary>
-        ///// Gibt den aktuellen Gesundheitsstand zurück.
-        ///// </summary>
-        //public int Health { get { return _attackable.AttackableHealth; } }
+        /// <summary>
+        /// Returns the own Attack Range.
+        /// </summary>
+        public float AttackRange { get { return attacker.AttackRange; } }
 
-        ///// <summary>
-        ///// Gibt den maximalen Wert der Gesundheit zurück.
-        ///// </summary>
-        //public int MaximumHealth { get { return _attackable.AttackableMaximumHealth; } }
+        /// <summary>
+        /// Returns the own Attack Strength.
+        /// </summary>
+        public int AttackStrength { get { return attacker.AttackStrength; } }
 
-        ///// <summary>
-        ///// Gibt die Angriffsreichweite der Ameise an.
-        ///// </summary>
-        //public float AttackRange { get { return _attacker.AttackRange; } }
+        /// <summary>
+        /// Returns the Recovery Time per Hit.
+        /// </summary>
+        public int AttackRecovery { get { return attacker.AttackRecoveryTime; } }
 
-        ///// <summary>
-        ///// Gibt die Stärke an, mit der die Ameise angreifen kann.
-        ///// </summary>
-        //public int AttackStrength { get { return _attacker.AttackStrength; } }
+        /// <summary>
+        /// Returns the current Target.
+        /// </summary>
+        public ItemInfo AttackTarget
+        {
+            get
+            {
+                return attacker.AttackTarget != null ? attacker.AttackTarget.Item.GetItemInfo(Item) : null;
+            }
+        }
 
-        ///// <summary>
-        ///// Gibt die Zeit in Runden an, die die Ameise für einen Schlag braucht.
-        ///// </summary>
-        //public int AttackRecovery { get { return _attacker.AttackRecoveryTime; } }
+        /// <summary>
+        /// Returns the own Carrier Strength.
+        /// </summary>
+        public float Strength { get { return carrier.CarrierStrength; } }
 
-        ///// <summary>
-        ///// Gibt das aktuelle Angriffsziel zurück.
-        ///// </summary>
-        //public ItemInfo AttackTarget
-        //{
-        //    get
-        //    {
-        //        return _attacker.AttackTarget != null ? ((Item) _attacker.AttackTarget.Item).GetItemInfo(_antItem) : null;
-        //    }
-        //}
+        /// <summary>
+        /// Returns the current Sugar Load.
+        /// </summary>
+        public int SugarLoad { get { return sugar.Amount; } }
 
-        ///// <summary>
-        ///// Gibt die Tragkraft dieser Ameise zurück.
-        ///// </summary>
-        //public float Strength { get { return _carrier.CarrierStrength; } }
+        /// <summary>
+        /// Returns the total Sugar Capacity.
+        /// </summary>
+        public int MaximumSugarLoad { get { return sugar.Capacity; } }
 
-        ///// <summary>
-        ///// Gibt die aktuell getragene Menge Zucker zurück.
-        ///// </summary>
-        //public int SugarLoad { get { return _sugar.Amount; } }
+        /// <summary>
+        /// Returns the current Load of Apple Parts.
+        /// </summary>
+        public int AppleLoad { get { return apple.Amount; } }
 
-        ///// <summary>
-        ///// Gibt die maximale Menge an Zucker zurück.
-        ///// </summary>
-        //public int MaximumSugarLoad { get { return _sugar.Capacity; } }
+        /// <summary>
+        /// Returns the total Apple Capacity.
+        /// </summary>
+        public int MaximumAppleLoad { get { return apple.Capacity; } }
 
-        ///// <summary>
-        ///// Gibt die aktuell getragene Menge Apfelteilchen zurück.
-        ///// </summary>
-        //public int AppleLoad { get { return _apple.Amount; } }
+        /// <summary>
+        /// Returns the current Load.
+        /// </summary>
+        public ItemInfo CurrentLoad
+        {
+            get
+            {
+                if (carrier.CarrierLoad == null) return null;
+                return carrier.CarrierLoad.Item.GetItemInfo(Item);
+            }
+        }
 
-        ///// <summary>
-        ///// Gibt die maximale Menge an Apfelteilchen zurück.
-        ///// </summary>
-        //public int MaximumAppleLoad { get { return _apple.Capacity; } }
+        /// <summary>
+        /// Returns whenever the Item carries anything.
+        /// </summary>
+        public bool IsLoaded
+        {
+            get
+            {
+                if (carrier.CarrierLoad != null) return true;
+                return Item.Properties.OfType<CollectorProperty>().Any(p => p.Amount > 0);
+            }
+        }
 
-        ///// <summary>
-        ///// Gibt das aktuell getragene Objekt zurück.
-        ///// </summary>
-        //public ItemInfo CurrentLoad
-        //{
-        //    get
-        //    {
-        //        if (_carrier.CarrierLoad == null) return null;
-        //        var item = _carrier.CarrierLoad.Item as Item;
-        //        return (item != null) ? item.GetItemInfo(_antItem) : null;
-        //    }
-        //}
+        #endregion
 
-        ///// <summary>
-        ///// Gibt an, ob die Ameise irgendetwas geladen hat.
-        ///// </summary>
-        //public bool IsLoaded
-        //{
-        //    get
-        //    {
-        //        return (_sugar.Amount > 0 ||
-        //            _apple.Amount > 0 ||
-        //            _carrier.CarrierLoad != null);
-        //    }
-        //}
+        #region Events
 
-        //#endregion
+        /// <summary>
+        /// Signals a Hit by an Enemy.
+        /// </summary>
+        public event InteropEvent<int> OnHit;
 
-        //#region Events
+        /// <summary>
+        /// Signals the death of the Ant.
+        /// </summary>
+        public event InteropEvent OnKill;
 
-        ///// <summary>
-        ///// Wird geworfen, wenn die Ameise von einem Angreifer getroffen wurde.
-        ///// </summary>
-        //public event InteropEvent<int> OnHit;
-
-        ///// <summary>
-        ///// Wird geworfen, wenn die Ameise von einem Angreifer getötet wurde.
-        ///// </summary>
-        //public event InteropEvent OnKill;
-
-        //#endregion
-
+        #endregion
     }
 }

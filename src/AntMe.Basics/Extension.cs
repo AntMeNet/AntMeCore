@@ -101,6 +101,7 @@ namespace AntMe.Basics
             // Ant Unit Interops
             typeMapper.AttachUnitInteropProperty<AntUnitInterop, AntMovementInterop>(this, "Ant Movement Interop");
             typeMapper.AttachUnitInteropProperty<AntUnitInterop, RecognitionInterop>(this, "Ant Recognition Interop");
+            typeMapper.AttachUnitInteropProperty<AntUnitInterop, InteractionInterop>(this, "Ant Interaction Interop");
 
             // Bug Faction
             typeMapper.RegisterFaction<BugFaction, BugFactionState, FactionInfo, BugFactory, BugFactoryInterop, BugUnit, BugUnitInterop>(this, "Bugs");
