@@ -51,10 +51,28 @@ namespace AntMe.Generator
 
                 AnalyseType<FactionInfo>(item.InfoType, dictionary);
                 AnalyseType<FactionFactory>(item.FactoryType, dictionary);
+
+                // TODO: Ingnoriere Vererbungsstack
                 AnalyseType<FactoryInterop>(item.FactoryInteropType, dictionary);
+
                 AnalyseType<FactionUnit>(item.UnitType, dictionary);
+
+                // TODO: Ingnoriere Vererbungsstack
                 AnalyseType<UnitInterop>(item.UnitInteropType, dictionary);
             }
+
+            foreach (var item in ExtensionLoader.DefaultTypeMapper.FactoryInteropAttachments)
+            {
+                // TODO: Ingnoriere Vererbungsstack
+                AnalyseType<FactoryInteropProperty>(item.AttachmentType, dictionary);
+            }
+
+            foreach (var item in ExtensionLoader.DefaultTypeMapper.UnitInteropAttachments)
+            {
+                // TODO: Ingnoriere Vererbungsstack
+                AnalyseType<UnitInteropProperty>(item.AttachmentType, dictionary);
+            }
+            
 
             // Collect all Factory Interops
             foreach (var item in ExtensionLoader.DefaultTypeMapper.FactionProperties)
@@ -82,10 +100,13 @@ namespace AntMe.Generator
         {
             if (dict.ContainsKey(type)) return;
 
+            if (type.IsGenericType) return;
+
             List<string> result = new List<string>();
 
             // Name
-            result.Add(type.Name);
+            if (!result.Contains(type.Name))
+                result.Add(type.Name);
 
             // Methods / Parameter
             foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Public))
@@ -96,11 +117,16 @@ namespace AntMe.Generator
                 if (method.DeclaringType != type)
                     continue;
 
-                result.Add(method.Name);
+                if (!result.Contains(method.Name))
+                    result.Add(method.Name);
 
                 foreach (var parameter in method.GetParameters())
                 {
-                    result.Add(parameter.Name);
+                    if (parameter.ParameterType.FullName.StartsWith("AntMe."))
+                        AnalyseType(parameter.ParameterType, dict);
+
+                    if (!result.Contains(parameter.Name))
+                        result.Add(parameter.Name);
                 }
             }
 
@@ -110,13 +136,20 @@ namespace AntMe.Generator
                 if (property.DeclaringType != type)
                     continue;
 
-                result.Add(property.Name);
+                if (property.PropertyType.FullName.StartsWith("AntMe."))
+                    AnalyseType(property.PropertyType, dict);
+
+                if (!result.Contains(property.Name))
+                    result.Add(property.Name);
             }
 
             // Events
             foreach (var e in type.GetEvents(BindingFlags.Instance | BindingFlags.Public))
             {
-                result.Add(e.Name);
+                // TODO: Check Parameter
+
+                if (!result.Contains(e.Name))
+                    result.Add(e.Name);
             }
 
             dict.Add(type, result);
