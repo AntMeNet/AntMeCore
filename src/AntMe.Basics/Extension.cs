@@ -55,20 +55,20 @@ namespace AntMe.Basics
             // ##########################
             // Standard Item Properties
             // ##########################
-            typeMapper.RegisterItemPropertyS<AttackableProperty, AttackableState>(this, "Attackable");
-            typeMapper.RegisterItemPropertyS<AttackerProperty, AttackerState>(this, "Attacker");
+            typeMapper.RegisterItemPropertySI<AttackableProperty, AttackableState, AttackableInfo>(this, "Attackable");
+            typeMapper.RegisterItemPropertySI<AttackerProperty, AttackerState, AttackerInfo>(this, "Attacker");
             typeMapper.RegisterItemPropertyS<CarrierProperty, CarrierState>(this, "Carrier");
-            typeMapper.RegisterItemPropertyS<CollidableProperty, CollidableState>(this, "Collidable");
+            typeMapper.RegisterItemPropertySI<CollidableProperty, CollidableState, CollidableInfo>(this, "Collidable");
             typeMapper.RegisterItemPropertyS<PortableProperty, PortableState>(this, "Portable");
-            typeMapper.RegisterItemPropertyS<SightingProperty, SightingState>(this, "Sighting");
-            typeMapper.RegisterItemPropertyS<SmellableProperty, SmellableState>(this, "Smellable");
-            typeMapper.RegisterItemPropertyS<SnifferProperty, SnifferState>(this, "Sniffer");
-            typeMapper.RegisterItemPropertyS<VisibleProperty, VisibleState>(this, "Visible");
+            typeMapper.RegisterItemPropertyS<SightingProperty, SightingState>(this, "Sighting"); // keine Info
+            typeMapper.RegisterItemPropertyS<SmellableProperty, SmellableState>(this, "Smellable"); // keine Info
+            typeMapper.RegisterItemPropertyS<SnifferProperty, SnifferState>(this, "Sniffer"); // keine Info
+            typeMapper.RegisterItemPropertyS<VisibleProperty, VisibleState>(this, "Visible"); // keine Info
             typeMapper.RegisterItemPropertyS<WalkingProperty, WalkingState>(this, "Walking");
-            typeMapper.RegisterItemPropertyS<AppleCollectorProperty, AppleCollectorState>(this, "Apple Collector");
-            typeMapper.RegisterItemPropertyS<SugarCollectorProperty, SugarCollectorState>(this, "Sugar Collector");
-            typeMapper.RegisterItemPropertyS<AppleCollectableProperty, AppleCollectableState>(this, "Apple Collectable");
-            typeMapper.RegisterItemPropertyS<SugarCollectableProperty, SugarCollectableState>(this, "Sugar Collectable");
+            typeMapper.RegisterItemPropertyS<AppleCollectorProperty, AppleCollectorState>(this, "Apple Collector"); // keine Info
+            typeMapper.RegisterItemPropertyS<SugarCollectorProperty, SugarCollectorState>(this, "Sugar Collector"); // keine Info
+            typeMapper.RegisterItemPropertyS<AppleCollectableProperty, AppleCollectableState>(this, "Apple Collectable"); // keine Info
+            typeMapper.RegisterItemPropertyS<SugarCollectableProperty, SugarCollectableState>(this, "Sugar Collectable"); // keine Info
 
             // ##########################
             // Factions registrieren

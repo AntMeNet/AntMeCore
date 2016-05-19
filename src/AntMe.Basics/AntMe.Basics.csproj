@@ -52,8 +52,10 @@
     <Compile Include="Factions\TotalStatisticsInterop.cs" />
     <Compile Include="ItemProperties\AppleCollectorProperty.cs" />
     <Compile Include="ItemProperties\AppleCollectorState.cs" />
+    <Compile Include="ItemProperties\AttackableInfo.cs" />
     <Compile Include="ItemProperties\AttackableProperty.cs" />
     <Compile Include="ItemProperties\AttackableState.cs" />
+    <Compile Include="ItemProperties\AttackerInfo.cs" />
     <Compile Include="ItemProperties\AttackerProperty.cs" />
     <Compile Include="ItemProperties\AttackerState.cs" />
     <Compile Include="ItemProperties\CarrierProperty.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="ItemProperties\CollectableState.cs" />
     <Compile Include="ItemProperties\CollectorProperty.cs" />
     <Compile Include="ItemProperties\CollectorState.cs" />
+    <Compile Include="ItemProperties\CollidableInfo.cs" />
     <Compile Include="ItemProperties\CollidableProperty.cs" />
     <Compile Include="ItemProperties\CollidableState.cs" />
     <Compile Include="EngineExtensions\InteractionExtension.cs" />
