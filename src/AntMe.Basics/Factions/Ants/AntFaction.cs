@@ -11,6 +11,7 @@ namespace AntMe.Basics.Factions.Ants
     /// </summary>
     public sealed class AntFaction : Faction
     {
+        private AnthillItem primaryHill = null;
         private readonly Dictionary<int, AnthillItem> antHills = new Dictionary<int, AnthillItem>();
         private readonly string[] names;
 
@@ -40,16 +41,34 @@ namespace AntMe.Basics.Factions.Ants
         {
             Level.Engine.OnRemoveItem += Level_RemovedItem;
 
-            // Ameisenhügel erstellen und platzieren
-            for (int i = 0; i < Settings.GetInt<AntFaction>("InitialAnthillCount").Value; i++)
+            // Generate the first group of Anthills (Initial Anthills)
+            int hillCount = Settings.GetInt<AntFaction>("InitialAnthillCount").Value;
+            hillCount = Math.Min(hillCount, Settings.GetInt<AntFaction>("TotalAnthillCount").Value);
+            hillCount = Math.Min(hillCount, Settings.GetInt<AntFaction>("ConcurrentAnthillCount").Value);
+            for (int i = 0; i < hillCount; i++)
             {
-                // TODO: Random Positions (on i > 1)
-                CreateAntHill(Home);
+                
+                if (i == 0)
+                {
+                    // Generate Primary Hill
+                    primaryHill = CreateAntHill(Home);
+                }
+                else
+                {
+                    // TODO: Random Positions (on i > 1)
+                    CreateAntHill(Home);
+                }
             }
 
-            // Erste Gruppe Ameisen erstellen
-            for (var i = 0; i < Settings.GetInt<AntFaction>("InitialAntCount").Value; i++)
-                CreateAnt();
+            // Generate the first group of Ants (Initial Ants)
+            int antCount = Settings.GetInt<AntFaction>("InitialAntCount").Value;
+            antCount = Math.Min(antCount, Settings.GetInt<AntFaction>("TotalAntCount").Value);
+            antCount = Math.Min(antCount, Settings.GetInt<AntFaction>("ConcurrentAntCount").Value);
+            for (var i = 0; i < antCount; i++)
+            {
+                if (primaryHill != null)
+                    CreateAnt(primaryHill);
+            }
         }
 
         private void Level_RemovedItem(Item item)
@@ -60,49 +79,48 @@ namespace AntMe.Basics.Factions.Ants
 
         protected override void OnUpdate(int round)
         {
-            // Ameisen nachproduzieren
-            // - die Zeitverzögerung für neue Ameisen muss abgelaufen sein
-            // - die Anzahl gleichzeitiger Ameisen muss kleiner dem maximalwert sein
-            // - die Anzahl ingesamt erstellter Ameisen muss kleiner als der maximalwert sein
+            // Generate new Ants
+            // - check for Repawn Delay
+            // - check for maximum Count of concurrent Ants (Settings: ConcurrentAntCount)
+            // - check for maximum Ants per Simulation (Settings: TotalAntCount)
             if (_antRespawnDelay-- <= 0 &&
                 Units.Count < Settings.GetInt<AntFaction>("ConcurrentAntCount").Value &&
                 totalAntCount < Settings.GetInt<AntFaction>("TotalAntCount").Value)
             {
-                CreateAnt();
-            }
-
-            // Neuer Punktestand berechnen
-            foreach (var anthill in antHills.Values)
-            {
-                //Points += anthill.AppleAmount;
-                //Points += anthill.SugarAmount;
+                CreateAnt(primaryHill);
             }
         }
 
         protected override void OnUpdated(int round) { }
 
-        private void CreateAntHill(Vector2 position)
+        /// <summary>
+        /// Generates a new Anthill.
+        /// </summary>
+        /// <param name="position">Position</param>
+        private AnthillItem CreateAntHill(Vector2 position)
         {
             var hill = new AnthillItem(Context, this, position);
             Level.Engine.InsertItem(hill);
             antHills.Add(hill.Id, hill);
+            return hill;
         }
 
-        private void CreateAnt()
+        /// <summary>
+        /// Generates a new Ant at the position of the given Anthill.
+        /// </summary>
+        private AntItem CreateAnt(AnthillItem anthill)
         {
-            // TODO: Create Member Methode muss mehr Informationen bekommen und 
-            // auch bestimmen, in welchem Ameisenhügel die Ameise erscheint.
-            float range = 10f;
-            Vector2 position = Home +
-                               new Vector2(range * (float)Random.NextDouble(), range * (float)Random.NextDouble()) -
-                               new Vector2(5, 5);
+            // Find Direction
+            Angle direction = Angle.FromDegree(Random.Next(0, 360));
+            Vector2 rim = Vector2.FromAngle(direction) * (anthill.Radius + AntItem.AntRadius);
+            Vector2 position = anthill.Position.ToVector2XY() + rim;
 
             // Type anfragen
             Type antType = (Factory.Interop as AntFactoryInterop).RequestCreateMember();
             if (antType == null)
             {
                 // Spieler will offensichtlich keine Ameise erstellen
-                return;
+                return null;
             }
 
             // Prüfen, ob es sich um den richtigen Typen handelt
@@ -151,7 +169,7 @@ namespace AntMe.Basics.Factions.Ants
             string name = names[Random.Next(0, names.Length - 1)];
 
             // AntItem erstellen
-            AntItem antItem = new AntItem(Context, this, position, Angle.FromDegree(Random.Next(0, 359)), name);
+            AntItem antItem = new AntItem(Context, this, position, direction, name);
             AntUnit antUnit = (AntUnit)Activator.CreateInstance(antType);
 
             CreateUnit(antUnit, antItem);
@@ -163,6 +181,8 @@ namespace AntMe.Basics.Factions.Ants
 
             // Stats
             _antRespawnDelay = Settings.GetInt<AntFaction>("AntRespawnDelay").Value;
+
+            return antItem;
         }
 
         /// <summary>
