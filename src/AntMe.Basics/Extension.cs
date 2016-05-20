@@ -40,7 +40,7 @@ namespace AntMe.Basics
         /// </summary>
         /// <param name="typeMapper">Reference to the Type Mapper</param>
         /// <param name="settings">Reference to the Extension Settings</param>
-        public void Load(ITypeMapper typeMapper, Settings settings)
+        public void Load(ITypeMapper typeMapper, KeyValueStore settings)
         {
             // ##########################
             // Standard Engine Extensions
@@ -138,7 +138,7 @@ namespace AntMe.Basics
         /// </summary>
         /// <param name="typeMapper">Type Mapper</param>
         /// <param name="settings">Settings</param>
-        private void RegisterApple(ITypeMapper typeMapper, Settings settings)
+        private void RegisterApple(ITypeMapper typeMapper, KeyValueStore settings)
         {
             // Apple
             typeMapper.RegisterItem<AppleItem, AppleState, AppleInfo>(this, "Apple");
@@ -206,7 +206,7 @@ namespace AntMe.Basics
         /// </summary>
         /// <param name="typeMapper">Type Mapper</param>
         /// <param name="settings">Settings</param>
-        private void RegisterSugar(ITypeMapper typeMapper, Settings settings)
+        private void RegisterSugar(ITypeMapper typeMapper, KeyValueStore settings)
         {
             // Sugar
             typeMapper.RegisterItem<SugarItem, SugarState, SugarInfo>(this, "Sugar");
@@ -248,7 +248,7 @@ namespace AntMe.Basics
         /// </summary>
         /// <param name="typeMapper">Type Mapper</param>
         /// <param name="settings">Settings</param>
-        private void RegisterAnthill(ITypeMapper typeMapper, Settings settings)
+        private void RegisterAnthill(ITypeMapper typeMapper, KeyValueStore settings)
         {
             // Anthill
             typeMapper.RegisterItem<AnthillItem, AnthillState, AnthillInfo>(this, "Anthill");
@@ -314,7 +314,7 @@ namespace AntMe.Basics
         /// </summary>
         /// <param name="typeMapper">Type Mapper</param>
         /// <param name="settings">Settings</param>
-        private void RegisterMarker(ITypeMapper typeMapper, Settings settings)
+        private void RegisterMarker(ITypeMapper typeMapper, KeyValueStore settings)
         {
             // Marker
             settings.Set<MarkerItem>("MinRadius", 20f, "Minimum Radius of a Marker");
@@ -340,7 +340,7 @@ namespace AntMe.Basics
         /// </summary>
         /// <param name="typeMapper">Type Mapper</param>
         /// <param name="settings">Settings</param>
-        private void RegisterBug(ITypeMapper typeMapper, Settings settings)
+        private void RegisterBug(ITypeMapper typeMapper, KeyValueStore settings)
         {
             // Bug
             typeMapper.RegisterItem<BugItem, BugState, BugInfo>(this, "Bug");
@@ -451,7 +451,7 @@ namespace AntMe.Basics
         /// </summary>
         /// <param name="typeMapper">Type Mapper</param>
         /// <param name="settings">Settings</param>
-        private void RegisterClassicBug(ITypeMapper typeMapper, Settings settings)
+        private void RegisterClassicBug(ITypeMapper typeMapper, KeyValueStore settings)
         {
             // Classic Bug
             typeMapper.RegisterItem<ClassicBugItem, BugState, BugInfo>(this, "Classic Bug");
@@ -558,7 +558,7 @@ namespace AntMe.Basics
         /// </summary>
         /// <param name="typeMapper">Type Mapper</param>
         /// <param name="settings">Settings</param>
-        private void RegisterAnt(ITypeMapper typeMapper, Settings settings)
+        private void RegisterAnt(ITypeMapper typeMapper, KeyValueStore settings)
         {
             // Ant Item
             settings.Set<AntItem>("ZickZackAngle", 10, "Correction Angle after Sprint");

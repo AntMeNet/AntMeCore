@@ -79,7 +79,7 @@ namespace AntMe
         /// <summary>
         /// Settings for this Item
         /// </summary>
-        public Settings Settings { get { return Context.Settings; } }
+        public KeyValueStore Settings { get { return Context.Settings; } }
 
         /// <summary>
         /// Randomizer

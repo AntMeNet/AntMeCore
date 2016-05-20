@@ -15,7 +15,7 @@ namespace AntMe
         /// <summary>
         /// Settings for the current Context.
         /// </summary>
-        public Settings Settings { get; private set; }
+        public KeyValueStore Settings { get; private set; }
 
         /// <summary>
         /// Randomizer for the current Context.
@@ -28,7 +28,7 @@ namespace AntMe
         /// <param name="resolver">Reference to the Type Resolver</param>
         /// <param name="settings">Settings for the current Context</param>
         /// <param name="random">Randomizer for the current Context</param>
-        public SimulationContext(ITypeResolver resolver, Settings settings, Random random = null)
+        public SimulationContext(ITypeResolver resolver, KeyValueStore settings, Random random = null)
         {
             Resolver = resolver;
             Settings = settings;

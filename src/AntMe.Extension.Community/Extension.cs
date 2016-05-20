@@ -13,7 +13,7 @@ namespace AntMe.Extension.Community
 
         public Version Version { get { return new Version(2, 0); } }
 
-        public void Load(ITypeMapper typeMapper, Settings settings)
+        public void Load(ITypeMapper typeMapper, KeyValueStore settings)
         {
         }
     }

@@ -33,6 +33,6 @@ namespace AntMe
         /// </summary>
         /// <param name="typeMapper">Aktiver Type Mapper</param>
         /// <param name="settings">Basis Settings</param>
-        void Load(ITypeMapper typeMapper, Settings settings);
+        void Load(ITypeMapper typeMapper, KeyValueStore settings);
     }
 }

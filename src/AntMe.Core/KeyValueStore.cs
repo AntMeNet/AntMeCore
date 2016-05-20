@@ -7,7 +7,7 @@ namespace AntMe
     /// <summary>
     /// Settings-Container für Item/Faction/Property-Settings.
     /// </summary>
-    public sealed class Settings
+    public sealed class KeyValueStore
     {
         /// <summary>
         /// Dictionary for Setting Values
@@ -23,7 +23,7 @@ namespace AntMe
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public Settings()
+        public KeyValueStore()
         {
             global = new Dictionary<string, string>();
             descriptions = new Dictionary<string, string>();
@@ -33,7 +33,7 @@ namespace AntMe
         /// Initialize the Settings with the given Stream.
         /// </summary>
         /// <param name="stream">Stream</param>
-        public Settings(Stream stream) : this()
+        public KeyValueStore(Stream stream) : this()
         {
             Apply(stream);
         }
@@ -42,7 +42,7 @@ namespace AntMe
         /// Initialize the Settings with the given Settings File.
         /// </summary>
         /// <param name="filename">Dateinamen</param>
-        public Settings(string filename) : this()
+        public KeyValueStore(string filename) : this()
         {
             Apply(filename);
         }
@@ -51,7 +51,7 @@ namespace AntMe
         /// Initialize the Settings with another Settings-Instance as source.
         /// </summary>
         /// <param name="settings">Source Settings</param>
-        public Settings(Settings settings) : this()
+        public KeyValueStore(KeyValueStore settings) : this()
         {
             Apply(settings);
         }
@@ -93,7 +93,7 @@ namespace AntMe
         /// Overwrites Settings with the given Settings Instance.
         /// </summary>
         /// <param name="settings">Settings</param>
-        public void Apply(Settings settings)
+        public void Apply(KeyValueStore settings)
         {
             foreach (var key in settings.global.Keys)
             {
@@ -213,9 +213,9 @@ namespace AntMe
         /// Clones the full set of Settings.
         /// </summary>
         /// <returns>Full Copy of Settings</returns>
-        public Settings Clone()
+        public KeyValueStore Clone()
         {
-            return new Settings(this);
+            return new KeyValueStore(this);
         }
 
         /// <summary>
@@ -223,9 +223,9 @@ namespace AntMe
         /// </summary>
         /// <param name="settings">Additional Settings</param>
         /// <returns>New Instance with merged Settings</returns>
-        public Settings Merge(Settings settings)
+        public KeyValueStore Merge(KeyValueStore settings)
         {
-            Settings result = new Settings(this);
+            KeyValueStore result = new KeyValueStore(this);
             result.Apply(settings);
             return result;
         }

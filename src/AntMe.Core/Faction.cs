@@ -72,7 +72,7 @@ namespace AntMe
         /// <summary>
         /// Factory-specific Settings.
         /// </summary>
-        public Settings Settings { get { return Context.Settings; } }
+        public KeyValueStore Settings { get { return Context.Settings; } }
 
         /// <summary>
         /// Current Simulation Context for this Faction.

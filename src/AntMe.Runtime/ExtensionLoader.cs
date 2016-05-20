@@ -21,7 +21,7 @@ namespace AntMe.Runtime
         private static IEnumerable<CampaignInfo> campaignCache = null;
         private static IEnumerable<LevelInfo> levelCache = null;
         private static IEnumerable<PlayerInfo> playerCache = null;
-        private static Settings extensionSettings = null;
+        private static KeyValueStore extensionSettings = null;
         private static Dictionary<Guid, PlayerStatistics> playerStatistics = new Dictionary<Guid, PlayerStatistics>();
         private static Dictionary<Guid, CampaignStatistics> campaignStatistics = new Dictionary<Guid, CampaignStatistics>();
         private static Dictionary<Guid, LevelStatistics> levelStatistics = new Dictionary<Guid, LevelStatistics>();
@@ -107,7 +107,7 @@ namespace AntMe.Runtime
 
             // Pass 1 Load Extension Packs
             List<IExtensionPack> extensionPacks = new List<IExtensionPack>();
-            Settings settings = new Settings();
+            KeyValueStore settings = new KeyValueStore();
             foreach (var assembly in assemblies)
             {
                 foreach (var type in assembly.GetExportedTypes())
@@ -416,7 +416,7 @@ namespace AntMe.Runtime
         /// <summary>
         /// Returns a copy of the Extension Settings.
         /// </summary>
-        public static Settings ExtensionSettings { get { return extensionSettings.Clone(); } }
+        public static KeyValueStore ExtensionSettings { get { return extensionSettings.Clone(); } }
 
         #endregion
 

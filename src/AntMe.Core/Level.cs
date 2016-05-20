@@ -32,7 +32,7 @@ namespace AntMe
         /// <summary>
         /// Slot specific Settings.
         /// </summary>
-        private Settings[] slotSettings;
+        private KeyValueStore[] slotSettings;
 
         // Last ID: 0
         private readonly Tracer tracer = new Tracer("AntMe.Level");
@@ -65,7 +65,7 @@ namespace AntMe
         /// <summary>
         /// Global Settings for the whole Level.
         /// </summary>
-        public Settings Settings { get { return Context.Settings; } }
+        public KeyValueStore Settings { get { return Context.Settings; } }
 
         /// <summary>
         /// Reference to the Simulation Engine.
@@ -103,7 +103,7 @@ namespace AntMe
             Context = new SimulationContext(context.Resolver, context.Settings);
 
             // Clone Settings for Slots
-            slotSettings = new Settings[MAX_SLOTS];
+            slotSettings = new KeyValueStore[MAX_SLOTS];
             for (int i = 0; i < MAX_SLOTS; i++)
                 slotSettings[i] = Settings.Clone();
 
@@ -368,7 +368,7 @@ namespace AntMe
         /// <summary>
         /// Gives the Level Designer the chance to change Settings.
         /// </summary>
-        protected virtual void DoSettings(Settings levelSettings, Settings[] slotSettings) { }
+        protected virtual void DoSettings(KeyValueStore levelSettings, KeyValueStore[] slotSettings) { }
 
         /// <summary>
         /// This Method will be called after the basic Initialization to gives the 

@@ -8,11 +8,11 @@ namespace CoreTestClient
 {
     public partial class SettingsForm : Form
     {
-        private Settings settings;
+        private KeyValueStore settings;
 
         private Dictionary<string, string[]> keys = new Dictionary<string, string[]>();
 
-        public SettingsForm(Settings settings)
+        public SettingsForm(KeyValueStore settings)
         {
             InitializeComponent();
             this.settings = settings;
