@@ -103,10 +103,17 @@ namespace AntMe.Generator
             if (type.IsGenericType) return;
 
             List<string> result = new List<string>();
+            dict.Add(type, result);
 
             // Name
+            string name = type.Name;
             if (!result.Contains(type.Name))
                 result.Add(type.Name);
+
+            // Enum
+            if (type.IsEnum)
+                foreach (var value in Enum.GetNames(type))
+                    result.Add(value);
 
             // Methods / Parameter
             foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Public))
@@ -151,8 +158,6 @@ namespace AntMe.Generator
                 if (!result.Contains(e.Name))
                     result.Add(e.Name);
             }
-
-            dict.Add(type, result);
         }
     }
 }
