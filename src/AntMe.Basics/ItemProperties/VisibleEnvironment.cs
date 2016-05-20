@@ -1,74 +1,55 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    ///     Umgebungsinformationen.
+    /// Set of visible Environment Information.
     /// </summary>
     public sealed class VisibleEnvironment
     {
         /// <summary>
-        ///     Liefert Zelleninfos zur aktuellen Zelle
+        /// Information about the current Cell.
         /// </summary>
-        [DisplayName("Center")]
-        [Description("")]
         public VisibleCell? Center { get; internal set; }
 
         /// <summary>
-        ///     Liefert Zelleninfos zur Zelle Richtung Norden.
+        /// Cell Information in North Direction.
         /// </summary>
-        [DisplayName("North")]
-        [Description("")]
         public VisibleCell? North { get; internal set; }
 
         /// <summary>
-        ///     Liefert Zelleninfos zur Zelle Richtung Süden.
+        /// Cell Information in South Direction.
         /// </summary>
-        [DisplayName("South")]
-        [Description("")]
         public VisibleCell? South { get; internal set; }
 
         /// <summary>
-        ///     Liefert Zelleninfos zur Zelle Richtung Westen.
+        /// Cell Information in West Direction.
         /// </summary>
-        [DisplayName("West")]
-        [Description("")]
         public VisibleCell? West { get; internal set; }
 
         /// <summary>
-        ///     Liefert Zelleninfos zur Zelle Richtung Osten.
+        /// Cell Information in East Direction.
         /// </summary>
-        [DisplayName("East")]
-        [Description("")]
         public VisibleCell? East { get; internal set; }
 
         /// <summary>
-        ///     Liefert Zelleninfos zur Zelle Richtung Nordwesten.
+        /// Cell Information in Northwest Direction.
         /// </summary>
-        [DisplayName("North West")]
-        [Description("")]
         public VisibleCell? NorthWest { get; internal set; }
 
         /// <summary>
-        ///     Liefert Zelleninfos zur Zelle Richtung Nordosten.
+        /// Cell Information in Northeast Direction.
         /// </summary>
-        [DisplayName("North East")]
-        [Description("")]
         public VisibleCell? NorthEast { get; internal set; }
 
         /// <summary>
-        ///     Liefert Zelleninfos zur Zelle Richtung Südwesten.
+        /// Cell Information in Southwest Direction.
         /// </summary>
-        [DisplayName("South West")]
-        [Description("")]
         public VisibleCell? SouthWest { get; internal set; }
 
         /// <summary>
-        ///     Liefert Zelleninfos zur Zelle Richtung Südosten.
+        /// Cell Information in Southeast Direction.
         /// </summary>
-        [DisplayName("South East")]
-        [Description("")]
         public VisibleCell? SouthEast { get; internal set; }
 
         /// <summary>
@@ -76,38 +57,38 @@ namespace AntMe.Basics.ItemProperties
         /// </summary>
         /// <param name="compass">Kompass Information</param>
         /// <returns>Zellinfos</returns>
-        public VisibleCell? this[Compass compass]
-        {
-            get
-            {
-                switch (compass)
-                {
-                    case Compass.North:
-                        return North;
-                    case Compass.South:
-                        return South;
-                    case Compass.West:
-                        return West;
-                    case Compass.East:
-                        return East;
-                    case Compass.NorthWest:
-                        return NorthWest;
-                    case Compass.NorthEast:
-                        return NorthEast;
-                    case Compass.SouthWest:
-                        return SouthWest;
-                    case Compass.SouthEast:
-                        return SouthEast;
-                    default:
-                        throw new Exception("Unknown Compass Value");
-                }
-            }
-        }
+        //public VisibleCell? this[Compass compass]
+        //{
+        //    get
+        //    {
+        //        switch (compass)
+        //        {
+        //            case Compass.North:
+        //                return North;
+        //            case Compass.South:
+        //                return South;
+        //            case Compass.West:
+        //                return West;
+        //            case Compass.East:
+        //                return East;
+        //            case Compass.NorthWest:
+        //                return NorthWest;
+        //            case Compass.NorthEast:
+        //                return NorthEast;
+        //            case Compass.SouthWest:
+        //                return SouthWest;
+        //            case Compass.SouthEast:
+        //                return SouthEast;
+        //            default:
+        //                throw new Exception("Unknown Compass Value");
+        //        }
+        //    }
+        //}
 
-        public VisibleCell? this[Index2 coordinate]
+        internal VisibleCell? this[Index2 coordinate]
         {
             get { return this[coordinate.X, coordinate.Y]; }
-            internal set { this[coordinate.X, coordinate.Y] = value; }
+            set { this[coordinate.X, coordinate.Y] = value; }
         }
 
         /// <summary>
@@ -116,7 +97,7 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="x">X Koordinate im Bereich [-1...1]</param>
         /// <param name="y">Y Koordinate im Bereich [-1...1]</param>
         /// <returns>Zelleninfos</returns>
-        public VisibleCell? this[int x, int y]
+        internal VisibleCell? this[int x, int y]
         {
             get
             {
@@ -165,7 +146,7 @@ namespace AntMe.Basics.ItemProperties
                         throw new Exception("Unknown X Parameter");
                 }
             }
-            internal set
+            set
             {
                 x = Math.Min(1, Math.Max(-1, x));
                 y = Math.Min(1, Math.Max(-1, y));

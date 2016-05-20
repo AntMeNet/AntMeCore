@@ -167,7 +167,18 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// </summary>
         /// <param name="item">Destination</param>
         /// <returns>Transfered Amount</returns>
-        public int Give(Item item)
+        public int Give(ItemInfo item)
+        {
+            var i = Item.GetItemFromInfo(item);
+            return Give(i);
+        }
+
+        /// <summary>
+        /// Transfers all Collectable Ressources to the Destination.
+        /// </summary>
+        /// <param name="item">Destination</param>
+        /// <returns>Transfered Amount</returns>
+        private int Give(Item item)
         {
             int result = 0;
             foreach (var property in item.Properties.OfType<CollectableProperty>())
