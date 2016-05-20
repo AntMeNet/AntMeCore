@@ -34,8 +34,10 @@
             this.valuesList = new System.Windows.Forms.ListView();
             this.keyColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.valueColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.closeButton = new System.Windows.Forms.Button();
             this.descriptionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.closeButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
+            this.openButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitter)).BeginInit();
             this.splitter.Panel1.SuspendLayout();
             this.splitter.Panel2.SuspendLayout();
@@ -105,6 +107,11 @@
             this.valueColumn.Text = "Value";
             this.valueColumn.Width = 91;
             // 
+            // descriptionColumn
+            // 
+            this.descriptionColumn.Text = "Description";
+            this.descriptionColumn.Width = 244;
+            // 
             // closeButton
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -116,10 +123,25 @@
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
             // 
-            // descriptionColumn
+            // saveButton
             // 
-            this.descriptionColumn.Text = "Description";
-            this.descriptionColumn.Width = 244;
+            this.saveButton.Location = new System.Drawing.Point(12, 377);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(75, 23);
+            this.saveButton.TabIndex = 2;
+            this.saveButton.Text = "save";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            // 
+            // openButton
+            // 
+            this.openButton.Location = new System.Drawing.Point(93, 377);
+            this.openButton.Name = "openButton";
+            this.openButton.Size = new System.Drawing.Size(75, 23);
+            this.openButton.TabIndex = 3;
+            this.openButton.Text = "open";
+            this.openButton.UseVisualStyleBackColor = true;
+            this.openButton.Click += new System.EventHandler(this.openButton_Click);
             // 
             // SettingsForm
             // 
@@ -127,6 +149,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
             this.ClientSize = new System.Drawing.Size(735, 412);
+            this.Controls.Add(this.openButton);
+            this.Controls.Add(this.saveButton);
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.splitter);
             this.MinimizeBox = false;
@@ -153,5 +177,7 @@
         private System.Windows.Forms.ColumnHeader valueColumn;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.ColumnHeader descriptionColumn;
+        private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.Button openButton;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace AntMe
 {
@@ -9,28 +10,29 @@ namespace AntMe
     /// </summary>
     public sealed class KeyValueStore
     {
-        /// <summary>
-        /// Dictionary for Setting Values
-        /// key = Typename:Keyname (e.g.: "AntMe.Factions.AntFaction:MaxAntCount")
-        /// </summary>
-        private Dictionary<string, string> global;
 
         /// <summary>
-        /// Dictionary for Descriptions.
+        /// Dictionary for all Values and Discriptions
+        /// key = Typename:Keyname (e.g.: "AntMe.Factions.AntFaction:InitialAnthillCount","AntMe.Basics.Items.AntItem:AntRadius")
         /// </summary>
-        private Dictionary<string, string> descriptions;
+        private Dictionary<string, ValueDescriptionEntry> Storage;
+
+        /// <summary>
+        /// Dictionary for informations and comments about the KeyValueStore (will be saved).
+        /// </summary>
+        public Dictionary<string, string> Common { get; set; }
 
         /// <summary>
         /// Default Constructor
         /// </summary>
         public KeyValueStore()
         {
-            global = new Dictionary<string, string>();
-            descriptions = new Dictionary<string, string>();
+            Storage = new Dictionary<string, ValueDescriptionEntry>();
+            Common = new Dictionary<string, string>();
         }
 
         /// <summary>
-        /// Initialize the Settings with the given Stream.
+        /// Initialize the KeyValueStore with the given Stream.
         /// </summary>
         /// <param name="stream">Stream</param>
         public KeyValueStore(Stream stream) : this()
@@ -39,7 +41,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Initialize the Settings with the given Settings File.
+        /// Initialize the KeyValueStore with the given KeyValueStore File.
         /// </summary>
         /// <param name="filename">Dateinamen</param>
         public KeyValueStore(string filename) : this()
@@ -48,12 +50,12 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Initialize the Settings with another Settings-Instance as source.
+        /// Initialize the KeyValueStore with another KeyValueStore-Instance as source.
         /// </summary>
-        /// <param name="settings">Source Settings</param>
-        public KeyValueStore(KeyValueStore settings) : this()
+        /// <param name="keyValueStore">Source KeyValueStore</param>
+        public KeyValueStore(KeyValueStore keyValueStore) : this()
         {
-            Apply(settings);
+            Apply(keyValueStore);
         }
 
         /// <summary>
@@ -68,7 +70,8 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Overwrites Settings with the given Settings in a Stream.
+        /// Applies all given KeyValues in a Stream to the KeyValueStore.
+        /// Overwrites existing KeyValues and adds new ones.
         /// </summary>
         /// <param name="stream">Source Stream</param>
         public void Apply(Stream stream)
@@ -78,7 +81,8 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Overwrites Settings with the given Settings in a File.
+        /// Applies all given KeyValues in a File to the KeyValueStore.
+        /// Overwrites existing KeyValues and adds new ones.
         /// </summary>
         /// <param name="filename">Source File</param>
         public void Apply(string filename)
@@ -90,21 +94,22 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Overwrites Settings with the given Settings Instance.
+        /// Applies all given KeyValues in a keyValueStore to the KeyValueStore.
+        /// Overwrites existing KeyValues and adds new ones.
         /// </summary>
-        /// <param name="settings">Settings</param>
-        public void Apply(KeyValueStore settings)
+        /// <param name="keyValueStore">Settings</param>
+        public void Apply(KeyValueStore keyValueStore)
         {
-            foreach (var key in settings.global.Keys)
+            foreach (var key in keyValueStore.Storage.Keys)
             {
-                string description = null;
-                settings.descriptions.TryGetValue(key, out description);
-                Set(key, settings.global[key], description);
+                ValueDescriptionEntry VDE = null;
+                keyValueStore.Storage.TryGetValue(key, out VDE);
+                Set(key, VDE);
             }
         }
 
         /// <summary>
-        /// Sets the value for the given Key.
+        /// Sets the Value and the Discription for the given Key.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
         /// <param name="key">Settings Key</param>
@@ -116,7 +121,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Sets the value for the given Key.
+        /// Sets the Value and the Discription for the given Key.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
         /// <param name="key">Settings Key</param>
@@ -128,7 +133,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Sets the value for the given Key.
+        /// Sets the Value and the Discription for the given Key.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
         /// <param name="key">Settings Key</param>
@@ -140,36 +145,53 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Sets the value for the given Key.
+        /// Sets the Value and the Discription for the given Key.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Settings Key</param>
-        /// <param name="value">Settings Value</param>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value</param>
         /// <param name="description">Optional Description for this key</param>
         public void Set<T>(string key, bool value, string description = null)
         {
             Set(FullKey<T>(key), value.ToString(), description);
         }
 
+
         /// <summary>
-        /// Sets the value for the given Key.
+        /// Sets the Value and the Discription for the given Key.
         /// </summary>
-        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
-        /// <param name="value">Settings Value</param>
+        /// <param name="key">Full Key (incl. Type and Key)</param>
+        /// <param name="valueDescriptionEntry">ValueDescriptionEntry</param>
+        private void Set(string key, ValueDescriptionEntry valueDescriptionEntry)
+        {
+            Set(key, valueDescriptionEntry.Value, valueDescriptionEntry.Description);
+        }
+
+        /// <summary>
+        /// Sets the Value and the Discription for the given Key.
+        /// </summary>
+        /// <param name="key">Full Key (incl. Type and Key)</param>
+        /// <param name="value"> Value</param>
         /// <param name="description">Optional Description for this key</param>
         public void Set(string key, string value, string description = null)
         {
             // TODO: Check right syntax (full.type.name:key)
+            ValueDescriptionEntry VDE;
+            if (!Storage.TryGetValue(key, out VDE))
+                VDE = new ValueDescriptionEntry() { Value = value, Description = description };
+            else
+            {
+                if (value != null)
+                    VDE.Value = value;
+                if (description != null)
+                    VDE.Description = description;
+            }
+            Storage[key] = VDE;
 
-            global[key] = value;
-
-            // Set Description (if available)
-            if (!string.IsNullOrEmpty(description))
-                descriptions[key] = description;
         }
 
         /// <summary>
-        /// Sets the value for the given Key.
+        /// Sets the Value and the Discription for the given Key.
         /// </summary>
         /// <param name="key">Full Settings Key (incl. Type and Key)</param>
         /// <param name="value">Settings Value</param>
@@ -191,7 +213,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Sets the value for the given Key.
+        /// Sets the Value and the Discription for the given Key.
         /// </summary>
         /// <param name="key">Full Settings Key (incl. Type and Key)</param>
         /// <param name="value">Settings Value</param>
@@ -206,7 +228,7 @@ namespace AntMe
         /// </summary>
         public IEnumerable<string> Keys
         {
-            get { return global.Keys; }
+            get { return Storage.Keys; }
         }
 
         /// <summary>
@@ -231,34 +253,58 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Sets the Value with the given Key interpreted as String.
+        /// Gets the Description with the given Object-Key interpreted as String.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Settings Key</param>
+        /// <param name="key">Object-Key</param>
+        /// <returns>Description</returns>
+        public string GetDescription<T>(string key)
+        {
+            return GetDescription(FullKey<T>(key));
+        }
+
+        /// <summary>
+        /// Gets the Description with the given Object-Key interpreted as String.
+        /// </summary>
+        /// <param name="key">Full Key (incl. Type and Key)</param>
+        /// <returns>Description</returns>
+        public string GetDescription(string key)
+        {
+            ValueDescriptionEntry result;
+            if (Storage.TryGetValue(key, out result))
+                return result.Description;
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the Value with the given Object-Key interpreted as String.
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Object-Key</param>
         /// <returns>Value</returns>
         public string GetString<T>(string key)
         {
-            string result;
-            if (global.TryGetValue(FullKey<T>(key), out result))
-                return result;
+            ValueDescriptionEntry result;
+            if (Storage.TryGetValue(FullKey<T>(key), out result))
+                return result.Value;
             return string.Empty;
         }
 
         /// <summary>
-        /// Sets the Value with the given Key interpreted as String.
+        /// Gets the Value with the given Key interpreted as String.
         /// </summary>
-        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <param name="key">Full Key (incl. Type and Key)</param>
         /// <returns>Value</returns>
         public string GetString(string key)
         {
-            string result;
-            if (global.TryGetValue(key, out result))
-                return result;
+            ValueDescriptionEntry result;
+            if (Storage.TryGetValue(key, out result))
+                return result.Value;
             return string.Empty;
         }
 
         /// <summary>
-        /// Sets the Value with the given Key interpreted as Integer.
+        /// Gets the Value with the given Key interpreted as Integer.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
         /// <param name="key">Settings Key</param>
@@ -345,27 +391,59 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Returns the Description for the Settings with the given Key.
+        /// Gets the Description with the given Object-Key interpreted as String.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Settings Key</param>
+        /// <param name="key">Object-Key</param>
         /// <returns>Description</returns>
-        public string GetDescription<T>(string key)
+        private ValueDescriptionEntry GetValueDescriptionEntry<T>(string key)
         {
-            return GetDescription(FullKey<T>(key));
+            return GetValueDescriptionEntry(FullKey<T>(key));
         }
 
         /// <summary>
-        /// Returns the Description for the Settings with the given Key.
+        /// Gets the Description with the given Object-Key interpreted as String.
         /// </summary>
-        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <param name="key">Full Key (incl. Type and Key)</param>
         /// <returns>Description</returns>
-        public string GetDescription(string key)
+        private ValueDescriptionEntry GetValueDescriptionEntry(string key)
         {
-            string result;
-            if (descriptions.TryGetValue(key, out result))
+            ValueDescriptionEntry result;
+            if (Storage.TryGetValue(key, out result))
                 return result;
-            return string.Empty;
+            return null;
+        }
+
+
+        //Work in Progress (Patrick Kirsch)
+        /// <summary>
+        /// Loads a KeyValueStore from a given stream
+        /// </summary>
+        /// <param name="stream">Stream</param>
+        /// <returns>KeyValueStore</returns>
+        public static KeyValueStore Load(Stream stream)
+        {
+            KeyValueStore locaKeyValueStore = new KeyValueStore();
+
+            using (StreamReader sr = new StreamReader(stream))
+            {
+
+
+            }
+            return locaKeyValueStore;
+        }
+
+        /// <summary>
+        /// Loads a KeyValueStore from a given file
+        /// </summary>
+        /// <param name="filename">Filename</param>
+        /// <returns>KeyValueStore</returns>
+        public static KeyValueStore Load(string filename)
+        {
+            using (Stream stream = File.Open(filename, FileMode.Open))
+            {
+                return Load(stream);
+            }
         }
 
         /// <summary>
@@ -386,8 +464,55 @@ namespace AntMe
         /// <param name="stream">Output Stream</param>
         public void Save(Stream stream)
         {
-            // TODO: Implement Settings Save
-            throw new NotImplementedException();
+
+            using (StreamWriter sw = new StreamWriter(stream))
+            {
+
+                if (Common.Count > 0)
+                {
+                    sw.WriteLine("[Common]");
+                    foreach (var item in Common)
+                    {
+                        sw.WriteLine("{0}={1}", item.Key, item.Value);
+                    }
+                }
+
+                string[] keytemp = Keys.ToArray();
+
+                var typeKeys = keytemp.Select(k => k.Substring(0, k.IndexOf(':'))).Distinct();
+
+                foreach (var typekey in typeKeys.OrderBy(k => k))
+                {
+                    sw.WriteLine("[{0}]", typekey);
+
+                    foreach (var key in Storage.Where(k => k.Key.StartsWith(typekey)).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
+                    {
+                        string fullkey = string.Format("{0}:{1}", typekey, key);
+                        ValueDescriptionEntry VDE = GetValueDescriptionEntry(fullkey);
+                        sw.WriteLine("{0}={1}//{2}", key.ToString(), VDE.Value != null ? VDE.Value : "no Value", VDE.Description != null ? VDE.Description : "no Description");
+                    }
+                    sw.WriteLine();
+
+                }
+
+                sw.Close();
+            }
+
+            //// TODO: Implement Settings Save
+            //throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Nested class for data storing.
+        /// </summary>
+        private class ValueDescriptionEntry
+        {
+
+            public string Value { get; set; }
+
+            public string Description { get; set; }
+
+        }
+
     }
 }

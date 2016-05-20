@@ -45,5 +45,34 @@ namespace CoreTestClient
                 }
             }
         }
+
+        private void saveButton_Click(object sender, System.EventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            
+
+            saveDialog.Title = "Save Settings";
+            saveDialog.Filter = "Settings-File|*.set";
+
+
+            if (saveDialog.ShowDialog() == DialogResult.OK && saveDialog.FileName != null)
+                settings.Save(saveDialog.FileName);
+
+
+        }
+
+        private void openButton_Click(object sender, System.EventArgs e)
+        {
+            //work in progress (Patrick Kirsch)
+            //OpenFileDialog saveDialog = new OpenFileDialog();
+
+
+            //saveDialog.Title = "Open Settings";
+            //saveDialog.Filter = "Settings-File|*.set";
+
+
+            //if (saveDialog.ShowDialog() == DialogResult.OK && saveDialog.FileName != null)
+            //    settings = KeyValueStore.Load(saveDialog.FileName);
+        }
     }
 }
