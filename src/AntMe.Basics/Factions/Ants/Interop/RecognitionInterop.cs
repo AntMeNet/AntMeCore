@@ -1,5 +1,6 @@
 ﻿using AntMe.Basics.ItemProperties;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -31,7 +32,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             // Insert sniffed Items into the List.
             sniffer.OnNewSmellableItem += property =>
             {
-                var info = Item.GetItemInfo(property.Item);
+                var info = property.Item.GetItemInfo(Item);
                 if (!smellableItems.Contains(info))
                     smellableItems.Add(info);
             };
@@ -39,7 +40,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             // Remove sniffed Items from List.
             sniffer.OnLostSmellableItem += property =>
             {
-                var info = Item.GetItemInfo(property.Item);
+                var info = property.Item.GetItemInfo(Item);
                 if (smellableItems.Contains(info))
                     smellableItems.Remove(info);
             };
@@ -52,7 +53,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             // Add visible items to List.
             sighting.OnNewVisibleItem += property =>
             {
-                var info = Item.GetItemInfo(property.Item);
+                var info = property.Item.GetItemInfo(Item);
                 if (!visibleItems.Contains(info))
                     visibleItems.Add(info);
             };
@@ -60,7 +61,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             // Remove visible Items from List.
             sighting.OnLostVisibleItem += property =>
             {
-                var info = Item.GetItemInfo(property.Item);
+                var info = property.Item.GetItemInfo(Item);
                 if (visibleItems.Contains(info))
                     visibleItems.Remove(info);
             };
