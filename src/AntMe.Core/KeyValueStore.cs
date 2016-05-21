@@ -6,7 +6,7 @@ using System.Linq;
 namespace AntMe
 {
     /// <summary>
-    /// Settings-Container für Item/Faction/Property-Settings.
+    /// KeyValueDesciption-Container for e.g.: Settings or Localizations
     /// </summary>
     public sealed class KeyValueStore
     {
@@ -27,7 +27,7 @@ namespace AntMe
         /// If empty no error occurred.
         /// key = fileName/"stream"
         /// </summary>
-        public Dictionary<string, List<string>> LoadingErrors;
+        internal Dictionary<string, List<string>> LoadingErrors;
 
         /// <summary>
         /// Default Constructor
@@ -40,30 +40,45 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Initialize the KeyValueStore with the given Stream.
+        /// Initialize a new KeyValueStore with the given Stream.
         /// </summary>
         /// <param name="stream">Stream</param>
         public KeyValueStore(Stream stream) : this()
         {
-            Apply(stream);
+            KeyValueStore temp = Load(stream);
+
+            this.Storage = temp.Storage;
+            this.Common = temp.Common;
+            this.LoadingErrors = temp.LoadingErrors;
+
+            temp = null;
         }
 
         /// <summary>
-        /// Initialize the KeyValueStore with the given KeyValueStore File.
+        /// Initialize a new KeyValueStore with the given KeyValueStore File.
         /// </summary>
         /// <param name="filename">Dateinamen</param>
         public KeyValueStore(string filename) : this()
         {
-            Apply(filename);
+            KeyValueStore temp = Load(filename);
+
+            this.Storage = temp.Storage;
+            this.Common = temp.Common;
+            this.LoadingErrors = temp.LoadingErrors;
+
+            temp = null;
+
         }
 
         /// <summary>
-        /// Initialize the KeyValueStore with another KeyValueStore-Instance as source.
+        /// Initialize a new KeyValueStore with another KeyValueStore-Instance as source.
         /// </summary>
         /// <param name="keyValueStore">Source KeyValueStore</param>
         public KeyValueStore(KeyValueStore keyValueStore) : this()
         {
-            Apply(keyValueStore);
+            this.Storage = keyValueStore.Storage;
+            this.Common = keyValueStore.Common;
+            this.LoadingErrors = keyValueStore.LoadingErrors;
         }
 
         /// <summary>
@@ -77,53 +92,14 @@ namespace AntMe
             return string.Format("{0}:{1}", typeof(T).FullName, key);
         }
         /// <summary>
-        /// Generates the Full Key out of Type and Key.
+        /// Generates the Full Key out of TypeKey and Key.
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
+        /// <param name="typeKey">TypeKey</param>
         /// <param name="key">Key</param>
         /// <returns>Full Key</returns>
         private static string FullKey(string typeKey, string key)
         {
             return string.Format("{0}:{1}", typeKey, key);
-        }
-
-        /// <summary>
-        /// Applies all given KeyValues in a Stream to the KeyValueStore.
-        /// Overwrites existing KeyValues and adds new ones.
-        /// </summary>
-        /// <param name="stream">Source Stream</param>
-        public void Apply(Stream stream)
-        {
-            // TODO: Implement File Load.
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Applies all given KeyValues in a File to the KeyValueStore.
-        /// Overwrites existing KeyValues and adds new ones.
-        /// </summary>
-        /// <param name="filename">Source File</param>
-        public void Apply(string filename)
-        {
-            using (Stream stream = File.Open(filename, FileMode.Open))
-            {
-                Apply(stream);
-            }
-        }
-
-        /// <summary>
-        /// Applies all given KeyValues in a keyValueStore to the KeyValueStore.
-        /// Overwrites existing KeyValues and adds new ones.
-        /// </summary>
-        /// <param name="keyValueStore">Settings</param>
-        public void Apply(KeyValueStore keyValueStore)
-        {
-            foreach (var key in keyValueStore.Storage.Keys)
-            {
-                ValueDescriptionEntry VDE = null;
-                keyValueStore.Storage.TryGetValue(key, out VDE);
-                Set(key, VDE);
-            }
         }
 
         /// <summary>
@@ -258,16 +234,105 @@ namespace AntMe
             return new KeyValueStore(this);
         }
 
+
         /// <summary>
-        /// Merge Settings with the given Settings Instance.
+        /// Merge information with the given KeyValueStore-Instance.
         /// </summary>
-        /// <param name="settings">Additional Settings</param>
-        /// <returns>New Instance with merged Settings</returns>
-        public KeyValueStore Merge(KeyValueStore settings)
+        /// <param name="stream">Source KeyValueStore-Stream</param>
+        public void Merge(Stream stream)
         {
-            KeyValueStore result = new KeyValueStore(this);
-            result.Apply(settings);
-            return result;
+            Merge(Load(stream));
+        }
+
+        /// <summary>
+        /// Merge information with the given KeyValueStore-Instance.
+        /// </summary>
+        /// <param name="stream">Source KeyValueStore-File</param>
+        public void Merge(string filename)
+        {
+            Merge(Load(filename));
+        }
+
+        /// <summary>
+        /// Merge information with the given KeyValueStore-Instance.
+        /// </summary>
+        /// <param name="keyValueStore">Source KeyValueStore</param>
+        public void Merge(KeyValueStore keyValueStore)
+        {
+            //merge storage dictonary 
+            foreach (var key in keyValueStore.Storage.Keys)
+            {
+                ValueDescriptionEntry newVDE;
+                keyValueStore.Storage.TryGetValue(key, out newVDE);
+                if (Storage.Keys.Contains(key))
+                {
+                    ValueDescriptionEntry orgVDE;
+                    Storage.TryGetValue(key, out orgVDE);
+                    if (orgVDE == null)
+                        orgVDE = new ValueDescriptionEntry();
+                    if (string.IsNullOrEmpty(newVDE.Value))
+                        newVDE.Value = orgVDE.Value;
+                    if (string.IsNullOrEmpty(newVDE.Description))
+                        newVDE.Value = orgVDE.Description;
+
+                    Storage[key] = newVDE;
+                }
+                else
+                {
+                    Storage.Add(key, newVDE != null ? newVDE : new ValueDescriptionEntry());
+                }
+            }
+
+            //merge common dictonary 
+            foreach (var key in keyValueStore.Common.Keys)
+            {
+                string newValue;
+                keyValueStore.Common.TryGetValue(key, out newValue);
+
+                if (Common.Keys.Contains(key))
+                {
+                    string orgValue;
+                    Common.TryGetValue(key, out orgValue);
+
+                    if (string.IsNullOrEmpty(newValue))
+                        newValue = orgValue;
+
+                    Common[key] = newValue;
+                }
+                else
+                {
+                    Common.Add(key, newValue);
+                }
+
+            }
+
+            //merge loadingError Diconary
+            foreach (var key in keyValueStore.LoadingErrors.Keys)
+            {
+                List<string> newErrorList;
+                keyValueStore.LoadingErrors.TryGetValue(key, out newErrorList);
+
+                if (LoadingErrors.Keys.Contains(key))
+                {
+                    List<string> orgErrorList;
+                    LoadingErrors.TryGetValue(key, out orgErrorList);
+
+                    foreach (var item in orgErrorList)
+                    {
+                        if (!newErrorList.Contains(item))
+                            newErrorList.Add(item);
+                    }
+
+
+                    LoadingErrors[key] = newErrorList;
+                }
+                else
+                {
+                    LoadingErrors.Add(key, newErrorList);
+                }
+
+            }
+
         }
 
         /// <summary>
@@ -469,14 +534,24 @@ namespace AntMe
                 while (sr.Peek() >= 0)
                 {
                     currentLine++;
+                    bool waitforTypeKey = false;
                     string rawData = sr.ReadLine();
                     string editedData = rawData.TrimStart(' ').TrimEnd(' ');
 
                     if (editedData.StartsWith("["))
                     {
+                        if (editedData.IndexOf(']') == -1)
+                        {
+                            waitforTypeKey = true;
+                            locaErrors.Add("ERROR Line " + currentLine.ToString() + ": missing ']' (end of TypeKey deklaration)");
+                            continue;
+                        }
+
                         currentTypeKey = editedData.Substring(1, editedData.IndexOf(']') - 1).TrimStart(' ').TrimEnd(' ');
                         continue;
                     }
+                    else if (waitforTypeKey)
+                        continue;
                     else if (editedData.Contains("="))
                     {
 
@@ -498,6 +573,7 @@ namespace AntMe
                         else
                         {
                             VDE.Value = editedData.TrimStart(' ').TrimEnd(' ');
+                            locaErrors.Add("WARNING Line " + currentLine.ToString() + ": missing description");
                         }
 
                         locaKeyValueStore.Set(FullKey(currentTypeKey, key), VDE);
@@ -509,7 +585,7 @@ namespace AntMe
                     }
                     else
                     {
-                        locaErrors.Add("ERROR Line " + currentLine.ToString() + ": could not be deserialized, make sure it matches the Format([TYPEKEY] or KEY=VALUE(//DESCRIPTION))");
+                        locaErrors.Add("ERROR Line " + currentLine.ToString() + ": could not be deserialized, make sure it matches the Format([TYPEKEY] or KEY=VALUE//DESCRIPTION)");
                     }
                 }
             }
