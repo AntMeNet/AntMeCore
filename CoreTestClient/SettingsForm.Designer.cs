@@ -29,8 +29,7 @@
         private void InitializeComponent()
         {
             this.splitter = new System.Windows.Forms.SplitContainer();
-            this.typeList = new System.Windows.Forms.ListView();
-            this.typeColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.typeTreeView = new System.Windows.Forms.TreeView();
             this.valuesList = new System.Windows.Forms.ListView();
             this.keyColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.valueColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -39,6 +38,8 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.openButton = new System.Windows.Forms.Button();
             this.easyReadCheckBox = new System.Windows.Forms.CheckBox();
+            this.valueTextBox = new System.Windows.Forms.TextBox();
+            this.descriptionTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitter)).BeginInit();
             this.splitter.Panel1.SuspendLayout();
             this.splitter.Panel2.SuspendLayout();
@@ -55,7 +56,7 @@
             // 
             // splitter.Panel1
             // 
-            this.splitter.Panel1.Controls.Add(this.typeList);
+            this.splitter.Panel1.Controls.Add(this.typeTreeView);
             // 
             // splitter.Panel2
             // 
@@ -64,24 +65,14 @@
             this.splitter.SplitterDistance = 237;
             this.splitter.TabIndex = 0;
             // 
-            // typeList
+            // typeTreeView
             // 
-            this.typeList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.typeColumn});
-            this.typeList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.typeList.FullRowSelect = true;
-            this.typeList.Location = new System.Drawing.Point(0, 0);
-            this.typeList.Name = "typeList";
-            this.typeList.Size = new System.Drawing.Size(237, 359);
-            this.typeList.TabIndex = 0;
-            this.typeList.UseCompatibleStateImageBehavior = false;
-            this.typeList.View = System.Windows.Forms.View.Details;
-            this.typeList.SelectedIndexChanged += new System.EventHandler(this.typeList_SelectedIndexChanged);
-            // 
-            // typeColumn
-            // 
-            this.typeColumn.Text = "Type";
-            this.typeColumn.Width = 202;
+            this.typeTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.typeTreeView.Location = new System.Drawing.Point(0, 0);
+            this.typeTreeView.Name = "typeTreeView";
+            this.typeTreeView.Size = new System.Drawing.Size(237, 359);
+            this.typeTreeView.TabIndex = 0;
+            this.typeTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.typeTreeView_AfterSelect);
             // 
             // valuesList
             // 
@@ -92,14 +83,15 @@
             this.valuesList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.valuesList.FullRowSelect = true;
             this.valuesList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.valuesList.LabelEdit = true;
+            this.valuesList.HideSelection = false;
             this.valuesList.Location = new System.Drawing.Point(0, 0);
             this.valuesList.MultiSelect = false;
             this.valuesList.Name = "valuesList";
             this.valuesList.Size = new System.Drawing.Size(470, 359);
-            this.valuesList.TabIndex = 0;
+            this.valuesList.TabIndex = 1;
             this.valuesList.UseCompatibleStateImageBehavior = false;
             this.valuesList.View = System.Windows.Forms.View.Details;
+            this.valuesList.SelectedIndexChanged += new System.EventHandler(this.valuesList_SelectedIndexChanged);
             // 
             // keyColumn
             // 
@@ -123,39 +115,68 @@
             this.closeButton.Location = new System.Drawing.Point(648, 377);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(75, 23);
-            this.closeButton.TabIndex = 1;
+            this.closeButton.TabIndex = 7;
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
             // 
             // saveButton
             // 
+            this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.saveButton.Location = new System.Drawing.Point(93, 377);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(75, 23);
-            this.saveButton.TabIndex = 2;
+            this.saveButton.TabIndex = 3;
             this.saveButton.Text = "save";
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // openButton
             // 
+            this.openButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.openButton.Location = new System.Drawing.Point(174, 377);
             this.openButton.Name = "openButton";
             this.openButton.Size = new System.Drawing.Size(75, 23);
-            this.openButton.TabIndex = 3;
+            this.openButton.TabIndex = 4;
             this.openButton.Text = "open";
             this.openButton.UseVisualStyleBackColor = true;
             this.openButton.Click += new System.EventHandler(this.openButton_Click);
             // 
             // easyReadCheckBox
             // 
+            this.easyReadCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.easyReadCheckBox.AutoSize = true;
             this.easyReadCheckBox.Location = new System.Drawing.Point(12, 381);
             this.easyReadCheckBox.Name = "easyReadCheckBox";
             this.easyReadCheckBox.Size = new System.Drawing.Size(74, 17);
-            this.easyReadCheckBox.TabIndex = 4;
+            this.easyReadCheckBox.TabIndex = 2;
             this.easyReadCheckBox.Text = "easyRead";
             this.easyReadCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // valueTextBox
+            // 
+            this.valueTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.valueTextBox.Enabled = false;
+            this.valueTextBox.Location = new System.Drawing.Point(255, 379);
+            this.valueTextBox.Name = "valueTextBox";
+            this.valueTextBox.Size = new System.Drawing.Size(134, 20);
+            this.valueTextBox.TabIndex = 5;
+            this.valueTextBox.Text = "(Value)";
+            this.valueTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.valueTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.valueTextBox_KeyPress);
+            this.valueTextBox.Leave += new System.EventHandler(this.valueTextBox_Leave);
+            // 
+            // descriptionTextBox
+            // 
+            this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.descriptionTextBox.Enabled = false;
+            this.descriptionTextBox.Location = new System.Drawing.Point(395, 379);
+            this.descriptionTextBox.Name = "descriptionTextBox";
+            this.descriptionTextBox.Size = new System.Drawing.Size(247, 20);
+            this.descriptionTextBox.TabIndex = 6;
+            this.descriptionTextBox.Text = "(Description)";
+            this.descriptionTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.descriptionTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.descriptionTextBox_KeyPress);
+            this.descriptionTextBox.Leave += new System.EventHandler(this.descriptionTextBox_Leave);
             // 
             // SettingsForm
             // 
@@ -163,6 +184,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
             this.ClientSize = new System.Drawing.Size(735, 412);
+            this.Controls.Add(this.descriptionTextBox);
+            this.Controls.Add(this.valueTextBox);
             this.Controls.Add(this.easyReadCheckBox);
             this.Controls.Add(this.openButton);
             this.Controls.Add(this.saveButton);
@@ -186,9 +209,7 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitter;
-        private System.Windows.Forms.ListView typeList;
         private System.Windows.Forms.ListView valuesList;
-        private System.Windows.Forms.ColumnHeader typeColumn;
         private System.Windows.Forms.ColumnHeader keyColumn;
         private System.Windows.Forms.ColumnHeader valueColumn;
         private System.Windows.Forms.Button closeButton;
@@ -196,5 +217,8 @@
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button openButton;
         private System.Windows.Forms.CheckBox easyReadCheckBox;
+        private System.Windows.Forms.TreeView typeTreeView;
+        private System.Windows.Forms.TextBox valueTextBox;
+        private System.Windows.Forms.TextBox descriptionTextBox;
     }
 }
