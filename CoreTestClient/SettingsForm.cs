@@ -15,7 +15,17 @@ namespace CoreTestClient
         public SettingsForm(KeyValueStore settings)
         {
             InitializeComponent();
+            reloadSettings(settings);
+        }
+
+        public SettingsForm() : this(ExtensionLoader.ExtensionSettings) { }
+
+        private void reloadSettings(KeyValueStore settings)
+        {
             this.settings = settings;
+            keys = new Dictionary<string, string[]>();
+
+            typeList.Items.Clear();
 
             string[] keytemp = settings.Keys.ToArray();
 
@@ -26,9 +36,8 @@ namespace CoreTestClient
                 item.Tag = key;
                 keys.Add(key, keytemp.Where(k => k.StartsWith(key)).Select(k => k.Substring(k.IndexOf(":") + 1)).ToArray());
             }
+            Refresh();
         }
-
-        public SettingsForm() : this(ExtensionLoader.ExtensionSettings) { }
 
         private void typeList_SelectedIndexChanged(object sender, System.EventArgs e)
         {
@@ -49,30 +58,30 @@ namespace CoreTestClient
         private void saveButton_Click(object sender, System.EventArgs e)
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
-            
+
 
             saveDialog.Title = "Save Settings";
             saveDialog.Filter = "Settings-File|*.set";
 
 
             if (saveDialog.ShowDialog() == DialogResult.OK && saveDialog.FileName != null)
-                settings.Save(saveDialog.FileName);
+                settings.Save(saveDialog.FileName, easyReadCheckBox.Checked);
 
 
         }
 
         private void openButton_Click(object sender, System.EventArgs e)
         {
-            //work in progress (Patrick Kirsch)
-            //OpenFileDialog saveDialog = new OpenFileDialog();
+
+            OpenFileDialog saveDialog = new OpenFileDialog();
 
 
-            //saveDialog.Title = "Open Settings";
-            //saveDialog.Filter = "Settings-File|*.set";
+            saveDialog.Title = "Open Settings";
+            saveDialog.Filter = "Settings-File|*.set";
 
 
-            //if (saveDialog.ShowDialog() == DialogResult.OK && saveDialog.FileName != null)
-            //    settings = KeyValueStore.Load(saveDialog.FileName);
+            if (saveDialog.ShowDialog() == DialogResult.OK && saveDialog.FileName != null)
+                reloadSettings(KeyValueStore.Load(saveDialog.FileName));
         }
     }
 }

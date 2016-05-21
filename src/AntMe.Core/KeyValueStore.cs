@@ -23,12 +23,20 @@ namespace AntMe
         public Dictionary<string, string> Common { get; set; }
 
         /// <summary>
+        /// Dictionary of errors that occurred while the Loading form file or stream.
+        /// If empty no error occurred.
+        /// key = fileName/"stream"
+        /// </summary>
+        public Dictionary<string, List<string>> LoadingErrors;
+
+        /// <summary>
         /// Default Constructor
         /// </summary>
         public KeyValueStore()
         {
             Storage = new Dictionary<string, ValueDescriptionEntry>();
             Common = new Dictionary<string, string>();
+            LoadingErrors = new Dictionary<string, List<string>>();
         }
 
         /// <summary>
@@ -64,9 +72,19 @@ namespace AntMe
         /// <typeparam name="T">Type</typeparam>
         /// <param name="key">Key</param>
         /// <returns>Full Key</returns>
-        private string FullKey<T>(string key)
+        private static string FullKey<T>(string key)
         {
             return string.Format("{0}:{1}", typeof(T).FullName, key);
+        }
+        /// <summary>
+        /// Generates the Full Key out of Type and Key.
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">Key</param>
+        /// <returns>Full Key</returns>
+        private static string FullKey(string typeKey, string key)
+        {
+            return string.Format("{0}:{1}", typeKey, key);
         }
 
         /// <summary>
@@ -414,8 +432,6 @@ namespace AntMe
             return null;
         }
 
-
-        //Work in Progress (Patrick Kirsch)
         /// <summary>
         /// Loads a KeyValueStore from a given stream
         /// </summary>
@@ -423,14 +439,7 @@ namespace AntMe
         /// <returns>KeyValueStore</returns>
         public static KeyValueStore Load(Stream stream)
         {
-            KeyValueStore locaKeyValueStore = new KeyValueStore();
-
-            using (StreamReader sr = new StreamReader(stream))
-            {
-
-
-            }
-            return locaKeyValueStore;
+            return Load(stream, "Stream");
         }
 
         /// <summary>
@@ -442,19 +451,86 @@ namespace AntMe
         {
             using (Stream stream = File.Open(filename, FileMode.Open))
             {
-                return Load(stream);
+                return Load(stream, filename);
             }
+        }
+
+        private static KeyValueStore Load(Stream stream, string source)
+        {
+
+            KeyValueStore locaKeyValueStore = new KeyValueStore();
+            List<string> locaErrors = new List<string>();
+
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                int currentLine = 0;
+                string currentTypeKey = "";
+
+                while (sr.Peek() >= 0)
+                {
+                    currentLine++;
+                    string rawData = sr.ReadLine();
+                    string editedData = rawData.TrimStart(' ').TrimEnd(' ');
+
+                    if (editedData.StartsWith("["))
+                    {
+                        currentTypeKey = editedData.Substring(1, editedData.IndexOf(']') - 1).TrimStart(' ').TrimEnd(' ');
+                        continue;
+                    }
+                    else if (editedData.Contains("="))
+                    {
+
+                        string key = editedData.Substring(0, editedData.IndexOf('=')).TrimEnd(' ');
+                        editedData = editedData.Remove(0, editedData.IndexOf('=') + 1);
+
+                        if (currentTypeKey == "Common")
+                        {
+                            locaKeyValueStore.Common.Add(key, editedData.TrimStart(' ').TrimEnd(' '));
+                            continue;
+                        }
+                        ValueDescriptionEntry VDE = new ValueDescriptionEntry();
+
+                        if (editedData.IndexOf("//") >= 0)
+                        {
+                            VDE.Value = editedData.Substring(0, editedData.IndexOf("//")).TrimStart(' ').TrimEnd(' ');
+                            VDE.Description = editedData.Remove(0, editedData.IndexOf("//") + 2).TrimStart(' ').TrimEnd(' ');
+                        }
+                        else
+                        {
+                            VDE.Value = editedData.TrimStart(' ').TrimEnd(' ');
+                        }
+
+                        locaKeyValueStore.Set(FullKey(currentTypeKey, key), VDE);
+
+                    }
+                    else if (string.IsNullOrWhiteSpace(editedData))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        locaErrors.Add("ERROR Line " + currentLine.ToString() + ": could not be deserialized, make sure it matches the Format([TYPEKEY] or KEY=VALUE(//DESCRIPTION))");
+                    }
+                }
+            }
+
+            if (locaErrors.Count > 0)
+                locaKeyValueStore.LoadingErrors.Add(source, locaErrors);
+
+
+            return locaKeyValueStore;
         }
 
         /// <summary>
         /// Saves all Settings to a File.
         /// </summary>
         /// <param name="filename">Filename</param>
-        public void Save(string filename)
+        /// <param name="easyReading">Optional easy to read output</param>
+        public void Save(string filename, bool easyReading = false)
         {
             using (Stream stream = File.Open(filename, FileMode.Create))
             {
-                Save(stream);
+                Save(stream, easyReading);
             }
         }
 
@@ -462,7 +538,8 @@ namespace AntMe
         /// Saves all Settings to a File.
         /// </summary>
         /// <param name="stream">Output Stream</param>
-        public void Save(Stream stream)
+        /// <param name="easyReading">Optional easy to read output</param>
+        public void Save(Stream stream, bool easyReading = false)
         {
 
             using (StreamWriter sw = new StreamWriter(stream))
@@ -485,11 +562,25 @@ namespace AntMe
                 {
                     sw.WriteLine("[{0}]", typekey);
 
+                    int keyLength = 0;
+                    int valueLength = 0;
+
+                    if (easyReading)
+                    {
+                        foreach (var key in Storage.Where(k => k.Key.StartsWith(typekey)).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
+                        {
+                            string fullkey = string.Format("{0}:{1}", typekey, key);
+                            ValueDescriptionEntry VDE = GetValueDescriptionEntry(fullkey);
+                            keyLength = Math.Max(keyLength, key.Length);
+                            valueLength = Math.Max(valueLength, VDE.Value.Length);
+                        }
+                    }
+
                     foreach (var key in Storage.Where(k => k.Key.StartsWith(typekey)).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
                     {
                         string fullkey = string.Format("{0}:{1}", typekey, key);
                         ValueDescriptionEntry VDE = GetValueDescriptionEntry(fullkey);
-                        sw.WriteLine("{0}={1}//{2}", key.ToString(), VDE.Value != null ? VDE.Value : "no Value", VDE.Description != null ? VDE.Description : "no Description");
+                        sw.WriteLine("{0}={1}//{2}", key.ToString().PadRight(keyLength), (VDE.Value != null ? VDE.Value : "no Value").PadRight(valueLength), VDE.Description != null ? VDE.Description : "no Description");
                     }
                     sw.WriteLine();
 

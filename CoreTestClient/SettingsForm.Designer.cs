@@ -38,6 +38,7 @@
             this.closeButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.openButton = new System.Windows.Forms.Button();
+            this.easyReadCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitter)).BeginInit();
             this.splitter.Panel1.SuspendLayout();
             this.splitter.Panel2.SuspendLayout();
@@ -90,7 +91,10 @@
             this.descriptionColumn});
             this.valuesList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.valuesList.FullRowSelect = true;
+            this.valuesList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.valuesList.LabelEdit = true;
             this.valuesList.Location = new System.Drawing.Point(0, 0);
+            this.valuesList.MultiSelect = false;
             this.valuesList.Name = "valuesList";
             this.valuesList.Size = new System.Drawing.Size(470, 359);
             this.valuesList.TabIndex = 0;
@@ -125,7 +129,7 @@
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(12, 377);
+            this.saveButton.Location = new System.Drawing.Point(93, 377);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(75, 23);
             this.saveButton.TabIndex = 2;
@@ -135,7 +139,7 @@
             // 
             // openButton
             // 
-            this.openButton.Location = new System.Drawing.Point(93, 377);
+            this.openButton.Location = new System.Drawing.Point(174, 377);
             this.openButton.Name = "openButton";
             this.openButton.Size = new System.Drawing.Size(75, 23);
             this.openButton.TabIndex = 3;
@@ -143,12 +147,23 @@
             this.openButton.UseVisualStyleBackColor = true;
             this.openButton.Click += new System.EventHandler(this.openButton_Click);
             // 
+            // easyReadCheckBox
+            // 
+            this.easyReadCheckBox.AutoSize = true;
+            this.easyReadCheckBox.Location = new System.Drawing.Point(12, 381);
+            this.easyReadCheckBox.Name = "easyReadCheckBox";
+            this.easyReadCheckBox.Size = new System.Drawing.Size(74, 17);
+            this.easyReadCheckBox.TabIndex = 4;
+            this.easyReadCheckBox.Text = "easyRead";
+            this.easyReadCheckBox.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
             this.ClientSize = new System.Drawing.Size(735, 412);
+            this.Controls.Add(this.easyReadCheckBox);
             this.Controls.Add(this.openButton);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.closeButton);
@@ -164,6 +179,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitter)).EndInit();
             this.splitter.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -179,5 +195,6 @@
         private System.Windows.Forms.ColumnHeader descriptionColumn;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button openButton;
+        private System.Windows.Forms.CheckBox easyReadCheckBox;
     }
 }
