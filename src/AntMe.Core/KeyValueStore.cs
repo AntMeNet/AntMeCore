@@ -76,9 +76,7 @@ namespace AntMe
         /// <param name="keyValueStore">Source KeyValueStore</param>
         public KeyValueStore(KeyValueStore keyValueStore) : this()
         {
-            this.Storage = keyValueStore.Storage;
-            this.Common = keyValueStore.Common;
-            this.LoadingErrors = keyValueStore.LoadingErrors;
+            
         }
 
         /// <summary>
@@ -231,7 +229,9 @@ namespace AntMe
         /// <returns>Full Copy of Settings</returns>
         public KeyValueStore Clone()
         {
-            return new KeyValueStore(this);
+            KeyValueStore newStore = new KeyValueStore();
+            newStore.Merge(this);
+            return newStore;
         }
 
 
@@ -247,7 +247,7 @@ namespace AntMe
         /// <summary>
         /// Merge information with the given KeyValueStore-Instance.
         /// </summary>
-        /// <param name="stream">Source KeyValueStore-File</param>
+        /// <param name="filename">Source KeyValueStore-File</param>
         public void Merge(string filename)
         {
             Merge(Load(filename));
@@ -573,8 +573,12 @@ namespace AntMe
                         else
                         {
                             VDE.Value = editedData.TrimStart(' ').TrimEnd(' ');
-                            locaErrors.Add("WARNING Line " + currentLine.ToString() + ": missing description");
                         }
+
+                        if (string.IsNullOrWhiteSpace(VDE.Value))
+                            locaErrors.Add("WARNING Line " + currentLine.ToString() + ": missing Value");
+                        if (string.IsNullOrWhiteSpace(VDE.Description))
+                            locaErrors.Add("WARNING Line " + currentLine.ToString() + ": missing Description");
 
                         locaKeyValueStore.Set(FullKey(currentTypeKey, key), VDE);
 
@@ -601,12 +605,12 @@ namespace AntMe
         /// Saves all Settings to a File.
         /// </summary>
         /// <param name="filename">Filename</param>
-        /// <param name="easyReading">Optional easy to read output</param>
-        public void Save(string filename, bool easyReading = false)
+        /// <param name="alignedValues">Optional easy to read output</param>
+        public void Save(string filename, bool alignedValues = false)
         {
             using (Stream stream = File.Open(filename, FileMode.Create))
             {
-                Save(stream, easyReading);
+                Save(stream, alignedValues);
             }
         }
 
@@ -614,8 +618,8 @@ namespace AntMe
         /// Saves all Settings to a File.
         /// </summary>
         /// <param name="stream">Output Stream</param>
-        /// <param name="easyReading">Optional easy to read output</param>
-        public void Save(Stream stream, bool easyReading = false)
+        /// <param name="alignedValues">Optional easy to read output</param>
+        public void Save(Stream stream, bool alignedValues = false)
         {
 
             using (StreamWriter sw = new StreamWriter(stream))
@@ -638,10 +642,10 @@ namespace AntMe
                 {
                     sw.WriteLine("[{0}]", typekey);
 
-                    int keyLength = 0;
-                    int valueLength = 0;
+                    int keyLength = 1;
+                    int valueLength = 1;
 
-                    if (easyReading)
+                    if (alignedValues)
                     {
                         foreach (var key in Storage.Where(k => k.Key.StartsWith(typekey)).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
                         {
@@ -656,7 +660,12 @@ namespace AntMe
                     {
                         string fullkey = string.Format("{0}:{1}", typekey, key);
                         ValueDescriptionEntry VDE = GetValueDescriptionEntry(fullkey);
-                        sw.WriteLine("{0}={1}//{2}", key.ToString().PadRight(keyLength), (VDE.Value != null ? VDE.Value : "no Value").PadRight(valueLength), VDE.Description != null ? VDE.Description : "no Description");
+                        string description = " // ";
+                        if (string.IsNullOrWhiteSpace(VDE.Description))
+                            description = string.Empty;
+                        else
+                            description += VDE.Description;
+                        sw.WriteLine("{0}={1}{2}", key.ToString().PadRight(keyLength), (VDE.Value != null ? VDE.Value : "").PadRight(valueLength), description);
                     }
                     sw.WriteLine();
 

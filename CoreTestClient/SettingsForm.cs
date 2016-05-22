@@ -107,6 +107,8 @@ namespace CoreTestClient
             if (e.Node.LastNode != null)
             {
                 valuesList.Items.Clear();
+                valuesList.SelectedItems.Clear();
+                editTextBoxesUpdate();
                 return;
             }
                 
@@ -125,8 +127,9 @@ namespace CoreTestClient
 
         }
 
-        private void valuesList_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void editTextBoxesUpdate()
         {
+
             if (valuesList.SelectedItems.Count > 0)
             {
                 valueTextBox.Enabled = true;
@@ -145,6 +148,12 @@ namespace CoreTestClient
                 descriptionTextBox.Text = "(Description)";
                 descriptionTextBox.TextAlign = HorizontalAlignment.Center;
             }
+
+        }
+
+        private void valuesList_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            editTextBoxesUpdate();
         }
 
         private void updateSettings()
