@@ -2,8 +2,8 @@
 
 |  | master | develop |  
 | --- | ----- | ---- | 
-| Travis CI | [![Build Status](https://travis-ci.org/AntMeNet/AntMeCore.svg?branch=master)](https://travis-ci.org/AntMeNet/AntMeCore) | TBD |
-| AppVeyor | [![Build status](https://ci.appveyor.com/api/projects/status/tm398jnj830c44h8?svg=true)](https://ci.appveyor.com/project/reicheltp/antmecore) | TBD | 
+| Travis CI | [![Build Status](https://travis-ci.org/AntMeNet/AntMeCore.svg?branch=master)](https://travis-ci.org/AntMeNet/AntMeCore) | [![Build Status](https://travis-ci.org/AntMeNet/AntMeCore.svg?branch=develop)](https://travis-ci.org/AntMeNet/AntMeCore) |
+| AppVeyor | [![Build status](https://ci.appveyor.com/api/projects/status/tm398jnj830c44h8/branch/master?svg=true)](https://ci.appveyor.com/project/reicheltp/antmecore/branch/master) | [![Build status](https://ci.appveyor.com/api/projects/status/tm398jnj830c44h8/branch/master?svg=true)](https://ci.appveyor.com/project/reicheltp/antmecore/branch/develop) | 
 
 This repository includes the whole simulation/backend Part of the AntMe! Engine and the AntMe! Simulation Calculation.
 
