@@ -8,7 +8,7 @@ namespace AntMe
     /// <summary>
     /// KeyValueDesciption-Container for e.g.: Settings or Localizations
     /// </summary>
-    public sealed class KeyValueStore
+    public class KeyValueStore
     {
 
         /// <summary>
@@ -20,14 +20,7 @@ namespace AntMe
         /// <summary>
         /// Dictionary for informations and comments about the KeyValueStore (will be saved).
         /// </summary>
-        public Dictionary<string, string> Common { get; set; }
-
-        /// <summary>
-        /// Dictionary of errors that occurred while the Loading form file or stream.
-        /// If empty no error occurred.
-        /// key = fileName/"stream"
-        /// </summary>
-        internal Dictionary<string, List<string>> LoadingErrors;
+        public Dictionary<string, string> Common { get; private set; }
 
         /// <summary>
         /// Default Constructor
@@ -36,7 +29,6 @@ namespace AntMe
         {
             Storage = new Dictionary<string, ValueDescriptionEntry>();
             Common = new Dictionary<string, string>();
-            LoadingErrors = new Dictionary<string, List<string>>();
         }
 
         /// <summary>
@@ -45,13 +37,7 @@ namespace AntMe
         /// <param name="stream">Stream</param>
         public KeyValueStore(Stream stream) : this()
         {
-            KeyValueStore temp = Load(stream);
-
-            this.Storage = temp.Storage;
-            this.Common = temp.Common;
-            this.LoadingErrors = temp.LoadingErrors;
-
-            temp = null;
+            Load(stream);
         }
 
         /// <summary>
@@ -60,14 +46,10 @@ namespace AntMe
         /// <param name="filename">Dateinamen</param>
         public KeyValueStore(string filename) : this()
         {
-            KeyValueStore temp = Load(filename);
-
-            this.Storage = temp.Storage;
-            this.Common = temp.Common;
-            this.LoadingErrors = temp.LoadingErrors;
-
-            temp = null;
-
+            using (Stream stream = File.Open(filename, FileMode.Open))
+            {
+                Load(stream);
+            }
         }
 
         /// <summary>
@@ -76,7 +58,7 @@ namespace AntMe
         /// <param name="keyValueStore">Source KeyValueStore</param>
         public KeyValueStore(KeyValueStore keyValueStore) : this()
         {
-            
+            Merge(keyValueStore);
         }
 
         /// <summary>
@@ -179,7 +161,6 @@ namespace AntMe
                     VDE.Description = description;
             }
             Storage[key] = VDE;
-
         }
 
         /// <summary>
@@ -241,7 +222,7 @@ namespace AntMe
         /// <param name="stream">Source KeyValueStore-Stream</param>
         public void Merge(Stream stream)
         {
-            Merge(Load(stream));
+            Merge(new KeyValueStore(stream));
         }
 
         /// <summary>
@@ -250,7 +231,7 @@ namespace AntMe
         /// <param name="filename">Source KeyValueStore-File</param>
         public void Merge(string filename)
         {
-            Merge(Load(filename));
+            Merge(new KeyValueStore(filename));
         }
 
         /// <summary>
@@ -305,34 +286,6 @@ namespace AntMe
                 }
 
             }
-
-            //merge loadingError Diconary
-            foreach (var key in keyValueStore.LoadingErrors.Keys)
-            {
-                List<string> newErrorList;
-                keyValueStore.LoadingErrors.TryGetValue(key, out newErrorList);
-
-                if (LoadingErrors.Keys.Contains(key))
-                {
-                    List<string> orgErrorList;
-                    LoadingErrors.TryGetValue(key, out orgErrorList);
-
-                    foreach (var item in orgErrorList)
-                    {
-                        if (!newErrorList.Contains(item))
-                            newErrorList.Add(item);
-                    }
-
-
-                    LoadingErrors[key] = newErrorList;
-                }
-                else
-                {
-                    LoadingErrors.Add(key, newErrorList);
-                }
-
-            }
-
         }
 
         /// <summary>
@@ -497,34 +450,10 @@ namespace AntMe
             return null;
         }
 
-        /// <summary>
-        /// Loads a KeyValueStore from a given stream
-        /// </summary>
-        /// <param name="stream">Stream</param>
-        /// <returns>KeyValueStore</returns>
-        public static KeyValueStore Load(Stream stream)
-        {
-            return Load(stream, "Stream");
-        }
-
-        /// <summary>
-        /// Loads a KeyValueStore from a given file
-        /// </summary>
-        /// <param name="filename">Filename</param>
-        /// <returns>KeyValueStore</returns>
-        public static KeyValueStore Load(string filename)
-        {
-            using (Stream stream = File.Open(filename, FileMode.Open))
-            {
-                return Load(stream, filename);
-            }
-        }
-
-        private static KeyValueStore Load(Stream stream, string source)
+        private void Load(Stream stream)
         {
 
-            KeyValueStore locaKeyValueStore = new KeyValueStore();
-            List<string> locaErrors = new List<string>();
+            List<string> Errors = new List<string>();
 
             using (StreamReader sr = new StreamReader(stream))
             {
@@ -543,7 +472,7 @@ namespace AntMe
                         if (editedData.IndexOf(']') == -1)
                         {
                             waitforTypeKey = true;
-                            locaErrors.Add("ERROR Line " + currentLine.ToString() + ": missing ']' (end of TypeKey deklaration)");
+                            Errors.Add("ERROR Line " + currentLine.ToString() + ": missing ']' (end of TypeKey deklaration)");
                             continue;
                         }
 
@@ -560,7 +489,7 @@ namespace AntMe
 
                         if (currentTypeKey == "Common")
                         {
-                            locaKeyValueStore.Common.Add(key, editedData.TrimStart(' ').TrimEnd(' '));
+                            Common.Add(key, editedData.TrimStart(' ').TrimEnd(' '));
                             continue;
                         }
                         ValueDescriptionEntry VDE = new ValueDescriptionEntry();
@@ -576,11 +505,11 @@ namespace AntMe
                         }
 
                         if (string.IsNullOrWhiteSpace(VDE.Value))
-                            locaErrors.Add("WARNING Line " + currentLine.ToString() + ": missing Value");
+                            Errors.Add("WARNING Line " + currentLine.ToString() + ": missing Value");
                         if (string.IsNullOrWhiteSpace(VDE.Description))
-                            locaErrors.Add("WARNING Line " + currentLine.ToString() + ": missing Description");
+                            Errors.Add("WARNING Line " + currentLine.ToString() + ": missing Description");
 
-                        locaKeyValueStore.Set(FullKey(currentTypeKey, key), VDE);
+                        Set(FullKey(currentTypeKey, key), VDE);
 
                     }
                     else if (string.IsNullOrWhiteSpace(editedData))
@@ -589,16 +518,14 @@ namespace AntMe
                     }
                     else
                     {
-                        locaErrors.Add("ERROR Line " + currentLine.ToString() + ": could not be deserialized, make sure it matches the Format([TYPEKEY] or KEY=VALUE//DESCRIPTION)");
+                        Errors.Add("ERROR Line " + currentLine.ToString() + ": could not be deserialized, make sure it matches the Format([TYPEKEY] or KEY=VALUE//DESCRIPTION)");
                     }
                 }
+                sr.Close();
             }
 
-            if (locaErrors.Count > 0)
-                locaKeyValueStore.LoadingErrors.Add(source, locaErrors);
-
-
-            return locaKeyValueStore;
+            if (Errors.Count > 0)
+                throw new AggregateException(string.Join(Environment.NewLine, Errors.ToArray()));
         }
 
         /// <summary>
@@ -673,9 +600,6 @@ namespace AntMe
 
                 sw.Close();
             }
-
-            //// TODO: Implement Settings Save
-            //throw new NotImplementedException();
         }
 
         /// <summary>
