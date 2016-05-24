@@ -61,7 +61,10 @@
   <ItemGroup>
     <Compile Include="AngleTest.cs" />
     <Compile Include="CompassTest.cs" />
+    <Compile Include="Index2Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Vector2Test.cs" />
+    <Compile Include="Vector3Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
