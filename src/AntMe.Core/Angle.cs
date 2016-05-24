@@ -75,13 +75,13 @@ namespace AntMe
         private float value;
 
         /// <summary>
-        ///     Erzeugt einen neuen Winkel mit der initialen Angabe des gegebenen Bogenmaßes [0;2Pi].
+        /// Creates a new Angle based on the given Radian.
         /// </summary>
-        /// <param name="value">Winkel im Bogenmaß</param>
-        public Angle(float value)
+        /// <param name="radian">Radian</param>
+        public Angle(float radian)
         {
-            this.value = 0;
-            Radian = value;
+            value = 0;
+            Radian = radian;
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace AntMe
         /// </summary>
         public int Degree
         {
-            get { return ConvertToDegree(value); }
+            get { return NormalizeDegree(ConvertToDegree(value)); }
             set { Radian = ConvertToRadian(NormalizeDegree(value)); }
         }
 
@@ -171,7 +171,7 @@ namespace AntMe
         {
             return new Angle
             {
-                Degree = Degree + degree
+                Degree = Degree - degree
             };
         }
 

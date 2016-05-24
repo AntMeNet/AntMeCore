@@ -27,17 +27,17 @@ namespace AntMe.Core
                 {
                     // Radian, Normalized Radian, Degrees, Normalized Degrees, Compass
                     new object[] { -12f, 0.566370f, -688, 32, Compass.SouthEast }, // Far negative
-                    new object[] { -(2 * Math.PI) - 0.001f, (2 * Math.PI) - 0.001f, 0, 0, Compass.East }, // Close to the negative border
-                    new object[] { -(2 * Math.PI), 0f, 0, 0, Compass.East },
-                    new object[] { -(2 * Math.PI) + 0.001f, 0.001f, 0, 0, Compass.East }, // In range negative
+                    new object[] { -(2 * Math.PI) - 0.001f, (2 * Math.PI) - 0.001f, -360, 0, Compass.East }, // Close to the negative border
+                    new object[] { -(2 * Math.PI), 0f, -360, 0, Compass.East },
+                    new object[] { -(2 * Math.PI) + 0.001f, 0.001f, -360, 0, Compass.East }, // In range negative
                     new object[] { -3f, 3.283185f, -172, 188, Compass.West },
-                    new object[] { -1f, 5.283185f, -64, 303, Compass.NorthEast },
+                    new object[] { -1f, 5.283185f, -57, 303, Compass.NorthEast },
                     new object[] { 0f, 0f, 0, 0, Compass.East  },// Zero
                     new object[] { 1f, 1f, 57, 57, Compass.SouthEast  },// In Range
                     new object[] { 3f, 3f, 172, 172, Compass.West },
-                    new object[] { (2 * Math.PI) - 0.001f, (2 * Math.PI) - 0.001f, 0, 0, Compass.East, },
-                    new object[] { (2 * Math.PI), 0f, 0, 0, Compass.East  }, // Overflow
-                    new object[] { (2 * Math.PI) + 0.001f, 0.001f, 0, 0, Compass.East },
+                    new object[] { (2 * Math.PI) - 0.001f, (2 * Math.PI) - 0.001f, 360, 0, Compass.East, },
+                    new object[] { (2 * Math.PI), 0f, 360, 0, Compass.East  }, // Overflow
+                    new object[] { (2 * Math.PI) + 0.001f, 0.001f, 360, 0, Compass.East },
                     new object[] { 12f, 5.716814f, 688, 328, Compass.NorthEast  },
                 };
             }
@@ -67,7 +67,7 @@ namespace AntMe.Core
                     new object[] { 1, 1, 0.017453f, 0.017453f, Compass.East },
                     new object[] { 100, 100, 1.745329f, 1.745329f, Compass.South  },
                     new object[] { 359, 359, 6.265732f, 6.265732f, Compass.East },
-                    new object[] { 360, 0, 0f, 0f, Compass.East },
+                    new object[] { 360, 0, 6.283185f, 0f, Compass.East },
                     new object[] { 1000, 280, 17.45329f, 4.886922f, Compass.North },
                 };
             }
@@ -99,112 +99,6 @@ namespace AntMe.Core
         }
 
         #endregion
-
-        // TODO
-        // - Casts to float and int
-        // - Check static Values
-
-        private float[,] inverts;
-        private float[,] values;
-        private int[,] degreeDiffs;
-
-        public AngleTest()
-        {
-            // Winkel a, Winkel b, Erwarteter Diff
-            values = new float[,]
-                {
-                    {0, Angle.Right, 0*Angle.PiQuarter},
-                    {0, Angle.LowerRight, 1*Angle.PiQuarter},
-                    {0, Angle.Down, 2*Angle.PiQuarter},
-                    {0, Angle.LowerLeft, 3*Angle.PiQuarter},
-                    {0, Angle.Left, 4*Angle.PiQuarter},
-                    {0, Angle.UpperLeft, -3*Angle.PiQuarter},
-                    {0, Angle.Up, -2*Angle.PiQuarter},
-                    {0, Angle.UpperRight, -1*Angle.PiQuarter},
-                    {Angle.Down, Angle.Right, -2*Angle.PiQuarter},
-                    {Angle.Down, Angle.LowerRight, -1*Angle.PiQuarter},
-                    {Angle.Down, Angle.Down, 0*Angle.PiQuarter},
-                    {Angle.Down, Angle.LowerLeft, 1*Angle.PiQuarter},
-                    {Angle.Down, Angle.Left, 2*Angle.PiQuarter},
-                    {Angle.Down, Angle.UpperLeft, 3*Angle.PiQuarter},
-                    {Angle.Down, Angle.Up, 4*Angle.PiQuarter},
-                    {Angle.Down, Angle.UpperRight, -3*Angle.PiQuarter},
-                    {Angle.Left, Angle.Right, -4*Angle.PiQuarter},
-                    {Angle.Left, Angle.LowerRight, -3*Angle.PiQuarter},
-                    {Angle.Left, Angle.Down, -2*Angle.PiQuarter},
-                    {Angle.Left, Angle.LowerLeft, -1*Angle.PiQuarter},
-                    {Angle.Left, Angle.Left, 0*Angle.PiQuarter},
-                    {Angle.Left, Angle.UpperLeft, 1*Angle.PiQuarter},
-                    {Angle.Left, Angle.Up, 2*Angle.PiQuarter},
-                    {Angle.Left, Angle.UpperRight, 3*Angle.PiQuarter},
-                    {Angle.Up, Angle.Right, 2*Angle.PiQuarter},
-                    {Angle.Up, Angle.LowerRight, 3*Angle.PiQuarter},
-                    {Angle.Up, Angle.Down, -4*Angle.PiQuarter},
-                    {Angle.Up, Angle.LowerLeft, -3*Angle.PiQuarter},
-                    {Angle.Up, Angle.Left, -2*Angle.PiQuarter},
-                    {Angle.Up, Angle.UpperLeft, -1*Angle.PiQuarter},
-                    {Angle.Up, Angle.Up, 0*Angle.PiQuarter},
-                    {Angle.Up, Angle.UpperRight, 1*Angle.PiQuarter},
-                };
-
-            // Winkel, Invert X, Invert Y
-            inverts = new float[,]
-                {
-                    {Angle.Right, Angle.Left, Angle.Right},
-                    {Angle.LowerRight, Angle.LowerLeft, Angle.UpperRight},
-                    {Angle.Down, Angle.Down, Angle.Up},
-                    {Angle.LowerLeft, Angle.LowerRight, Angle.UpperLeft},
-                    {Angle.Left, Angle.Right, Angle.Left},
-                    {Angle.UpperLeft, Angle.UpperRight, Angle.LowerLeft},
-                    {Angle.Up, Angle.Up, Angle.Down},
-                    {Angle.UpperRight, Angle.UpperLeft, Angle.LowerRight},
-                };
-
-            // Degree Diffs
-            // Winkel a, Winkel b, Erwarteter Diff
-            degreeDiffs = new int[,]
-            {
-                {-360, -360, 0},
-                {-360, -270, 90},
-                {-360, -180, 180},
-                {-360, -90, -90},
-                {-360, 0, 0},
-                {-360, 90, 90},
-                {-360, 180, 180},
-                {-360, 270, -90},
-                {-360, 360, 0},
-
-                {-180, -360, -180},
-                {-180, -270, -90},
-                {-180, -180, 0},
-                {-180, -90, 90},
-                {-180, 0, -180},
-                {-180, 90, -90},
-                {-180, 180, 0},
-                {-180, 270, 90},
-                {-180, 360, -180},
-
-                {0, -360, 0},
-                {0, -270, 90},
-                {0, -180, 180},
-                {0, -90, -90},
-                {0, 0, 0},
-                {0, 90, 90},
-                {0, 180, 180},
-                {0, 270, -90},
-                {0, 360, 0},
-
-                {144, -360, -144},
-                {144, -270, -54},
-                {144, -180, 36},
-                {144, -90, 126},
-                {144, 0, -144},
-                {144, 90, -54},
-                {144, 180, 36},
-                {144, 270, 126},
-                {144, 360, -144}
-            };
-        }
 
         #region Constructors
 
@@ -451,11 +345,14 @@ namespace AntMe.Core
             result.Radian = radian;
 
             // Assert
-            Assert.Equal(normalizedRadian, result.Radian);
+            Assert.Equal(normalizedRadian, result.Radian, 5);
             Assert.Equal(normalizedDegrees, result.Degree);
             Assert.Equal(compass, result.Compass);
         }
 
+        /// <summary>
+        /// Tests the Setter of the Degree Property.
+        /// </summary>
         [Theory, MemberData("DegreeValues")]
         public void SetDegreeByProperty(int degrees, int normalizedDegrees, float radian, float normalizedRadian, Compass compass)
         {
@@ -466,11 +363,14 @@ namespace AntMe.Core
             result.Degree = degrees;
 
             // Assert
-            Assert.Equal(normalizedRadian, result.Radian);
+            Assert.Equal(normalizedRadian, result.Radian, 5);
             Assert.Equal(normalizedDegrees, result.Degree);
             Assert.Equal(compass, result.Compass);
         }
 
+        /// <summary>
+        /// Tests the Setter of the Compass Property.
+        /// </summary>
         [Theory, MemberData("CompassValues")]
         public void SetCompassByProperty(Compass compass, int degrees, float radian)
         {
@@ -490,206 +390,196 @@ namespace AntMe.Core
 
         #region Calculations
 
-        [Fact]
-        public void AddPositiveFloats()
+        /// <summary>
+        /// Tests the AddRadian Method to add two Angles.
+        /// </summary>
+        [Theory]
+        [InlineData(3f, -10f, -7f + (4 * Math.PI))]
+        [InlineData(3f, -(2 * Math.PI), 3f)]
+        [InlineData(3f, -3f, 0f)]
+        [InlineData(3f, 0f, 3f)]
+        [InlineData(3f, 3f, 6f)]
+        [InlineData(3f, 2 * Math.PI, 3f)]
+        [InlineData(3f, 10f, 13f - (4 * Math.PI))]
+        public void AddRadianByMethod(float init, float add, float expectation)
+        {
+            // Arrange
+            Angle value = new Angle(init);
+
+            // Act
+            Angle result = value.AddRadian(add);
+
+            // Assert
+            Assert.Equal(expectation, result.Radian, 5);
+        }
+
+        /// <summary>
+        /// Tests the Add Operator.
+        /// </summary>
+        [Theory]
+        [InlineData(3f, -10f, -7f + (4 * Math.PI))]
+        [InlineData(3f, -(2 * Math.PI), 3f)]
+        [InlineData(3f, -3f, 0f)]
+        [InlineData(3f, 0f, 3f)]
+        [InlineData(3f, 3f, 6f)]
+        [InlineData(3f, 2 * Math.PI, 3f)]
+        [InlineData(3f, 10f, 13f - (4 * Math.PI))]
+        public void AddRadianByOperator(float init, float add, float expectation)
+        {
+            // Arrange
+            Angle value = new Angle(init);
+
+            // Act
+            Angle result = value + add;
+
+            // Assert
+            Assert.Equal(expectation, result.Radian, 5);
+        }
+
+        /// <summary>
+        /// Tests the AddDegree Method to add two Angles.
+        /// </summary>
+        [Theory]
+        [InlineData(150, -600, 270)]
+        [InlineData(150, -360, 150)]
+        [InlineData(150, -150, 0)]
+        [InlineData(150, 0f, 150)]
+        [InlineData(150, 150, 300)]
+        [InlineData(150, 360, 150)]
+        [InlineData(150, 600, 30)]
+        public void AddDegreeByMethod(int init, int add, int expectation)
+        {
+            // Arrange
+            Angle value = Angle.FromDegree(init);
+
+            // Act
+            Angle result = value.AddDegree(add);
+
+            // Assert
+            Assert.Equal(expectation, result.Degree);
+        }
+
+        /// <summary>
+        /// Tests the SubstractRadian Method to substract an Angle from anonther.
+        /// </summary>
+        [Theory]
+        [InlineData(3f, -10f, 13f - (4 * Math.PI))]
+        [InlineData(3f, -(2 * Math.PI), 3f)]
+        [InlineData(3f, -3f, 6f)]
+        [InlineData(3f, 0f, 3f)]
+        [InlineData(3f, 3f, 0f)]
+        [InlineData(3f, 2 * Math.PI, 3f)]
+        [InlineData(3f, 10f, -7f + (4 * Math.PI))]
+        public void SubstractRadianByMethod(float init, float substract, float expectation)
+        {
+            // Arrange
+            Angle value = new Angle(init);
+
+            // Act
+            Angle result = value.SubstractRadian(substract);
+
+            // Assert
+            Assert.Equal(expectation, result.Radian, 5);
+        }
+
+        /// <summary>
+        /// Tests the Substract Operator.
+        /// </summary>
+        [Theory]
+        [InlineData(3f, -10f, 13f - (4 * Math.PI))]
+        [InlineData(3f, -(2 * Math.PI), 3f)]
+        [InlineData(3f, -3f, 6f)]
+        [InlineData(3f, 0f, 3f)]
+        [InlineData(3f, 3f, 0f)]
+        [InlineData(3f, 2 * Math.PI, 3f)]
+        [InlineData(3f, 10f, -7f + (4 * Math.PI))]
+        public void SubstractRadianByOperator(float init, float substract, float expectation)
+        {
+            // Arrange
+            Angle value = new Angle(init);
+
+            // Act
+            Angle result = value - substract;
+
+            // Assert
+            Assert.Equal(expectation, result.Radian, 5);
+        }
+
+        /// <summary>
+        /// Tests the SubstractDegree Method to substract an Angle from anonther.
+        /// </summary>
+        [Theory]
+        [InlineData(150, -600, 30)]
+        [InlineData(150, -360, 150)]
+        [InlineData(150, -150, 300)]
+        [InlineData(150, 0, 150)]
+        [InlineData(150, 150, 0)]
+        [InlineData(150, 360, 150)]
+        [InlineData(150, 600, 270)]
+        public void SubstractDegreeByMethod(int init, int substract, float expectation)
+        {
+            // Arrange
+            Angle value = Angle.FromDegree(init);
+
+            // Act
+            Angle result = value.SubstractDegree(substract);
+
+            // Assert
+            Assert.Equal(expectation, result.Degree);
+        }
+
+        #endregion
+
+        #region Casts
+
+        public void CastFromAngleToRadian()
         {
             // Arrange
             // Act
             // Assert
-            Assert.False(true);
-
-            for (int i = -100; i < 100; i++)
-            {
-                for (int j = -100; j < 100; j++)
-                {
-                    float a = (float)i / 10;
-                    float b = (float)j / 10;
-
-                    var c = new Angle(a);
-                    Angle d = c + b;
-
-                    float e = Angle.NormalizeRadian(Angle.NormalizeRadian(a) + b);
-
-                    Assert.Equal((float)d, e);
-                }
-            }
         }
 
-        [Fact]
-        public void AddNegativeFloats()
+        public void CastFromRadianToAngle()
         {
             // Arrange
             // Act
             // Assert
-            Assert.False(true);
-
-            for (int i = -100; i < 100; i++)
-            {
-                for (int j = -100; j < 100; j++)
-                {
-                    float a = (float)i / 10;
-                    float b = (float)j / 10;
-
-                    var c = new Angle(a);
-                    Angle d = c - b;
-
-                    float e = Angle.NormalizeRadian(Angle.NormalizeRadian(a) - b);
-
-                    Assert.Equal((float)d, e);
-                }
-            }
         }
 
-        [Fact]
-        public void FindDiff()
+        #endregion
+
+        #region Diff
+
+        public void CalculateDiffByRadian()
         {
             // Arrange
             // Act
             // Assert
-            Assert.False(true);
-
-            for (int i = 0; i < values.GetLength(0); i++)
-            {
-                float a = values[i, 0];
-                float b = values[i, 1];
-                float x = values[i, 2];
-                var c = new Angle(a);
-                var d = new Angle(b);
-                float e = Angle.Diff(c, d);
-                Assert.Equal(x, e, 5);
-            }
         }
 
-        [Fact]
-        public void FindDiffDegrees()
+        public void CalculateDiffByDegree()
         {
             // Arrange
             // Act
             // Assert
-            Assert.False(true);
-
-            for (int i = 0; i < degreeDiffs.GetLength(0); i++)
-            {
-                int a = degreeDiffs[i, 0];
-                int b = degreeDiffs[i, 1];
-                int x = degreeDiffs[i, 2];
-                int e = Angle.Diff(a, b);
-                Assert.Equal(x, e);
-            }
         }
 
-        [Fact]
-        public void CamparerGreater()
-        {
-            // Arrange
-            // Act
-            // Assert
-            Assert.False(true);
+        #endregion
 
-            for (int i = 0; i < values.GetLength(0); i++)
-            {
-                float a = values[i, 0];
-                float b = values[i, 1];
-                float x = values[i, 2];
-                var c = new Angle(a);
-                var d = new Angle(b);
-                bool e = c > d;
-                Assert.Equal(e, x > 0);
-            }
-        }
+        #region Inverter
 
-        [Fact]
-        public void CamparerGreaterOrEqual()
-        {
-            // Arrange
-            // Act
-            // Assert
-            Assert.False(true);
-
-            for (int i = 0; i < values.GetLength(0); i++)
-            {
-                float a = values[i, 0];
-                float b = values[i, 1];
-                float x = values[i, 2];
-                var c = new Angle(a);
-                var d = new Angle(b);
-                bool e = c >= d;
-                Assert.Equal(e, x >= 0);
-            }
-        }
-
-        [Fact]
-        public void CamparerSmaller()
-        {
-            // Arrange
-            // Act
-            // Assert
-            Assert.False(true);
-
-            for (int i = 0; i < values.GetLength(0); i++)
-            {
-                float a = values[i, 0];
-                float b = values[i, 1];
-                float x = values[i, 2];
-                var c = new Angle(a);
-                var d = new Angle(b);
-                bool e = c < d;
-                Assert.Equal(e, x < 0);
-            }
-        }
-
-        [Fact]
-        public void CamparerSmallerOrEqual()
-        {
-            // Arrange
-            // Act
-            // Assert
-            Assert.False(true);
-
-            for (int i = 0; i < values.GetLength(0); i++)
-            {
-                float a = values[i, 0];
-                float b = values[i, 1];
-                float x = values[i, 2];
-                var c = new Angle(a);
-                var d = new Angle(b);
-                bool e = c <= d;
-                Assert.Equal(e, x <= 0);
-            }
-        }
-
-        [Fact]
         public void InvertX()
         {
             // Arrange
             // Act
             // Assert
-            Assert.False(true);
-
-            for (int i = 0; i < inverts.GetLength(0); i++)
-            {
-                float a = inverts[i, 0];
-                float b = inverts[i, 1];
-                Angle c = new Angle(a).InvertX();
-                Assert.Equal(Math.Round(c.Radian, 2), Math.Round(b, 2));
-            }
         }
 
-        [Fact]
         public void InvertY()
         {
             // Arrange
             // Act
             // Assert
-            Assert.False(true);
-
-            for (int i = 0; i < inverts.GetLength(0); i++)
-            {
-                float a = inverts[i, 0];
-                float b = inverts[i, 2];
-                Angle c = new Angle(a).InvertY();
-                Assert.Equal(Math.Round(c.Radian, 2), Math.Round(b, 2));
-            }
         }
 
         #endregion
