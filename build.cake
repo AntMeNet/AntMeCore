@@ -98,7 +98,7 @@ Task("test")
     .WithCriteria(() => 
     {
         // Find Tests by convention
-        var testLibs = GetFiles($"./tests/*/bin/{Configuration}/**/*.Tests.dll").ToArray();
+        var testLibs = GetFiles(string.Format("./tests/*/bin/{0}/**/*.Tests.dll", Configuration)).ToArray();
         Tests.AddRange(testLibs);
     
         var canTest = Tests != null && Tests.Any();
