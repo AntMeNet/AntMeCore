@@ -13,22 +13,22 @@ namespace AntMe
         /// <summary>
         /// Value for Pi.
         /// </summary>
-        public static float Pi = (float) Math.PI;
+        public static float Pi = (float)Math.PI;
 
         /// <summary>
         /// Value for Pi over two.
         /// </summary>
-        public static float PiHalf = Pi/2;
+        public static float PiHalf = Pi / 2;
 
         /// <summary>
         /// Value for Pi over four.
         /// </summary>
-        public static float PiQuarter = PiHalf/2;
+        public static float PiQuarter = PiHalf / 2;
 
         /// <summary>
         /// Value for two Pi.
         /// </summary>
-        public static float TwoPi = Pi*2;
+        public static float TwoPi = Pi * 2;
 
         /// <summary>
         /// Angle to Right (East).
@@ -48,7 +48,7 @@ namespace AntMe
         /// <summary>
         /// Angle to lower Left (Southwest).
         /// </summary>
-        public static Angle LowerLeft = new Angle(PiQuarter*3);
+        public static Angle LowerLeft = new Angle(PiQuarter * 3);
 
         /// <summary>
         /// Angle to Left (West).
@@ -58,30 +58,30 @@ namespace AntMe
         /// <summary>
         /// Angle to upper Left (Northwest).
         /// </summary>
-        public static Angle UpperLeft = new Angle(PiQuarter*5);
+        public static Angle UpperLeft = new Angle(PiQuarter * 5);
 
         /// <summary>
         /// Angle to Up (North).
         /// </summary>
-        public static Angle Up = new Angle(PiHalf*3);
+        public static Angle Up = new Angle(PiHalf * 3);
 
         /// <summary>
         /// Angle to upper Right (Northeast).
         /// </summary>
-        public static Angle UpperRight = new Angle(PiQuarter*7);
+        public static Angle UpperRight = new Angle(PiQuarter * 7);
 
         #endregion
 
         private float value;
 
         /// <summary>
-        ///     Erzeugt einen neuen Winkel mit der initialen Angabe des gegebenen Bogenmaßes [0;2Pi].
+        /// Creates a new Angle based on the given Radian.
         /// </summary>
-        /// <param name="value">Winkel im Bogenmaß</param>
-        public Angle(float value)
+        /// <param name="radian">Radian</param>
+        public Angle(float radian)
         {
-            this.value = 0;
-            Radian = value;
+            value = 0;
+            Radian = radian;
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace AntMe
         /// </summary>
         public int Degree
         {
-            get { return ConvertToDegree(value); }
+            get { return NormalizeDegree(ConvertToDegree(value)); }
             set { Radian = ConvertToRadian(NormalizeDegree(value)); }
         }
 
@@ -107,12 +107,8 @@ namespace AntMe
         /// </summary>
         public Compass Compass
         {
-            get
-            {
-                int index = ((Degree + 22)/45)%8;
-                return (Compass) (index*45);
-            }
-            set { Degree = (int) value; }
+            get { return ConvertToCompass(Degree); }
+            set { Degree = (int)value; }
         }
 
         /// <summary>
@@ -175,7 +171,7 @@ namespace AntMe
         {
             return new Angle
             {
-                Degree = Degree + degree
+                Degree = Degree - degree
             };
         }
 
@@ -197,9 +193,9 @@ namespace AntMe
         {
             Angle other;
             if (obj is Angle)
-                other = (Angle) obj;
+                other = (Angle)obj;
             else if (obj is float)
-                other = new Angle((float) obj);
+                other = new Angle((float)obj);
             else
                 return false;
 
@@ -332,27 +328,50 @@ namespace AntMe
         #region Static Helper
 
         /// <summary>
-        /// Converts Degrees to Radian.
+        /// Converts Degrees to Radian without any Normalization.
         /// </summary>
         /// <param name="degree">Degree</param>
         /// <returns>Radian</returns>
         public static float ConvertToRadian(int degree)
         {
-            return (float) degree/360*TwoPi;
+            return (float)degree / 360 * TwoPi;
         }
 
         /// <summary>
-        /// Converts Radian to Degree.
+        /// Converts Radian to Degree without any Normalization.
         /// </summary>
         /// <param name="radian">Radian</param>
         /// <returns>Degree</returns>
         public static int ConvertToDegree(float radian)
         {
-            return (int) Math.Round(radian*360/TwoPi);
+            return (int)Math.Round(radian * 360 / TwoPi);
         }
 
         /// <summary>
-        /// Normalize the given Radian to the value range of [0;2Pi].
+        /// Convertes the given Radian to a Compass Value.
+        /// </summary>
+        /// <param name="radian">Radian</param>
+        /// <returns>Compass Direction</returns>
+        public static Compass ConvertToCompass(float radian)
+        {
+            int degree = ConvertToDegree(radian);
+            return ConvertToCompass(degree);
+        }
+
+        /// <summary>
+        /// Converts the given degree to a Compass Value.
+        /// </summary>
+        /// <param name="degree">Degree</param>
+        /// <returns>Compass Direction</returns>
+        public static Compass ConvertToCompass(int degree)
+        {
+            int normalized = NormalizeDegree(degree);
+            int index = ((normalized + 22) / 45) % 8;
+            return (Compass)(index * 45);
+        }
+
+        /// <summary>
+        /// Normalize the given Radian to the value range of [0;2Pi).
         /// </summary>
         /// <param name="radian">Radian</param>
         /// <returns>Normaized Radian</returns>
@@ -360,10 +379,10 @@ namespace AntMe
         {
             if (radian < 0)
             {
-                int multiplier = (int) (-radian/TwoPi) + 1;
-                radian += (TwoPi*multiplier);
+                int multiplier = (int)(-radian / TwoPi) + 1;
+                radian += (TwoPi * multiplier);
             }
-            return radian%TwoPi;
+            return radian % TwoPi;
         }
 
         /// <summary>
@@ -375,10 +394,10 @@ namespace AntMe
         {
             if (degree < 0)
             {
-                int multiplier = (-degree/360) + 1;
-                degree += (multiplier*360);
+                int multiplier = (-degree / 360) + 1;
+                degree += (multiplier * 360);
             }
-            return degree%360;
+            return degree % 360;
         }
 
         /// <summary>
@@ -388,7 +407,7 @@ namespace AntMe
         /// <returns>New Angle</returns>
         public static Angle FromDegree(int degree)
         {
-            return new Angle {Degree = degree};
+            return new Angle { Degree = degree };
         }
 
         /// <summary>
@@ -408,7 +427,7 @@ namespace AntMe
         /// <returns></returns>
         public static Angle FromCompass(Compass compass)
         {
-            return FromDegree((int) compass);
+            return FromDegree((int)compass);
         }
 
         /// <summary>
