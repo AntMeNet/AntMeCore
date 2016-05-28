@@ -8,6 +8,15 @@
     public delegate void ValueUpdate<in T>(T newValue);
 
     /// <summary>
+    /// Default Delegate for all Index-based Value Changes.
+    /// </summary>
+    /// <typeparam name="I">Type of Index</typeparam>
+    /// <typeparam name="V">Type of Value</typeparam>
+    /// <param name="index">Index of the Value</param>
+    /// <param name="value">Value</param>
+    public delegate void ValueUpdate<in I, in V>(I index, V value);
+
+    /// <summary>
     /// Standard Delegat für Property Changed Events.
     /// </summary>
     /// <typeparam name="T">Datentyp der Änderung</typeparam>
