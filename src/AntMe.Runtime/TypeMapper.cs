@@ -1877,6 +1877,9 @@ namespace AntMe.Runtime
                     if (property == null)
                         throw new Exception("Not able to create a Level Property");
                 }
+
+                if (property != null)
+                    level.AddProperty(property);
             }
 
             // TODO: Level-Vererbung auflösen

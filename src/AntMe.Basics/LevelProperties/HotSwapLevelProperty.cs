@@ -1,12 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AntMe.Basics.LevelProperties
 {
+    /// <summary>
+    /// Level Property for switching Player Classes (Factory and Unit) during a running Simulation.
+    /// </summary>
     public sealed class HotSwapLevelProperty : LevelProperty
     {
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="level">Reference to the Level</param>
         public HotSwapLevelProperty(Level level) : base(level) { }
 
         /// <summary>

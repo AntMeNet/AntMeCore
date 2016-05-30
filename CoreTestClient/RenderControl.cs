@@ -240,23 +240,6 @@ namespace CoreTestClient
             UpdateTree();
         }
 
-        //private Color Convert(PlayerColor color)
-        //{
-        //    switch (color)
-        //    {
-        //        case PlayerColor.Black: return Color.Black;
-        //        case PlayerColor.Blue: return Color.Blue;
-        //        case PlayerColor.Cyan: return Color.Yellow;
-        //        case PlayerColor.Green: return Color.Green;
-        //        case PlayerColor.Orange: return Color.Orange;
-        //        case PlayerColor.Purple: return Color.Purple;
-        //        case PlayerColor.Red: return Color.Red;
-        //        case PlayerColor.White: return Color.White;
-        //    }
-
-        //    return Color.Black;
-        //}
-
         private Index2 _mapCells;
         private Vector2 _mapSize;
 

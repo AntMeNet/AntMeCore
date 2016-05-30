@@ -146,6 +146,9 @@ namespace AntMe.Basics
             // ##############################
 
             typeMapper.RegisterLevelProperty<TriggerLevelProperty>(this, "Level Trigger");
+            typeMapper.RegisterLevelProperty<DialogHighlightsLevelProperty, DialogHighlightsStateProperty>(this, "Dialog Highlights");
+            typeMapper.RegisterLevelProperty<MapMarkerHighlightsLevelProperty, MapMarkerHighlightsStateProperty>(this, "Map Marker Highlights");
+            typeMapper.RegisterLevelProperty<NotificationHighlightsLevelProperty, NotificationHighlightsStateProperty>(this, "Notification Highlights");
         }
 
         /// <summary>
