@@ -2,6 +2,9 @@
 ///     Just a simple build script.
 /// </summary>
 
+#tool "xunit.runner.console"
+#tool "ReportUnit"
+
 // *********************
 //      ARGUMENTS
 // *********************
@@ -63,7 +66,8 @@ Task("clean")
 Task("default")
     .IsDependentOn("clean")
     .IsDependentOn("restore")
-    .IsDependentOn("build");
+    .IsDependentOn("build")
+    .IsDependentOn("test");
 
 /// <summary>
 ///     Task to rebuild. Nothing else than a clean followed by build.
@@ -86,6 +90,38 @@ Task("restore")
         return canRestore;
     })
     .Does(() => NuGetRestore(Solution));
+    
+/// <summary>
+///     Task to run unit tests.
+/// </summary>
+Task("test")
+    .WithCriteria(() => 
+    {
+        // Find Tests by convention
+        var testLibs = GetFiles(string.Format("./tests/*/bin/{0}/**/*.Tests.dll", Configuration)).ToArray();
+        Tests.AddRange(testLibs);
+    
+        var canTest = Tests != null && Tests.Any();
+        
+        if(!canTest)
+            Information("Test skipped. To run tests add some dlls to Tests variable.");
+        
+        return canTest;
+    })
+    .Does(() => 
+    {
+        CreateDirectory("./output/xunit");
+    
+        XUnit2(Tests, new XUnit2Settings
+        {
+            OutputDirectory = "./output/xunit",
+            XmlReport = true,
+            Parallelism = ParallelismOption.All
+        });
+    }).Finally(() => 
+    {
+        ReportUnit("./output/xunit");
+    });
     
 // Execution
 RunTarget(Target);
