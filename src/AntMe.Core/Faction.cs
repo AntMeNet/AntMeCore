@@ -108,6 +108,10 @@ namespace AntMe
             // Creates the Simulation Context for this Faction
             Context = new SimulationContext(Context.Resolver, Context.Settings, random);
 
+            // Init all Properties
+            foreach (var property in Properties)
+                property.Init();
+
             // Factory für Ameisen erzeugen
             Factory = new FactoryGroup()
             {

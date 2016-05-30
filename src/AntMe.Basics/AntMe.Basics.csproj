@@ -46,10 +46,16 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FactionProperties\PointsProperty.cs" />
+    <Compile Include="FactionProperties\PointsState.cs" />
+    <Compile Include="Factions\Ants\AntDeathCounterProperty.cs" />
+    <Compile Include="Factions\Ants\AnthillDeathCounterProperty.cs" />
     <Compile Include="Factions\Ants\Interop\ByCasteStatisticsInterop.cs" />
     <Compile Include="Factions\ByTypeStatisticsInterop.cs" />
+    <Compile Include="Factions\DeathCountProperty.cs" />
     <Compile Include="Factions\StatisticsInterop.cs" />
     <Compile Include="Factions\TotalStatisticsInterop.cs" />
+    <Compile Include="IPointsCollector.cs" />
     <Compile Include="ItemProperties\AppleCollectorProperty.cs" />
     <Compile Include="ItemProperties\AppleCollectorState.cs" />
     <Compile Include="ItemProperties\AttackableInfo.cs" />

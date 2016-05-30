@@ -5,18 +5,40 @@ namespace AntMe.Basics.ItemProperties
     /// <summary>
     /// Property for all attacking Items.
     /// </summary>
-    public sealed class AttackerProperty : ItemProperty
+    public sealed class AttackerProperty : ItemProperty, IPointsCollector
     {
         private float attackRange;
         private int attackRecoveryTime;
         private int attackStrength;
         private AttackableProperty attackTarget;
+        private int damageCounter;
+        private int killCounter;
+        private bool enablePoints;
+        private int points;
 
         /// <summary>
         /// Default Constructor.
         /// </summary>
         /// <param name="item">Item</param>
         public AttackerProperty(Item item) : base(item) { }
+
+        /// <summary>
+        /// Returns the Points Category.
+        /// </summary>
+        public string PointsCategory { get { return "Attacker"; } }
+
+        /// <summary>
+        /// Defines of the Counter will be removed after Item Death.
+        /// </summary>
+        public bool PermanentPoints
+        {
+            get
+            {
+                // TODO: Maybe Settings? 
+                // ("Keep Damage Points only for living items?")
+                return true;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the Attack Range.
@@ -74,6 +96,62 @@ namespace AntMe.Basics.ItemProperties
             }
         }
 
+        /// <summary>
+        /// Counts the Damage made by this Item.
+        /// </summary>
+        public int AttackDamageCounter
+        {
+            get { return damageCounter; }
+            set
+            {
+                damageCounter = value;
+                if (OnDamageCounterChanged != null)
+                    OnDamageCounterChanged(Item, value);
+            }
+        }
+
+        /// <summary>
+        /// Counts the Number of Items killed by this Item. (Last Hit counts)
+        /// </summary>
+        public int AttackKillCounter
+        {
+            get { return killCounter; }
+            set
+            {
+                killCounter = value;
+                if (OnKillCounterChanged != null)
+                    OnKillCounterChanged(Item, value);
+            }
+        }
+
+        /// <summary>
+        /// Returns the current Amount of Points.
+        /// </summary>
+        public int Points
+        {
+            get { return points; }
+            set
+            {
+                points = value;
+                if (OnPointsChanged != null)
+                    OnPointsChanged(this, value);
+            }
+        }
+
+        /// <summary>
+        /// Defines if the Points should count.
+        /// </summary>
+        public bool EnablePoints
+        {
+            get { return enablePoints; }
+            set
+            {
+                enablePoints = value;
+                if (OnEnablePointsChanged != null)
+                    OnEnablePointsChanged(this, value);
+            }
+        }
+
         #region Internal Methods
 
         /// <summary>
@@ -82,6 +160,8 @@ namespace AntMe.Basics.ItemProperties
         /// </summary>
         internal int RecoveryCounter { get; set; }
 
+
+
         /// <summary>
         /// Internal call to perform a hit.
         /// </summary>
@@ -89,6 +169,15 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="hitpoints">Hitpoints</param>
         internal void AttackHit(AttackableProperty item, int hitpoints)
         {
+            // Count Points
+            AttackDamageCounter += hitpoints;
+            if (item.AttackableHealth <= 0 && hitpoints > 0)
+                AttackKillCounter++;
+
+            // Calculate Points
+            // TODO: Create Settings
+            Points = AttackDamageCounter + (100 * AttackKillCounter);
+
             if (OnAttackHit != null)
                 OnAttackHit(item.Item, hitpoints);
         }
@@ -121,6 +210,26 @@ namespace AntMe.Basics.ItemProperties
         /// Signal for a succeeded hit.
         /// </summary>
         public event ValueChanged<int> OnAttackHit;
+
+        /// <summary>
+        /// Signal for a changed Damage Counter.
+        /// </summary>
+        public event ValueChanged<int> OnDamageCounterChanged;
+
+        /// <summary>
+        /// Signal for a changed Kill Counter.
+        /// </summary>
+        public event ValueChanged<int> OnKillCounterChanged;
+
+        /// <summary>
+        /// Signal for changed Enable Flag.
+        /// </summary>
+        public event ValueUpdate<IPointsCollector, bool> OnEnablePointsChanged;
+
+        /// <summary>
+        /// Signal for a changed Point Counter.
+        /// </summary>
+        public event ValueUpdate<IPointsCollector, int> OnPointsChanged;
 
         #endregion
 
@@ -174,6 +283,6 @@ namespace AntMe.Basics.ItemProperties
             }
         }
 
-        
+
     }
 }
