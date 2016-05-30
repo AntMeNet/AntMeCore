@@ -6,7 +6,7 @@ using AntMe.Basics.Factions.Ants.Interop;
 using AntMe.Basics.Factions.Bugs;
 using AntMe.Basics.ItemProperties;
 using AntMe.Basics.Items;
-
+using AntMe.Basics.LevelProperties;
 using System;
 
 namespace AntMe.Basics
@@ -140,6 +140,12 @@ namespace AntMe.Basics
             RegisterAnt(typeMapper, settings);
             RegisterBug(typeMapper, settings);
             RegisterClassicBug(typeMapper, settings);
+
+            // ##############################
+            // Level Properties registrieren
+            // ##############################
+
+            typeMapper.RegisterLevelProperty<TriggerLevelProperty>(this, "Level Trigger");
         }
 
         /// <summary>

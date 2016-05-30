@@ -1,60 +1,54 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Basis-Klasse für alle Level Properties.
+    /// Base Class for all Level Properties.
     /// </summary>
     public abstract class LevelProperty : Property
     {
         /// <summary>
-        /// Referenz auf das zugehörige Level.
+        /// Reference to the Level.
         /// </summary>
         public Level Level { get; private set; }
 
         /// <summary>
-        /// Standard-Konstruktor.
+        /// Default Constructor for Type Mapper.
         /// </summary>
-        /// <param name="level">Referenz auf das Level.</param>
+        /// <param name="level">Level</param>
         public LevelProperty(Level level)
         {
             Level = level;
         }
 
         /// <summary>
-        ///     Wird vom System aufgerufen, bevor die Settings an die Engine und an
-        ///     die Fraktionen weitergegeben werden. Map, Engine und Factions
-        ///     existieren, sind aber uninitialisiert.
-        ///     - Level Settings anpassen
-        ///     - Faction Settings anpassen
-        ///     - Engine Extensions registrieren
+        /// Gets called before Level Initialization. Allows to set up final Stuff like
+        /// - modify Level Settings
+        /// - modify Faction/Slot Settings
+        /// - modify Engine Extensions
         /// </summary>
         public virtual void DoSettings() { }
 
         /// <summary>
-        ///     Wird vom System aufgerufen, um das Level zu initialisieren. Das
-        ///     hier kann verwendet werden, um Listen, Trigger und Caches zu
-        ///     initialisieren.
-        ///     - Trigger registrieren
-        ///     - Start Einheiten erzeugen
+        /// Gets called during Level Initialization. Allows to set up Level Design.
+        /// - adding Trigger
+        /// - Generate Initial Items
         /// </summary>
         public virtual void OnInit() { }
 
         /// <summary>
-        ///     Wird vom System vor dem Engine-Update in jeder Simulationsrunde aufgerufen. An dieser
-        ///     Stelle kann die Level Logik reagieren.
+        /// Gets called every Round to regulate the Situation.
         /// </summary>
         public virtual void OnUpdate() { }
 
         /// <summary>
-        /// Wird aufgerufen wenn ein neues Item in das Level eingefügt wird.
+        /// Gets called when new Items came to the Level.
         /// </summary>
-        /// <param name="item">Referenz auf das neue item.</param>
+        /// <param name="item">New Item</param>
         public virtual void OnInsertItem(Item item) { }
 
         /// <summary>
-        ///     Wird vom System aufgerufen, wenn Elemente aus der Simulation
-        ///     entfernt wurden.
+        /// Gets called before Items will be deleted.
         /// </summary>
-        /// <param name="item">Entferntes Element</param>
+        /// <param name="item">Removed Item</param>
         public virtual void OnRemoveItem(Item item) { }
     }
 }
