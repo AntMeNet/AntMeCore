@@ -1,4 +1,5 @@
 ﻿using AntMe.Basics.EngineExtensions;
+using AntMe.Basics.FactionProperties;
 using AntMe.Basics.Factions;
 using AntMe.Basics.Factions.Ants;
 using AntMe.Basics.Factions.Ants.Interop;
@@ -74,6 +75,11 @@ namespace AntMe.Basics
             // Factions registrieren
             // ##########################
 
+            // Faction Properties
+            typeMapper.RegisterFactionPropertyS<PointsProperty, PointsState>(this, "Faction Points Property");
+            typeMapper.RegisterFactionProperty<AntDeathCounterProperty>(this, "Death Ant Counter");
+            typeMapper.RegisterFactionProperty<AnthillDeathCounterProperty>(this, "Death Anthill Counter");
+
             // Ant Faction
             settings.Set<AntFaction>("InitialAnthillCount", 1, "Number of initial Anthills");
             settings.Set<AntFaction>("InitialAntCount", 0, "Number of initial Ants");
@@ -117,6 +123,9 @@ namespace AntMe.Basics
             });
 
             // Faction Extensions
+            typeMapper.AttachFactionProperty<Faction, PointsProperty>(this, "Faction Points");
+            typeMapper.AttachFactionProperty<AntFaction, AntDeathCounterProperty>(this, "Counter for dead Ants");
+            typeMapper.AttachFactionProperty<AntFaction, AnthillDeathCounterProperty>(this, "Counter for destroyed Anthills");
 
             // Faction Attatchments
 

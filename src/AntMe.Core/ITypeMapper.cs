@@ -217,7 +217,7 @@ namespace AntMe
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties.</param>
         /// <param name="createStateDelegate">Optionaler Delegat zur Erstellung des State Properties.</param>
-        void RegisterFactionProperty<T, S>(IExtensionPack extensionPack, string name,
+        void RegisterFactionPropertyS<T, S>(IExtensionPack extensionPack, string name,
             Func<Faction, FactionProperty, S> createStateDelegate = null)
             where T : FactionProperty
             where S : FactionStateProperty;
@@ -230,7 +230,7 @@ namespace AntMe
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties.</param>
         /// <param name="createInfoDelegate">Optionaler Delegat zur Erstellung des Info Properties.</param>
-        void RegisterFactionProperty<T, I>(IExtensionPack extensionPack, string name,
+        void RegisterFactionPropertyI<T, I>(IExtensionPack extensionPack, string name,
             Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
             where T : FactionProperty
             where I : FactionInfoProperty;
@@ -245,7 +245,7 @@ namespace AntMe
         /// <param name="name">Name des Properties.</param>
         /// <param name="createStateDelegate">Optionaler Delegat zur Erstellung des State Properties.</param>
         /// <param name="createInfoDelegate">Optionaler Delegat zur Erstellung des Info Properties.</param>
-        void RegisterFactionProperty<T, S, I>(IExtensionPack extensionPack, string name,
+        void RegisterFactionPropertySI<T, S, I>(IExtensionPack extensionPack, string name,
             Func<Faction, FactionProperty, S> createStateDelegate = null,
             Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
             where T : FactionProperty
@@ -261,8 +261,8 @@ namespace AntMe
 
         #region Faction Attachment Properties
 
-        void AttachFactionProperty<I, P>(IExtensionPack extensionPack, string name, Func<Faction, P> createPropertyDelegate = null)
-            where I : Faction
+        void AttachFactionProperty<F, P>(IExtensionPack extensionPack, string name, Func<Faction, P> createPropertyDelegate = null)
+            where F : Faction
             where P : FactionProperty;
 
         IEnumerable<IAttachmentTypeMapperEntry> FactionAttachments { get; }

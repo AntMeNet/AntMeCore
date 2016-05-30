@@ -9,6 +9,13 @@
         /// Default Constructor.
         /// </summary>
         /// <param name="item">Item</param>
-        public AppleCollectableProperty(Item item) : base(item) { }
+        public AppleCollectableProperty(Item item) : base(item, "Apple")
+        {
+            // Bind Points
+            // TODO: Settings
+            Points = Amount;
+            OnAmountChanged += (i, v) => { Points = v; };
+
+        }
     }
 }

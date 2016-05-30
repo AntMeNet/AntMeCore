@@ -789,21 +789,21 @@ namespace AntMe.Runtime
             RegisterFactionProperty<T, FactionStateProperty, FactionInfoProperty>(extensionPack, name, false, false, null, null);
         }
 
-        public void RegisterFactionProperty<T, S>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null)
+        public void RegisterFactionPropertyS<T, S>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null)
             where T : FactionProperty
             where S : FactionStateProperty
         {
             RegisterFactionProperty<T, S, FactionInfoProperty>(extensionPack, name, true, false, createStateDelegate, null);
         }
 
-        public void RegisterFactionProperty<T, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+        public void RegisterFactionPropertyI<T, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
             where T : FactionProperty
             where I : FactionInfoProperty
         {
             RegisterFactionProperty<T, FactionStateProperty, I>(extensionPack, name, false, true, null, createInfoDelegate);
         }
 
-        public void RegisterFactionProperty<T, S, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+        public void RegisterFactionPropertySI<T, S, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
             where T : FactionProperty
             where S : FactionStateProperty
             where I : FactionInfoProperty
@@ -842,7 +842,7 @@ namespace AntMe.Runtime
             }
 
             // Kollisionen prüfen
-            if (itemProperties.Any(p => p.Type == type))
+            if (factionProperties.Any(p => p.Type == type))
             {
                 // tracer.Trace(TraceEventType.Critical, 21, "Property is already registered. '{0}' ({1})", name, type.FullName);
                 throw new NotSupportedException("Property is already registered");
@@ -938,8 +938,8 @@ namespace AntMe.Runtime
 
         public IEnumerable<IAttachmentTypeMapperEntry> FactionAttachments { get { return factionAttachments; } }
 
-        public void AttachFactionProperty<I, P>(IExtensionPack extensionPack, string name, Func<Faction, P> createPropertyDelegate = null)
-            where I : Faction
+        public void AttachFactionProperty<F, P>(IExtensionPack extensionPack, string name, Func<Faction, P> createPropertyDelegate = null)
+            where F : Faction
             where P : FactionProperty
         {
             // Extension prüfen
@@ -956,13 +956,13 @@ namespace AntMe.Runtime
                 throw new ArgumentNullException("name");
             }
 
-            if (!itemProperties.Any(c => c.Type == typeof(P)))
+            if (!factionProperties.Any(c => c.Type == typeof(P)))
             {
                 // TODO: Tracer
                 throw new ArgumentException("Property is not registered");
             }
 
-            if (itemAttachments.Any(c => c.Type == typeof(I) && c.AttachmentType == typeof(P)))
+            if (factionAttachments.Any(c => c.Type == typeof(F) && c.AttachmentType == typeof(P)))
             {
                 // TODO: Tracer
                 throw new NotSupportedException("Item Property Combination is already reagistered");
@@ -982,7 +982,7 @@ namespace AntMe.Runtime
             {
                 ExtensionPack = extensionPack,
                 Name = name,
-                Type = typeof(I),
+                Type = typeof(F),
                 AttachmentType = typeof(P),
                 CreateDelegate = createPropertyDelegate
             });

@@ -1,27 +1,24 @@
-﻿using System.ComponentModel;
-
-namespace AntMe
+﻿namespace AntMe
 {
     /// <summary>
-    /// Basisklasse für jegliche Art von Item Properties.
+    /// Base Class for all Item Properties.
     /// </summary>
     public abstract class ItemProperty : Property
     {
         private readonly Item item;
 
         /// <summary>
-        /// Konstruktor des Item Properties.
+        /// Default Constructor.
         /// </summary>
-        /// <param name="item">Referenz auf das zugehörige Item.</param>
+        /// <param name="item">Reference to the related Item.</param>
         public ItemProperty(Item item)
         {
             this.item = item;
         }
 
         /// <summary>
-        /// Liefert die Referenz auf das betroffene Item zurück.
+        /// Reference to the related Item.
         /// </summary>
-        [Browsable(false)]
         public Item Item { get { return item; } }
     }
 }
