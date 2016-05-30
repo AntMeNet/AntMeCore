@@ -25,7 +25,7 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// Returns the Points Category.
         /// </summary>
-        public string PointsCategory { get { return "AttackerDamage"; } }
+        public string PointsCategory { get { return "Attacker"; } }
 
         /// <summary>
         /// Defines of the Counter will be removed after Item Death.

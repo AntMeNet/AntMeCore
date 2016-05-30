@@ -77,6 +77,8 @@ namespace AntMe.Basics
 
             // Faction Properties
             typeMapper.RegisterFactionPropertyS<PointsProperty, PointsState>(this, "Faction Points Property");
+            typeMapper.RegisterFactionProperty<AntDeathCounterProperty>(this, "Death Ant Counter");
+            typeMapper.RegisterFactionProperty<AnthillDeathCounterProperty>(this, "Death Anthill Counter");
 
             // Ant Faction
             settings.Set<AntFaction>("InitialAnthillCount", 1, "Number of initial Anthills");
@@ -122,6 +124,8 @@ namespace AntMe.Basics
 
             // Faction Extensions
             typeMapper.AttachFactionProperty<Faction, PointsProperty>(this, "Faction Points");
+            typeMapper.AttachFactionProperty<AntFaction, AntDeathCounterProperty>(this, "Counter for dead Ants");
+            typeMapper.AttachFactionProperty<AntFaction, AnthillDeathCounterProperty>(this, "Counter for destroyed Anthills");
 
             // Faction Attatchments
 
