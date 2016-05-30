@@ -1,4 +1,4 @@
-﻿using AntMe.Basics.EngineExtensions;
+﻿using AntMe.Basics.EngineProperties;
 using AntMe.Basics.FactionProperties;
 using AntMe.Basics.Factions;
 using AntMe.Basics.Factions.Ants;
@@ -46,12 +46,12 @@ namespace AntMe.Basics
             // ##########################
             // Standard Engine Extensions
             // ##########################
-            typeMapper.RegisterEngineProperty<InteractionExtension>(this, "Interaction Extension (Core)", 70);
-            typeMapper.RegisterEngineProperty<PhysicsExtension>(this, "Physics Extension (Core)", 100);
+            typeMapper.RegisterEngineProperty<InteractionProperty>(this, "Interaction Extension (Core)", 70);
+            typeMapper.RegisterEngineProperty<PhysicsProperty>(this, "Physics Extension (Core)", 100);
 
-            settings.Set<RecognitionExtension>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
-            settings.Set<RecognitionExtension>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
-            typeMapper.RegisterEngineProperty<RecognitionExtension>(this, "Recognition Extension (Core)", 150);
+            settings.Set<RecognitionProperty>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
+            settings.Set<RecognitionProperty>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
+            typeMapper.RegisterEngineProperty<RecognitionProperty>(this, "Recognition Extension (Core)", 150);
 
             // ##########################
             // Standard Item Properties

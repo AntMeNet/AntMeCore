@@ -4,18 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AntMe.Basics.EngineExtensions
+namespace AntMe.Basics.EngineProperties
 {
     /// <summary>
-    ///     Wrapper um bewegliche Elemente
+    /// Groups Items from a Carrier/Portable-Connection.
     /// </summary>
-    internal sealed class PhysicsUnit : IDisposable
+    internal sealed class PhysicsGroup : IDisposable
     {
         private readonly CarrierProperty carrier;
-        private readonly HashSet<PhysicsUnit> clusterUnits;
+        private readonly HashSet<PhysicsGroup> clusterUnits;
         private readonly CollidableProperty collidable;
         private readonly Item item;
-        private readonly Dictionary<int, PhysicsUnit> items;
+        private readonly Dictionary<int, PhysicsGroup> items;
         private readonly Map map;
         private readonly Vector2 mapSize;
 
@@ -25,13 +25,13 @@ namespace AntMe.Basics.EngineExtensions
         // Cache für die lokalen Infos (ohne Berücksichtigung anderer)
         private float clusterMass;
         private Vector3 clusterVelocity = Vector3.Zero;
-        private PhysicsUnit load;
+        private PhysicsGroup load;
         private float ownMass;
         private Vector3 ownVelocity = Vector3.Zero;
 
         #region Connect und Disconnect
 
-        public PhysicsUnit(Item item, Dictionary<int, PhysicsUnit> items)
+        public PhysicsGroup(Item item, Dictionary<int, PhysicsGroup> items)
         {
             this.item = item;
             this.items = items;
@@ -76,7 +76,7 @@ namespace AntMe.Basics.EngineExtensions
                 portable.OnPortableWeightChanged += portable_OnPortableMassChanged;
                 portable.OnNewCarrierItem += portable_OnNewCarrierItem;
                 portable.OnLostCarrierItem += portable_OnLostCarrierItem;
-                clusterUnits = new HashSet<PhysicsUnit>();
+                clusterUnits = new HashSet<PhysicsGroup>();
             }
 
             Recalc();
@@ -286,7 +286,7 @@ namespace AntMe.Basics.EngineExtensions
                 float tempMass = ownMass;
                 float tempStrength = 0f;
                 int itemCount = 1;
-                foreach (PhysicsUnit unit in clusterUnits)
+                foreach (PhysicsGroup unit in clusterUnits)
                 {
                     tempVelocity += unit.clusterVelocity;
                     tempMass += unit.clusterMass;
@@ -350,7 +350,7 @@ namespace AntMe.Basics.EngineExtensions
         ///     Kümmert sich um eine Kollision zweier Elemente.
         /// </summary>
         /// <param name="cluster"></param>
-        public void Collide(PhysicsUnit cluster)
+        public void Collide(PhysicsGroup cluster)
         {
             float max = Radius + cluster.Radius;
             float dist = (Position - cluster.Position).Length();

@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace AntMe
+﻿namespace AntMe
 {
     /// <summary>
-    ///     Basisklasse für Engine Erweiterungen.
+    /// Base Class for all Engine Properties.
     /// </summary>
     public abstract class EngineProperty : Property
     {
         /// <summary>
-        /// Referenz auf die aktuelle Engine.
+        /// Reference to the Engine.
         /// </summary>
         protected readonly Engine Engine;
 
@@ -16,34 +14,37 @@ namespace AntMe
         private readonly Tracer tracer = new Tracer("AntMe.EngineExtension");
 
         /// <summary>
-        /// Standard Konstruktor für Extensions.
+        /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="engine"></param>
+        /// <param name="engine">Reference to the Engine</param>
         public EngineProperty(Engine engine)
         {
             Engine = engine;
+
+            Engine.OnInsertItem += Insert;
+            Engine.OnRemoveItem += Remove;
         }
 
         /// <summary>
-        ///     Wird bei der Initialisierung der Engine aufgerufen.
+        /// Gets a call after Engine Initialization.
         /// </summary>
         public abstract void Init();
 
         /// <summary>
-        ///     Wird in jeder Update-Runde von der Engine aufgerufen.
+        /// Gets a call after every Engine Update.
         /// </summary>
         public abstract void Update();
 
         /// <summary>
-        ///     Wird von der Engine aufgerufen, wenn ein neues Item eingefügt wird.
+        /// Gets a call after adding a new Item to the Engine.
         /// </summary>
-        /// <param name="item">Neu eingefügtes Item</param>
-        public abstract void Insert(Item item);
+        /// <param name="item">New Item</param>
+        protected abstract void Insert(Item item);
 
         /// <summary>
-        ///     Wird von der Engine aufgerufen, wenn ein Item aus der Engine entfernt wird.
+        /// Gets a call before removing an item from Engine.
         /// </summary>
-        /// <param name="item">Das entfernte Item</param>
-        public abstract void Remove(Item item);
+        /// <param name="item">Removed Item</param>
+        protected abstract void Remove(Item item);
     }
 }

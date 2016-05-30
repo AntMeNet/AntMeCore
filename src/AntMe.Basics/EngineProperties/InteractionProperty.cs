@@ -1,34 +1,48 @@
 ﻿using AntMe.Basics.ItemProperties;
 using System.Collections.Generic;
 
-namespace AntMe.Basics.EngineExtensions
+namespace AntMe.Basics.EngineProperties
 {
     /// <summary>
-    ///     Extension zur Behandlung aller aktiven Interaktionen wie das Angreifen,
-    ///     Einsammeln.
+    /// Engine Extension to handle all Interactions
     /// </summary>
-    public sealed class InteractionExtension : EngineProperty
+    public sealed class InteractionProperty : EngineProperty
     {
-        private readonly Dictionary<int, AttackableProperty> attackables = new Dictionary<int, AttackableProperty>();
-        private readonly Dictionary<int, AttackerProperty> attackers = new Dictionary<int, AttackerProperty>();
+        private readonly Dictionary<int, AttackableProperty> attackables;
+        private readonly Dictionary<int, AttackerProperty> attackers;
 
-        public InteractionExtension(Engine engine) : base(engine) { }
+        /// <summary>
+        /// Default Constructor for Type Mapper.
+        /// </summary>
+        /// <param name="engine">Reference to the Engine</param>
+        public InteractionProperty(Engine engine) : base(engine)
+        {
+            attackables = new Dictionary<int, AttackableProperty>();
+            attackers = new Dictionary<int, AttackerProperty>();
+        }
 
+        /// <summary>
+        /// Gets a call after Engine Initialization.
+        /// </summary>
         public override void Init()
         {
             // Nothing to init
         }
 
-        public override void Insert(Item item)
+        /// <summary>
+        /// Gets a call after adding a new Item to the Engine.
+        /// </summary>
+        /// <param name="item">New Item</param>
+        protected override void Insert(Item item)
         {
-            // Füge angreifbares Objekt ein
+            // Track attackable Items.
             if (item.ContainsProperty<AttackableProperty>() &&
                 !attackables.ContainsKey(item.Id))
             {
                 var prop = item.GetProperty<AttackableProperty>();
                 attackables.Add(item.Id, prop);
             }
-            // Füge angreifendes Objekt ein
+            // Track attacking Items.
             if (item.ContainsProperty<AttackerProperty>() &&
                 !attackers.ContainsKey(item.Id))
             {
@@ -37,40 +51,45 @@ namespace AntMe.Basics.EngineExtensions
             }
         }
 
-        public override void Remove(Item item)
+        /// <summary>
+        /// Gets a call before removing an item from Engine.
+        /// </summary>
+        /// <param name="item">Removed Item</param>
+        protected override void Remove(Item item)
         {
-            // Entferne angreifbares Objekt
+            // Remove attackable Items.
             if (item.ContainsProperty<AttackableProperty>() &&
                 attackables.ContainsKey(item.Id))
             {
-                // Angriffe auf ein entferntes Element stoppen
+                // Stop all running Fights.
                 AttackableProperty attackable = attackables[item.Id];
                 foreach (AttackerProperty attacker in attackers.Values)
                     if (attacker.AttackTarget == attackable)
                         attacker.StopAttack();
 
-                // entfernen
                 attackables.Remove(item.Id);
             }
 
-            // Entferne angreifendes Objekt
+            // Remove all attacking Items.
             if (item.ContainsProperty<AttackerProperty>() &&
                 attackers.ContainsKey(item.Id))
             {
-                // Angriffe stoppen
+                // Stop all running Fights.
                 AttackerProperty attacker = attackers[item.Id];
                 attacker.StopAttack();
 
-                // entfernen
                 attackers.Remove(item.Id);
             }
         }
 
+        /// <summary>
+        /// Gets a call after every Engine Update.
+        /// </summary>
         public override void Update()
         {
             foreach (AttackerProperty attacker in attackers.Values)
             {
-                // Prüfen, ob überhaupt ein Ziel existiert
+                // Check for existing Targets
                 if (attacker.AttackTarget == null)
                     continue;
 
@@ -79,7 +98,7 @@ namespace AntMe.Basics.EngineExtensions
                 if (Item.GetDistance(attacker.Item, attackable.Item) <=
                     attacker.AttackRange + attackable.AttackableRadius)
                 {
-                    // Zum ersten mal im Angriffsbereich
+                    // Check Distance to the Target
                     if (!attackable.AttackerItems.Contains(attacker))
                     {
                         attackable.AddAttackerItem(attacker);
@@ -87,14 +106,14 @@ namespace AntMe.Basics.EngineExtensions
                     }
                     else
                     {
-                        // Mit jeder weiteren Runde im Angriffsradius lädt der Recovery Counter.
+                        // Update Recovery Timer
                         attacker.RecoveryCounter++;
                     }
 
-                    // Informiere Attackable über einen Angreifer
+                    // Inform Attackable about a new Attacker
                     attackable.NoteAttackerItem(attacker);
 
-                    // Angriff
+                    // Fight
                     if (attacker.RecoveryCounter >= attacker.AttackRecoveryTime)
                     {
                         int hitpoints = attacker.AttackStrength;
@@ -106,7 +125,7 @@ namespace AntMe.Basics.EngineExtensions
                 }
                 else
                 {
-                    // Vorher im Angriffsbereich gewesen?
+                    // Left Attack Range
                     if (attackable.AttackerItems.Contains(attacker))
                     {
                         attackable.RemoveAttackerItem(attacker);
@@ -114,7 +133,7 @@ namespace AntMe.Basics.EngineExtensions
                 }
             }
 
-            // Tote Elemente aussortieren
+            // Remove dead Items
             foreach (AttackableProperty attackable in attackables.Values)
             {
                 if (attackable.AttackableHealth <= 0)
