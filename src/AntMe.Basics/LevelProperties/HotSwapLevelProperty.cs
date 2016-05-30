@@ -14,23 +14,25 @@ namespace AntMe.Basics.LevelProperties
         public HotSwapLevelProperty(Level level) : base(level) { }
 
         /// <summary>
-        /// Tauscht den Factory Type der entsprechenden Faction während der Simulation.
+        /// Swaps the Factory Class during Simulation.
         /// </summary>
-        /// <param name="faction"></param>
-        /// <param name="factoryType"></param>
-        public void SwitchFactoryType(int faction, Type factoryType)
+        /// <param name="slot">Affected Player Slot</param>
+        /// <param name="factoryType">Type of new Factory Class</param>
+        public void SwapFactoryType(byte slot, Type factoryType)
         {
+            // TODO: Implement
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Tauscht beliebige Unit Types durch den angegebenen Type während der Simulation aus.
+        /// Swaps the Unit Classes during Simulation.
         /// </summary>
-        /// <param name="factory"></param>
-        /// <param name="oldUnitType"></param>
-        /// <param name="newUnitType"></param>
-        public void SwitchUnitType(int factory, Type oldUnitType, Type newUnitType)
+        /// <param name="slot">Affected Player Slot</param>
+        /// <param name="oldUnitType">Type of new Factory Class</param>
+        /// <param name="newUnitType">Type of new Unit Class</param>
+        public void SwapUnitType(byte slot, Type oldUnitType, Type newUnitType)
         {
+            // TODO: Implement
             throw new NotImplementedException();
         }
     }

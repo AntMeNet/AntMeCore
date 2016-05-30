@@ -3,26 +3,24 @@
 namespace AntMe
 {
     /// <summary>
-    /// Attribut zum Erweitern von Levels um Slots für bestimmte Factions zu limitieren.
+    /// Attribute to specify allowed Factions for the Level Slots.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-    [Serializable]
-    [Obsolete]
     public sealed class FactionFilterAttribute : Attribute
     {
         /// <summary>
-        /// Hilfstext für die Anzeige im Frontend.
+        /// Short Description / Reason
         /// </summary>
-        public string Comment;
+        public string Comment { get; set; }
 
         /// <summary>
-        /// Type der Faction die für diesen Slot erlaubt ist.
+        /// Allowed Faction type.
         /// </summary>
-        public Type FactionType;
+        public Type FactionType { get; set; }
 
         /// <summary>
-        /// ID des Slots für den der Filter gilt.
+        /// Affected Slot Id.
         /// </summary>
-        public int SlotIndex;
+        public byte SlotIndex { get; set; }
     }
 }

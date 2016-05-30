@@ -146,7 +146,6 @@
     <Compile Include="LevelProperties\AreaTrigger.cs" />
     <Compile Include="LevelProperties\DialogHighlightsLevelProperty.cs" />
     <Compile Include="LevelProperties\DialogHighlightsStateProperty.cs" />
-    <Compile Include="LevelProperties\FactionFilterLevelProperty.cs" />
     <Compile Include="LevelProperties\HotSwapLevelProperty.cs" />
     <Compile Include="LevelProperties\ITrigger.cs" />
     <Compile Include="LevelProperties\MapMarkerHighlightsLevelProperty.cs" />
