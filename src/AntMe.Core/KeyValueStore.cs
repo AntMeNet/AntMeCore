@@ -69,7 +69,7 @@ namespace AntMe
         /// <returns>Full Key</returns>
         private static string FullKey<T>(string key)
         {
-            return string.Format("{0}:{1}", typeof(T).FullName, key);
+            return FullKey(typeof(T).FullName, key);
         }
         /// <summary>
         /// Generates the Full Key out of TypeKey and Key.
@@ -79,6 +79,7 @@ namespace AntMe
         /// <returns>Full Key</returns>
         private static string FullKey(string typeKey, string key)
         {
+           
             return string.Format("{0}:{1}", typeKey, key);
         }
 
