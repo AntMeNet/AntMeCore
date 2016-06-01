@@ -90,12 +90,12 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         /// List of visible Items in Range.
         /// </summary>
-        public ReadOnlyCollection<ItemInfo> VisibleItems { get { return visibleItems.AsReadOnly(); } }
+        public IQueryable<ItemInfo> VisibleItems { get { return visibleItems.AsQueryable(); } }
 
         /// <summary>
         /// List of smellable items in Range.
         /// </summary>
-        public ReadOnlyCollection<ItemInfo> SmellableItems { get { return smellableItems.AsReadOnly(); } }
+        public IQueryable<ItemInfo> SmellableItems { get { return smellableItems.AsQueryable(); } }
 
         /// <summary>
         /// Visible Environment.

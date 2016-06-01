@@ -3,6 +3,7 @@ using AntMe.Basics.Factions.Ants.Interop;
 using AntMe.Basics.ItemProperties;
 using AntMe.Basics.Items;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AntMe.Extension.Community.Players
@@ -55,17 +56,18 @@ namespace AntMe.Extension.Community.Players
 
         private void Interaction_OnHit(int parameter)
         {
+            
         }
 
         private void Recognition_Spots()
         {
-            
             var sugar = recognition.VisibleItems.OfType<SugarInfo>().FirstOrDefault();
-            if (sugar != null)
+            Console.WriteLine("Spotted " + recognition.VisibleItems.Count());
+            if (sugar != null && movement.CurrentDestination == null)
                 movement.GoTo(sugar);
 
             var apple = recognition.VisibleItems.OfType<AppleInfo>().FirstOrDefault();
-            if (apple != null)
+            if (apple != null && movement.CurrentDestination == null)
                 movement.GoTo(apple);
         }
 
@@ -90,7 +92,7 @@ namespace AntMe.Extension.Community.Players
 
         private void Movement_OnHitWall(Compass parameter)
         {
-            
+            Console.WriteLine(string.Format("Ant {0} hits wall in {1} direction", interop.Id, parameter));
         }
 
         private void Movement_OnWaits()

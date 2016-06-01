@@ -584,6 +584,7 @@ namespace AntMe.Basics
             settings.Set<AntItem>("RotationSpeed", 20, "Maximum Rotation Angle per Round");
             settings.Set<AntItem>("DropSugar", false, "Will an Ant leave a small Sugar on Drop");
             settings.Set<AntItem>("MarkerDelay", 10, "Time in Rounds between Marker-Drops");
+            settings.Set<AntItem>("ClassicBorderBehavior", true, "Should an ant be reflected by Walls (like in AntMe! 1)");
             typeMapper.RegisterItem<AntItem, AntState, AntInfo>(this, "Ant");
 
             // Walking

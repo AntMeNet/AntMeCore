@@ -20,16 +20,39 @@ namespace AntMe.Basics.Items
 
         private WalkingProperty walking;
 
+        private CollidableProperty collidable;
+
         private int roundsToTurn = 0;
 
         private int roundsToWalk = 0;
 
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="context">Simulation Context</param>
+        /// <param name="position">Position for the new Bug</param>
+        /// <param name="orientation">Start Orientation</param>
         public ClassicBugItem(SimulationContext context, Vector2 position, Angle orientation)
             : base(context, position, BugRadius, orientation)
         {
             walking = GetProperty<WalkingProperty>();
             if (walking == null)
                 throw new NotSupportedException("Classic Bug does not have a Walking Property");
+
+            collidable = GetProperty<CollidableProperty>();
+            if (collidable == null)
+                throw new NotSupportedException("Classic Bug does not have a Collidable Property");
+
+            walking.OnHitBorder += OnHitBorder;
+            walking.OnHitWall += OnHitBorder;
+        }
+
+        private void OnHitBorder(Item item, Compass direction)
+        {
+            if (direction == Compass.North || direction == Compass.South)
+                Orientation = Orientation.InvertY();
+            else
+                Orientation = Orientation.InvertX();
         }
 
         protected override void OnUpdate()

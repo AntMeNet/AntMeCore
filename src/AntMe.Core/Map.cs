@@ -63,23 +63,19 @@ namespace AntMe
         /// <summary>
         /// Gets or sets the border behavior of this map.
         /// </summary>
-        [DisplayName("Border Behavior")]
-        [Description("Gets or sets the border behavior of this map.")]
         public bool BlockBorder { get; set; }
 
         /// <summary>
         /// Gets or sets the two-dimentional array of Map Tiles.
         /// </summary>
-        [DisplayName("Tiles")]
-        [Description("Gets or sets the two-dimentional array of Map Tiles.")]
         public MapTile[,] Tiles { get; set; }
 
         /// <summary>
         /// List of Start Point for the available Player Slots.
         /// </summary>
-        [DisplayName("Start Points")]
-        [Description("List of Start Point for the available Player Slots.")]
         public Index2[] StartPoints { get; set; }
+
+        private Map() { }
 
         public Map(int width, int height, bool blockBorder, TileSpeed initialSpeed = TileSpeed.Normal, TileHeight initialHeight = TileHeight.Medium)
         {
@@ -123,6 +119,116 @@ namespace AntMe
         }
 
         #region Statische Methoden (Generatoren und Serialisierer)
+
+        /// <summary>
+        ///     Deserialisiert eine Map aus einem gegebenen Stream.
+        ///     TODO: Test!!!
+        /// </summary>
+        /// <param name="stream">Quellstream</param>
+        /// <returns>Deserialisierte Map</returns>
+        public static Map Deserialize(Stream stream)
+        {
+            var reader = new BinaryReader(stream);
+
+            // Intro (Typ und Version)
+            if (reader.ReadString() != "AntMe! Map")
+                throw new Exception("This is not a AntMe! Map");
+            if (reader.ReadByte() != 1)
+                throw new Exception("Wrong Version");
+
+            var map = new Map();
+
+            // Globale Infos (Border, Width, Height)
+            map.BlockBorder = reader.ReadBoolean();
+            int width = reader.ReadInt32();
+            int height = reader.ReadInt32();
+            int playercount = reader.ReadByte();
+
+            if (playercount < MIN_STARTPOINTS)
+                throw new Exception("Too less Player in this Map");
+            if (playercount > MAX_STARTPOINTS)
+                throw new Exception("Too many Player in this Map");
+
+            // Startpunkte einlesen
+            map.StartPoints = new Index2[playercount];
+            for (int i = 0; i < playercount; i++)
+            {
+                map.StartPoints[i] = new Index2(
+                    reader.ReadInt32(),
+                    reader.ReadInt32());
+            }
+
+            if (width < MIN_WIDTH || width > MAX_WIDTH)
+                throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_WIDTH,
+                    MAX_WIDTH));
+            if (height < MIN_HEIGHT || height > MAX_HEIGHT)
+                throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_HEIGHT,
+                    MAX_HEIGHT));
+
+            // Zellen einlesen
+            map.Tiles = new MapTile[width, height];
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                {
+                    map.Tiles[x, y] = new MapTile
+                    {
+                        Shape = (TileShape)reader.ReadByte(),
+                        Speed = (TileSpeed)reader.ReadByte(),
+                        Height = (TileHeight)reader.ReadByte()
+                    };
+                }
+
+            return map;
+        }
+
+        /// <summary>
+        ///     Serialisiert eine Map in einen Stream.
+        ///     TODO: Test!!!
+        /// </summary>
+        /// <param name="stream">Zielstream</param>
+        /// <param name="map">Zu serialisierende Map</param>
+        public static void Serialize(Stream stream, Map map)
+        {
+            // Check Map
+            if (map == null)
+                throw new ArgumentNullException("map");
+            map.CheckMap();
+
+            // Check Stream
+            if (stream == null)
+                throw new ArgumentNullException("stream");
+            if (!stream.CanWrite)
+                throw new ArgumentException("Stream is read only");
+
+
+            var writer = new BinaryWriter(stream);
+
+            // Intro (Typ und Version)
+            writer.Write("AntMe! Map");
+            writer.Write((byte)1);
+
+            // Global Infos (Block, Width, Height)
+            writer.Write(map.BlockBorder);
+            writer.Write(map.Tiles.GetLength(0));
+            writer.Write(map.Tiles.GetLength(1));
+            writer.Write((byte)map.StartPoints.GetLength(0));
+
+            // Startpoints
+            for (int i = 0; i < map.StartPoints.GetLength(0); i++)
+            {
+                writer.Write(map.StartPoints[i].X);
+                writer.Write(map.StartPoints[i].Y);
+            }
+
+            // Zelleninfos
+            for (int y = 0; y < map.Tiles.GetLength(1); y++)
+                for (int x = 0; x < map.Tiles.GetLength(0); x++)
+                {
+                    writer.Write((byte)map.Tiles[x, y].Shape);
+                    writer.Write((byte)map.Tiles[x, y].Speed);
+                    writer.Write((byte)map.Tiles[x, y].Height);
+                }
+        }
 
         /// <summary>
         ///     Ermittelt die Höhe der Position auf Basis der Zellen- und Positionsangaben.

@@ -11,12 +11,34 @@ namespace AntMe.Basics.Factions.Ants.Interop
     /// </summary>
     public sealed class AntMovementInterop : UnitInteropProperty
     {
+        /// <summary>
+        /// Reference to the Walking Property.
+        /// </summary>
         private readonly WalkingProperty walking;
+
+        /// <summary>
+        /// Reference to the Collidable Property.
+        /// </summary>
         private readonly CollidableProperty collidable;
+
+        /// <summary>
+        /// List of Collisions during the last Round.
+        /// </summary>
         private readonly List<ItemInfo> collidedItems = new List<ItemInfo>();
 
+        /// <summary>
+        /// Angle to Rotate until Wait()
+        /// </summary>
         private int angleToGo;
+
+        /// <summary>
+        /// Distance to go until Wait()
+        /// </summary>
         private float distanceToGo;
+
+        /// <summary>
+        /// Current Destination Item.
+        /// </summary>
         private ItemInfo destination;
 
         /// <summary>
@@ -25,7 +47,8 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
         /// <param name="interop">UnitInterop</param>
-        public AntMovementInterop(Faction faction, FactionItem item, UnitInterop interop) : base(faction, item, interop)
+        public AntMovementInterop(Faction faction, FactionItem item, UnitInterop interop) 
+            : base(faction, item, interop)
         {
             // Get Walking Property
             walking = Item.GetProperty<WalkingProperty>();
@@ -38,8 +61,8 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 throw new NotSupportedException("There is no Collidable Property");
 
             // Handle Collisions with Walls and Borders.
-            walking.OnHitBorder += (i, v) => { if (OnHitWall != null) OnHitWall(v); };
-            walking.OnHitWall += (i, v) => { if (OnHitWall != null) OnHitWall(v); };
+            walking.OnHitBorder += InternalHitWall;
+            walking.OnHitWall += InternalHitWall;
 
             // Kollisionen mit anderen Items füllt die Liste der Kollisionsitems 
             // und prüft, ob es sich beim getroffenen Item um das Ziel handelt.
@@ -58,6 +81,19 @@ namespace AntMe.Basics.Factions.Ants.Interop
                         OnTargetReched(i.GetItemInfo(Item));
                 }
             };
+        }
+
+        private void InternalHitWall(Item item, Compass direction)
+        {
+            if (item.Settings.GetBool<AntItem>("ClassicBorderBehavior").Value)
+            {
+                // React on Walls like in the old Game (reflect)
+                if (direction == Compass.North || direction == Compass.South)
+                    item.Orientation = item.Orientation.InvertY();
+                else
+                    item.Orientation = item.Orientation.InvertX();
+            }
+            if (OnHitWall != null) OnHitWall(direction);
         }
 
         protected override void Update(int round)
@@ -88,6 +124,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             }
             else if (distanceToGo > 0)
             {
+                // TODO: Calculate right (based on Position, not MAxSpeed)
                 // Bewegung
                 if (distanceToGo > walking.MaximumSpeed)
                 {
@@ -102,7 +139,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             }
             else if (destination != null)
             {
-                // Erneut Kurs aufs Ziel nehmen
+                // Recalc Direction
                 float distance = destination.Distance;
                 Angle direction = destination.Direction;
                 int angle = Angle.ConvertToDegree(Angle.Diff(Item.Orientation, direction));
@@ -128,43 +165,20 @@ namespace AntMe.Basics.Factions.Ants.Interop
             }
         }
 
-        /// <summary>
-        /// Returns the Distance to go.
-        /// </summary>
-        public float DistanceToGo
-        {
-            get
-            {
-                // In Case of a Destination return Distance
-                if (destination != null)
-                    return destination.Distance;
-
-                // otherwise return the freestyle Distance to go
-                return distanceToGo;
-            }
-        }
+        
 
         /// <summary>
-        /// Returns the Angle to turn.
+        /// Let the Ant walk ahead.
         /// </summary>
-        public int AngleToGo
-        {
-            get { return angleToGo; }
-        }
-
-        /// <summary>
-        /// Returns the current Destination Item.
-        /// </summary>
-        public ItemInfo CurrentDestination
-        {
-            get { return destination; }
-        }
-
         public void Goahead()
         {
             Goahead(float.MaxValue);
         }
 
+        /// <summary>
+        /// Let the Ant walk ahead for a given Distance.
+        /// </summary>
+        /// <param name="distance">Distance to go</param>
         public void Goahead(float distance)
         {
             distanceToGo = distance;
@@ -262,6 +276,38 @@ namespace AntMe.Basics.Factions.Ants.Interop
         #region Properties
 
         /// <summary>
+        /// Returns the Distance to go.
+        /// </summary>
+        public float DistanceToGo
+        {
+            get
+            {
+                // In Case of a Destination return Distance
+                if (destination != null)
+                    return destination.Distance;
+
+                // otherwise return the freestyle Distance to go
+                return distanceToGo;
+            }
+        }
+
+        /// <summary>
+        /// Returns the Angle to turn.
+        /// </summary>
+        public int AngleToGo
+        {
+            get { return angleToGo; }
+        }
+
+        /// <summary>
+        /// Returns the current Destination Item.
+        /// </summary>
+        public ItemInfo CurrentDestination
+        {
+            get { return destination; }
+        }
+
+        /// <summary>
         /// Gibt die maximale Geschwindigkeit der Ameise zurück.
         /// </summary>
         public float MaximumSpeed { get { return walking.MaximumSpeed; } }
@@ -285,8 +331,14 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// </summary>
         public event InteropEvent OnWaits;
 
+        /// <summary>
+        /// Signals a Collision with a wall (includes Map Borders).
+        /// </summary>
         public event InteropEvent<Compass> OnHitWall;
 
+        /// <summary>
+        /// Signals a Collision with another Item.
+        /// </summary>
         public event InteropEvent OnCollision;
 
         public event InteropEvent<ItemInfo> OnTargetReched;

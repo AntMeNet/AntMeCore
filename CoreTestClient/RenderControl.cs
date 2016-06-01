@@ -236,7 +236,7 @@ namespace CoreTestClient
                 roundLabel.Text = string.Empty;
             }
 
-            // UPdate Tree
+            // Update Tree
             UpdateTree();
         }
 
@@ -354,7 +354,10 @@ namespace CoreTestClient
                 foreach (var item in treeState)
                 {
                     if (!state.Items.Contains(item))
-                        itemsNode.Nodes["item" + item.Id].Remove();
+                    {
+                        var node = itemsNode.Nodes["item" + item.Id];
+                        if (node != null) node.Remove();
+                    }
                 }
 
                 // Items einfügen
