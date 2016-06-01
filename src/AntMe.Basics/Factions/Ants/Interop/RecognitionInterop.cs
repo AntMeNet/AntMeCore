@@ -13,8 +13,8 @@ namespace AntMe.Basics.Factions.Ants.Interop
     {
         private readonly SightingProperty sighting;
 
-        private readonly List<ItemInfo> smellableItems = new List<ItemInfo>();
-        private readonly List<ItemInfo> visibleItems = new List<ItemInfo>();
+        private readonly HashSet<ItemInfo> smellableItems = new HashSet<ItemInfo>();
+        private readonly HashSet<ItemInfo> visibleItems = new HashSet<ItemInfo>();
 
         /// <summary>
         /// Default Constructor for the Type Mapper.

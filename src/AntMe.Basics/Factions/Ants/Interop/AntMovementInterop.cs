@@ -2,7 +2,7 @@
 using AntMe.Basics.Items;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AntMe.Basics.Factions.Ants.Interop
 {
@@ -24,7 +24,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         /// List of Collisions during the last Round.
         /// </summary>
-        private readonly List<ItemInfo> collidedItems = new List<ItemInfo>();
+        private readonly HashSet<ItemInfo> collidedItems = new HashSet<ItemInfo>();
 
         /// <summary>
         /// Angle to Rotate until Wait()
@@ -320,7 +320,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         /// Liefert eine Liste der Elemente, mit der die Ameise gerade kollidiert ist.
         /// </summary>
-        public ReadOnlyCollection<ItemInfo> CollidedItems { get { return collidedItems.AsReadOnly(); } }
+        public IQueryable<ItemInfo> CollidedItems { get { return collidedItems.AsQueryable(); } }
 
         #endregion
 

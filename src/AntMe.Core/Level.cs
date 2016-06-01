@@ -194,7 +194,7 @@ namespace AntMe
             //}
 
             // Check for Color Collisions.
-            var colors = new List<PlayerColor>();
+            var colors = new HashSet<PlayerColor>();
             foreach (var slot in slots)
             {
                 if (slot != null)

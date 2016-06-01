@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AntMe.Basics.ItemProperties
 {
@@ -9,7 +10,7 @@ namespace AntMe.Basics.ItemProperties
     /// </summary>
     public sealed class PortableProperty : ItemProperty
     {
-        private readonly List<CarrierProperty> carrierItems = new List<CarrierProperty>();
+        private readonly HashSet<CarrierProperty> carrierItems = new HashSet<CarrierProperty>();
         private float portableRadius;
         private float portableWeight;
 
@@ -25,9 +26,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of all carriing Items.
         /// </summary>
-        public ReadOnlyCollection<CarrierProperty> CarrierItems
+        public IQueryable<CarrierProperty> CarrierItems
         {
-            get { return carrierItems.AsReadOnly(); }
+            get { return carrierItems.AsQueryable(); }
         }
 
         /// <summary>

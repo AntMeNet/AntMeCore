@@ -175,7 +175,7 @@ namespace AntMe.Basics.EngineProperties
             // Run through sighting Items
             foreach (SightingProperty sighting in viewers.Values)
             {
-                var visibleItems = new List<VisibleProperty>();
+                var visibleItems = new HashSet<VisibleProperty>();
 
                 // Run through all visible elements in the vincinity
                 foreach (VisibleProperty visible in visiblesMap.FindAll(sighting.Item.Position, sighting.ViewRange))
@@ -286,7 +286,7 @@ namespace AntMe.Basics.EngineProperties
             // Run through all sniffing Items
             foreach (SnifferProperty sniffer in sniffers.Values)
             {
-                var smellableItems = new List<SmellableProperty>();
+                var smellableItems = new HashSet<SmellableProperty>();
 
                 // Run through potential smallable Items
                 foreach (SmellableProperty smellable in smellablesMap.FindAll(sniffer.Item.Position, 0f))

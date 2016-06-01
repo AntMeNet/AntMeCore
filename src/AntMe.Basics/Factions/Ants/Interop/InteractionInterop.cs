@@ -18,7 +18,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         private readonly SugarCollectorProperty sugar;
         private readonly AppleCollectorProperty apple;
 
-        private readonly List<ItemInfo> attackerItems = new List<ItemInfo>();
+        private readonly HashSet<ItemInfo> attackerItems = new HashSet<ItemInfo>();
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
@@ -245,7 +245,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         /// List of attacking Items.
         /// </summary>
-        public ReadOnlyCollection<ItemInfo> AttackingItems { get { return attackerItems.AsReadOnly(); } }
+        public IQueryable<ItemInfo> AttackingItems { get { return attackerItems.AsQueryable(); } }
 
         /// <summary>
         /// Gets the current Health state.

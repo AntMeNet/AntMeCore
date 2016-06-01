@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AntMe.Basics.ItemProperties
 {
@@ -9,7 +10,7 @@ namespace AntMe.Basics.ItemProperties
     /// </summary>
     public sealed class AttackableProperty : ItemProperty
     {
-        private readonly List<AttackerProperty> attackerItems = new List<AttackerProperty>();
+        private readonly HashSet<AttackerProperty> attackerItems = new HashSet<AttackerProperty>();
         private int attackableHealth;
         private int attackableMaximumHealth;
         private float attackableRadius;
@@ -54,9 +55,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of all attacking Items.
         /// </summary>
-        public ReadOnlyCollection<AttackerProperty> AttackerItems
+        public IQueryable<AttackerProperty> AttackerItems
         {
-            get { return attackerItems.AsReadOnly(); }
+            get { return attackerItems.AsQueryable(); }
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AntMe.Basics.ItemProperties
 {
@@ -14,14 +14,14 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="item">Item</param>
         public SnifferProperty(Item item) : base(item) { }
 
-        private readonly List<SmellableProperty> smellableItems = new List<SmellableProperty>();
+        private readonly HashSet<SmellableProperty> smellableItems = new HashSet<SmellableProperty>();
 
         /// <summary>
         /// List of all sniffed Items.
         /// </summary>
-        public ReadOnlyCollection<SmellableProperty> SmellableItems
+        public IQueryable<SmellableProperty> SmellableItems
         {
-            get { return smellableItems.AsReadOnly(); }
+            get { return smellableItems.AsQueryable(); }
         }
 
         #region Internal Calls

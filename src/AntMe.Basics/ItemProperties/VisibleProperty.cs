@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AntMe.Basics.ItemProperties
 {
@@ -9,7 +10,7 @@ namespace AntMe.Basics.ItemProperties
     /// </summary>
     public sealed class VisibleProperty : ItemProperty
     {
-        private readonly List<SightingProperty> sightingItems = new List<SightingProperty>();
+        private readonly HashSet<SightingProperty> sightingItems = new HashSet<SightingProperty>();
         private float visibilityRadius;
 
         /// <summary>
@@ -38,9 +39,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of Items that are able to see this Item.
         /// </summary>
-        public ReadOnlyCollection<SightingProperty> SightingItems
+        public IQueryable<SightingProperty> SightingItems
         {
-            get { return sightingItems.AsReadOnly(); }
+            get { return sightingItems.AsQueryable(); }
         }
 
         #region Internal Calls
@@ -82,20 +83,17 @@ namespace AntMe.Basics.ItemProperties
         #region Events
 
         /// <summary>
-        ///     Event, das bei Änderung des Sichtbarkeitsradius geworfen werden
-        ///     muss.
+        /// Signal for a changed Visibility Radius.
         /// </summary>
         public event ValueChanged<float> OnVisibilityRadiusChanged;
 
         /// <summary>
-        ///     Event, das über ein sehendes Item informiert, das neu in die
-        ///     Liste gekommen ist.
+        /// Signal for a new Sighting Item.
         /// </summary>
         public event ChangeItem<SightingProperty> OnNewSightingItem;
 
         /// <summary>
-        ///     Event, das über ein sehendes Item informiert, das aus der Liste
-        ///     geflogen ist.
+        /// Signal for a removed Sighting Item.
         /// </summary>
         public event ChangeItem<SightingProperty> OnLostSightingItem;
 
