@@ -10,6 +10,8 @@ namespace CoreTestClient
     {
         private KeyValueStore settings;
 
+        
+
         private Dictionary<string, string[]> keys = new Dictionary<string, string[]>();
 
         public SettingsForm(KeyValueStore settings)
@@ -90,15 +92,15 @@ namespace CoreTestClient
         private void openButton_Click(object sender, System.EventArgs e)
         {
 
-            OpenFileDialog saveDialog = new OpenFileDialog();
+            OpenFileDialog openDialog = new OpenFileDialog();
 
 
-            saveDialog.Title = "Open Settings";
-            saveDialog.Filter = "Settings-File|*.set";
+            openDialog.Title = "Open Settings";
+            openDialog.Filter = "Settings-File|*.set";
 
 
-            if (saveDialog.ShowDialog() == DialogResult.OK && saveDialog.FileName != null)
-                reloadSettings(KeyValueStore.Load(saveDialog.FileName));
+            if (openDialog.ShowDialog() == DialogResult.OK && openDialog.FileName != null)
+                reloadSettings(new KeyValueStore(openDialog.FileName));
         }
 
         private void typeTreeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -111,7 +113,7 @@ namespace CoreTestClient
                 editTextBoxesUpdate();
                 return;
             }
-                
+
 
             valuesList.Items.Clear();
 
@@ -163,14 +165,14 @@ namespace CoreTestClient
             if (valueTextBox.Text == valuesList.SelectedItems[0].SubItems[1].Text && descriptionTextBox.Text == valuesList.SelectedItems[0].SubItems[2].Text)
                 return;
 
-            settings.Set(string.Format("{0}:{1}",typeTreeView.SelectedNode.FullPath, valuesList.SelectedItems[0].Text),valueTextBox.Text,descriptionTextBox.Text);
+            settings.Set(string.Format("{0}:{1}", typeTreeView.SelectedNode.FullPath, valuesList.SelectedItems[0].Text), valueTextBox.Text, descriptionTextBox.Text);
             valuesList.SelectedItems[0].SubItems[1].Text = valueTextBox.Text;
             valuesList.SelectedItems[0].SubItems[2].Text = descriptionTextBox.Text;
         }
 
         private void valueTextBox_Leave(object sender, System.EventArgs e)
         {
-            updateSettings();         
+            updateSettings();
         }
 
         private void descriptionTextBox_Leave(object sender, System.EventArgs e)
@@ -193,8 +195,8 @@ namespace CoreTestClient
         {
             if (e.KeyChar == (char)Keys.Return)
             {
-                updateSettings();     
-                valuesList.Items[valuesList.SelectedItems[0].Index < (valuesList.Items.Count - 1) ? valuesList.SelectedItems[0].Index + 1 : 0 ].Selected = true;
+                updateSettings();
+                valuesList.Items[valuesList.SelectedItems[0].Index < (valuesList.Items.Count - 1) ? valuesList.SelectedItems[0].Index + 1 : 0].Selected = true;
                 valueTextBox.Select();
                 e.Handled = true;
             }
