@@ -3,11 +3,16 @@ using AntMe.Basics.Factions.Ants.Interop;
 using AntMe.Basics.ItemProperties;
 using AntMe.Basics.Items;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AntMe.Extension.Community.Players
 {
+    [Caste("Default")]
+    [Strength(0)]
+    [Speed(-1)]
+    [Attack(0)]
+    [Attention(0)]
+    [Defense(1)]
     public class DefaultAnt : AntUnit
     {
         private AntUnitInterop interop;

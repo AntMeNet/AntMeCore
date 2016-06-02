@@ -28,12 +28,13 @@ namespace AntMe.Basics.Items
         /// Creates a new Instance of an Ant.
         /// </summary>
         /// <param name="context">Simulation Context</param>
+        /// <param name="attributes">List of Attributes</param>
         /// <param name="faction">Related Faction</param>
         /// <param name="position">Startposition</param>
         /// <param name="orientation">Startorientation</param>
         /// <param name="name">Name of the Ant</param>
-        public AntItem(SimulationContext context, AntFaction faction, Vector2 position, Angle orientation, string name)
-            : base(context, faction, position, AntRadius, orientation)
+        public AntItem(SimulationContext context, UnitAttributeCollection attributes, AntFaction faction, Vector2 position, Angle orientation, string name)
+            : base(context, attributes, faction, position, AntRadius, orientation)
         {
             Name = name;
 

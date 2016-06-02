@@ -50,7 +50,13 @@
     <Compile Include="FactionProperties\PointsState.cs" />
     <Compile Include="Factions\Ants\AntDeathCounterProperty.cs" />
     <Compile Include="Factions\Ants\AnthillDeathCounterProperty.cs" />
+    <Compile Include="Factions\Ants\AttackAttribute.cs" />
+    <Compile Include="Factions\Ants\AttentionAttribute.cs" />
+    <Compile Include="Factions\Ants\CasteAttribute.cs" />
+    <Compile Include="Factions\Ants\DefenseAttribute.cs" />
     <Compile Include="Factions\Ants\Interop\ByCasteStatisticsInterop.cs" />
+    <Compile Include="Factions\Ants\SpeedAttribute.cs" />
+    <Compile Include="Factions\Ants\StrengthAttribute.cs" />
     <Compile Include="Factions\ByTypeStatisticsInterop.cs" />
     <Compile Include="Factions\DeathCountProperty.cs" />
     <Compile Include="Factions\StatisticsInterop.cs" />
@@ -111,8 +117,6 @@
     <Compile Include="Factions\Ants\AntUnitInterop.cs" />
     <Compile Include="Items\AntItem.cs" />
     <Compile Include="Items\AntState.cs" />
-    <Compile Include="Factions\Ants\CasteAttribute.cs" />
-    <Compile Include="Factions\Ants\CasteAttributeMappingAttribute.cs" />
     <Compile Include="Factions\Ants\Interop\InteractionInterop.cs" />
     <Compile Include="Factions\Ants\Interop\AntMovementInterop.cs" />
     <Compile Include="Factions\Ants\Interop\RecognitionInterop.cs" />
@@ -122,7 +126,6 @@
     <Compile Include="Items\MarkerState.cs" />
     <Compile Include="Factions\Ants\AntUnit.cs" />
     <Compile Include="Factions\Ants\AntFactory.cs" />
-    <Compile Include="Factions\Ants\PrimordialCasteAttribute.cs" />
     <Compile Include="Factions\Bugs\BugFaction.cs" />
     <Compile Include="Factions\Bugs\BugFactionState.cs" />
     <Compile Include="Factions\Bugs\BugGeneratorFiles.Designer.cs">
