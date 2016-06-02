@@ -88,5 +88,6 @@ namespace CoreTestClient
                 MessageBox.Show(ex.Message);
             }
         }
+
     }
 }
