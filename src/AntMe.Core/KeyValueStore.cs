@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -122,7 +123,7 @@ namespace AntMe
         /// <param name="description">Optional Description for this key</param>
         public void Set<T>(string key, float value, string description = null)
         {
-            Set(FullKey<T>(key), value.ToString(), description);
+            Set(FullKey<T>(key), value.ToString(CultureInfo.InvariantCulture), description);
         }
 
         /// <summary>
@@ -157,17 +158,19 @@ namespace AntMe
         public void Set(string key, string value, string description = null)
         {
             // TODO: Check right syntax (full.type.name:key)
-            ValueDescriptionEntry VDE;
-            if (!Storage.TryGetValue(key, out VDE))
-                VDE = new ValueDescriptionEntry() { Value = value, Description = description };
+            ValueDescriptionEntry entry;
+            if (!Storage.TryGetValue(key, out entry))
+            {
+                entry = new ValueDescriptionEntry() { Value = value, Description = description };
+                Storage[key] = entry;
+            }
             else
             {
-                if (value != null)
-                    VDE.Value = value;
-                if (description != null)
-                    VDE.Description = description;
+                if (!string.IsNullOrWhiteSpace(value))
+                    entry.Value = value;
+                if (!string.IsNullOrWhiteSpace(description))
+                    entry.Description = description;
             }
-            Storage[key] = VDE;
         }
 
         /// <summary>
@@ -178,7 +181,7 @@ namespace AntMe
         /// <param name="description">Optional Description for this key</param>
         public void Set(string key, int value, string description = null)
         {
-            Set(key, value.ToString(), description);
+            Set(key, value.ToString(CultureInfo.InvariantCulture), description);
         }
 
         /// <summary>
@@ -189,7 +192,7 @@ namespace AntMe
         /// <param name="description">Optional Description for this key</param>
         public void Set(string key, float value, string description = null)
         {
-            Set(key, value.ToString(), description);
+            Set(key, value.ToString(CultureInfo.InvariantCulture), description);
         }
 
         /// <summary>
@@ -370,7 +373,7 @@ namespace AntMe
         {
             string value = GetString(key);
             int result;
-            if (int.TryParse(value, out result))
+            if (int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
                 return result;
             return null;
         }
@@ -414,7 +417,7 @@ namespace AntMe
         {
             string value = GetString<T>(key);
             float result;
-            if (float.TryParse(value, out result))
+            if (float.TryParse(value,NumberStyles.Any,CultureInfo.InvariantCulture, out result))
                 return result;
             return null;
         }
@@ -428,7 +431,7 @@ namespace AntMe
         {
             string value = GetString(key);
             float result;
-            if (float.TryParse(value, out result))
+            if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
                 return result;
             return null;
         }
@@ -559,7 +562,7 @@ namespace AntMe
         {
 
             StreamWriter sw = new StreamWriter(stream);
-            
+
             if (Common.Count > 0)
             {
                 sw.WriteLine("[Common]");
@@ -601,16 +604,16 @@ namespace AntMe
                         description = string.Empty;
                     else
                         description += VDE.Description;
-                    sw.WriteLine("{0}={1}{2}", key.ToString().PadRight(keyLength), (VDE.Value != null ? VDE.Value : "").PadRight(valueLength), description);
+                    sw.WriteLine("{0}={1}{2}", key.ToString().PadRight(keyLength), (VDE.Value != null ? VDE.Value.ToString(CultureInfo.InvariantCulture) : "").PadRight(valueLength), description);
                 }
                 sw.WriteLine();
 
-                
+
 
             }
             sw.Flush();
             //sw.Dispose(); //TODO: Dispose was not used, because it closes the baseStream (.Net 4.5 has an option in the constructor to avoid this)
-            
+
         }
 
         /// <summary>
