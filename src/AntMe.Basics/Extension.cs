@@ -588,14 +588,31 @@ namespace AntMe.Basics
             typeMapper.RegisterItem<AntItem, AntState, AntInfo>(this, "Ant");
 
             // Walking
-            settings.Set<AntItem>("MaxSpeed", 1f, "Maximum Speed of an Ant");
+            settings.Set<AntItem>("MaxSpeed[-1]", 0.8f, "Maximum Speed of an Ant (with Speed Attribute -1)");
+            settings.Set<AntItem>("MaxSpeed[0]", 1f, "Maximum Speed of an Ant (with Speed Attribute 0)");
+            settings.Set<AntItem>("MaxSpeed[1]", 1.2f, "Maximum Speed of an Ant (with Speed Attribute 1)");
+            settings.Set<AntItem>("MaxSpeed[2]", 1.4f, "Maximum Speed of an Ant (with Speed Attribute 2)");
             typeMapper.AttachItemProperty<AntItem, WalkingProperty>(this, "Ant Walking", (i) =>
             {
                 WalkingProperty property = new WalkingProperty(i);
 
+                // Try to get Attribute Setting
+                sbyte speedAttribute = 0;
+                FactionItem factionItem = i as FactionItem;
+                if (factionItem != null && factionItem.Attributes != null)
+                    speedAttribute = factionItem.Attributes.GetValue("speed");
+
                 // Set Maximum Speed based on the current Settings
+                float maxSpeed;
+                switch (speedAttribute)
+                {
+                    case -1: maxSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed[-1]").Value; break;
+                    case 1: maxSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed[1]").Value; break;
+                    case 2: maxSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed[2]").Value; break;
+                    default: maxSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed[0]").Value; break;
+                }
                 // TODO: Check for Castes
-                property.MaximumSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed").Value;
+                property.MaximumSpeed = maxSpeed;
 
                 // Bind Item Orientation to Walk-Direction
                 property.Direction = i.Orientation;

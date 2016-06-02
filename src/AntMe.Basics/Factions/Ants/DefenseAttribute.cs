@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Attribute to set the Defense Value of this Ant.
+    /// Has impact to Hitpoints, Mass
     /// </summary>
     public class DefenseAttribute : UnitAttribute
     {

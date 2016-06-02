@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Attribute to set the Attack Value of the Ant.
+    /// Has impact to AttackStrength (as Multiplier), AttackRange
     /// </summary>
     public class AttackAttribute : UnitAttribute
     {

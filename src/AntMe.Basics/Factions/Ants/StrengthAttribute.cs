@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Attribute to set the Strength Value of this Ant.
+    /// Has Impact to CarrierStrength, CollectableCapacity und AttackStrength
     /// </summary>
     public class StrengthAttribute : UnitAttribute
     {

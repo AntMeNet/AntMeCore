@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Attribute to set the Attention Value for this Ant.
+    /// Has impact to ViewRange, ViewAngle
     /// </summary>
     public class AttentionAttribute : UnitAttribute
     {

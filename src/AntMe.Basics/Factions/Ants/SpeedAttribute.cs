@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Attribute to set the Speed Value of the Ant.
+    /// Has Impact to WalkingSpeed, RotationSpeed, RecoveryTime
     /// </summary>
     public class SpeedAttribute : UnitAttribute
     {

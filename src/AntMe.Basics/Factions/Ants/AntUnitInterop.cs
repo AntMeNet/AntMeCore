@@ -69,6 +69,11 @@ namespace AntMe.Basics.Factions.Ants
         /// </summary>
         public string Name { get { return item.Name; } }
 
+        /// <summary>
+        /// Returns the Caste Name for this Item.
+        /// </summary>
+        public string Caste { get { return item.Attributes != null ? item.Attributes.Name : string.Empty; } }
+
         #endregion
 
         #region Events
