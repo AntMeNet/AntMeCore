@@ -26,9 +26,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of all carriing Items.
         /// </summary>
-        public IQueryable<CarrierProperty> CarrierItems
+        public IEnumerable<CarrierProperty> CarrierItems
         {
-            get { return carrierItems.AsQueryable(); }
+            get { return carrierItems.AsEnumerable(); }
         }
 
         /// <summary>

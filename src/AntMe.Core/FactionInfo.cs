@@ -1,18 +1,58 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Basisklasse für alle Faction Infos
+    /// Base Class for Faction Infos.
     /// </summary>
     public abstract class FactionInfo : PropertyList<InfoProperty>
     {
         /// <summary>
-        /// Konstruktor der Faction-Info.
+        /// Reference to the observed Faction.
         /// </summary>
-        /// <param name="faction"></param>
-        /// <param name="observer"></param>
+        protected readonly Faction Faction;
+
+        /// <summary>
+        /// Reference to the observing Item.
+        /// </summary>
+        protected readonly Item Observer;
+
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="faction">Faction Reference</param>
+        /// <param name="observer">Observing Item</param>
         public FactionInfo(Faction faction, Item observer)
         {
-            // TODO: Info Properties laden
+            Faction = faction;
+            Observer = observer;
+
+            IsOwnFaction = false;
+            IsFriendlyFaction = false;
+            IsEnemyFaction = true;
+
+            if (observer is FactionItem)
+            {
+                FactionItem factionObserver = observer as FactionItem;
+                IsOwnFaction = faction.SlotIndex == factionObserver.Faction.SlotIndex;
+                IsFriendlyFaction = faction.TeamIndex == factionObserver.Faction.TeamIndex;
+                IsEnemyFaction = !IsFriendlyFaction;
+            }
+
+            // TODO: Collect Faction Infos (Faction Name?)
         }
+
+        /// <summary>
+        /// Is Faction own Faction?
+        /// </summary>
+        public bool IsOwnFaction { get; private set; }
+
+        /// <summary>
+        /// Is Faction in the same Team?
+        /// </summary>
+        public bool IsFriendlyFaction { get; private set; }
+
+        /// <summary>
+        /// Is Faction an Enemy?
+        /// </summary>
+        public bool IsEnemyFaction { get; private set; }
     }
 }

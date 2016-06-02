@@ -55,9 +55,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of all attacking Items.
         /// </summary>
-        public IQueryable<AttackerProperty> AttackerItems
+        public IEnumerable<AttackerProperty> AttackerItems
         {
-            get { return attackerItems.AsQueryable(); }
+            get { return attackerItems.AsEnumerable(); }
         }
 
         /// <summary>

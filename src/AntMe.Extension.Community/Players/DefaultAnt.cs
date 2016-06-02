@@ -61,18 +61,31 @@ namespace AntMe.Extension.Community.Players
 
         private void Recognition_Spots()
         {
-            var sugar = recognition.VisibleItems.OfType<SugarInfo>().FirstOrDefault();
-            Console.WriteLine("Spotted " + recognition.VisibleItems.Count());
-            if (sugar != null && movement.CurrentDestination == null)
-                movement.GoTo(sugar);
+            if (movement.CurrentDestination == null)
+            {
+                var sugar = recognition.VisibleItems.OfType<SugarInfo>().FirstOrDefault();
+                if (sugar != null)
+                {
+                    interop.MakeMark(0, 300);
+                    movement.GoTo(sugar);
+                }
 
-            var apple = recognition.VisibleItems.OfType<AppleInfo>().FirstOrDefault();
-            if (apple != null && movement.CurrentDestination == null)
-                movement.GoTo(apple);
+                var apple = recognition.VisibleItems.OfType<AppleInfo>().FirstOrDefault();
+                if (apple != null)
+                {
+                    interop.MakeMark(0, 300);
+                    movement.GoTo(apple);
+                }
+            }
         }
 
         private void Recognition_Smells()
         {
+            var mark = recognition.SmellableItems.OfType<MarkerInfo>().FirstOrDefault();
+            if (mark != null && movement.CurrentDestination == null)
+            {
+                movement.GoTo(mark);
+            }
         }
 
         private void Recognition_OnEnvironmentChanged(VisibleEnvironment environment)
@@ -92,7 +105,6 @@ namespace AntMe.Extension.Community.Players
 
         private void Movement_OnHitWall(Compass parameter)
         {
-            Console.WriteLine(string.Format("Ant {0} hits wall in {1} direction", interop.Id, parameter));
         }
 
         private void Movement_OnWaits()

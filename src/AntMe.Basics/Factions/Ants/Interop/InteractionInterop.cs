@@ -245,7 +245,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         /// List of attacking Items.
         /// </summary>
-        public IQueryable<ItemInfo> AttackingItems { get { return attackerItems.AsQueryable(); } }
+        public IEnumerable<ItemInfo> AttackingItems { get { return attackerItems.AsEnumerable(); } }
 
         /// <summary>
         /// Gets the current Health state.

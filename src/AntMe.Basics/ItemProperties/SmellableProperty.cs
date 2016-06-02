@@ -26,9 +26,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of all Items that sniffes the Item.
         /// </summary>
-        public IQueryable<SnifferProperty> SnifferItems
+        public IEnumerable<SnifferProperty> SnifferItems
         {
-            get { return snifferItems.AsQueryable(); }
+            get { return snifferItems.AsEnumerable(); }
         }
 
         /// <summary>

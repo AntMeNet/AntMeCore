@@ -19,9 +19,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of all sniffed Items.
         /// </summary>
-        public IQueryable<SmellableProperty> SmellableItems
+        public IEnumerable<SmellableProperty> SmellableItems
         {
-            get { return smellableItems.AsQueryable(); }
+            get { return smellableItems.AsEnumerable(); }
         }
 
         #region Internal Calls

@@ -77,9 +77,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of all visible Items.
         /// </summary>
-        public IQueryable<VisibleProperty> VisibleItems
+        public IEnumerable<VisibleProperty> VisibleItems
         {
-            get { return visibleItems.AsQueryable(); }
+            get { return visibleItems.AsEnumerable(); }
         }
 
         #region Internal Calls

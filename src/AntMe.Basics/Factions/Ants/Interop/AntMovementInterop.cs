@@ -140,7 +140,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             else if (destination != null)
             {
                 // Recalc Direction
-                float distance = destination.Distance;
+                float distance = destination.Distance + Item.Radius + destination.Radius;
                 Angle direction = destination.Direction;
                 int angle = Angle.ConvertToDegree(Angle.Diff(Item.Orientation, direction));
 
@@ -320,7 +320,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         /// Liefert eine Liste der Elemente, mit der die Ameise gerade kollidiert ist.
         /// </summary>
-        public IQueryable<ItemInfo> CollidedItems { get { return collidedItems.AsQueryable(); } }
+        public IEnumerable<ItemInfo> CollidedItems { get { return collidedItems.AsEnumerable(); } }
 
         #endregion
 

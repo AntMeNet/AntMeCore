@@ -168,9 +168,7 @@ namespace AntMe.Basics.EngineProperties
             // Remake the visibles map
             visiblesMap.Clear();
             foreach (VisibleProperty visible in visibles.Values)
-            {
                 visiblesMap.Add(visible, visible.Item.Position, visible.VisibilityRadius);
-            }
 
             // Run through sighting Items
             foreach (SightingProperty sighting in viewers.Values)
@@ -190,27 +188,27 @@ namespace AntMe.Basics.EngineProperties
                     // TODO: Include Sighting Angle
                     if (Item.GetDistance(sighting.Item, visible.Item) <= max)
                     {
-                        // Spots new Item
-                        if (!sighting.VisibleItems.Contains(visible))
-                        {
-                            sighting.AddVisibleItem(visible);
-                            visible.AddSightingItem(sighting);
-                        }
-
                         // Inform about visible Items.
                         sighting.NoteVisibleItem(visible);
                         visibleItems.Add(visible);
                     }
                 }
 
-                // Run through visible Items to remove if not visible anymore
-                foreach (VisibleProperty visible in sighting.VisibleItems.ToArray())
+                // Add new Items and remove old once
+                var addVisible = visibleItems.Except(sighting.VisibleItems).ToArray();
+                var removeVisible = sighting.VisibleItems.Except(visibleItems).ToArray();
+
+                foreach (var item in addVisible)
                 {
-                    if (!visibleItems.Contains(visible))
-                    {
-                        sighting.RemoveVisibleItem(visible);
-                        visible.RemoveSightingItem(sighting);
-                    }
+                    sighting.AddVisibleItem(item);
+                    item.AddSightingItem(sighting);
+                }
+
+                
+                foreach (var item in removeVisible)
+                {
+                    sighting.RemoveVisibleItem(item);
+                    item.RemoveSightingItem(sighting);
                 }
             }
         }
@@ -279,9 +277,7 @@ namespace AntMe.Basics.EngineProperties
             // Remake the smellables map
             smellablesMap.Clear();
             foreach (SmellableProperty smellable in smellables.Values)
-            {
                 smellablesMap.Add(smellable, smellable.Item.Position, smellable.SmellableRadius);
-            }
 
             // Run through all sniffing Items
             foreach (SnifferProperty sniffer in sniffers.Values)
@@ -298,27 +294,26 @@ namespace AntMe.Basics.EngineProperties
                     // Check for Distance
                     if (Item.GetDistance(sniffer.Item, smellable.Item) <= smellable.SmellableRadius)
                     {
-                        // Add if not sniffable yet
-                        if (!sniffer.SmellableItems.Contains(smellable))
-                        {
-                            smellable.AddSnifferItem(sniffer);
-                            sniffer.AddSmellableItem(smellable);
-                        }
-
                         // Inform about all smellable Items
                         sniffer.NoteSmellableItem(smellable);
                         smellableItems.Add(smellable);
                     }
                 }
 
-                // Run through Smellable Items
-                foreach (SmellableProperty smellable in sniffer.SmellableItems.ToArray())
+                // Add new Items and remove old once
+                var addSmellable = smellableItems.Except(sniffer.SmellableItems).ToArray();
+                var removeSmellable = sniffer.SmellableItems.Except(smellableItems).ToArray();
+
+                foreach (var item in addSmellable)
                 {
-                    if (!smellableItems.Contains(smellable))
-                    {
-                        sniffer.RemoveSmellableItem(smellable);
-                        smellable.RemoveSnifferItem(sniffer);
-                    }
+                    item.AddSnifferItem(sniffer);
+                    sniffer.AddSmellableItem(item);
+                }
+
+                foreach (var item in removeSmellable)
+                {
+                    sniffer.RemoveSmellableItem(item);
+                    item.RemoveSnifferItem(sniffer);
                 }
             }
         }

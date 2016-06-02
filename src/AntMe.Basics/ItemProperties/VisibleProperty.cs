@@ -39,9 +39,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of Items that are able to see this Item.
         /// </summary>
-        public IQueryable<SightingProperty> SightingItems
+        public IEnumerable<SightingProperty> SightingItems
         {
-            get { return sightingItems.AsQueryable(); }
+            get { return sightingItems.AsEnumerable(); }
         }
 
         #region Internal Calls
