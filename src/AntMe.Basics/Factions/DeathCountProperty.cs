@@ -11,8 +11,8 @@ namespace AntMe.Basics.Factions
     {
         private bool enabled;
         private int points;
-        private List<T> observedItems;
-        private List<AttackableProperty> observedAttackables;
+        private HashSet<T> observedItems;
+        private HashSet<AttackableProperty> observedAttackables;
         private int removedItemsCount;
         private int killedItemsCount;
         private int damageCount;
@@ -23,8 +23,8 @@ namespace AntMe.Basics.Factions
         /// <param name="faction">Reference to the related Faction</param>
         public DeathCountProperty(Faction faction) : base(faction)
         {
-            observedAttackables = new List<AttackableProperty>();
-            observedItems = new List<T>();
+            observedAttackables = new HashSet<AttackableProperty>();
+            observedItems = new HashSet<T>();
         }
 
         /// <summary>

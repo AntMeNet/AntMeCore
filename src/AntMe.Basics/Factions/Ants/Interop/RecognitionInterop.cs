@@ -13,8 +13,8 @@ namespace AntMe.Basics.Factions.Ants.Interop
     {
         private readonly SightingProperty sighting;
 
-        private readonly List<ItemInfo> smellableItems = new List<ItemInfo>();
-        private readonly List<ItemInfo> visibleItems = new List<ItemInfo>();
+        private readonly HashSet<ItemInfo> smellableItems = new HashSet<ItemInfo>();
+        private readonly HashSet<ItemInfo> visibleItems = new HashSet<ItemInfo>();
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
@@ -90,12 +90,12 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         /// List of visible Items in Range.
         /// </summary>
-        public ReadOnlyCollection<ItemInfo> VisibleItems { get { return visibleItems.AsReadOnly(); } }
+        public IEnumerable<ItemInfo> VisibleItems { get { return visibleItems.AsEnumerable(); } }
 
         /// <summary>
         /// List of smellable items in Range.
         /// </summary>
-        public ReadOnlyCollection<ItemInfo> SmellableItems { get { return smellableItems.AsReadOnly(); } }
+        public IEnumerable<ItemInfo> SmellableItems { get { return smellableItems.AsEnumerable(); } }
 
         /// <summary>
         /// Visible Environment.

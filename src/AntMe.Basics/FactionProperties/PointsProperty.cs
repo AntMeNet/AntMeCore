@@ -22,7 +22,7 @@ namespace AntMe.Basics.FactionProperties
         /// List of all Point-Relevant Elements.
         /// (including Factions, FactionProperties, Items and ItemProperties)
         /// </summary>
-        private List<IPointsCollector> collectors;
+        private HashSet<IPointsCollector> collectors;
 
         /// <summary>
         /// Default Constructor.
@@ -30,7 +30,7 @@ namespace AntMe.Basics.FactionProperties
         /// <param name="faction">Reference to the related Faction</param>
         public PointsProperty(Faction faction) : base(faction)
         {
-            collectors = new List<IPointsCollector>();
+            collectors = new HashSet<IPointsCollector>();
             pointsPerCategory = new Dictionary<string, int>();
             PointsPerCategory = new ReadOnlyDictionary<string, int>(pointsPerCategory);
         }

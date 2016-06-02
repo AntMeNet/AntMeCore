@@ -1,26 +1,34 @@
 ﻿namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
-    ///     Allgemeines Interface für beliebige Level-Trigger.
+    /// Base Interface for all kind of Level Triggers.
     /// </summary>
     public interface ITrigger
     {
         /// <summary>
-        ///     Erlaubt das kurzzeitige aktivieren oder deaktivieren des
-        ///     Triggers.
+        /// Gets or sets if the Trigger is active and should be triggered.
         /// </summary>
         bool Enabled { get; set; }
 
         /// <summary>
-        ///     Update Methode wird in jeder Runde aufgerufen und sollte true
-        ///     zurück liefern, falls etwas getriggert wurde.
+        /// Gets called in every Round to check Trigger Condition.
         /// </summary>
-        /// <param name="engine">Referenz auf das aktuelle Level</param>
-        /// <returns>true, falls was getriggert wurde</returns>
-        bool Update(Engine engine);
+        /// <param name="level">Reference to the Level</param>
+        /// <returns>Triggered?</returns>
+        bool Update(Level level);
     }
 
+    /// <summary>
+    /// Default Delegate for Use in Triggers.
+    /// </summary>
+    /// <param name="trigger">Reference to the Trigger</param>
     public delegate void TriggerEvent(ITrigger trigger);
 
+    /// <summary>
+    /// Default Delegate for Use in Triggers.
+    /// </summary>
+    /// <typeparam name="T">Parameter Type</typeparam>
+    /// <param name="trigger">Reference to the Trigger</param>
+    /// <param name="param">Trigger Value</param>
     public delegate void TriggerEvent<T>(ITrigger trigger, T param);
 }

@@ -1,47 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AntMe
+﻿namespace AntMe
 {
     /// <summary>
-    /// Basis Item Info für alle Faction Items.
+    /// Base Info Class for all Faction Items.
     /// </summary>
     public abstract class FactionItemInfo : ItemInfo
     {
+        /// <summary>
+        /// Reference to the related Faction Item.
+        /// </summary>
         private readonly FactionItem factionItem;
-        private readonly int observerFaction;
 
         /// <summary>
-        /// Konstruktur des Item Info Objektes.
+        /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="item">Referenz auf das betroffene Item.</param>
-        /// <param name="observer">Referenz auf das betrachtende Item.</param>
+        /// <param name="item">Reference to the Item</param>
+        /// <param name="observer">Reference to the Observer item</param>
         public FactionItemInfo(FactionItem item, Item observer)
             : base(item, observer)
         {
             factionItem = item;
 
-            observerFaction = -1;
+            IsFriendly = false;
+            IsAllied = false;
+            IsEnemy = true;
             if (observer is FactionItem)
-                observerFaction = (observer as FactionItem).Faction.SlotIndex;
+            {
+                FactionItem factionObserver = observer as FactionItem;
+                IsFriendly = (factionItem.Faction.SlotIndex == factionObserver.Faction.SlotIndex);
+                IsAllied = (factionItem.Faction.TeamIndex == factionObserver.Faction.TeamIndex);
+                IsEnemy = !IsAllied;
+            }
         }
 
         /// <summary>
-        /// Gibt an, ob das Objekt zum Spieler gehört.
+        /// Gets detailed Faction Information.
         /// </summary>
-        public bool IsFriendly
-        {
-            get { return (factionItem.Faction.SlotIndex == observerFaction); }
-        }
+        public FactionInfo Faction { get { return factionItem.Faction.GetFactionInfo(Observer); } }
 
         /// <summary>
-        /// Gibt an, ob das Objekt zu einem anderen Spieler gehört.
+        /// Is Item from same Faction? (Same Slot)
         /// </summary>
-        public bool IsEnemy
-        {
-            get { return (factionItem.Faction.SlotIndex != observerFaction); }
-        }
+        public bool IsFriendly { get; private set; }
+
+        /// <summary>
+        /// Is Item from an allied Faction? (Same Team)
+        /// </summary>
+        public bool IsAllied { get; private set; }
+
+        /// <summary>
+        /// Is Item an Enemy?
+        /// </summary>
+        public bool IsEnemy { get; private set; }
     }
 }

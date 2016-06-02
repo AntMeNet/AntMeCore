@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace AntMe.Basics.ItemProperties
 {
@@ -13,7 +12,7 @@ namespace AntMe.Basics.ItemProperties
         private float collisionRadius = 1f;
 
         /// <summary>
-        ///     Erstellt eine fixierte Masse mit angegebenem Radius.
+        /// Default Constructor with a fixed Body.
         /// </summary>
         /// <param name="item">Reference to the Item</param>
         public CollidableProperty(Item item) : base(item)
@@ -24,10 +23,10 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        ///     Erstellt eine bewegliche Masse mit angegebenem Radius.
+        /// Constructor with a movable Body.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="mass">Masse</param>
+        /// <param name="item">Reference to the Item</param>
+        /// <param name="mass">Mass of this Body</param>
         public CollidableProperty(Item item, float mass) : this(item)
         {
             CollisionFixed = false;
@@ -35,11 +34,8 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        ///     Gibt den Kollisionsradius des Elementes an. Das entspricht grob
-        ///     dem Radius des Körpers.
+        /// Gets or sets the collision Radius.
         /// </summary>
-        [DisplayName("Collision Radius")]
-        [Description("")]
         public float CollisionRadius
         {
             get { return collisionRadius; }
@@ -52,12 +48,8 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        ///     Gibt die Kollisionsmasse des Körpers zurück. Dies wird benötigt,
-        ///     um die Kollisionsauflösung zu berechnet. Schwerere Elemente lassen
-        ///     sich nur schwer von leichteren Elementen verschieben.
+        /// Gets or sets the collision Mass.
         /// </summary>
-        [DisplayName("Collision Mass")]
-        [Description("")]
         public float CollisionMass
         {
             get { return collisionMass; }
@@ -70,13 +62,8 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        ///     GIbt an, ob das Element in der Welt fixiert ist. Dies trifft auf
-        ///     Spielelemente zu, die nicht durch Kollisionen verschoben werden
-        ///     können. Ist dieser Wert true, spielt die Masse keine Rolle mehr
-        ///     bei der Berechnung.
+        /// Gets or sets if the Body is fixed or movable.
         /// </summary>
-        [DisplayName("Fixed Position")]
-        [Description("")]
         public bool CollisionFixed
         {
             get { return collisionFixed; }
@@ -91,10 +78,9 @@ namespace AntMe.Basics.ItemProperties
         #region Internal Calls
 
         /// <summary>
-        ///     Wird von der Extension aufgerufen, wenn das Element mit einem anderen
-        ///     Element kollidiert.
+        /// Gets a call after a Collision with the given Item.
         /// </summary>
-        /// <param name="item">Kollidierendes Element</param>
+        /// <param name="item">Colliding Item</param>
         internal void CollideItem(Item item)
         {
             if (OnCollision != null)
@@ -106,22 +92,22 @@ namespace AntMe.Basics.ItemProperties
         #region Events
 
         /// <summary>
-        ///     Event, das bei Änderung des Kollisionsradius geworfen werden muss.
+        /// Signal for a changed collision Radius.
         /// </summary>
         public event ValueChanged<float> OnCollisionRadiusChanged;
 
         /// <summary>
-        ///     Event, das bei Änderung der Kollisionsmasse geworfen werden muss.
+        /// Signal for a changed collision Mass.
         /// </summary>
         public event ValueChanged<float> OnCollisionMassChanged;
 
         /// <summary>
-        ///     Event, das bei Änderung des Fixed-Flags geworfen werden muss.
+        /// Signal for a changed Fixed Body Flag.
         /// </summary>
         public event ValueChanged<bool> OnCollisionFixedChanged;
 
         /// <summary>
-        ///     Event, das eine Kollision mit einem anderen Element signalisiert.
+        /// Signal on Collision with another Item.
         /// </summary>
         public event ValueChanged<Item> OnCollision;
 
