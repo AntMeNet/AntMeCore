@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace AntMe.Basics.ItemProperties
 {
@@ -10,7 +10,7 @@ namespace AntMe.Basics.ItemProperties
     public sealed class SightingProperty : ItemProperty
     {
         private readonly VisibleEnvironment environment = new VisibleEnvironment();
-        private readonly List<VisibleProperty> visibleItems = new List<VisibleProperty>();
+        private readonly HashSet<VisibleProperty> visibleItems = new HashSet<VisibleProperty>();
         private Angle viewDirection;
         private float viewangle;
         private float viewrange;
@@ -77,9 +77,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of all visible Items.
         /// </summary>
-        public ReadOnlyCollection<VisibleProperty> VisibleItems
+        public IEnumerable<VisibleProperty> VisibleItems
         {
-            get { return visibleItems.AsReadOnly(); }
+            get { return visibleItems.AsEnumerable(); }
         }
 
         #region Internal Calls

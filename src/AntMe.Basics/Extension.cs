@@ -1,4 +1,4 @@
-﻿using AntMe.Basics.EngineExtensions;
+﻿using AntMe.Basics.EngineProperties;
 using AntMe.Basics.FactionProperties;
 using AntMe.Basics.Factions;
 using AntMe.Basics.Factions.Ants;
@@ -6,7 +6,7 @@ using AntMe.Basics.Factions.Ants.Interop;
 using AntMe.Basics.Factions.Bugs;
 using AntMe.Basics.ItemProperties;
 using AntMe.Basics.Items;
-
+using AntMe.Basics.LevelProperties;
 using System;
 
 namespace AntMe.Basics
@@ -46,12 +46,12 @@ namespace AntMe.Basics
             // ##########################
             // Standard Engine Extensions
             // ##########################
-            typeMapper.RegisterEngineProperty<InteractionExtension>(this, "Interaction Extension (Core)", 70);
-            typeMapper.RegisterEngineProperty<PhysicsExtension>(this, "Physics Extension (Core)", 100);
+            typeMapper.RegisterEngineProperty<InteractionProperty>(this, "Interaction Extension (Core)", 70);
+            typeMapper.RegisterEngineProperty<PhysicsProperty>(this, "Physics Extension (Core)", 100);
 
-            settings.Set<RecognitionExtension>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
-            settings.Set<RecognitionExtension>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
-            typeMapper.RegisterEngineProperty<RecognitionExtension>(this, "Recognition Extension (Core)", 150);
+            settings.Set<RecognitionProperty>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
+            settings.Set<RecognitionProperty>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
+            typeMapper.RegisterEngineProperty<RecognitionProperty>(this, "Recognition Extension (Core)", 150);
 
             // ##########################
             // Standard Item Properties
@@ -140,6 +140,15 @@ namespace AntMe.Basics
             RegisterAnt(typeMapper, settings);
             RegisterBug(typeMapper, settings);
             RegisterClassicBug(typeMapper, settings);
+
+            // ##############################
+            // Level Properties registrieren
+            // ##############################
+
+            typeMapper.RegisterLevelProperty<TriggerLevelProperty>(this, "Level Trigger");
+            typeMapper.RegisterLevelProperty<DialogHighlightsLevelProperty, DialogHighlightsStateProperty>(this, "Dialog Highlights");
+            typeMapper.RegisterLevelProperty<MapMarkerHighlightsLevelProperty, MapMarkerHighlightsStateProperty>(this, "Map Marker Highlights");
+            typeMapper.RegisterLevelProperty<NotificationHighlightsLevelProperty, NotificationHighlightsStateProperty>(this, "Notification Highlights");
         }
 
         /// <summary>
@@ -575,6 +584,7 @@ namespace AntMe.Basics
             settings.Set<AntItem>("RotationSpeed", 20, "Maximum Rotation Angle per Round");
             settings.Set<AntItem>("DropSugar", false, "Will an Ant leave a small Sugar on Drop");
             settings.Set<AntItem>("MarkerDelay", 10, "Time in Rounds between Marker-Drops");
+            settings.Set<AntItem>("ClassicBorderBehavior", true, "Should an ant be reflected by Walls (like in AntMe! 1)");
             typeMapper.RegisterItem<AntItem, AntState, AntInfo>(this, "Ant");
 
             // Walking

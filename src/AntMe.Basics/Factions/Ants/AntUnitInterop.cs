@@ -8,17 +8,28 @@ namespace AntMe.Basics.Factions.Ants
     /// </summary>
     public sealed class AntUnitInterop : UnitInterop
     {
+        /// <summary>
+        /// Delay Counter for Markers.
+        /// </summary>
         private int markerDelay;
+
+        /// <summary>
+        /// Reference to the related Ant Item.
+        /// </summary>
+        private new readonly AntItem item;
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
-        public AntUnitInterop(AntFaction faction, AntItem item) : base(faction, item) { }
+        public AntUnitInterop(AntFaction faction, AntItem item) : base(faction, item)
+        {
+            this.item = item;
+        }
 
         /// <summary>
-        ///     Wird von der Faction beim Update dieser Einheit aufgerufen.
+        /// Gets called by the Engine on Round Update.
         /// </summary>
         protected override void Update(int round)
         {
@@ -43,32 +54,27 @@ namespace AntMe.Basics.Factions.Ants
                 return false;
 
             // Marker erstellen
-            var marker = new MarkerItem(Faction.Context, Faction,
-                Item.Position.ToVector2XY(), size, information);
+            var marker = new MarkerItem(faction.Context, faction,
+                item.Position.ToVector2XY(), size, information);
 
-            Item.Engine.InsertItem(marker);
-            markerDelay = Faction.Settings.GetInt<AntItem>("MarkerDelay").Value;
+            item.Engine.InsertItem(marker);
+            markerDelay = faction.Settings.GetInt<AntItem>("MarkerDelay").Value;
             return true;
         }
 
-        #region Eigenschaften
+        #region Properties
 
         /// <summary>
-        ///     Liefert die Faction-weite Instanz eines Zufallsgenerators.
+        /// Gets the Name of this Item.
         /// </summary>
-        public Random Random { get { return Faction.Context.Random; } }
-
-        /// <summary>
-        /// Gibt die Ausrichtung der Ameise zurück.
-        /// </summary>
-        public Angle Orientation { get { return Item.Orientation; } }
+        public string Name { get { return item.Name; } }
 
         #endregion
 
         #region Events
 
         /// <summary>
-        ///     Event wird in jeder Runde einmal aufgerufen.
+        /// Signal for a new Round.
         /// </summary>
         public event InteropProperty.InteropEvent Tick;
 

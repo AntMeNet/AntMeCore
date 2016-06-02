@@ -236,26 +236,9 @@ namespace CoreTestClient
                 roundLabel.Text = string.Empty;
             }
 
-            // UPdate Tree
+            // Update Tree
             UpdateTree();
         }
-
-        //private Color Convert(PlayerColor color)
-        //{
-        //    switch (color)
-        //    {
-        //        case PlayerColor.Black: return Color.Black;
-        //        case PlayerColor.Blue: return Color.Blue;
-        //        case PlayerColor.Cyan: return Color.Yellow;
-        //        case PlayerColor.Green: return Color.Green;
-        //        case PlayerColor.Orange: return Color.Orange;
-        //        case PlayerColor.Purple: return Color.Purple;
-        //        case PlayerColor.Red: return Color.Red;
-        //        case PlayerColor.White: return Color.White;
-        //    }
-
-        //    return Color.Black;
-        //}
 
         private Index2 _mapCells;
         private Vector2 _mapSize;
@@ -371,7 +354,10 @@ namespace CoreTestClient
                 foreach (var item in treeState)
                 {
                     if (!state.Items.Contains(item))
-                        itemsNode.Nodes["item" + item.Id].Remove();
+                    {
+                        var node = itemsNode.Nodes["item" + item.Id];
+                        if (node != null) node.Remove();
+                    }
                 }
 
                 // Items einfügen
