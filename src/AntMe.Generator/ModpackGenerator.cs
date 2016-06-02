@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.IO;
 using Microsoft.CodeAnalysis;
+using System.Linq;
 
 namespace AntMe.Generator
 {
@@ -23,9 +24,41 @@ namespace AntMe.Generator
         /// <returns>Filename</returns>
         public static string Generate(string[] paths, string output, ProgressToken token)
         {
+            string outputFile = "Summary.dll";
 
-            throw new NotImplementedException();
+            string frameworkRoot = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1\{0}.dll";
+            List<MetadataReference> references = new List<MetadataReference>();
+            references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "mscorlib")));
+            references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "System")));
+            references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "System.Core")));
 
+            CSharpCompilationOptions options =
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+                    .WithOverflowChecks(true).WithOptimizationLevel(OptimizationLevel.Release);
+
+            List<SyntaxTree> syntaxTrees = new List<SyntaxTree>();
+
+            foreach (var item in ExtensionLoader.DefaultTypeMapper.Items.Where(i => i.InfoType != null).Select(i => i.InfoType).Distinct())
+            {
+                syntaxTrees.Add(GenerateItem(item));
+            }
+
+            var compilation = CSharpCompilation.Create(outputFile, syntaxTrees, references, options);
+            var result = compilation.Emit(Path.Combine(output, outputFile));
+
+            if (!result.Success)
+                throw new Exception();
+
+            return Path.Combine(output, outputFile);
+        }
+
+        private static SyntaxTree GenerateItem(Type item)
+        {
+            return SyntaxFactory.SyntaxTree(
+                SyntaxFactory.CompilationUnit().AddMembers(
+                    SyntaxFactory.NamespaceDeclaration(
+                        SyntaxFactory.IdentifierName("AntMe.Deutsch")).AddMembers(
+                            SyntaxFactory.ClassDeclaration(item.Name))));
         }
 
         /// <summary>
