@@ -157,7 +157,12 @@ namespace AntMe
                     foreach (var item in (List<ExpandedObject<T>>)_grid.GetValue(runrow, runcol))
                     {
                         // Check the intersection with every object in this cell
-                        if ((item.pos - pos).Length() <= (radius + item.radius))
+                        float radiuses = radius + item.radius;
+                        float x = item.pos.X - pos.X;
+                        float y = item.pos.Y - pos.Y;
+                        float z = item.pos.Z - pos.Z;
+                        float distance = (x * x) + (y * y) + (z * z);
+                        if (distance <= radiuses * radiuses)
                         {
                             result.Add(item.obj);
                         }

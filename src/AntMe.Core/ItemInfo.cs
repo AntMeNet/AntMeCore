@@ -3,25 +3,25 @@
 namespace AntMe
 {
     /// <summary>
-    /// Basis-Klasse für alle Info-Objekte.
+    /// Base Class for all Info Objects.
     /// </summary>
     public class ItemInfo : PropertyList<ItemInfoProperty>
     {
         /// <summary>
-        /// Referenz auf das bezogene Spielelement.
+        /// Reference to the observed Item.
         /// </summary>
         protected readonly Item Item;
 
         /// <summary>
-        /// Beobachtendes Spielelement.
+        /// Reference to the observing Item.
         /// </summary>
         protected readonly Item Observer;
 
         /// <summary>
-        /// Neue Instanz eines Info-Objektes.
+        /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="item">Bezogenes Spielelement</param>
-        /// <param name="observer">Betrachtendes Spielelement</param>
+        /// <param name="item">Reference to the observed Item.</param>
+        /// <param name="observer">Reference to the observing Item.</param>
         public ItemInfo(Item item, Item observer)
         {
             Item = item;
@@ -29,7 +29,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt den Abstand zu diesem Objekt abzüglich der Radien zurück.
+        /// Gets the real Distance (Radius to Radius) to the Item.
         /// </summary>
         public float Distance
         {
@@ -37,7 +37,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt die Himmelsrichtung zum Objekt zurück.
+        /// Gets the direction to the Item.
         /// </summary>
         public int Direction
         {
@@ -45,7 +45,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt den Radius des Spielelements zurück.
+        /// Returns the Item Radius.
         /// </summary>
         public float Radius
         {
@@ -53,7 +53,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt an, ob das Objekt noch Teil des Spiels ist.
+        /// Returns true of the Item is still alive.
         /// </summary>
         public bool IsAlive
         {
@@ -61,20 +61,18 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Interner Call um innerhalb von Items aus einem Info wieder ein 
-        /// Item zu ermitteln.
+        /// Internal call to get the related Item.
         /// </summary>
-        /// <returns>Item des aktuellen Info-Objektes</returns>
+        /// <returns>Related Item</returns>
         internal Item GetItem()
         {
             return Item;
         }
 
         /// <summary>
-        /// Ermittelt den Hashwert dieses Info-Objektes (ergibt sich aus der 
-        /// Kombination aus Item- und Observer-Id).
+        /// Generates a unique Hash Code for this Info.
         /// </summary>
-        /// <returns>Hashwert</returns>
+        /// <returns>Hash Code</returns>
         public override int GetHashCode()
         {
             return Item.Id.GetHashCode() + 
@@ -82,12 +80,10 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Ermittelt, ob es sich bei den beiden Info-Objekten um die selbe 
-        /// Instanz handelt. Diese Entscheidung wird auf Basis der beiden 
-        /// IDs von Item und Observer getroffen.
+        /// Compares two Info Items.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">Other Item</param>
+        /// <returns>Is this the same Info?</returns>
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -101,27 +97,52 @@ namespace AntMe
                 Observer == other.Observer;
         }
         
-        #region Static Methoden, private
+        #region Static Helper
 
+        /// <summary>
+        /// Calculates the Distance between two Items.
+        /// </summary>
+        /// <param name="item1">Item Info 1</param>
+        /// <param name="item2">Item Info 2</param>
+        /// <returns></returns>
         private static float GetDistance(ItemInfo item1, ItemInfo item2)
         {
             return GetDistance(item1.Item, item2.Item);
         }
 
+        /// <summary>
+        /// Calculates the Distance between two Items.
+        /// </summary>
+        /// <param name="item1">Item 1</param>
+        /// <param name="item2">Item 2</param>
+        /// <returns></returns>
         private static float GetDistance(Item item1, Item item2)
         {
             return Item.GetDistance(item1, item2);
         }
 
+        /// <summary>
+        /// Calculates the Direction from Item 1 to Item 2.
+        /// </summary>
+        /// <param name="source">Item Info 1</param>
+        /// <param name="target">Item Info 2</param>
+        /// <returns></returns>
         private static int GetDirection(ItemInfo source, ItemInfo target)
         {
             return Item.GetDirection(source.Item, target.Item).Degree;
         }
 
+        /// <summary>
+        /// Calculates the Direction from Item 1 to Item 2.
+        /// </summary>
+        /// <param name="source">Item 1</param>
+        /// <param name="target">Item 2</param>
+        /// <returns></returns>
         private static int GetDirection(Item source, Item target)
         {
             return Item.GetDirection(source, target).Degree;
         }
+
         #endregion
         
     }

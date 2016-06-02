@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AntMe.Basics.ItemProperties
 {
@@ -9,7 +9,7 @@ namespace AntMe.Basics.ItemProperties
     /// </summary>
     public sealed class SmellableProperty : ItemProperty
     {
-        private readonly List<SnifferProperty> snifferItems = new List<SnifferProperty>();
+        private readonly HashSet<SnifferProperty> snifferItems = new HashSet<SnifferProperty>();
         private float smellableRadius;
 
         /// <summary>
@@ -26,9 +26,9 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// List of all Items that sniffes the Item.
         /// </summary>
-        public ReadOnlyCollection<SnifferProperty> SnifferItems
+        public IEnumerable<SnifferProperty> SnifferItems
         {
-            get { return snifferItems.AsReadOnly(); }
+            get { return snifferItems.AsEnumerable(); }
         }
 
         /// <summary>

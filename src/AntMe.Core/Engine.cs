@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace AntMe
 {
     /// <summary>
-    /// Kern Komponente zur Simulation aller Spielelemente.
+    /// Simulation Core Engine.
     /// </summary>
     public sealed class Engine : PropertyList<EngineProperty>
     {
         private readonly ITypeResolver typeResolver;
 
-        private readonly HashSet<Item> items = new HashSet<Item>();
-        private readonly Dictionary<int, Item> itemsById = new Dictionary<int, Item>();
+        private readonly HashSet<Item> items;
+        private readonly Dictionary<int, Item> itemsById;
 
-        private readonly Queue<Item> insertQueue = new Queue<Item>();
-        private readonly Queue<Item> removeQueue = new Queue<Item>();
+        private readonly Queue<Item> insertQueue;
+        private readonly Queue<Item> removeQueue;
 
         private int nextId = 1;
 
@@ -24,8 +23,9 @@ namespace AntMe
         private readonly Tracer tracer = new Tracer("AntMe.Engine");
 
         /// <summary>
-        /// Standard Konstruktor für Engines.
+        /// Default Constructor for Type Mapper
         /// </summary>
+        /// <param name="resolver">Reference to the Type Resolver</param>
         public Engine(ITypeResolver resolver)
         {
             tracer.Trace(TraceEventType.Information, 1, "Engine wird instanziiert");
@@ -34,42 +34,40 @@ namespace AntMe
             State = EngineState.Uninitialized;
             Round = -1;
 
+            items = new HashSet<Item>();
+            itemsById = new Dictionary<int, Item>();
+            insertQueue = new Queue<Item>();
+            removeQueue = new Queue<Item>();
+
             resolver.ResolveEngine(this);
 
             tracer.Trace(TraceEventType.Information, 2, "Engine ist instanziiert");
         }
 
         /// <summary>
-        /// Gibt die Referenz auf den aktuell verwendeten Type Resolver zurück.
+        /// Reference to the Type Resolver.
         /// </summary>
         public ITypeResolver TypeResolver { get { return typeResolver; } }
 
         /// <summary>
-        /// Liefert die aktuelle Rundenzahl. Vor der ersten Runde liefert
-        /// diese Eigenschaft -1.
+        /// Gets the current Simulation Round or -1, of not started.
         /// </summary>
-        [DisplayName("Round")]
-        [Description("Liefert die aktuelle Rundenzahl. Vor der ersten Runde liefert diese Eigenschaft -1.")]
         public int Round { get; private set; }
 
         /// <summary>
-        /// Gibt den Status der Engine an.
+        /// Gets the current State of the Engine.
         /// </summary>
-        [DisplayName("State")]
-        [Description("Gibt den Status der Engine an.")]
         public EngineState State { get; private set; }
 
         /// <summary>
-        /// Gibt die Referenz auf die aktuell verwendete Map
+        /// Reference to the current Map.
         /// </summary>
-        [Browsable(false)]
         public Map Map { get; private set; }
 
         /// <summary>
-        /// Initialisiert die Engine mit passender Konfiguration und
-        /// startet die Extensions.
+        /// Initializes the Engine Instance.
         /// </summary>
-        /// <param name="map"></param>
+        /// <param name="map">Map to use</param>
         public void Init(Map map)
         {
             // State check
@@ -80,11 +78,11 @@ namespace AntMe
             if (map == null)
                 throw new ArgumentNullException("map");
 
-            // Prüft Karte
+            // Check Map
             map.CheckMap();
             Map = map;
 
-            // Extensions initialisieren
+            // Initialize Extensions
             foreach (var property in Properties)
                 property.Init();
 
@@ -92,9 +90,9 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Validiert, ob das Einfügen neuer Engine Properties zu diesem Zeitpunkt zulässig ist.
+        /// Validates the Properties to attach.
         /// </summary>
-        /// <param name="property"></param>
+        /// <param name="property">Property</param>
         protected override void ValidateAddProperty(EngineProperty property)
         {
             if (State != EngineState.Uninitialized)
@@ -102,7 +100,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Versetzt die Engine in den finalisierten Modus.
+        /// Finishs the current Simulation.
         /// </summary>
         public void Finish()
         {
@@ -110,7 +108,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Versetzt die Engine in den fehlgeschlagenen Modus.
+        /// Fails the current Simulation.
         /// </summary>
         public void Fail()
         {
@@ -118,102 +116,93 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Führt ein Update für die kommende Runde aus und startet dadruch die Berechnungen.
+        /// Updates the current Simulation and simulates another Round.
         /// </summary>
         public void Update()
         {
-            // Darf nur gestartet werden, wenn das System initialisiert ist und sich nicht schon im Update-Modus befindet.
+            // Engine must be running.
             if (State != EngineState.Simulating)
                 throw new NotSupportedException("Engine is not ready");
 
             Round++;
 
-            // Pre Update Call für alle Items
+            // Pre Update Call for every Item
             foreach (Item item in items)
                 item.BeforeUpdate();
 
-            // Update Calls an alle Extensions
+            // Update Calls for the Properties
             foreach (var property in Properties)
                 property.Update();
 
-            // Post Update Call an alle Items
+            // Post Update Call for all Items
             foreach (Item item in items)
                 item.AfterUpdate();
 
-            // Add Items
+            // Add new Items
             while (insertQueue.Count > 0)
                 PrivateInsertItem(insertQueue.Dequeue());
 
-            // Remove Items
+            // Remove new Items
             while (removeQueue.Count > 0)
                 PrivateRemoveItem(removeQueue.Dequeue());
 
-            // Rundenevent werfen
+            // Inform about another Round
             if (OnNextRound != null)
                 OnNextRound(Round);
         }
 
         /// <summary>
-        /// Dieses Event informiert über entfernte Elemente.
+        /// Signal for removed Items.
         /// </summary>
         public event ChangeItem OnRemoveItem;
 
         /// <summary>
-        /// Dieses Event informiert über eingefügte Elemente.
+        /// Signal for added Items.
         /// </summary>
         public event ChangeItem OnInsertItem;
 
         /// <summary>
-        /// Wird nach dem Update aufgerufen und informiert über das Ende einer
-        /// neuen Runde.
+        /// Signal for another Round.
         /// </summary>
         public event ValueUpdate<int> OnNextRound;
 
-        #region Private Helfer
+        #region Private Helper
 
         /// <summary>
-        /// Interne Methode zum Hinzufügen neuer Elemente am Ende von Update
+        /// Internal Method to add an Item to the Simulation.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">New Items</param>
         private void PrivateInsertItem(Item item)
         {
             int id = nextId++;
 
-            // Item zu den Listen der Engine hinzufügen
+            // Add Item to the internal Item List
             items.Add(item);
             itemsById.Add(id, item);
 
             item.InternalInsertEngine(this, id);
 
-            // Generiere Distanzinfos zu allen anderen Items
-            RelocateItem(item);
+            // Generate Distance Information for the Item
+            NormalizeItemPosition(item);
 
-            // Insert Call an alle Extensions
-            foreach (var property in Properties)
-                property.Insert(item);
-
-            // Events
+            // Inform about a new Item
             if (OnInsertItem != null)
                 OnInsertItem(item);
         }
 
         /// <summary>
-        /// Interne Methode zum Entfernen der markierten Elemente. Wird von Update am Ende des Updates aufgerufen.
+        /// Internal Method for removing an Item.
         /// </summary>
-        /// <param name="item">Zu entfernendes Item</param>
+        /// <param name="item">Item to remove</param>
         private void PrivateRemoveItem(Item item)
         {
             if (items.Contains(item))
             {
-                // Event werfen
+                // Inform about removed Item
                 if (OnRemoveItem != null)
                     OnRemoveItem(item);
 
-                // Remove Call für alle Extensions
-                foreach (var property in Properties)
-                    property.Remove(item);
-
-                // Entferne Item aus allen Engine Listen
+                // Remove Item from internal Lists
                 items.Remove(item);
                 itemsById.Remove(item.Id);
                 item.InternalRemoveEngine();
@@ -221,26 +210,27 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Berechnet die neuen Daten der Distance Values.
+        /// Normalizes the Position Information of this Item.
+        /// Bring it back to Map Boundaries.
         /// </summary>
-        /// <param name="item"></param>
-        private void RelocateItem(Item item)
+        /// <param name="item">Item</param>
+        private void NormalizeItemPosition(Item item)
         {
             Vector2 limit = Map.GetSize();
 
-            // X-Achse
+            // X Axis
             if (item.Position.X < 0)
                 item.Position = new Vector3(0, item.Position.Y, item.Position.Z);
             if (item.Position.X > limit.X)
                 item.Position = new Vector3(limit.Y - Vector3.EPS_MIN, item.Position.Y, item.Position.Z);
 
-            // Y-Achse
+            // Y Axis
             if (item.Position.Y < 0)
                 item.Position = new Vector3(item.Position.X, 0, item.Position.Z);
             if (item.Position.Y > limit.Y)
                 item.Position = new Vector3(item.Position.X, limit.Y - Vector3.EPS_MIN, item.Position.Z);
 
-            // Z-Achse
+            // Z Axis
             float height = Map.GetHeight(new Vector2(item.Position.X, item.Position.Y));
             if (item.Position.Z < Map.MIN_Z || item.Position.Z < height)
                 item.Position = new Vector3(item.Position.X, item.Position.Y, Math.Max(Map.MIN_Z, height));
@@ -255,56 +245,53 @@ namespace AntMe
         #region Item Management
 
         /// <summary>
-        /// Liefert eine lesbare Liste der enthaltenen Items.
+        /// List of all Items.
         /// </summary>
-        [Browsable(false)]
         public IEnumerable<Item> Items
         {
             get { return items; }
         }
 
         /// <summary>
-        ///     Fügt das angegebene Element zur Simulation hinzu.
+        /// Adds the given Item to the Simulation.
         /// </summary>
-        /// <param name="item">Das einzufügende Element</param>
+        /// <param name="item">New Item</param>
         public void InsertItem(Item item)
         {
             if (item == null)
                 throw new ArgumentNullException();
 
-            // Darf nur zur initialisierten Engine hinzugefügt werden
+            // Engine must be running
             if (State != EngineState.Simulating)
                 throw new NotSupportedException("Engine must be in ready- or update-mode");
 
-            // Prüfen, ob Item vielleicht schon in der Simulation läuft.
+            // Item can't be already Part of an Engine
             if (items.Contains(item) || insertQueue.Contains(item))
                 throw new InvalidOperationException("Item is already part of the Simulation");
 
-            // Engine ist bereit - Item kann direkt eingefügt werden.
-            if (State == EngineState.Simulating)
-                insertQueue.Enqueue(item);                
+            // Queue to insert
+            insertQueue.Enqueue(item);                
         }
 
         /// <summary>
-        ///     Entfernt das angegebene Element aus der Simulation.
+        /// Removes the given Item from the Simulation.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">Item to remove</param>
         public void RemoveItem(Item item)
         {
             if (item == null)
                 throw new ArgumentNullException();
 
-            // Darf nur zur initialisierten Engine hinzugefügt werden
+            // Engine must be running
             if (State != EngineState.Simulating)
                 throw new NotSupportedException("Engine is not in ready- or update-Mode");
 
-            // Prüfen, ob Element Teil der Engine ist
+            // Item must be Part of the Simulation
             if (!items.Contains(item) && !removeQueue.Contains(item))
                 return;
 
-            // Direkter Löschvorgang
-            if (State == EngineState.Simulating)
-                removeQueue.Enqueue(item);
+            // Queue to remove
+            removeQueue.Enqueue(item);
         }
 
         #endregion
