@@ -128,89 +128,76 @@ namespace AntMe
         /// <summary>
         ///     Ebene Fläche.
         /// </summary>
-        Flat = 1,
-
-        /// <summary>
-        ///     Rampe nach Norden.
-        /// </summary>
-        RampTop = 11,
+        Flat = 0x00,
 
         /// <summary>
         ///     Rampe nach Süden.
         /// </summary>
-        RampBottom = 12,
-
-        /// <summary>
-        ///     Rampe nach Westen.
-        /// </summary>
-        RampLeft = 13,
-
+        RampBottom = 0x10,
         /// <summary>
         ///     Rampe nach Osten.
         /// </summary>
-        RampRight = 14,
-
+        RampRight = 0x11,
         /// <summary>
-        ///     Gerade Klippe nach Nordern.
+        ///     Rampe nach Norden.
         /// </summary>
-        CanyonTop = 51,
+        RampTop = 0x12,
+        /// <summary>
+        ///     Rampe nach Westen.
+        /// </summary>
+        RampLeft = 0x13,
 
         /// <summary>
         ///     Gerade Klippe nach Süden.
         /// </summary>
-        CanyonBottom = 52,
-
-        /// <summary>
-        ///     Gerade Klippe nach Westen.
-        /// </summary>
-        CanyonLeft = 53,
-
+        CanyonBottom = 0x20,
         /// <summary>
         ///     Gerade Klippe nach Osten.
         /// </summary>
-        CanyonRight = 54,
-
-
+        CanyonRight = 0x21,
         /// <summary>
-        ///     Innere Klippe nach Südosten.
+        ///     Gerade Klippe nach Nordern.
         /// </summary>
-        CanyonUpperLeftConcave = 61,
+        CanyonTop = 0x22,
+        /// <summary>
+        ///     Gerade Klippe nach Westen.
+        /// </summary>
+        CanyonLeft = 0x23,
 
         /// <summary>
         ///     Innere Klippe nach Südwesten.
         /// </summary>
-        CanyonUpperRightConcave = 62,
-
+        CanyonUpperRightConcave = 0x30,
+        /// <summary>
+        ///     Innere Klippe nach Südosten.
+        /// </summary>
+        CanyonUpperLeftConcave = 0x31,
         /// <summary>
         ///     Innere Klippe nach Nordosten.
         /// </summary>
-        CanyonLowerLeftConcave = 63,
-
+        CanyonLowerLeftConcave = 0x32,
         /// <summary>
         ///     Innere Klippe nach Nordwesten.
         /// </summary>
-        CanyonLowerRightConcave = 64,
-
-
-        /// <summary>
-        ///     Äußere Klippe nach Nordwesten.
-        /// </summary>
-        CanyonUpperLeftConvex = 71,
-
-        /// <summary>
-        ///     Äußere Klippe nach Nordosten.
-        /// </summary>
-        CanyonUpperRightConvex = 72,
+        CanyonLowerRightConcave = 0x33,
 
         /// <summary>
         ///     Äußere Klippe nach Südwesten.
         /// </summary>
-        CanyonLowerLeftConvex = 73,
-
+        CanyonLowerLeftConvex = 0x40,
         /// <summary>
         ///     Äußere Klippe nach Südosten.
         /// </summary>
-        CanyonLowerRightConvex = 74,
+        CanyonLowerRightConvex = 0x41,
+        /// <summary>
+        ///     Äußere Klippe nach Nordosten.
+        /// </summary>
+        CanyonUpperRightConvex = 0x42,
+        /// <summary>
+        ///     Äußere Klippe nach Nordwesten.
+        /// </summary>
+        CanyonUpperLeftConvex = 0x43,
+
     }
 
     /// <summary>
