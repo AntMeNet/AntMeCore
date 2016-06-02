@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Xunit;
 
@@ -494,13 +495,13 @@ namespace AntMe.Core
                 Assert.Equal("[AntMe.Core.KeyValueStoreTest+TestType1]", SR.ReadLine());
                 Assert.Equal("TestKey1=True // Test1 Description", SR.ReadLine());
                 Assert.Equal("TestKey2=42 // Test2 Description", SR.ReadLine());
-                Assert.Equal("TestKey3=3,141593 // Test3 Description", SR.ReadLine());
+                Assert.Equal(string.Format("TestKey3=3{0}141593 // Test3 Description", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator), SR.ReadLine());
                 Assert.Equal("TestKey4=TestSchlüßel4 // Test4 Description", SR.ReadLine());
                 Assert.Equal("", SR.ReadLine());
                 Assert.Equal("[AntMe.Core.KeyValueStoreTest+TestType2]", SR.ReadLine());
                 Assert.Equal("TestKey1=True", SR.ReadLine());
                 Assert.Equal("TestKey2=42", SR.ReadLine());
-                Assert.Equal("TestKey3=3,141593", SR.ReadLine());
+                Assert.Equal(string.Format("TestKey3=3{0}141593", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator), SR.ReadLine());
                 Assert.Equal("TestKey4=TestSchlüßel4", SR.ReadLine());
             }
 
@@ -537,14 +538,15 @@ namespace AntMe.Core
                     Assert.Equal("[AntMe.Core.KeyValueStoreTest+TestType1]", SR.ReadLine());
                     Assert.Equal("TestKey1=True // Test1 Description", SR.ReadLine());
                     Assert.Equal("TestKey2=42 // Test2 Description", SR.ReadLine());
-                    Assert.Equal("TestKey3=3,141593 // Test3 Description", SR.ReadLine());
+                    Assert.Equal(string.Format("TestKey3=3{0}141593 // Test3 Description", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator), SR.ReadLine());
                     Assert.Equal("TestKey4=TestSchlüßel4 // Test4 Description", SR.ReadLine());
                     Assert.Equal("", SR.ReadLine());
                     Assert.Equal("[AntMe.Core.KeyValueStoreTest+TestType2]", SR.ReadLine());
                     Assert.Equal("TestKey1=True", SR.ReadLine());
                     Assert.Equal("TestKey2=42", SR.ReadLine());
-                    Assert.Equal("TestKey3=3,141593", SR.ReadLine());
+                    Assert.Equal(string.Format("TestKey3=3{0}141593", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator), SR.ReadLine());
                     Assert.Equal("TestKey4=TestSchlüßel4", SR.ReadLine());
+                    
                 }
             }
 
