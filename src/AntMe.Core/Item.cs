@@ -55,12 +55,26 @@ namespace AntMe
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public Item(SimulationContext context, Vector2 position, float radius, Angle orientation)
+        public Item(SimulationContext context, Vector2 position, float radius, Angle orientation) 
+            : this(context, null, position, radius, orientation)
+        {
+        }
+
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="context">Current Simulation Context</param>
+        /// <param name="attributes">List of Unit Attributes</param>
+        /// <param name="position">First Position of this Item</param>
+        /// <param name="radius">Radius of this Item</param>
+        /// <param name="orientation">First Orientation of this Item</param>
+        public Item(SimulationContext context, UnitAttributeCollection attributes, Vector2 position, float radius, Angle orientation)
         {
             Context = context;
             Orientation = orientation;
             Radius = radius;
             Position = new Vector3(position.X, position.Y, 0);
+            Attributes = attributes;
 
             // Resolve Item Properties and Extender
             Context.Resolver.ResolveItem(this);
@@ -85,6 +99,11 @@ namespace AntMe
         /// Randomizer
         /// </summary>
         public Random Random { get { return Context.Random; } }
+
+        /// <summary>
+        /// Collection of Attributes for this Item.
+        /// </summary>
+        public UnitAttributeCollection Attributes { get; private set; }
 
         /// <summary>
         /// Id of this Game Item.

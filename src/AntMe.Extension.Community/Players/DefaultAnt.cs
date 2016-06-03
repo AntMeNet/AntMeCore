@@ -8,11 +8,11 @@ using System.Linq;
 namespace AntMe.Extension.Community.Players
 {
     [Caste("Default")]
-    [Strength(0)]
-    [Speed(-1)]
-    [Attack(0)]
-    [Attention(0)]
-    [Defense(1)]
+    [Strength(-1)]
+    [Speed(1)]
+    [Attack(-1)]
+    [Attention(1)]
+    [Defense(-1)]
     public class DefaultAnt : AntUnit
     {
         private AntUnitInterop interop;

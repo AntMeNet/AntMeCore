@@ -11,6 +11,8 @@ namespace AntMe.Basics.Factions.Ants.Interop
     /// </summary>
     public sealed class AntMovementInterop : UnitInteropProperty
     {
+        private int rotationSpeed;
+
         /// <summary>
         /// Reference to the Walking Property.
         /// </summary>
@@ -47,7 +49,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
         /// <param name="interop">UnitInterop</param>
-        public AntMovementInterop(Faction faction, FactionItem item, UnitInterop interop) 
+        public AntMovementInterop(Faction faction, FactionItem item, UnitInterop interop)
             : base(faction, item, interop)
         {
             // Get Walking Property
@@ -59,6 +61,18 @@ namespace AntMe.Basics.Factions.Ants.Interop
             collidable = Item.GetProperty<CollidableProperty>();
             if (collidable == null)
                 throw new NotSupportedException("There is no Collidable Property");
+
+            int speedAttribute = 0;
+            if (item.Attributes != null)
+                item.Attributes.GetValue("speed");
+
+            switch (speedAttribute)
+            {
+                case -1: rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[-1]").Value; break;
+                case 1: rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[1]").Value; break;
+                case 2: rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[2]").Value; break;
+                default: rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[0]").Value; break;
+            }
 
             // Handle Collisions with Walls and Borders.
             walking.OnHitBorder += InternalHitWall;
@@ -115,8 +129,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             if (angleToGo != 0)
             {
                 // Drehung
-                int rotSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed").Value;
-                int rot = angleToGo > 0 ? Math.Min(angleToGo, rotSpeed) : Math.Max(angleToGo, -rotSpeed);
+                int rot = angleToGo > 0 ? Math.Min(angleToGo, rotationSpeed) : Math.Max(angleToGo, -rotationSpeed);
 
                 walking.Speed = 0f;
                 walking.Direction = Item.Orientation.AddDegree(rot);
@@ -165,7 +178,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             }
         }
 
-        
+
 
         /// <summary>
         /// Let the Ant walk ahead.
