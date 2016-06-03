@@ -581,21 +581,40 @@ namespace AntMe.Basics
             // Ant Item
             settings.Set<AntItem>("ZickZackAngle", 10, "Correction Angle after Sprint");
             settings.Set<AntItem>("ZickZackRange", 30f, "Distance to go every Sprint");
-            settings.Set<AntItem>("RotationSpeed", 20, "Maximum Rotation Angle per Round");
             settings.Set<AntItem>("DropSugar", false, "Will an Ant leave a small Sugar on Drop");
             settings.Set<AntItem>("MarkerDelay", 10, "Time in Rounds between Marker-Drops");
             settings.Set<AntItem>("ClassicBorderBehavior", true, "Should an ant be reflected by Walls (like in AntMe! 1)");
+            settings.Set<AntItem>("RotationSpeed[-1]", 10, "Maximum Rotation Angle per Round (with Speed Attribute -1)");
+            settings.Set<AntItem>("RotationSpeed[0]", 20, "Maximum Rotation Angle per Round (with Speed Attribute 0)");
+            settings.Set<AntItem>("RotationSpeed[1]", 30, "Maximum Rotation Angle per Round (with Speed Attribute 1)");
+            settings.Set<AntItem>("RotationSpeed[2]", 40, "Maximum Rotation Angle per Round (with Speed Attribute 2)");
             typeMapper.RegisterItem<AntItem, AntState, AntInfo>(this, "Ant");
 
             // Walking
-            settings.Set<AntItem>("MaxSpeed", 1f, "Maximum Speed of an Ant");
+            settings.Set<AntItem>("MaxSpeed[-1]", 0.8f, "Maximum Speed of an Ant (with Speed Attribute -1)");
+            settings.Set<AntItem>("MaxSpeed[0]", 1f, "Maximum Speed of an Ant (with Speed Attribute 0)");
+            settings.Set<AntItem>("MaxSpeed[1]", 1.2f, "Maximum Speed of an Ant (with Speed Attribute 1)");
+            settings.Set<AntItem>("MaxSpeed[2]", 1.4f, "Maximum Speed of an Ant (with Speed Attribute 2)");
             typeMapper.AttachItemProperty<AntItem, WalkingProperty>(this, "Ant Walking", (i) =>
             {
                 WalkingProperty property = new WalkingProperty(i);
 
+                // Try to get Attribute Setting
+                sbyte speedAttribute = 0;
+                if (i.Attributes != null)
+                    speedAttribute = i.Attributes.GetValue("speed");
+
                 // Set Maximum Speed based on the current Settings
+                float maxSpeed;
+                switch (speedAttribute)
+                {
+                    case -1: maxSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed[-1]").Value; break;
+                    case 1: maxSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed[1]").Value; break;
+                    case 2: maxSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed[2]").Value; break;
+                    default: maxSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed[0]").Value; break;
+                }
                 // TODO: Check for Castes
-                property.MaximumSpeed = i.Settings.GetFloat<AntItem>("MaxSpeed").Value;
+                property.MaximumSpeed = maxSpeed;
 
                 // Bind Item Orientation to Walk-Direction
                 property.Direction = i.Orientation;
@@ -605,14 +624,31 @@ namespace AntMe.Basics
             });
 
             // Collision
-            settings.Set<AntItem>("Mass", 1f, "Collision Mass of an Ant");
+            settings.Set<AntItem>("Mass[-1]", 0.5f, "Collision Mass of an Ant (with Defense Attribute -1)");
+            settings.Set<AntItem>("Mass[0]", 1f, "Collision Mass of an Ant (with Defense Attribute 0)");
+            settings.Set<AntItem>("Mass[1]", 1.5f, "Collision Mass of an Ant (with Defense Attribute 1)");
+            settings.Set<AntItem>("Mass[2]", 2f, "Collision Mass of an Ant (with Defense Attribute 2)");
             typeMapper.AttachItemProperty<AntItem, CollidableProperty>(this, "Ant Collidable", (i) =>
             {
                 CollidableProperty property = new CollidableProperty(i);
 
+                // Try to get Attribute Setting
+                sbyte defenseAttribute = 0;
+                if (i.Attributes != null)
+                    defenseAttribute = i.Attributes.GetValue("defense");
+
+                float mass;
+                switch (defenseAttribute)
+                {
+                    case -1: mass = i.Settings.GetFloat<AntItem>("Mass[-1]").Value; break;
+                    case 1: mass = i.Settings.GetFloat<AntItem>("Mass[1]").Value; break;
+                    case 2: mass = i.Settings.GetFloat<AntItem>("Mass[2]").Value; break;
+                    default: mass = i.Settings.GetFloat<AntItem>("Mass[0]").Value; break;
+                }
+
                 // Set Mass to Settings
                 property.CollisionFixed = false;
-                property.CollisionMass = i.Settings.GetFloat<AntItem>("Mass").Value;
+                property.CollisionMass = mass;
 
                 // Bind Collision Radius to Item Radius
                 property.CollisionRadius = i.Radius;
@@ -634,15 +670,45 @@ namespace AntMe.Basics
             });
 
             // Sighting
-            settings.Set<AntItem>("ViewRange", 20f, "View Range of an Ant");
-            settings.Set<AntItem>("ViewAngle", 360, "View Angle of an Ant");
+            settings.Set<AntItem>("ViewRange[-1]", 10f, "View Range of an Ant (with Attention Attribute -1)");
+            settings.Set<AntItem>("ViewRange[0]", 20f, "View Range of an Ant (with Attention Attribute 0)");
+            settings.Set<AntItem>("ViewRange[1]", 25f, "View Range of an Ant (with Attention Attribute 1)");
+            settings.Set<AntItem>("ViewRange[2]", 30f, "View Range of an Ant (with Attention Attribute 2)");
+            settings.Set<AntItem>("ViewAngle[-1]", 45, "View Angle of an Ant (with Attention Attribute -1)");
+            settings.Set<AntItem>("ViewAngle[0]", 90, "View Angle of an Ant (with Attention Attribute 0)");
+            settings.Set<AntItem>("ViewAngle[1]", 180, "View Angle of an Ant (with Attention Attribute 1)");
+            settings.Set<AntItem>("ViewAngle[2]", 270, "View Angle of an Ant (with Attention Attribute 2)");
             typeMapper.AttachItemProperty<AntItem, SightingProperty>(this, "Ant Sighting", (i) =>
             {
                 SightingProperty property = new SightingProperty(i);
 
+                // Try to get Attribute Setting
+                sbyte attentionAttribute = 0;
+                if (i.Attributes != null)
+                {
+                    attentionAttribute = i.Attributes.GetValue("attention");
+                }
+
                 // Set View Range and Angle
-                property.ViewRange = i.Settings.GetFloat<AntItem>("ViewRange").Value;
-                property.ViewAngle = i.Settings.GetFloat<AntItem>("ViewAngle").Value;
+                float viewRange;
+                switch (attentionAttribute)
+                {
+                    case -1: viewRange = i.Settings.GetFloat<AntItem>("ViewRange[-1]").Value; break;
+                    case 1: viewRange = i.Settings.GetFloat<AntItem>("ViewRange[1]").Value; break;
+                    case 2: viewRange = i.Settings.GetFloat<AntItem>("ViewRange[2]").Value; break;
+                    default: viewRange = i.Settings.GetFloat<AntItem>("ViewRange[0]").Value; break;
+                }
+                property.ViewRange = viewRange;
+
+                float viewAngle;
+                switch (attentionAttribute)
+                {
+                    case -1: viewAngle = i.Settings.GetFloat<AntItem>("ViewAngle[-1]").Value; break;
+                    case 1: viewAngle = i.Settings.GetFloat<AntItem>("ViewAngle[1]").Value; break;
+                    case 2: viewAngle = i.Settings.GetFloat<AntItem>("ViewAngle[2]").Value; break;
+                    default: viewAngle = i.Settings.GetFloat<AntItem>("ViewAngle[0]").Value; break;
+                }
+                property.ViewAngle = viewAngle;
 
                 // Bind View Direction to the Item Orientation
                 property.ViewDirection = i.Orientation;
@@ -655,57 +721,186 @@ namespace AntMe.Basics
             typeMapper.AttachItemProperty<AntItem, SnifferProperty>(this, "Ant Sniffer");
 
             // Carrier
-            settings.Set<AntItem>("CarrierStrength", 10f, "Carrier Strength of an Ant");
+            settings.Set<AntItem>("CarrierStrength[-1]", 5f, "Carrier Strength of an Ant (with Strength Attribute -1)");
+            settings.Set<AntItem>("CarrierStrength[0]", 10f, "Carrier Strength of an Ant (with Strength Attribute 0)");
+            settings.Set<AntItem>("CarrierStrength[1]", 15f, "Carrier Strength of an Ant (with Strength Attribute 1)");
+            settings.Set<AntItem>("CarrierStrength[2]", 20f, "Carrier Strength of an Ant (with Strength Attribute 2)");
             typeMapper.AttachItemProperty<AntItem, CarrierProperty>(this, "Ant Carrier", (i) =>
             {
                 CarrierProperty property = new CarrierProperty(i);
-                property.CarrierStrength = i.Settings.GetFloat<AntItem>("CarrierStrength").Value;
+
+                // Try to get Attribute Setting
+                sbyte strengthAttribute = 0;
+                if (i.Attributes != null)
+                    strengthAttribute = i.Attributes.GetValue("strength");
+
+                float strength;
+                switch (strengthAttribute)
+                {
+                    case -1: strength = i.Settings.GetFloat<AntItem>("CarrierStrength[-1]").Value; break;
+                    case 1: strength = i.Settings.GetFloat<AntItem>("CarrierStrength[1]").Value; break;
+                    case 2: strength = i.Settings.GetFloat<AntItem>("CarrierStrength[2]").Value; break;
+                    default: strength = i.Settings.GetFloat<AntItem>("CarrierStrength[0]").Value; break;
+                }
+
+                property.CarrierStrength = strength;
                 return property;
             });
 
             // Attackable
-            settings.Set<AntItem>("MaxHealth", 100f, "Maximum Health for an Ant");
+            settings.Set<AntItem>("MaxHealth[-1]", 100f, "Maximum Health for an Ant (with Defense Attribute -1)");
+            settings.Set<AntItem>("MaxHealth[0]", 100f, "Maximum Health for an Ant (with Defense Attribute 0)");
+            settings.Set<AntItem>("MaxHealth[1]", 100f, "Maximum Health for an Ant (with Defense Attribute 1)");
+            settings.Set<AntItem>("MaxHealth[2]", 100f, "Maximum Health for an Ant (with Defense Attribute 2)");
             typeMapper.AttachItemProperty<AntItem, AttackableProperty>(this, "Ant Attackable", (i) =>
             {
                 AttackableProperty property = new AttackableProperty(i);
+
+                // Try to get Attribute Setting
+                sbyte defenseAttribute = 0;
+                if (i.Attributes != null)
+                {
+                    defenseAttribute = i.Attributes.GetValue("defense");
+                }
+
+                // Health
+                int health;
+                switch (defenseAttribute)
+                {
+                    case -1: health = i.Settings.GetInt<AntItem>("MaxHealth[-1]").Value; break;
+                    case 1: health = i.Settings.GetInt<AntItem>("MaxHealth[1]").Value; break;
+                    case 2: health = i.Settings.GetInt<AntItem>("MaxHealth[2]").Value; break;
+                    default: health = i.Settings.GetInt<AntItem>("MaxHealth[0]").Value; break;
+                }
+                property.AttackableMaximumHealth = health;
+                property.AttackableHealth = health;
 
                 // Bind Attackable Radius to Item Radius
                 property.AttackableRadius = i.Radius;
                 i.RadiusChanged += (item, v) => { property.AttackableRadius = v; };
 
-                // Health
-                property.AttackableMaximumHealth = settings.GetInt<AntItem>("MaxHealth").Value;
-                property.AttackableHealth = settings.GetInt<AntItem>("MaxHealth").Value;
-
                 return property;
             });
 
             // Attacker
-            settings.Set<AntItem>("AttackRange", 3f, "Attack Range for a Bug");
-            settings.Set<AntItem>("RecoveryTime", 2, "Recovery Time in Rounds for a Bug");
-            settings.Set<AntItem>("AttackStrength", 5, "Attach Strength for a Bug");
+            settings.Set<AntItem>("AttackRange[-1]", 2f, "Attack Range for an Ant (with Attack Attribute -1)");
+            settings.Set<AntItem>("AttackRange[0]", 3f, "Attack Range for an Ant (with Attack Attribute 0)");
+            settings.Set<AntItem>("AttackRange[1]", 5f, "Attack Range for an Ant (with Attack Attribute 1)");
+            settings.Set<AntItem>("AttackRange[2]", 7f, "Attack Range for an Ant (with Attack Attribute 2)");
+            settings.Set<AntItem>("RecoveryTime[-1]", 4, "Recovery Time in Rounds for an Ant (with Speed Attribute -1)");
+            settings.Set<AntItem>("RecoveryTime[0]", 2, "Recovery Time in Rounds for an Ant (with Speed Attribute 0)");
+            settings.Set<AntItem>("RecoveryTime[1]", 1, "Recovery Time in Rounds for an Ant (with Speed Attribute 1)");
+            settings.Set<AntItem>("RecoveryTime[2]", 0, "Recovery Time in Rounds for an Ant (with Speed Attribute 2)");
+            settings.Set<AntItem>("AttackStrength[-1]", 4, "Attack Strength for an Ant (with Strength Attribute -1)");
+            settings.Set<AntItem>("AttackStrength[0]", 5, "Attack Strength for an Ant (with Strength Attribute 0)");
+            settings.Set<AntItem>("AttackStrength[1]", 7, "Attack Strength for an Ant (with Strength Attribute 1)");
+            settings.Set<AntItem>("AttackStrength[2]", 10, "Attack Strength for an Ant (with Strength Attribute 2)");
+            settings.Set<AntItem>("AttackMultiplier[-1]", 0.7f, "Multiplier for the Attack Strength for an Ant (with Attack Attribute -1)");
+            settings.Set<AntItem>("AttackMultiplier[0]", 1f, "Multiplier for the Attack Strength for an Ant (with Attack Attribute 0)");
+            settings.Set<AntItem>("AttackMultiplier[1]", 1.4f, "Multiplier for the Attack Strength for an Ant (with Attack Attribute 1)");
+            settings.Set<AntItem>("AttackMultiplier[2]", 1.8f, "Multiplier for the Attack Strength for an Ant (with Attack Attribute 2)");
             typeMapper.AttachItemProperty<AntItem, AttackerProperty>(this, "Ant Attacker", (i) =>
             {
+                // Try to get Attribute Setting
+                sbyte attackAttribute = 0;
+                sbyte speedAttribute = 0;
+                sbyte strengthAttribute = 0;
+                if (i.Attributes != null)
+                {
+                    attackAttribute = i.Attributes.GetValue("attack");
+                    speedAttribute = i.Attributes.GetValue("speed");
+                    strengthAttribute = i.Attributes.GetValue("strength");
+                }
+
                 AttackerProperty property = new AttackerProperty(i);
-                property.AttackRange = i.Settings.GetFloat<AntItem>("AttackRange").Value;
-                property.AttackRecoveryTime = i.Settings.GetInt<AntItem>("RecoveryTime").Value;
-                property.AttackStrength = i.Settings.GetInt<AntItem>("AttackStrength").Value;
+
+                float attackRange;
+                switch (attackAttribute)
+                {
+                    case -1: attackRange = i.Settings.GetFloat<AntItem>("AttackRange[-1]").Value; break;
+                    case 1: attackRange = i.Settings.GetFloat<AntItem>("AttackRange[1]").Value; break;
+                    case 2: attackRange = i.Settings.GetFloat<AntItem>("AttackRange[2]").Value; break;
+                    default: attackRange = i.Settings.GetFloat<AntItem>("AttackRange[0]").Value; break;
+                }
+                property.AttackRange = attackRange;
+
+                int recoveryTime;
+                switch (speedAttribute)
+                {
+                    case -1: recoveryTime = i.Settings.GetInt<AntItem>("RecoveryTime[-1]").Value; break;
+                    case 1: recoveryTime = i.Settings.GetInt<AntItem>("RecoveryTime[1]").Value; break;
+                    case 2: recoveryTime = i.Settings.GetInt<AntItem>("RecoveryTime[2]").Value; break;
+                    default: recoveryTime = i.Settings.GetInt<AntItem>("RecoveryTime[0]").Value; break;
+                }
+                property.AttackRecoveryTime = recoveryTime;
+
+                int attackStrength;
+                switch (strengthAttribute)
+                {
+                    case -1: attackStrength = i.Settings.GetInt<AntItem>("AttackStrength[-1]").Value; break;
+                    case 1: attackStrength = i.Settings.GetInt<AntItem>("AttackStrength[1]").Value; break;
+                    case 2: attackStrength = i.Settings.GetInt<AntItem>("AttackStrength[2]").Value; break;
+                    default: attackStrength = i.Settings.GetInt<AntItem>("AttackStrength[0]").Value; break;
+                }
+                switch (attackAttribute)
+                {
+                    case -1: attackStrength = (int)(attackStrength * i.Settings.GetFloat<AntItem>("AttackMultiplier[-1]").Value); break;
+                    case 1: attackStrength = (int)(attackStrength * i.Settings.GetFloat<AntItem>("AttackMultiplier[1]").Value); break;
+                    case 2: attackStrength = (int)(attackStrength * i.Settings.GetFloat<AntItem>("AttackMultiplier[2]").Value); break;
+                    default: attackStrength = (int)(attackStrength * i.Settings.GetFloat<AntItem>("AttackMultiplier[0]").Value); break;
+                }
+                property.AttackStrength = attackStrength;
+
                 return property;
             });
 
             // Collector
-            settings.Set<AntItem>("SugarCapacity", 5, "Maximum Capacity for Sugar");
-            settings.Set<AntItem>("AppleCapacity", 2, "Maximum Capacity for Apple");
+            settings.Set<AntItem>("SugarCapacity[-1]", 3, "Maximum Capacity for Sugar (with Strength Attribute -1)");
+            settings.Set<AntItem>("SugarCapacity[0]", 5, "Maximum Capacity for Sugar (with Strength Attribute 0)");
+            settings.Set<AntItem>("SugarCapacity[1]", 7, "Maximum Capacity for Sugar (with Strength Attribute 1)");
+            settings.Set<AntItem>("SugarCapacity[2]", 10, "Maximum Capacity for Sugar (with Strength Attribute 2)");
+            settings.Set<AntItem>("AppleCapacity[-1]", 1, "Maximum Capacity for Apple (with Strength Attribute -1)");
+            settings.Set<AntItem>("AppleCapacity[0]", 2, "Maximum Capacity for Apple (with Strength Attribute 0)");
+            settings.Set<AntItem>("AppleCapacity[1]", 4, "Maximum Capacity for Apple (with Strength Attribute 1)");
+            settings.Set<AntItem>("AppleCapacity[2]", 6, "Maximum Capacity for Apple (with Strength Attribute 2)");
             typeMapper.AttachItemProperty<AntItem, SugarCollectorProperty>(this, "Ant Sugar Collectable", (i) =>
             {
+                // Try to get Attribute Setting
+                sbyte strengthAttribute = 0;
+                if (i.Attributes != null)
+                    strengthAttribute = i.Attributes.GetValue("strength");
+
+                int capacity;
+                switch (strengthAttribute)
+                {
+                    case -1: capacity = i.Settings.GetInt<AntItem>("SugarCapacity[-1]").Value; break;
+                    case 1: capacity = i.Settings.GetInt<AntItem>("SugarCapacity[1]").Value; break;
+                    case 2: capacity = i.Settings.GetInt<AntItem>("SugarCapacity[2]").Value; break;
+                    default: capacity = i.Settings.GetInt<AntItem>("SugarCapacity[0]").Value; break;
+                }
+
                 SugarCollectorProperty property = new SugarCollectorProperty(i);
-                property.Capacity = i.Settings.GetInt<AntItem>("SugarCapacity").Value;
+                property.Capacity = capacity;
                 return property;
             });
             typeMapper.AttachItemProperty<AntItem, AppleCollectorProperty>(this, "Ant Apple Collectable", (i) =>
             {
+                // Try to get Attribute Setting
+                sbyte strengthAttribute = 0;
+                if (i.Attributes != null)
+                    strengthAttribute = i.Attributes.GetValue("strength");
+
+                int capacity;
+                switch (strengthAttribute)
+                {
+                    case -1: capacity = i.Settings.GetInt<AntItem>("AppleCapacity[-1]").Value; break;
+                    case 1: capacity = i.Settings.GetInt<AntItem>("AppleCapacity[1]").Value; break;
+                    case 2: capacity = i.Settings.GetInt<AntItem>("AppleCapacity[2]").Value; break;
+                    default: capacity = i.Settings.GetInt<AntItem>("AppleCapacity[0]").Value; break;
+                }
+
                 AppleCollectorProperty property = new AppleCollectorProperty(i);
-                property.Capacity = i.Settings.GetInt<AntItem>("AppleCapacity").Value;
+                property.Capacity = capacity;
                 return property;
             }); // TODO: Optional, wenn _settings.ANT_APPLECOLLECT | _settings.ANT_APPLE_CAPACITY, 0);
         }

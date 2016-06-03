@@ -126,6 +126,40 @@ namespace AntMe
         }
 
         /// <summary>
+        /// Scans the given Type for Unit Attributes.
+        /// </summary>
+        /// <param name="unitType">Type to scan</param>
+        /// <returns>Collected Attributes</returns>
+        protected UnitAttributeCollection GetAttributes(Type unitType)
+        {
+            // Try to find the Caste Name
+            string categoryName = string.Empty;
+            var unitCategoryNames = unitType.GetCustomAttributes(typeof(UnitGroupAttribute), true);
+            if (unitCategoryNames.Length > 0)
+                categoryName = (unitCategoryNames[0] as UnitGroupAttribute).Name;
+
+            // Collect Attributes
+            Dictionary<string, sbyte> attributesValues = new Dictionary<string, sbyte>();
+            foreach (UnitAttribute unitAttribute in unitType.GetCustomAttributes(typeof(UnitAttribute), true))
+            {
+                // Check for Attributes with the same Key
+                if (attributesValues.ContainsKey(unitAttribute.Key))
+                    throw new NotSupportedException(string.Format("Attribute Key {0} from {1} is already in the list.", unitAttribute.Key, unitType.FullName));
+
+                // Check Min-Max-Values
+                if (unitAttribute.Value < unitAttribute.MinValue)
+                    throw new NotSupportedException(string.Format("Attribute {0} from {1} has a Value smaller than MinValue", unitAttribute.Key, unitType.FullName));
+                if (unitAttribute.Value > unitAttribute.MaxValue)
+                    throw new NotSupportedException(string.Format("Attribute {0} from {1} has a Value greater than MaxValue", unitAttribute.Key, unitType.FullName));
+
+                // Add
+                attributesValues.Add(unitAttribute.Key, unitAttribute.Value);
+            }
+
+            return new UnitAttributeCollection(categoryName, attributesValues);
+        }
+
+        /// <summary>
         /// Generate a Unit/Item/Interop Combination based on the Unit and Item
         /// </summary>
         /// <param name="unit">Unit Instance</param>

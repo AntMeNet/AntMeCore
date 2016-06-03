@@ -111,6 +111,9 @@
     <Compile Include="StateProperty.cs" />
     <Compile Include="StateSerializer.cs" />
     <Compile Include="Tracer.cs" />
+    <Compile Include="UnitAttribute.cs" />
+    <Compile Include="UnitAttributeCollection.cs" />
+    <Compile Include="UnitGroupAttribute.cs" />
     <Compile Include="UnitInterop.cs" />
     <Compile Include="UnitInteropProperty.cs" />
     <Compile Include="Vector2.cs" />
