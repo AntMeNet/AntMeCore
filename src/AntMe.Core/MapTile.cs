@@ -3,10 +3,9 @@
 namespace AntMe
 {
     /// <summary>
-    ///     Struktur zur Sammlung von zellenspezifischen Informationen der Karte.
+    /// Base Class for Map Tiles
     /// </summary>
-    [Serializable]
-    public struct MapTile
+    public abstract class MapTile
     {
         #region Constants
 
@@ -52,72 +51,32 @@ namespace AntMe
 
         #endregion
 
-        /// <summary>
-        ///     Der Shape dieser Zelle.
-        /// </summary>
-        public TileShape Shape { get; set; }
-
-        /// <summary>
-        ///     Geschwindigkeitsmodifikator dieser Zelle. Hat nur bei flachen
-        ///     Bereichen und auf Rampen Einfluss.
-        /// </summary>
-        public TileSpeed Speed { get; set; }
-
-        /// <summary>
-        ///     Höhenangaben dieser Zelle. Bei Rampen und Canyons gibt dieser Wert
-        ///     die Höhe der tiefsten Stelle an.
-        /// </summary>
-        public TileHeight Height { get; set; }
-
-        #region static Methods
-
-        /// <summary>
-        ///     Ermittelt den Geschwindigkeitsmultiplikator zum angegebenen Parameter.
-        /// </summary>
-        /// <param name="speed">Geschwindigkeit</param>
-        /// <returns>Speedmultiplikator</returns>
-        public static float GetSpeedMultiplicator(TileSpeed speed)
+        public MapTile(byte heightLevel, bool canEnter)
         {
-            switch (speed)
-            {
-                case TileSpeed.Stop:
-                    return SPEED_STOP;
-                case TileSpeed.Slowest:
-                    return SPEED_SLOWEST;
-                case TileSpeed.Slower:
-                    return SPEED_SLOWER;
-                case TileSpeed.Normal:
-                    return SPEED_NORMAL;
-                case TileSpeed.Faster:
-                    return SPEED_FASTER;
-                default:
-                    throw new NotSupportedException("Unknown TileSpeed Type");
-            }
-        }
-
-        #endregion
-
-        /// <summary>
-        ///     Gibt den resultierenden Geschwindigkeitsmultiplikator zurück.
-        /// </summary>
-        /// <returns>Geschwindigkeitsmultiplikator</returns>
-        public float GetSpeedMultiplicator()
-        {
-            return GetSpeedMultiplicator(Speed);
+            CanEnter = canEnter;
         }
 
         /// <summary>
-        ///     Gibt zurück, ob diese Zelle begehbar ist.
+        /// Gets or sets the Material.
         /// </summary>
-        /// <returns>Zelle kann betreten werden</returns>
-        public bool CanEnter()
-        {
-            return (Shape == TileShape.Flat ||
-                    Shape == TileShape.RampTop ||
-                    Shape == TileShape.RampBottom ||
-                    Shape == TileShape.RampLeft ||
-                    Shape == TileShape.RampRight);
-        }
+        public MapMaterial Material { get; set; }
+
+        /// <summary>
+        /// Sets or gets the base Height Level.
+        /// </summary>
+        public byte HeightLevel { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the possibility to enter the Tile.
+        /// </summary>
+        public bool CanEnter { get; private set; }
+
+        /// <summary>
+        /// Returns the Height at the given Position.
+        /// </summary>
+        /// <param name="position">relative Position</param>
+        /// <returns>Map Height</returns>
+        public abstract float GetHeight(Vector2 position);
     }
 
     /// <summary>
@@ -198,57 +157,5 @@ namespace AntMe
         /// </summary>
         CanyonUpperLeftConvex = 0x43,
 
-    }
-
-    /// <summary>
-    ///     Liste der möglichen Höhenlayern.
-    /// </summary>
-    public enum TileHeight
-    {
-        /// <summary>
-        ///     Niedrig.
-        /// </summary>
-        Low = 1,
-
-        /// <summary>
-        ///     Mittel.
-        /// </summary>
-        Medium = 2,
-
-        /// <summary>
-        ///     Hoch.
-        /// </summary>
-        High = 3
-    }
-
-    /// <summary>
-    ///     Liste möglicher Zellen-Geschwindigkeiten.
-    /// </summary>
-    public enum TileSpeed
-    {
-        /// <summary>
-        ///     Nahezu voller Stop (10%).
-        /// </summary>
-        Stop = 1,
-
-        /// <summary>
-        ///     Sehr langsam (50%).
-        /// </summary>
-        Slowest = 2,
-
-        /// <summary>
-        ///     Langsamer (80%).
-        /// </summary>
-        Slower = 3,
-
-        /// <summary>
-        ///     Normale Geschwindigkeit (100%).
-        /// </summary>
-        Normal = 4,
-
-        /// <summary>
-        ///     Schneller (120%).
-        /// </summary>
-        Faster = 5,
     }
 }

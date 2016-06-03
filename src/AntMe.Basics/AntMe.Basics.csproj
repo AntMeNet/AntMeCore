@@ -163,6 +163,16 @@
     <Compile Include="LevelProperties\NotificationHighlightsStateProperty.cs" />
     <Compile Include="LevelProperties\TimerTrigger.cs" />
     <Compile Include="LevelProperties\TriggerLevelProperty.cs" />
+    <Compile Include="MapTiles\CliffMapTile.cs" />
+    <Compile Include="MapTiles\ConcaveCliffMapTile.cs" />
+    <Compile Include="MapTiles\ConvexCliffMapTile.cs" />
+    <Compile Include="MapTiles\GrasMaterial.cs" />
+    <Compile Include="MapTiles\MudMaterial.cs" />
+    <Compile Include="MapTiles\RampMapTile.cs" />
+    <Compile Include="MapTiles\SandMaterial.cs" />
+    <Compile Include="MapTiles\StoneMaterial.cs" />
+    <Compile Include="MapTiles\TarMaterial.cs" />
+    <Compile Include="MapTiles\WallCliffMapTile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ItemProperties\AppleCollectableProperty.cs" />
     <Compile Include="ItemProperties\AppleCollectableState.cs" />

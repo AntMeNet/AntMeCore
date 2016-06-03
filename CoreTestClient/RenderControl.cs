@@ -274,34 +274,27 @@ namespace CoreTestClient
 
         private SolidBrush GetCellcolor(MapTile tile)
         {
-            if (tile.Shape != TileShape.Flat &&
-                tile.Shape != TileShape.RampBottom &&
-                tile.Shape != TileShape.RampTop &&
-                tile.Shape != TileShape.RampLeft &&
-                tile.Shape != TileShape.RampRight)
+            if (!tile.CanEnter)
                 return new SolidBrush(Color.Black);
 
             Color baseColor = Color.SandyBrown;
-            switch (tile.Speed)
+
+            // TODO: Workaround aufheben -> ExtensionLoader sollte MapTiles kennen
+            int speed = (int)(tile.Material.Speed * 10);
+            switch (speed)
             {
-                case TileSpeed.Stop: baseColor = Color.FromArgb(64, 64, 64); break;
-                case TileSpeed.Slowest: baseColor = Color.FromArgb(99, 49, 0); break;
-                case TileSpeed.Slower: baseColor = Color.FromArgb(204, 143, 83); break;
-                case TileSpeed.Normal: baseColor = Color.FromArgb(26, 175, 43); break;
-                case TileSpeed.Faster: baseColor = Color.FromArgb(192, 192, 192); break;
+                case 1: baseColor = Color.FromArgb(64, 64, 64); break;
+                case 5: baseColor = Color.FromArgb(99, 49, 0); break;
+                case 8: baseColor = Color.FromArgb(204, 143, 83); break;
+                case 10: baseColor = Color.FromArgb(26, 175, 43); break;
+                case 12: baseColor = Color.FromArgb(192, 192, 192); break;
             }
 
-            switch (tile.Height)
-            {
-                case TileHeight.High:
-                    baseColor = Color.FromArgb(baseColor.R + 30, baseColor.G + 30, baseColor.B + 30);
-                    break;
-                case TileHeight.Medium:
-                    break;
-                case TileHeight.Low:
-                    baseColor = Color.FromArgb(baseColor.R - 20, baseColor.G - 20, baseColor.B - 20);
-                    break;
-            }
+            int level = tile.HeightLevel - 1;
+            baseColor = Color.FromArgb(
+                baseColor.R + (level * 30), 
+                baseColor.G + (level * 30), 
+                baseColor.B + (level * 30));
 
             return new SolidBrush(baseColor);
         }

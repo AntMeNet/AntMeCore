@@ -8,7 +8,7 @@
         /// <summary>
         ///     Höheninformation zu dieser Zelle.
         /// </summary>
-        public TileHeight Height;
+        public float Height;
 
         /// <summary>
         ///     Speedmodifikator dieser Zelle. 1 bedeutet normale Geschwindigkeit,

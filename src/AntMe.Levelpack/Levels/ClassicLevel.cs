@@ -24,7 +24,8 @@ namespace AntMe.Levelpack.Levels
 
         public override Map GetMap()
         {
-            return new Map(30, 20, true, TileSpeed.Normal, TileHeight.Medium);
+            throw new NotImplementedException();
+            // return new Map(30, 20, true, TileSpeed.Normal, TileHeight.Medium);
         }
 
         protected override void OnUpdate()

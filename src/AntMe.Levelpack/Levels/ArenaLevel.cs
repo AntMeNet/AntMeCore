@@ -1,4 +1,5 @@
 ﻿using AntMe.Basics.Items;
+using System;
 using System.IO;
 
 namespace AntMe.Levelpack.Levels
@@ -17,10 +18,11 @@ namespace AntMe.Levelpack.Levels
 
         public override Map GetMap()
         {
-            using (MemoryStream stream = new MemoryStream(Levelpack.Properties.Resources.arenaLevel))
-            {
-                return Map.Deserialize(stream);
-            }
+            throw new NotImplementedException();
+            //using (MemoryStream stream = new MemoryStream(Levelpack.Properties.Resources.arenaLevel))
+            //{
+            //    return Map.Deserialize(stream);
+            //}
         }
 
         protected override void OnInit()

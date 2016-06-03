@@ -69,6 +69,7 @@
     <Compile Include="FactionUnit.cs" />
     <Compile Include="FactoryInterop.cs" />
     <Compile Include="FactoryInteropProperty.cs" />
+    <Compile Include="FlatMapTile.cs" />
     <Compile Include="IExtensionPack.cs" />
     <Compile Include="InfoProperty.cs" />
     <Compile Include="Interop.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="LevelSlot.cs" />
     <Compile Include="LevelState.cs" />
     <Compile Include="LevelStateProperty.cs" />
+    <Compile Include="MapMaterial.cs" />
     <Compile Include="MapState.cs" />
     <Compile Include="MapTile.cs" />
     <Compile Include="MipMap.cs" />

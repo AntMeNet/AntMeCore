@@ -251,8 +251,8 @@ namespace AntMe.Basics.EngineProperties
                     else
                     {
                         // Get Cell Infos
-                        float speed = Engine.Map.Tiles[cell.X, cell.Y].GetSpeedMultiplicator();
-                        TileHeight height = Engine.Map.Tiles[cell.X, cell.Y].Height;
+                        float speed = Engine.Map.Tiles[cell.X, cell.Y].Material.Speed;
+                        float height = Engine.Map.Tiles[cell.X, cell.Y].GetHeight(new Vector2(0.5f, 0.5f));
                         env[offset] = new VisibleCell
                         {
                             Speed = speed,
