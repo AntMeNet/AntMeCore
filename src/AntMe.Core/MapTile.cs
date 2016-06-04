@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AntMe
 {
@@ -7,53 +8,20 @@ namespace AntMe
     /// </summary>
     public abstract class MapTile
     {
-        #region Constants
-
         /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Stop-Flag.
+        /// Contains the List of Items in this Cell (maintained by Engine).
         /// </summary>
-        public const float SPEED_STOP = 0.1f;
-
-        /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Slowest-Flag.
-        /// </summary>
-        public const float SPEED_SLOWEST = 0.5f;
-
-        /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Stlower-Flag.
-        /// </summary>
-        public const float SPEED_SLOWER = 0.8f;
-
-        /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Normal-Flag.
-        /// </summary>
-        public const float SPEED_NORMAL = 1f;
-
-        /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Faster-Flag.
-        /// </summary>
-        public const float SPEED_FASTER = 1.2f;
-
-        /// <summary>
-        ///     Höhen in Simulationseinheiten einer Fläche mit dem Low-Flag.
-        /// </summary>
-        public const float HEIGHT_LOW = 0f;
-
-        /// <summary>
-        ///     Höhen in Simulationseinheiten einer Fläche mit dem Medium-Flag.
-        /// </summary>
-        public const float HEIGHT_MEDIUM = 10f;
-
-        /// <summary>
-        ///     Höhen in Simulationseinheiten einer Fläche mit dem High-Flag.
-        /// </summary>
-        public const float HEIGHT_HIGH = 20f;
-
-        #endregion
+        internal HashSet<Item> Items { get; private set; }
 
         public MapTile(byte heightLevel, bool canEnter)
         {
             CanEnter = canEnter;
+            Items = new HashSet<Item>();
+        }
+
+        public MapTileState GetState()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

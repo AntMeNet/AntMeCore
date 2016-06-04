@@ -18,6 +18,7 @@ namespace AntMe.Levelpack.Levels
 
         public override Map GetMap()
         {
+            return new ArenaMap(30, 20, true);
             throw new NotImplementedException();
             //using (MemoryStream stream = new MemoryStream(Levelpack.Properties.Resources.arenaLevel))
             //{

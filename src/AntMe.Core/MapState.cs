@@ -7,7 +7,7 @@ namespace AntMe
     /// <summary>
     /// Map State.
     /// </summary>
-    public sealed class MapState : ISerializableState
+    public sealed class MapState : PropertyList<MapStateProperty>, ISerializableState
     {
         /// <summary>
         /// Is Border blocked.
@@ -22,7 +22,7 @@ namespace AntMe
         /// Cell Description for the Map as a 2D Array of Map Tiles.
         /// </summary>
         [Browsable(false)]
-        public MapTile[,] Tiles { get; set; }
+        public MapTileState[,] Tiles { get; set; }
 
         /// <summary>
         /// Returns the Cell Count of this Map.

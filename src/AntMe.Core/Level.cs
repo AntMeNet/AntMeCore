@@ -289,7 +289,11 @@ namespace AntMe
             // State erzeugen
             mapState = new MapState();
             mapState.BlockBorder = map.BlockBorder;
-            mapState.Tiles = (MapTile[,])map.Tiles.Clone();
+            Index2 tileCount = map.GetCellCount();
+            mapState.Tiles = new MapTileState[tileCount.X, tileCount.Y];
+            for (int y = 0; y < tileCount.Y; y++)
+                for (int x = 0; x < tileCount.X; x++)
+                    mapState.Tiles[x, y] = map[x, y].GetState();
 
             engine.Init(map);
             engine.OnInsertItem += engine_OnInsertItem;

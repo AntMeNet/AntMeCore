@@ -272,7 +272,7 @@ namespace CoreTestClient
             mapLabel.Text = "Map: " + _mapCells.X + "/" + _mapCells.Y + " @ " + Map.CELLSIZE;
         }
 
-        private SolidBrush GetCellcolor(MapTile tile)
+        private SolidBrush GetCellcolor(MapTileState tile)
         {
             if (!tile.CanEnter)
                 return new SolidBrush(Color.Black);

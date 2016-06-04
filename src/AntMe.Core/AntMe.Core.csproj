@@ -82,6 +82,7 @@
     <Compile Include="ITypeMapper.cs" />
     <Compile Include="ITypeMapperEntry.cs" />
     <Compile Include="ITypeResolver.cs" />
+    <Compile Include="IUpdateableMapTile.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="LevelDescriptionAttribute.cs" />
     <Compile Include="LevelMode.cs" />
@@ -90,8 +91,11 @@
     <Compile Include="LevelState.cs" />
     <Compile Include="LevelStateProperty.cs" />
     <Compile Include="MapMaterial.cs" />
+    <Compile Include="MapProperty.cs" />
     <Compile Include="MapState.cs" />
+    <Compile Include="MapStateProperty.cs" />
     <Compile Include="MapTile.cs" />
+    <Compile Include="MapTileState.cs" />
     <Compile Include="MipMap.cs" />
     <Compile Include="MipMapLayer.cs" />
     <Compile Include="Engine.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace AntMe
@@ -6,7 +7,7 @@ namespace AntMe
     /// <summary>
     /// Represents the topological information about a level Map.
     /// </summary>
-    public abstract class Map
+    public abstract class Map : PropertyList<MapProperty>
     {
         #region Constants
 
@@ -68,14 +69,31 @@ namespace AntMe
         #endregion
 
         /// <summary>
+        /// Holds all Map Tiles.
+        /// </summary>
+        private MapTile[,] tiles;
+
+        /// <summary>
+        /// List of all updateable Map Tiles.
+        /// </summary>
+        private HashSet<IUpdateableMapTile> updateableMapTiles;
+
+        /// <summary>
         /// Gets or sets the border behavior of this map.
         /// </summary>
         public bool BlockBorder { get; set; }
 
         /// <summary>
-        /// Gets or sets the two-dimentional array of Map Tiles.
+        /// Gets or sets the Map Tiles.
         /// </summary>
-        public MapTile[,] Tiles { get; private set; }
+        /// <param name="x">X Coordinate</param>
+        /// <param name="y">Y Coordinate</param>
+        /// <returns>Map Tile</returns>
+        public MapTile this[int x, int y]
+        {
+            get { return tiles[x, y]; }
+            set { tiles[x, y] = value; }
+        }
 
         /// <summary>
         /// List of Start Point for the available Player Slots.
@@ -97,7 +115,7 @@ namespace AntMe
             BlockBorder = blockBorder;
 
             // Create Tiles
-            Tiles = new MapTile[width, height];
+            tiles = new MapTile[width, height];
 
             // Create Players
             int dx = width / 6;
@@ -112,6 +130,8 @@ namespace AntMe
             StartPoints[6] = new Index2(dx, 3 * dy);
             StartPoints[7] = new Index2(5 * dx, 3 * dy);
         }
+
+        public virtual void Update(int round) { }
 
         #region Statische Methoden (Generatoren und Serialisierer)
 
@@ -233,7 +253,7 @@ namespace AntMe
         public void CheckMap()
         {
             // Tiles prüfen
-            if (Tiles == null)
+            if (tiles == null)
                 throw new InvalidMapException("Tiles Array is null");
 
             Index2 cells = GetCellCount();
@@ -266,12 +286,12 @@ namespace AntMe
             {
                 // Prüfen, ob die Zelle existiert
                 Index2 startPoint = StartPoints[i];
-                if (startPoint.X < 0 || startPoint.X >= Tiles.GetLength(0) ||
-                    startPoint.Y < 0 || startPoint.Y >= Tiles.GetLength(1))
+                if (startPoint.X < 0 || startPoint.X >= tiles.GetLength(0) ||
+                    startPoint.Y < 0 || startPoint.Y >= tiles.GetLength(1))
                     throw new InvalidMapException(string.Format("StartPoint {0} is out of map bounds", i));
 
                 // Prüfen, ob es sich um eine flache Zelle handelt
-                if (!Tiles[startPoint.X, startPoint.Y].CanEnter)
+                if (!this[startPoint.X, startPoint.Y].CanEnter)
                     throw new InvalidMapException(string.Format("StartPoint {0} is not placed on a plane Cell", i));
 
                 // Prüfen, ob noch ein anderer Startpoint auf der selben Zelle ist.
@@ -310,7 +330,7 @@ namespace AntMe
         public Index2 GetCellIndex(float x, float y)
         {
             // Wenns keine Map gibt
-            if (Tiles == null)
+            if (tiles == null)
                 return Index2.Zero;
 
             Index2 limit = GetCellCount();
@@ -367,10 +387,10 @@ namespace AntMe
         /// <returns>Cell Count</returns>
         public Index2 GetCellCount()
         {
-            if (Tiles != null)
+            if (tiles != null)
                 return new Index2(
-                    Tiles.GetLength(0),
-                    Tiles.GetLength(1));
+                    tiles.GetLength(0),
+                    tiles.GetLength(1));
             return Index2.Zero;
         }
 
@@ -427,7 +447,7 @@ namespace AntMe
         {
             Index2 cell = GetCellIndex(x, y);
             Vector2 local = GetLocalPosition(x, y);
-            return Tiles[cell.X, cell.Y].GetHeight(local);
+            return this[cell.X, cell.Y].GetHeight(local);
         }
     }
 
