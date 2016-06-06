@@ -38,11 +38,15 @@ namespace AntMe.Generator
 
             List<SyntaxTree> syntaxTrees = new List<SyntaxTree>();
 
+            BaseParseNode root = new NamespaceParseNode("AntMe.Deutsch");
+
             foreach (var item in ExtensionLoader.DefaultTypeMapper.Items.Where(i => i.InfoType != null).Select(i => i.InfoType).Distinct())
             {
-                syntaxTrees.Add(GenerateItem(item));
-            }
 
+                root.ChildNodes.Add(new ClassParseNode(item));
+
+            }
+            syntaxTrees.Add(SyntaxFactory.SyntaxTree( SyntaxFactory.CompilationUnit().AddMembers(root.Generate())));
             var compilation = CSharpCompilation.Create(outputFile, syntaxTrees, references, options);
             var result = compilation.Emit(Path.Combine(output, outputFile));
 
@@ -54,12 +58,84 @@ namespace AntMe.Generator
 
         private static SyntaxTree GenerateItem(Type item)
         {
+
+
             return SyntaxFactory.SyntaxTree(
                 SyntaxFactory.CompilationUnit().AddMembers(
                     SyntaxFactory.NamespaceDeclaration(
                         SyntaxFactory.IdentifierName("AntMe.Deutsch")).AddMembers(
-                            SyntaxFactory.ClassDeclaration(item.Name))));
+                            SyntaxFactory.ClassDeclaration(item.Name).WithModifiers(
+                                SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword))).AddMembers(
+                                    generateLinkedMethods(item)
+                                ))).AddUsings(
+
+                                ));
+           
         }
+
+        #region Methods
+
+        private static MemberDeclarationSyntax[] generateLinkedMethods(Type item)
+        {
+            List<MemberDeclarationSyntax> members = new List<MemberDeclarationSyntax>();
+
+            foreach (MethodInfo methodInfo in item.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public))
+            {
+                members.Add(SyntaxFactory.MethodDeclaration(
+                    generateMethodTypeSyntax(methodInfo),
+                    methodInfo.Name).WithModifiers(
+                        SyntaxFactory.TokenList(
+                            SyntaxFactory.Token(SyntaxKind.PublicKeyword))).WithBody(
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.ReturnStatement(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(item.Name)
+                                            )))));
+            }
+
+            return members.ToArray();
+        }
+
+        private static TypeSyntax generateMethodTypeSyntax(MethodInfo info)
+        {
+            // returntype
+            SyntaxKind syntaxKind;
+            if (info.ReturnType == typeof(string))
+                syntaxKind = SyntaxKind.StringKeyword;
+            else if (info.ReturnType == typeof(bool))
+                syntaxKind = SyntaxKind.BoolKeyword;
+            else if (info.ReturnType == typeof(byte))
+                syntaxKind = SyntaxKind.ByteKeyword;
+            else if (info.ReturnType == typeof(char))
+                syntaxKind = SyntaxKind.CharKeyword;
+            else if (info.ReturnType == typeof(decimal))
+                syntaxKind = SyntaxKind.DecimalKeyword;
+            else if (info.ReturnType == typeof(double))
+                syntaxKind = SyntaxKind.DoubleKeyword;
+            else if (info.ReturnType == typeof(float))
+                syntaxKind = SyntaxKind.FloatKeyword;
+            else if (info.ReturnType == typeof(long))
+                syntaxKind = SyntaxKind.LongKeyword;
+            else if (info.ReturnType == typeof(object))
+                syntaxKind = SyntaxKind.ObjectKeyword;
+            else if (info.ReturnType == typeof(sbyte))
+                syntaxKind = SyntaxKind.SByteKeyword;
+            else if (info.ReturnType == typeof(short))
+                syntaxKind = SyntaxKind.ShortKeyword;
+            else if (info.ReturnType == typeof(uint))
+                syntaxKind = SyntaxKind.UIntKeyword;
+            else if (info.ReturnType == typeof(ulong))
+                syntaxKind = SyntaxKind.ULongKeyword;
+            else if (info.ReturnType == typeof(ushort))
+                syntaxKind = SyntaxKind.UShortKeyword;
+            else
+                return SyntaxFactory.IdentifierName(info.ReturnType.Name);
+            return SyntaxFactory.PredefinedType(SyntaxFactory.Token(syntaxKind));
+        }
+
+
+
+        #endregion
 
         /// <summary>
         /// 

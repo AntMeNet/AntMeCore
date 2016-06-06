@@ -98,9 +98,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseParseNode.cs" />
+    <Compile Include="ClassParseNode.cs" />
     <Compile Include="LocaleGenerator.cs" />
     <Compile Include="ModpackGenerator.cs" />
     <Compile Include="ModpackGeneratorHost.cs" />
+    <Compile Include="NamespaceParseNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TemplateGenerator.cs" />
   </ItemGroup>
