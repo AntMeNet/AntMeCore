@@ -6,11 +6,9 @@ namespace AntMe.Basics.MapTiles
 {
     public class RampMapTile : MapTile, IUpdateableMapTile
     {
-        public RampMapTile(byte heightLevel, bool canEnter) : base(heightLevel, canEnter)
+        public RampMapTile(byte heightLevel) : base(heightLevel, true)
         {
         }
-
-        public Compass Orientation { get; set; }
 
         public override float GetHeight(Vector2 position)
         {

@@ -24,7 +24,7 @@ namespace AntMe.Levelpack.Levels
 
         public override Map GetMap()
         {
-            return new ClassicMap();
+            return new Map(30, 20, true);
         }
 
         protected override void OnUpdate()

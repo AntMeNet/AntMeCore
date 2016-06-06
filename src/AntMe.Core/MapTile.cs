@@ -8,15 +8,10 @@ namespace AntMe
     /// </summary>
     public abstract class MapTile : PropertyList<MapTileProperty>
     {
-        /// <summary>
-        /// Contains the List of Items in this Cell (maintained by Engine).
-        /// </summary>
-        internal HashSet<Item> Items { get; private set; }
-
         public MapTile(byte heightLevel, bool canEnter)
         {
             CanEnter = canEnter;
-            Items = new HashSet<Item>();
+            HeightLevel = heightLevel;
         }
 
         public MapTileState GetState()
@@ -28,6 +23,11 @@ namespace AntMe
         /// Gets or sets the Material.
         /// </summary>
         public MapMaterial Material { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Orientation of this Tile.
+        /// </summary>
+        public Compass Orientation { get; set; }
 
         /// <summary>
         /// Sets or gets the base Height Level.

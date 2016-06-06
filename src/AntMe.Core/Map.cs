@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace AntMe
@@ -7,7 +7,7 @@ namespace AntMe
     /// <summary>
     /// Represents the topological information about a level Map.
     /// </summary>
-    public abstract class Map : PropertyList<MapProperty>
+    public sealed class Map : PropertyList<MapProperty>
     {
         #region Constants
 
@@ -126,70 +126,181 @@ namespace AntMe
             StartPoints[7] = new Index2(5 * dx, 3 * dy);
         }
 
-        public virtual void Update(int round) { }
+        public void Update(int round) { }
 
         #region Statische Methoden (Generatoren und Serialisierer)
 
-        ///// <summary>
-        /////     Deserialisiert eine Map aus einem gegebenen Stream.
-        /////     TODO: Test!!!
-        ///// </summary>
-        ///// <param name="stream">Quellstream</param>
-        ///// <returns>Deserialisierte Map</returns>
-        //public static Map Deserialize(Stream stream)
-        //{
-        //    var reader = new BinaryReader(stream);
+        /// <summary>
+        /// Deserialize a Map
+        /// </summary>
+        /// <param name="stream">Source</param>
+        /// <param name="old">Is Map in an old Format</param>
+        /// <returns>Map</returns>
+        public static Map Deserialize(Stream stream, bool old)
+        {
+            var reader = new BinaryReader(stream);
 
-        //    // Intro (Typ und Version)
-        //    if (reader.ReadString() != "AntMe! Map")
-        //        throw new Exception("This is not a AntMe! Map");
-        //    if (reader.ReadByte() != 1)
-        //        throw new Exception("Wrong Version");
+            // Intro (Typ und Version)
+            if (reader.ReadString() != "AntMe! Map")
+                throw new Exception("This is not a AntMe! Map");
 
-        //    var map = new Map();
+            byte version = reader.ReadByte();
+            switch (version)
+            {
+                case 1:
+                    return old ? DeserializeOld(reader) : DeserializeV1(reader);
+                default:
+                    throw new NotSupportedException("Invalid Version Number");
+            }
+        }
 
-        //    // Globale Infos (Border, Width, Height)
-        //    map.BlockBorder = reader.ReadBoolean();
-        //    int width = reader.ReadInt32();
-        //    int height = reader.ReadInt32();
-        //    int playercount = reader.ReadByte();
+        private static Map DeserializeOld(BinaryReader reader)
+        {
+            // Globale Infos (Border, Width, Height)
+            bool blockBorder = reader.ReadBoolean();
+            int width = reader.ReadInt32();
+            int height = reader.ReadInt32();
+            int playercount = reader.ReadByte();
 
-        //    if (playercount < MIN_STARTPOINTS)
-        //        throw new Exception("Too less Player in this Map");
-        //    if (playercount > MAX_STARTPOINTS)
-        //        throw new Exception("Too many Player in this Map");
+            var map = new Map(width, height, blockBorder);
 
-        //    // Startpunkte einlesen
-        //    map.StartPoints = new Index2[playercount];
-        //    for (int i = 0; i < playercount; i++)
-        //    {
-        //        map.StartPoints[i] = new Index2(
-        //            reader.ReadInt32(),
-        //            reader.ReadInt32());
-        //    }
+            if (playercount < MIN_STARTPOINTS)
+                throw new Exception("Too less Player in this Map");
+            if (playercount > MAX_STARTPOINTS)
+                throw new Exception("Too many Player in this Map");
 
-        //    if (width < MIN_WIDTH || width > MAX_WIDTH)
-        //        throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_WIDTH,
-        //            MAX_WIDTH));
-        //    if (height < MIN_HEIGHT || height > MAX_HEIGHT)
-        //        throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_HEIGHT,
-        //            MAX_HEIGHT));
+            // Startpunkte einlesen
+            map.StartPoints = new Index2[playercount];
+            for (int i = 0; i < playercount; i++)
+            {
+                map.StartPoints[i] = new Index2(
+                    reader.ReadInt32(),
+                    reader.ReadInt32());
+            }
 
-        //    // Zellen einlesen
-        //    map.Tiles = new MapTile[width, height];
-        //    for (int y = 0; y < height; y++)
-        //        for (int x = 0; x < width; x++)
-        //        {
-        //            map.Tiles[x, y] = new MapTile
-        //            {
-        //                Shape = (TileShape)reader.ReadByte(),
-        //                Speed = (TileSpeed)reader.ReadByte(),
-        //                Height = (TileHeight)reader.ReadByte()
-        //            };
-        //        }
+            if (width < MIN_WIDTH || width > MAX_WIDTH)
+                throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_WIDTH,
+                    MAX_WIDTH));
+            if (height < MIN_HEIGHT || height > MAX_HEIGHT)
+                throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_HEIGHT,
+                    MAX_HEIGHT));
 
-        //    return map;
-        //}
+            // Zellen einlesen
+            // map.Tiles = new MapTile[width, height];
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                {
+                    byte shape = reader.ReadByte();
+                    byte speed = reader.ReadByte();
+                    byte level = reader.ReadByte();
+
+                    string typeName = string.Empty;
+                    string materialName = string.Empty;
+                    Compass orientation = Compass.East;
+
+                    switch (speed)
+                    {
+                        case 1: materialName = "AntMe.Basics.MapTiles.TarMaterial"; break;
+                        case 2: materialName = "AntMe.Basics.MapTiles.MudMaterial"; break;
+                        case 3: materialName = "AntMe.Basics.MapTiles.SandMaterial"; break;
+                        case 4: materialName = "AntMe.Basics.MapTiles.GrasMaterial"; break;
+                        case 5: materialName = "AntMe.Basics.MapTiles.StoneMaterial"; break;
+                    }
+
+                    switch (shape)
+                    {
+                        // Flat Map Tile
+                        case 0x00:
+                            typeName = "AntMe.Basics.MapTiles.FlatMapTile";
+                            orientation = Compass.East;
+                            break;
+
+                        // Ramp
+                        case 0x10:
+                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                            orientation = Compass.East;
+                            break;
+                        case 0x11:
+                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                            orientation = Compass.South;
+                            break;
+                        case 0x12:
+                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                            orientation = Compass.North;
+                            break;
+                        case 0x13:
+                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                            orientation = Compass.West;
+                            break;
+
+                        // Wall
+                        case 0x20:
+                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                            orientation = Compass.East;
+                            break;
+                        case 0x21:
+                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                            orientation = Compass.South;
+                            break;
+                        case 0x22:
+                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                            orientation = Compass.North;
+                            break;
+                        case 0x23:
+                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                            orientation = Compass.West;
+                            break;
+
+                        // Concave Corners
+                        case 0x30:
+                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                            orientation = Compass.East;
+                            break;
+                        case 0x31:
+                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                            orientation = Compass.South;
+                            break;
+                        case 0x32:
+                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                            orientation = Compass.West;
+                            break;
+                        case 0x33:
+                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                            orientation = Compass.North;
+                            break;
+
+                        // Convex Cordners
+                        case 0x40:
+                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                            orientation = Compass.North;
+                            break;
+                        case 0x41:
+                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                            orientation = Compass.South;
+                            break;
+                        case 0x42:
+                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                            orientation = Compass.East;
+                            break;
+                        case 0x43:
+                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                            orientation = Compass.West;
+                            break;
+                    }
+
+                    MapTile tile = Activator.CreateInstance(Type.GetType(typeName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null"), level) as MapTile;
+                    tile.Orientation = orientation;
+                    tile.Material = Activator.CreateInstance(Type.GetType(materialName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null")) as MapMaterial;
+                    map[x, y] = tile;
+                }
+
+            return map;
+        }
+
+        private static Map DeserializeV1(BinaryReader reader)
+        {
+            throw new NotImplementedException();
+        }
 
         ///// <summary>
         /////     Serialisiert eine Map in einen Stream.

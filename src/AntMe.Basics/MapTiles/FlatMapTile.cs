@@ -1,6 +1,6 @@
 ﻿namespace AntMe.Basics.MapTiles
 {
-    public abstract class FlatMapTile : MapTile
+    public class FlatMapTile : MapTile
     {
         public FlatMapTile(byte heightLevel) : base(heightLevel, true)
         {
