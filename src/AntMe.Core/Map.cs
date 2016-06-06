@@ -12,47 +12,47 @@ namespace AntMe
         #region Constants
 
         /// <summary>
-        ///     Kantenlänge einer Zelle (quadratisch).
+        /// Size of a single Cell in World Units.
         /// </summary>
         public const float CELLSIZE = 50f;
 
         /// <summary>
-        ///     Minimale Anzahl Spalten einer Karte.
+        /// Minimum Number of Cells in X Direction.
         /// </summary>
         public const int MIN_WIDTH = 10;
 
         /// <summary>
-        ///     Minimale Anzahl Zeilen einer Karte.
+        /// Minimum Number of Cells in Y Direction.
         /// </summary>
         public const int MIN_HEIGHT = 10;
 
         /// <summary>
-        ///     Maximale Anzahl Spalten einer Karte.
+        /// Maximum Number of Cells in X Direction.
         /// </summary>
         public const int MAX_WIDTH = 100;
 
         /// <summary>
-        ///     Maximale Anzahl Zeilen einer Karte.
+        /// Maximum Number of Cells in Y Direction.
         /// </summary>
         public const int MAX_HEIGHT = 100;
 
         /// <summary>
-        ///     Minimale Anzahl Startpunkte einer Karte.
+        /// Minimum Count of Start Points.
         /// </summary>
         public const int MIN_STARTPOINTS = 1;
 
         /// <summary>
-        ///     Maximale Anzahl Startpunkte einer Karte.
+        /// Maximum Count of Start Points.
         /// </summary>
         public const int MAX_STARTPOINTS = Level.MAX_SLOTS;
 
         /// <summary>
-        ///     Minimaler Höhenwert von Einheiten.
+        /// Minimum Hight of Units.
         /// </summary>
         public const float MIN_Z = 0f;
 
         /// <summary>
-        ///     Maximaler Höhenwert von Einheiten.
+        /// Maximum Hight of Units.
         /// </summary>
         public const float MAX_Z = 50f;
 
@@ -72,11 +72,6 @@ namespace AntMe
         /// Holds all Map Tiles.
         /// </summary>
         private MapTile[,] tiles;
-
-        /// <summary>
-        /// List of all updateable Map Tiles.
-        /// </summary>
-        private HashSet<IUpdateableMapTile> updateableMapTiles;
 
         /// <summary>
         /// Gets or sets the border behavior of this map.

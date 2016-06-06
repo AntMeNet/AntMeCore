@@ -69,7 +69,6 @@
     <Compile Include="FactionUnit.cs" />
     <Compile Include="FactoryInterop.cs" />
     <Compile Include="FactoryInteropProperty.cs" />
-    <Compile Include="FlatMapTile.cs" />
     <Compile Include="IExtensionPack.cs" />
     <Compile Include="InfoProperty.cs" />
     <Compile Include="Interop.cs" />
@@ -82,7 +81,6 @@
     <Compile Include="ITypeMapper.cs" />
     <Compile Include="ITypeMapperEntry.cs" />
     <Compile Include="ITypeResolver.cs" />
-    <Compile Include="IUpdateableMapTile.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="LevelDescriptionAttribute.cs" />
     <Compile Include="LevelMode.cs" />
@@ -95,7 +93,11 @@
     <Compile Include="MapState.cs" />
     <Compile Include="MapStateProperty.cs" />
     <Compile Include="MapTile.cs" />
+    <Compile Include="MapTileInfo.cs" />
+    <Compile Include="MapTileInfoProperty.cs" />
+    <Compile Include="MapTileProperty.cs" />
     <Compile Include="MapTileState.cs" />
+    <Compile Include="MapTileStateProperty.cs" />
     <Compile Include="MipMap.cs" />
     <Compile Include="MipMapLayer.cs" />
     <Compile Include="Engine.cs" />

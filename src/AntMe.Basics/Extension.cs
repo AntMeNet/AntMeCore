@@ -7,6 +7,8 @@ using AntMe.Basics.Factions.Bugs;
 using AntMe.Basics.ItemProperties;
 using AntMe.Basics.Items;
 using AntMe.Basics.LevelProperties;
+using AntMe.Basics.MapProperties;
+using AntMe.Basics.MapTiles;
 using System;
 
 namespace AntMe.Basics
@@ -52,6 +54,24 @@ namespace AntMe.Basics
             settings.Set<RecognitionProperty>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
             settings.Set<RecognitionProperty>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
             typeMapper.RegisterEngineProperty<RecognitionProperty>(this, "Recognition Extension (Core)", 150);
+
+            // ##########################
+            // Map Properties
+            // ##########################
+            typeMapper.RegisterMapProperty<UpdateTileProperty>(this, "Updateable Tiles");
+
+            // ##########################
+            // Map Tiles
+            // ##########################
+            typeMapper.RegisterMapTile<ConcaveCliffMapTile, ConcaveCliffMapTileState, ConcaveCliffMapTileInfo>(this, "Concave Cliff Map Tile");
+            typeMapper.RegisterMapTile<ConvexCliffMapTile, ConvexCliffMapTileState, ConvexCliffMapTileInfo>(this, "Convex Cliff Map Tile");
+            typeMapper.RegisterMapTile<WallCliffMapTile, WallCliffMapTileState, WallCliffMapTileInfo>(this, "Cliff Wall Map Tile");
+            typeMapper.RegisterMapTile<FlatMapTile, FlatMapTileState, FlatMapTileInfo>(this, "Flat Map Tile");
+            typeMapper.RegisterMapTile<RampMapTile, RampMapTileState, RampMapTileInfo>(this, "Ramp Map Tile");
+
+            // ##########################
+            // Map Tile Properties
+            // ##########################
 
             // ##########################
             // Standard Item Properties

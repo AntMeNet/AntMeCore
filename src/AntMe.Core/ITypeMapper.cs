@@ -37,6 +37,70 @@ namespace AntMe
 
         #endregion
 
+        #region Map Properties
+
+        /// <summary>
+        /// Registers additional Map Properties.
+        /// </summary>
+        /// <typeparam name="T">Type of Map Property</typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createPropertyDelegate"></param>
+        void RegisterMapProperty<T>(IExtensionPack extensionPack, string name, Func<Level, T> createPropertyDelegate = null)
+            where T : MapProperty;
+
+        /// <summary>
+        /// Registers additional Map Properties.
+        /// </summary>
+        /// <typeparam name="T">Type of Map Property</typeparam>
+        /// <typeparam name="S">Type of State for the Map Property</typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createPropertyDelegate"></param>
+        /// <param name="createStateDelegate"></param>
+        void RegisterMapProperty<T, S>(IExtensionPack extensionPack, string name, Func<Level, T> createPropertyDelegate = null, Func<Map, S> createStateDelegate = null)
+            where T : MapProperty
+            where S : MapStateProperty;
+
+        /// <summary>
+        /// List all Map Properties.
+        /// </summary>
+        IEnumerable<IStateInfoTypeMapperEntry> MapProperties { get; }
+
+        #endregion
+
+        #region Map Tiles
+
+        void RegisterMapTile<T, S, I>(IExtensionPack extensionPack, string name,
+            Func<Item, S> createStateDelegate = null,
+            Func<Item, Item, I> createInfoDelegate = null)
+            where T : MapTile
+            where S : MapTileState
+            where I : MapTileInfo;
+
+        /// <summary>
+        /// List of all Map Tiles
+        /// </summary>
+        IEnumerable<IStateInfoTypeMapperEntry> MapTiles { get; }
+
+        #endregion
+
+        #region Map Tile Properties
+
+        void RegisterMapTileProperty<T, S, I>(IExtensionPack extensionPack, string name,
+            Func<Item, S> createStateDelegate = null,
+            Func<Item, Item, I> createInfoDelegate = null)
+            where T : MapTile
+            where S : MapTileState
+            where I : MapTileInfo;
+
+        /// <summary>
+        /// List of all Map Tile Properties.
+        /// </summary>
+        IEnumerable<IStateInfoTypeMapperEntry> MapTileProperties { get; }
+
+        #endregion
+
         #region Items
 
         /// <summary>

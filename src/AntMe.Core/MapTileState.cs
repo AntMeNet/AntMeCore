@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AntMe
 {
-    public abstract class MapTileState : ISerializableState
+    public abstract class MapTileState : PropertyList<MapTileStateProperty>, ISerializableState
     {
         public int HeightLevel { get; set; }
 

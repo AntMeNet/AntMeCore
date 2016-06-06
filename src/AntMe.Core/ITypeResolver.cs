@@ -17,6 +17,16 @@ namespace AntMe
 
         #endregion
 
+        #region Map Resolver
+
+        void ResolveMap(Map map);
+
+        MapState CreateMapState(Map map);
+
+        MapTileInfo CreateMapTileInfo(MapTile tile, Item observer);
+
+        #endregion
+
         #region Item Resolver
 
         /// <summary>

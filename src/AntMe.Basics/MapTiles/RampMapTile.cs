@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AntMe.Basics.MapProperties;
+using System;
 using System.Collections.Generic;
 
 namespace AntMe.Basics.MapTiles

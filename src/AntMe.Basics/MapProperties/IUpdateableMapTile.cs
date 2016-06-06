@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AntMe
+namespace AntMe.Basics.MapProperties
 {
     /// <summary>
     /// Interface for all Map Tiles that need updates.

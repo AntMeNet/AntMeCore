@@ -1,4 +1,4 @@
-﻿namespace AntMe
+﻿namespace AntMe.Basics.MapTiles
 {
     public abstract class FlatMapTile : MapTile
     {
