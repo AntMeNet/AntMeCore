@@ -74,6 +74,12 @@
     <Compile Include="CodeGeneratorForm.Designer.cs">
       <DependentUpon>CodeGeneratorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditorPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EditorPanel.Designer.cs">
+      <DependentUpon>EditorPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="LevelSelectorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,12 +116,20 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MapEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MapEditorForm.Designer.cs">
+      <DependentUpon>MapEditorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MapPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MapPreview.Designer.cs">
       <DependentUpon>MapPreview.cs</DependentUpon>
     </Compile>
+    <Compile Include="Renderer\MaterialRenderer.cs" />
+    <Compile Include="Renderer\TileRenderer.cs" />
     <Compile Include="PlayerPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -160,6 +174,9 @@
     <EmbeddedResource Include="CodeGeneratorForm.resx">
       <DependentUpon>CodeGeneratorForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="EditorPanel.resx">
+      <DependentUpon>EditorPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LevelSelectorForm.resx">
       <DependentUpon>LevelSelectorForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -177,6 +194,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MapEditorForm.resx">
+      <DependentUpon>MapEditorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MapPreview.resx">
       <DependentUpon>MapPreview.cs</DependentUpon>
@@ -235,6 +255,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="antme.ico" />
+    <None Include="Resources\tar.png" />
+    <None Include="Resources\stone.png" />
+    <None Include="Resources\sand.png" />
+    <None Include="Resources\mud.png" />
+    <None Include="Resources\gras.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\AntMe.Core\AntMe.Core.csproj">

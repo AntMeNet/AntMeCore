@@ -204,5 +204,13 @@ namespace CoreTestClient
                 form.ShowDialog(this);
             }
         }
+
+        private void mapEditorMenu_Click(object sender, EventArgs e)
+        {
+            using (MapEditorForm form = new MapEditorForm())
+            {
+                form.ShowDialog(this);
+            }
+        }
     }
 }
