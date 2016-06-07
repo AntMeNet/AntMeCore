@@ -1,4 +1,4 @@
-﻿using System;
+﻿using AntMe;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -6,37 +6,52 @@ namespace CoreTestClient.Renderer
 {
     public class MaterialRenderer
     {
-        private Dictionary<int, Bitmap> mipMaps;
-
-        private int levels;
-
         private Bitmap bitmap;
+
+        private Dictionary<Compass, Bitmap> bitmaps;
 
         public MaterialRenderer(Bitmap bitmap)
         {
             this.bitmap = bitmap;
-            mipMaps = new Dictionary<int, Bitmap>();
-
-            int level = 0;
-            while (Math.Pow(2, level) <= bitmap.Width)
-            {
-                int width = (int)Math.Pow(2, level);
-                Bitmap bm = new Bitmap(width, width);
-                using (Graphics g = Graphics.FromImage(bm))
-                {
-                    g.DrawImage(bitmap, new Rectangle(0, 0, width, width));
-                }
-                mipMaps.Add(level, bm);
-                levels = level;
-                level++;
-            }
+            bitmaps = new Dictionary<Compass, Bitmap>();
+            bitmaps.Add(Compass.East, Rotate(bitmap, Compass.East));
+            bitmaps.Add(Compass.South, Rotate(bitmap, Compass.South));
+            bitmaps.Add(Compass.West, Rotate(bitmap, Compass.West));
+            bitmaps.Add(Compass.North, Rotate(bitmap, Compass.North));
         }
 
-        public void Draw(Graphics g, Rectangle destination)
+        private Bitmap Rotate(Bitmap input, Compass orientation)
         {
-            int mipMapLevel = Math.Min((int)Math.Ceiling(Math.Log(destination.Width, 2)), levels);
+            Bitmap result = new Bitmap(input.Height, input.Width);
+            for (int y = 0; y < input.Height; y++)
+            {
+                for (int x = 0; x < input.Width; x++)
+                {
+                    Color pixel = input.GetPixel(x, y);
+                    switch (orientation)
+                    {
+                        case Compass.East:
+                            result.SetPixel(x, y, pixel);
+                            break;
+                        case Compass.South:
+                            result.SetPixel(result.Width - 1 - y, x, pixel);
+                            break;
+                        case Compass.West:
+                            result.SetPixel(result.Width - 1 - x, result.Height - 1 - y, pixel);
+                            break;
+                        case Compass.North:
+                            result.SetPixel(y, result.Height - 1 - x, pixel);
+                            break;
+                    }
+                }
+            }
 
-            g.DrawImage(mipMaps[mipMapLevel], destination);
+            return result;
+        }
+
+        public void Draw(Graphics g, int x, int y, Compass orientation)
+        {
+            g.DrawImageUnscaled(bitmaps[orientation], x, y);
         }
     }
 }

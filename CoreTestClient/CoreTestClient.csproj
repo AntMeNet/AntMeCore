@@ -255,6 +255,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="antme.ico" />
+    <None Include="Resources\WallConvex.png" />
+    <None Include="Resources\WallConcave.png" />
+    <None Include="Resources\Wall.png" />
+    <None Include="Resources\RampWallRight.png" />
+    <None Include="Resources\RampWallLeft.png" />
+    <None Include="Resources\Ramp.png" />
     <None Include="Resources\lava.png" />
     <None Include="Resources\stone.png" />
     <None Include="Resources\sand.png" />

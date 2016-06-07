@@ -93,6 +93,36 @@ namespace CoreTestClient.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Ramp {
+            get {
+                object obj = ResourceManager.GetObject("Ramp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RampWallLeft {
+            get {
+                object obj = ResourceManager.GetObject("RampWallLeft", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RampWallRight {
+            get {
+                object obj = ResourceManager.GetObject("RampWallRight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap sand {
             get {
                 object obj = ResourceManager.GetObject("sand", resourceCulture);
@@ -106,6 +136,36 @@ namespace CoreTestClient.Properties {
         internal static System.Drawing.Bitmap stone {
             get {
                 object obj = ResourceManager.GetObject("stone", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Wall {
+            get {
+                object obj = ResourceManager.GetObject("Wall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WallConcave {
+            get {
+                object obj = ResourceManager.GetObject("WallConcave", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WallConvex {
+            get {
+                object obj = ResourceManager.GetObject("WallConvex", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

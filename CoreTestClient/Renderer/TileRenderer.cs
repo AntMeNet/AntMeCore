@@ -3,18 +3,10 @@ using System.Drawing;
 
 namespace CoreTestClient.Renderer
 {
-    public class TileRenderer
+    public class TileRenderer : MaterialRenderer
     {
-        private Bitmap bitmap;
-
-        public TileRenderer(Bitmap bitmap)
+        public TileRenderer(Bitmap bitmap) : base(bitmap)
         {
-            this.bitmap = bitmap;
-        }
-
-        public void Draw(Graphics g, Rectangle destination, Compass orientation)
-        {
-
         }
     }
 }

@@ -10,17 +10,21 @@ namespace CoreTestClient
 {
     public partial class EditorPanel : UserControl
     {
+        private const int TILEWIDTH = 64;
+
         private float scale = 30f;
 
         private Dictionary<string, MaterialRenderer> materials;
 
         private Dictionary<string, TileRenderer> tiles;
 
-        private Index2 offset = Index2.Zero;
+        private Vector2 offset = Vector2.Zero;
 
         private Index2 mapSize;
 
         private Map map;
+
+        private Bitmap buffer;
 
         public Map Map
         {
@@ -28,9 +32,18 @@ namespace CoreTestClient
             set
             {
                 map = value;
+
+                if (buffer != null)
+                {
+                    buffer.Dispose();
+                    buffer = null;
+                }
+
                 if (map != null)
                 {
                     mapSize = map.GetCellCount();
+                    buffer = new Bitmap(mapSize.X * 64, mapSize.Y * 64);
+                    RedrawBuffer();
                     RecalcScale();
                 }
             }
@@ -50,46 +63,40 @@ namespace CoreTestClient
             materials.Add("AntMe.Basics.MapTiles.SandMaterial", new MaterialRenderer(Resources.sand));
             materials.Add("AntMe.Basics.MapTiles.GrasMaterial", new MaterialRenderer(Resources.gras));
             materials.Add("AntMe.Basics.MapTiles.StoneMaterial", new MaterialRenderer(Resources.stone));
+
+            tiles = new Dictionary<string, TileRenderer>();
+            tiles.Add("AntMe.Basics.MapTiles.RampMapTile", new TileRenderer(Resources.Ramp));
+            tiles.Add("AntMe.Basics.MapTiles.ConcaveCliffMapTile", new TileRenderer(Resources.WallConcave));
+            tiles.Add("AntMe.Basics.MapTiles.ConvexCliffMapTile", new TileRenderer(Resources.WallConvex));
+            tiles.Add("AntMe.Basics.MapTiles.LeftRampToCliffMapTile", new TileRenderer(Resources.RampWallLeft));
+            tiles.Add("AntMe.Basics.MapTiles.RightRampToCliffMapTile", new TileRenderer(Resources.RampWallRight));
+            tiles.Add("AntMe.Basics.MapTiles.WallCliffMapTile", new TileRenderer(Resources.Wall));
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.Clear(Color.CornflowerBlue);
 
-            if (Map != null)
+            if (buffer != null)
             {
-                var size = Map.GetCellCount();
-                for (int y = 0; y < size.Y; y++)
-                {
-                    for (int x = 0; x < size.X; x++)
-                    {
-                        MapTile tile = Map[x, y];
-                        if (tile == null) continue;
+                e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                e.Graphics.ResetTransform();
+                e.Graphics.TranslateTransform(offset.X, offset.Y);
+                e.Graphics.ScaleTransform(scale / TILEWIDTH, scale / TILEWIDTH);
+                e.Graphics.DrawImageUnscaled(buffer, 0, 0);
 
-                        int x1 = (int)(x * scale);
-                        int y1 = (int)(y * scale);
-                        int x2 = (int)((x + 1) * scale);
-                        int y2 = (int)((y + 1) * scale);
-
-                        Rectangle rect = new Rectangle(x1 + offset.X, y1 + offset.Y, x2 - x1, y2 - y1);
-
-                        MaterialRenderer material;
-                        if (materials.TryGetValue(tile.Material.GetType().FullName, out material))
-                            material.Draw(e.Graphics, rect);
-                    }
-                }
 
                 // Draw hovered
-                if (HoveredCell.HasValue)
-                {
-                    Index2 cell = HoveredCell.Value;
-                    int x1 = (int)(cell.X * scale);
-                    int y1 = (int)(cell.Y * scale);
-                    int x2 = (int)((cell.X + 1) * scale);
-                    int y2 = (int)((cell.Y + 1) * scale);
+                //if (HoveredCell.HasValue)
+                //{
+                //    Index2 cell = HoveredCell.Value;
+                //    int x1 = (int)(cell.X * scale);
+                //    int y1 = (int)(cell.Y * scale);
+                //    int x2 = (int)((cell.X + 1) * scale);
+                //    int y2 = (int)((cell.Y + 1) * scale);
 
-                    Rectangle rect = new Rectangle(x1 + offset.X, y1 + offset.Y, x2 - x1, y2 - y1);
-                }
+                //    // Rectangle rect = new Rectangle(x1 + offset.X, y1 + offset.Y, x2 - x1, y2 - y1);
+                //}
             }
         }
 
@@ -142,11 +149,35 @@ namespace CoreTestClient
                 float smallestScale = Math.Min(scaleX, scaleY);
                 scale = Math.Max(scale, smallestScale);
 
-                offset = new Index2(
-                    (ClientSize.Width - (int)(mapSize.X * scale)) / 2,
-                    (ClientSize.Height - (int)(mapSize.Y * scale)) / 2);
+                offset = new Vector2(
+                    (ClientSize.Width - (mapSize.X * scale)) / 2,
+                    (ClientSize.Height - (mapSize.Y * scale)) / 2);
             }
             Invalidate();
+        }
+
+        private void RedrawBuffer()
+        {
+            using (Graphics g = Graphics.FromImage(buffer))
+            {
+                var size = Map.GetCellCount();
+                for (int y = 0; y < size.Y; y++)
+                {
+                    for (int x = 0; x < size.X; x++)
+                    {
+                        MapTile tile = Map[x, y];
+                        if (tile == null) continue;
+
+                        MaterialRenderer material;
+                        if (materials.TryGetValue(tile.Material.GetType().FullName, out material))
+                            material.Draw(g, x * TILEWIDTH, y * TILEWIDTH, Compass.East);
+
+                        TileRenderer tileRenderer;
+                        if (tiles.TryGetValue(tile.GetType().FullName, out tileRenderer))
+                            tileRenderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, tile.Orientation);
+                    }
+                }
+            }
         }
     }
 }

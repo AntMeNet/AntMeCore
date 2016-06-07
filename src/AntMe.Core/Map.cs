@@ -222,15 +222,15 @@ namespace AntMe
                             break;
                         case 0x11:
                             typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                            orientation = Compass.South;
+                            orientation = Compass.North;
                             break;
                         case 0x12:
                             typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                            orientation = Compass.North;
+                            orientation = Compass.West;
                             break;
                         case 0x13:
                             typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                            orientation = Compass.West;
+                            orientation = Compass.South;
                             break;
 
                         // Wall
@@ -240,47 +240,47 @@ namespace AntMe
                             break;
                         case 0x21:
                             typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                            orientation = Compass.South;
+                            orientation = Compass.North;
                             break;
                         case 0x22:
                             typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                            orientation = Compass.North;
+                            orientation = Compass.West;
                             break;
                         case 0x23:
                             typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                            orientation = Compass.West;
+                            orientation = Compass.South;
                             break;
 
                         // Concave Corners
                         case 0x30:
                             typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                            orientation = Compass.East;
+                            orientation = Compass.South;
                             break;
                         case 0x31:
                             typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                            orientation = Compass.South;
+                            orientation = Compass.East;
                             break;
                         case 0x32:
                             typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                            orientation = Compass.West;
+                            orientation = Compass.North;
                             break;
                         case 0x33:
                             typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                            orientation = Compass.North;
+                            orientation = Compass.West;
                             break;
 
                         // Convex Cordners
                         case 0x40:
                             typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                            orientation = Compass.North;
+                            orientation = Compass.South;
                             break;
                         case 0x41:
                             typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                            orientation = Compass.South;
+                            orientation = Compass.East;
                             break;
                         case 0x42:
                             typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                            orientation = Compass.East;
+                            orientation = Compass.North;
                             break;
                         case 0x43:
                             typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
