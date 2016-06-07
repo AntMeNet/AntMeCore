@@ -255,7 +255,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="antme.ico" />
-    <None Include="Resources\tar.png" />
+    <None Include="Resources\lava.png" />
     <None Include="Resources\stone.png" />
     <None Include="Resources\sand.png" />
     <None Include="Resources\mud.png" />

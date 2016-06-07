@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AntMe.Basics.MapTiles
+﻿namespace AntMe.Basics.MapTiles
 {
+    /// <summary>
+    /// Map Tile State for Walls.
+    /// </summary>
     public class WallCliffMapTileState : CliffMapTileState
     {
     }

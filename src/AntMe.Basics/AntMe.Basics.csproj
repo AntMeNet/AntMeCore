@@ -182,9 +182,11 @@
     <Compile Include="MapTiles\RampMapTile.cs" />
     <Compile Include="MapTiles\RampMapTileInfo.cs" />
     <Compile Include="MapTiles\RampMapTileState.cs" />
+    <Compile Include="MapTiles\LeftRampToCliffMapTile.cs" />
+    <Compile Include="MapTiles\RightRampToCliffMapTile.cs" />
     <Compile Include="MapTiles\SandMaterial.cs" />
     <Compile Include="MapTiles\StoneMaterial.cs" />
-    <Compile Include="MapTiles\TarMaterial.cs" />
+    <Compile Include="MapTiles\LavaMaterial.cs" />
     <Compile Include="MapTiles\WallCliffMapTile.cs" />
     <Compile Include="MapTiles\WallCliffMapTileInfo.cs" />
     <Compile Include="MapTiles\WallCliffMapTileState.cs" />

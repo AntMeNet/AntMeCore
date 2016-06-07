@@ -45,9 +45,9 @@
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.editorPanel = new CoreTestClient.EditorPanel();
             this.toolSplitContainer = new System.Windows.Forms.SplitContainer();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.editorPanel = new CoreTestClient.EditorPanel();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -162,6 +162,7 @@
             // splitContainer
             // 
             this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainer.Location = new System.Drawing.Point(0, 49);
             this.splitContainer.Name = "splitContainer";
             // 
@@ -175,6 +176,15 @@
             this.splitContainer.Size = new System.Drawing.Size(820, 488);
             this.splitContainer.SplitterDistance = 598;
             this.splitContainer.TabIndex = 4;
+            // 
+            // editorPanel
+            // 
+            this.editorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.editorPanel.Location = new System.Drawing.Point(0, 0);
+            this.editorPanel.Map = null;
+            this.editorPanel.Name = "editorPanel";
+            this.editorPanel.Size = new System.Drawing.Size(598, 488);
+            this.editorPanel.TabIndex = 0;
             // 
             // toolSplitContainer
             // 
@@ -197,15 +207,6 @@
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(218, 249);
             this.propertyGrid.TabIndex = 0;
-            // 
-            // editorPanel
-            // 
-            this.editorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.editorPanel.Location = new System.Drawing.Point(0, 0);
-            this.editorPanel.Map = null;
-            this.editorPanel.Name = "editorPanel";
-            this.editorPanel.Size = new System.Drawing.Size(598, 488);
-            this.editorPanel.TabIndex = 0;
             // 
             // MapEditorForm
             // 

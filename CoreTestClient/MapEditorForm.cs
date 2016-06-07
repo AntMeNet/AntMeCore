@@ -28,10 +28,15 @@ namespace CoreTestClient
 
             if (editorPanel.SelectedCell.HasValue)
             {
+                Index2 cell = editorPanel.SelectedCell.Value;
+                MapTile tile = map[cell.X, cell.Y];
+                if (tile != propertyGrid.SelectedObject)
+                    propertyGrid.SelectedObject = tile;
                 selectedLabel.Text = string.Format("{0}/{1}", editorPanel.SelectedCell.Value.X, editorPanel.SelectedCell.Value.Y);
             }
             else
             {
+                propertyGrid.SelectedObject = null;
                 selectedLabel.Text = string.Empty;
             }
         }

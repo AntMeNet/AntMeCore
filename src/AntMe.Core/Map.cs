@@ -200,7 +200,7 @@ namespace AntMe
 
                     switch (speed)
                     {
-                        case 1: materialName = "AntMe.Basics.MapTiles.TarMaterial"; break;
+                        case 1: materialName = "AntMe.Basics.MapTiles.LavaMaterial"; break;
                         case 2: materialName = "AntMe.Basics.MapTiles.MudMaterial"; break;
                         case 3: materialName = "AntMe.Basics.MapTiles.SandMaterial"; break;
                         case 4: materialName = "AntMe.Basics.MapTiles.GrasMaterial"; break;
@@ -288,7 +288,8 @@ namespace AntMe
                             break;
                     }
 
-                    MapTile tile = Activator.CreateInstance(Type.GetType(typeName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null"), level) as MapTile;
+                    MapTile tile = Activator.CreateInstance(Type.GetType(typeName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null")) as MapTile;
+                    tile.HeightLevel = level;
                     tile.Orientation = orientation;
                     tile.Material = Activator.CreateInstance(Type.GetType(materialName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null")) as MapMaterial;
                     map[x, y] = tile;

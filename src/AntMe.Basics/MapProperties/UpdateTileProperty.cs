@@ -12,5 +12,7 @@ namespace AntMe.Basics.MapProperties
         /// </summary>
         private HashSet<IUpdateableMapTile> updateableMapTiles;
 
+        // TODO: Collect MapTiles and Materials (!!!)
+
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace AntMe.Basics.MapProperties
 {
@@ -10,6 +7,11 @@ namespace AntMe.Basics.MapProperties
     /// </summary>
     public interface IUpdateableMapTile
     {
+        /// <summary>
+        /// Gets called in every Round to update Items in this Map Tile.
+        /// </summary>
+        /// <param name="round">Current Round</param>
+        /// <param name="items">Included Items</param>
         void Update(int round, IEnumerable<Item> items);
     }
 }

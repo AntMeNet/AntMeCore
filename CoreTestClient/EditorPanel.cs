@@ -45,7 +45,7 @@ namespace CoreTestClient
             DoubleBuffered = true;
 
             materials = new Dictionary<string, MaterialRenderer>();
-            materials.Add("AntMe.Basics.MapTiles.TarMaterial", new MaterialRenderer(Resources.tar));
+            materials.Add("AntMe.Basics.MapTiles.LavaMaterial", new MaterialRenderer(Resources.lava));
             materials.Add("AntMe.Basics.MapTiles.MudMaterial", new MaterialRenderer(Resources.mud));
             materials.Add("AntMe.Basics.MapTiles.SandMaterial", new MaterialRenderer(Resources.sand));
             materials.Add("AntMe.Basics.MapTiles.GrasMaterial", new MaterialRenderer(Resources.gras));
@@ -78,6 +78,18 @@ namespace CoreTestClient
                             material.Draw(e.Graphics, rect);
                     }
                 }
+
+                // Draw hovered
+                if (HoveredCell.HasValue)
+                {
+                    Index2 cell = HoveredCell.Value;
+                    int x1 = (int)(cell.X * scale);
+                    int y1 = (int)(cell.Y * scale);
+                    int x2 = (int)((cell.X + 1) * scale);
+                    int y2 = (int)((cell.Y + 1) * scale);
+
+                    Rectangle rect = new Rectangle(x1 + offset.X, y1 + offset.Y, x2 - x1, y2 - y1);
+                }
             }
         }
 
@@ -92,6 +104,16 @@ namespace CoreTestClient
             int cellY = (int)Math.Floor((e.Y - offset.Y) / scale);
             if (cellX >= 0 && cellX < mapSize.X && cellY >= 0 && cellY < mapSize.Y)
                 HoveredCell = new Index2(cellX, cellY);
+        }
+
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            base.OnMouseClick(e);
+
+            if (e.Button == MouseButtons.Left && e.Clicks == 1)
+            {
+                SelectedCell = HoveredCell;
+            }
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
