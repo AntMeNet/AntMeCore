@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Linq;
+using System.Text;
+using System.IO.Compression;
 
 namespace AntMe
 {
     /// <summary>
     /// Represents the topological information about a level Map.
     /// </summary>
-    public sealed class Map : PropertyList<MapProperty>
+    public sealed class Map : PropertyList<MapProperty>, ISerializableState
     {
         #region Constants
+
+        private const string STREAM_HELLOMESSAGE = "AntMe! Map";
 
         /// <summary>
         /// Size of a single Cell in World Units.
@@ -95,7 +101,22 @@ namespace AntMe
         /// </summary>
         public Index2[] StartPoints { get; set; }
 
-        public Map(int width, int height, bool blockBorder)
+        /// <summary>
+        /// Default Constructor to initialize the Tile Array.
+        /// </summary>
+        /// <param name="context">Simulation Context</param>
+        /// <param name="width">Number of Cols</param>
+        /// <param name="height">Number of Rows</param>
+        public Map(SimulationContext context, int width, int height) : this(context, width, height, 0) { }
+
+        /// <summary>
+        /// Constructor with predefined Player Startpoints.
+        /// </summary>
+        /// <param name="context">Simulation Context</param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="playerCount"></param>
+        public Map(SimulationContext context, int width, int height, int playerCount)
         {
             // Check Parameter
             if (width < MIN_WIDTH)
@@ -106,8 +127,10 @@ namespace AntMe
                 throw new ArgumentOutOfRangeException(string.Format("Map must have at least {0} Rows", MIN_HEIGHT));
             if (height > MAX_HEIGHT)
                 throw new ArgumentOutOfRangeException(string.Format("Map must have a max of {0} Rows", MAX_HEIGHT));
-
-            BlockBorder = blockBorder;
+            if (playerCount < 0)
+                throw new ArgumentOutOfRangeException("Player Count can't me smaller than zero");
+            if (playerCount > 8)
+                throw new ArgumentOutOfRangeException("Player Count can't be greater than 8");
 
             // Create Tiles
             tiles = new MapTile[width, height];
@@ -115,242 +138,300 @@ namespace AntMe
             // Create Players
             int dx = width / 6;
             int dy = height / 6;
-            StartPoints = new Index2[8];
-            StartPoints[0] = new Index2(dx, dy);
-            StartPoints[1] = new Index2(5 * dx, 5 * dy);
-            StartPoints[2] = new Index2(5 * dx, dy);
-            StartPoints[3] = new Index2(dx, 5 * dy);
-            StartPoints[4] = new Index2(3 * dx, dy);
-            StartPoints[5] = new Index2(3 * dx, 5 * dy);
-            StartPoints[6] = new Index2(dx, 3 * dy);
-            StartPoints[7] = new Index2(5 * dx, 3 * dy);
+            StartPoints = new Index2[playerCount];
+            if (playerCount >= 1)
+                StartPoints[0] = new Index2(dx, dy);
+            if (playerCount >= 2)
+                StartPoints[1] = new Index2(5 * dx, 5 * dy);
+            if (playerCount >= 3)
+                StartPoints[2] = new Index2(5 * dx, dy);
+            if (playerCount >= 4)
+                StartPoints[3] = new Index2(dx, 5 * dy);
+            if (playerCount >= 5)
+                StartPoints[4] = new Index2(3 * dx, dy);
+            if (playerCount >= 6)
+                StartPoints[5] = new Index2(3 * dx, 5 * dy);
+            if (playerCount >= 7)
+                StartPoints[6] = new Index2(dx, 3 * dy);
+            if (playerCount >= 8)
+                StartPoints[7] = new Index2(5 * dx, 3 * dy);
         }
 
-        public void Update(int round) { }
+        /// <summary>
+        /// Updates the Map and its Properties.
+        /// </summary>
+        /// <param name="round">Current Round</param>
+        public void Update(int round)
+        {
+            foreach (var property in Properties)
+                property.Update(round);
+        }
 
         #region Statische Methoden (Generatoren und Serialisierer)
 
         /// <summary>
         /// Deserialize a Map
         /// </summary>
+        /// <param name="context">Reference to the Simulation Context</param>
         /// <param name="stream">Source</param>
-        /// <param name="old">Is Map in an old Format</param>
         /// <returns>Map</returns>
-        public static Map Deserialize(Stream stream, bool old)
+        public static Map Deserialize(SimulationContext context, Stream stream)
         {
-            var reader = new BinaryReader(stream);
-
-            // Intro (Typ und Version)
-            if (reader.ReadString() != "AntMe! Map")
+            // Intro Text
+            byte[] intro = Encoding.ASCII.GetBytes("AntMe! Map");
+            if (intro.Length != stream.ReadByte())
                 throw new Exception("This is not a AntMe! Map");
+            for (int i = 0; i < intro.Length; i++)
+            {
+                byte c = (byte)stream.ReadByte();
+                if (intro[i] != c)
+                    throw new Exception("This is not a AntMe! Map");
+            }
 
-            byte version = reader.ReadByte();
+            // Version
+            byte version = (byte)stream.ReadByte();
             switch (version)
             {
-                case 1:
-                    return old ? DeserializeOld(reader) : DeserializeV1(reader);
+                case 1: return DeserializeV1(context, stream);
+                case 2: return DeserializeV2(context, stream);
                 default:
                     throw new NotSupportedException("Invalid Version Number");
             }
         }
 
-        private static Map DeserializeOld(BinaryReader reader)
+        /// <summary>
+        /// Deserializes the Map Format in Version 1 (Beta Version).
+        /// </summary>
+        /// <param name="context">Current Simulation Context</param>
+        /// <param name="stream">Input Stream</param>
+        /// <returns></returns>
+        private static Map DeserializeV1(SimulationContext context, Stream stream)
         {
-            // Globale Infos (Border, Width, Height)
-            bool blockBorder = reader.ReadBoolean();
-            int width = reader.ReadInt32();
-            int height = reader.ReadInt32();
-            int playercount = reader.ReadByte();
-
-            var map = new Map(width, height, blockBorder);
-
-            if (playercount < MIN_STARTPOINTS)
-                throw new Exception("Too less Player in this Map");
-            if (playercount > MAX_STARTPOINTS)
-                throw new Exception("Too many Player in this Map");
-
-            // Startpunkte einlesen
-            map.StartPoints = new Index2[playercount];
-            for (int i = 0; i < playercount; i++)
+            using (BinaryReader reader = new BinaryReader(stream))
             {
-                map.StartPoints[i] = new Index2(
-                    reader.ReadInt32(),
-                    reader.ReadInt32());
-            }
+                // Globale Infos (Border, Width, Height)
+                bool blockBorder = reader.ReadBoolean();
+                int width = reader.ReadInt32();
+                int height = reader.ReadInt32();
+                int playercount = reader.ReadByte();
 
-            if (width < MIN_WIDTH || width > MAX_WIDTH)
-                throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_WIDTH,
-                    MAX_WIDTH));
-            if (height < MIN_HEIGHT || height > MAX_HEIGHT)
-                throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_HEIGHT,
-                    MAX_HEIGHT));
+                var map = new Map(context, width, height);
+                map.BlockBorder = blockBorder;
 
-            // Zellen einlesen
-            // map.Tiles = new MapTile[width, height];
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
+                if (playercount < MIN_STARTPOINTS)
+                    throw new Exception("Too less Player in this Map");
+                if (playercount > MAX_STARTPOINTS)
+                    throw new Exception("Too many Player in this Map");
+
+                // Startpunkte einlesen
+                map.StartPoints = new Index2[playercount];
+                for (int i = 0; i < playercount; i++)
                 {
-                    byte shape = reader.ReadByte();
-                    byte speed = reader.ReadByte();
-                    byte level = reader.ReadByte();
-
-                    string typeName = string.Empty;
-                    string materialName = string.Empty;
-                    Compass orientation = Compass.East;
-
-                    switch (speed)
-                    {
-                        case 1: materialName = "AntMe.Basics.MapTiles.LavaMaterial"; break;
-                        case 2: materialName = "AntMe.Basics.MapTiles.MudMaterial"; break;
-                        case 3: materialName = "AntMe.Basics.MapTiles.SandMaterial"; break;
-                        case 4: materialName = "AntMe.Basics.MapTiles.GrasMaterial"; break;
-                        case 5: materialName = "AntMe.Basics.MapTiles.StoneMaterial"; break;
-                    }
-
-                    switch (shape)
-                    {
-                        // Flat Map Tile
-                        case 0x00:
-                            typeName = "AntMe.Basics.MapTiles.FlatMapTile";
-                            orientation = Compass.East;
-                            break;
-
-                        // Ramp
-                        case 0x10:
-                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                            orientation = Compass.East;
-                            break;
-                        case 0x11:
-                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                            orientation = Compass.North;
-                            break;
-                        case 0x12:
-                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                            orientation = Compass.West;
-                            break;
-                        case 0x13:
-                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                            orientation = Compass.South;
-                            break;
-
-                        // Wall
-                        case 0x20:
-                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                            orientation = Compass.East;
-                            break;
-                        case 0x21:
-                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                            orientation = Compass.North;
-                            break;
-                        case 0x22:
-                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                            orientation = Compass.West;
-                            break;
-                        case 0x23:
-                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                            orientation = Compass.South;
-                            break;
-
-                        // Concave Corners
-                        case 0x30:
-                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                            orientation = Compass.South;
-                            break;
-                        case 0x31:
-                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                            orientation = Compass.East;
-                            break;
-                        case 0x32:
-                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                            orientation = Compass.North;
-                            break;
-                        case 0x33:
-                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                            orientation = Compass.West;
-                            break;
-
-                        // Convex Cordners
-                        case 0x40:
-                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                            orientation = Compass.South;
-                            break;
-                        case 0x41:
-                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                            orientation = Compass.East;
-                            break;
-                        case 0x42:
-                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                            orientation = Compass.North;
-                            break;
-                        case 0x43:
-                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                            orientation = Compass.West;
-                            break;
-                    }
-
-                    MapTile tile = Activator.CreateInstance(Type.GetType(typeName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null")) as MapTile;
-                    tile.HeightLevel = level;
-                    tile.Orientation = orientation;
-                    tile.Material = Activator.CreateInstance(Type.GetType(materialName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null")) as MapMaterial;
-                    map[x, y] = tile;
+                    map.StartPoints[i] = new Index2(
+                        reader.ReadInt32(),
+                        reader.ReadInt32());
                 }
 
-            return map;
+                if (width < MIN_WIDTH || width > MAX_WIDTH)
+                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_WIDTH,
+                        MAX_WIDTH));
+                if (height < MIN_HEIGHT || height > MAX_HEIGHT)
+                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", MIN_HEIGHT,
+                        MAX_HEIGHT));
+
+                // Zellen einlesen
+                // map.Tiles = new MapTile[width, height];
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        byte shape = reader.ReadByte();
+                        byte speed = reader.ReadByte();
+                        byte level = reader.ReadByte();
+
+                        string typeName = string.Empty;
+                        string materialName = string.Empty;
+                        Compass orientation = Compass.East;
+
+                        switch (speed)
+                        {
+                            case 1: materialName = "AntMe.Basics.MapTiles.LavaMaterial"; break;
+                            case 2: materialName = "AntMe.Basics.MapTiles.MudMaterial"; break;
+                            case 3: materialName = "AntMe.Basics.MapTiles.SandMaterial"; break;
+                            case 4: materialName = "AntMe.Basics.MapTiles.GrasMaterial"; break;
+                            case 5: materialName = "AntMe.Basics.MapTiles.StoneMaterial"; break;
+                        }
+
+                        switch (shape)
+                        {
+                            // Flat Map Tile
+                            case 0x00:
+                                typeName = "AntMe.Basics.MapTiles.FlatMapTile";
+                                orientation = Compass.East;
+                                break;
+
+                            // Ramp
+                            case 0x10:
+                                typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                                orientation = Compass.East;
+                                break;
+                            case 0x11:
+                                typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                                orientation = Compass.North;
+                                break;
+                            case 0x12:
+                                typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                                orientation = Compass.West;
+                                break;
+                            case 0x13:
+                                typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                                orientation = Compass.South;
+                                break;
+
+                            // Wall
+                            case 0x20:
+                                typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                                orientation = Compass.East;
+                                break;
+                            case 0x21:
+                                typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                                orientation = Compass.North;
+                                break;
+                            case 0x22:
+                                typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                                orientation = Compass.West;
+                                break;
+                            case 0x23:
+                                typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                                orientation = Compass.South;
+                                break;
+
+                            // Concave Corners
+                            case 0x30:
+                                typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                                orientation = Compass.South;
+                                break;
+                            case 0x31:
+                                typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                                orientation = Compass.East;
+                                break;
+                            case 0x32:
+                                typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                                orientation = Compass.North;
+                                break;
+                            case 0x33:
+                                typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                                orientation = Compass.West;
+                                break;
+
+                            // Convex Cordners
+                            case 0x40:
+                                typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                                orientation = Compass.South;
+                                break;
+                            case 0x41:
+                                typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                                orientation = Compass.East;
+                                break;
+                            case 0x42:
+                                typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                                orientation = Compass.North;
+                                break;
+                            case 0x43:
+                                typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                                orientation = Compass.West;
+                                break;
+                        }
+
+                        MapTile tile = Activator.CreateInstance(Type.GetType(typeName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null")) as MapTile;
+                        tile.HeightLevel = level;
+                        tile.Orientation = orientation;
+                        tile.Material = Activator.CreateInstance(Type.GetType(materialName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null")) as MapMaterial;
+                        map[x, y] = tile;
+                    }
+                }
+
+                return map;
+            }
         }
 
-        private static Map DeserializeV1(BinaryReader reader)
+        /// <summary>
+        /// Deserializes the Map Format in Version 2.
+        /// </summary>
+        /// <param name="context">Current Simulation Context</param>
+        /// <param name="stream">Input Stream</param>
+        /// <returns></returns>
+        private static Map DeserializeV2(SimulationContext context, Stream stream)
         {
-            throw new NotImplementedException();
+            using (GZipStream zip = new GZipStream(stream, CompressionMode.Decompress))
+            {
+                using (BinaryReader reader = new BinaryReader(zip))
+                {
+                    int width = reader.ReadByte();
+                    int height = reader.ReadByte();
+
+                    Map map = new Map(context, width, height);
+                    map.DeserializeFirst(reader, 2);
+
+                    return map;
+                }
+            }
         }
 
-        ///// <summary>
-        /////     Serialisiert eine Map in einen Stream.
-        /////     TODO: Test!!!
-        ///// </summary>
-        ///// <param name="stream">Zielstream</param>
-        ///// <param name="map">Zu serialisierende Map</param>
-        //public static void Serialize(Stream stream, Map map)
-        //{
-        //    // Check Map
-        //    if (map == null)
-        //        throw new ArgumentNullException("map");
-        //    map.CheckMap();
+        /// <summary>
+        /// Serializes the given Map into a stream.
+        /// </summary>
+        /// <param name="stream">Target Stream</param>
+        /// <param name="map">Map</param>
+        /// <param name="version">File Format Version</param>
+        public static void Serialize(Stream stream, Map map, byte version = 1)
+        {
+            // Check Map
+            if (map == null)
+                throw new ArgumentNullException("map");
+            map.CheckMap();
 
-        //    // Check Stream
-        //    if (stream == null)
-        //        throw new ArgumentNullException("stream");
-        //    if (!stream.CanWrite)
-        //        throw new ArgumentException("Stream is read only");
+            // Check Stream
+            if (stream == null)
+                throw new ArgumentNullException("stream");
+            if (!stream.CanWrite)
+                throw new ArgumentException("Stream is read only");
+
+            // Version Number
+            if (version != 1)
+                throw new ArgumentException("Invalid Version");
 
 
-        //    var writer = new BinaryWriter(stream);
+            // Write Intro
+            int count = STREAM_HELLOMESSAGE.Length;
+            stream.WriteByte((byte)count);
+            stream.Write(Encoding.ASCII.GetBytes(STREAM_HELLOMESSAGE), 0, count);
 
-        //    // Intro (Typ und Version)
-        //    writer.Write("AntMe! Map");
-        //    writer.Write((byte)1);
+            // Write Version
+            stream.WriteByte(version);
 
-        //    // Global Infos (Block, Width, Height)
-        //    writer.Write(map.BlockBorder);
-        //    writer.Write(map.Tiles.GetLength(0));
-        //    writer.Write(map.Tiles.GetLength(1));
-        //    writer.Write((byte)map.StartPoints.GetLength(0));
+            switch (version)
+            {
+                case 1: SerializeV2(stream, map); break;
+            }
+        }
 
-        //    // Startpoints
-        //    for (int i = 0; i < map.StartPoints.GetLength(0); i++)
-        //    {
-        //        writer.Write(map.StartPoints[i].X);
-        //        writer.Write(map.StartPoints[i].Y);
-        //    }
+        private static void SerializeV2(Stream stream, Map map)
+        {
+            using (GZipStream zip = new GZipStream(stream, CompressionMode.Compress))
+            {
+                using (BinaryWriter writer = new BinaryWriter(zip))
+                {
+                    // Header Information
+                    Index2 size = map.GetCellCount();
+                    writer.Write((byte)size.X);
+                    writer.Write((byte)size.Y);
 
-        //    // Zelleninfos
-        //    for (int y = 0; y < map.Tiles.GetLength(1); y++)
-        //        for (int x = 0; x < map.Tiles.GetLength(0); x++)
-        //        {
-        //            writer.Write((byte)map.Tiles[x, y].Shape);
-        //            writer.Write((byte)map.Tiles[x, y].Speed);
-        //            writer.Write((byte)map.Tiles[x, y].Height);
-        //        }
-        //}
+                    // Serialize Stuff
+                    map.SerializeFirst(writer, 2);
+                }
+            }
+        }
 
         #endregion
 
@@ -361,30 +442,30 @@ namespace AntMe
         {
             // Tiles prüfen
             if (tiles == null)
-                throw new InvalidMapException("Tiles Array is null");
+                throw new Exception("Tiles Array is null");
 
             Index2 cells = GetCellCount();
 
             // Karten Dimensionen checken
             if (cells.X < MIN_WIDTH)
-                throw new InvalidMapException(string.Format("Map must have at least {0} Columns", MIN_WIDTH));
+                throw new Exception(string.Format("Map must have at least {0} Columns", MIN_WIDTH));
             if (cells.X > MAX_WIDTH)
-                throw new InvalidMapException(string.Format("Map must have a maximum of {0} Columns", MAX_WIDTH));
+                throw new Exception(string.Format("Map must have a maximum of {0} Columns", MAX_WIDTH));
 
             if (cells.Y < MIN_HEIGHT)
-                throw new InvalidMapException(string.Format("Map must have at least {0} Rows", MIN_HEIGHT));
+                throw new Exception(string.Format("Map must have at least {0} Rows", MIN_HEIGHT));
             if (cells.Y > MAX_HEIGHT)
-                throw new InvalidMapException(string.Format("Map must have a maximum of {0} Rows", MAX_HEIGHT));
+                throw new Exception(string.Format("Map must have a maximum of {0} Rows", MAX_HEIGHT));
 
             // Startpunkte überprüfen
             if (StartPoints == null)
-                throw new InvalidMapException("The List of StartPoints is null");
+                throw new Exception("The List of StartPoints is null");
 
             // Spieleranzahl prüfen
             if (GetPlayerCount() < MIN_STARTPOINTS)
-                throw new InvalidMapException(string.Format("There must be at least {0} player", MIN_STARTPOINTS));
+                throw new Exception(string.Format("There must be at least {0} player", MIN_STARTPOINTS));
             if (GetPlayerCount() > MAX_STARTPOINTS)
-                throw new InvalidMapException(string.Format("The maximum Player Count is {0}", MAX_STARTPOINTS));
+                throw new Exception(string.Format("The maximum Player Count is {0}", MAX_STARTPOINTS));
 
             // TODO: Check Cell-Structure
 
@@ -395,16 +476,16 @@ namespace AntMe
                 Index2 startPoint = StartPoints[i];
                 if (startPoint.X < 0 || startPoint.X >= tiles.GetLength(0) ||
                     startPoint.Y < 0 || startPoint.Y >= tiles.GetLength(1))
-                    throw new InvalidMapException(string.Format("StartPoint {0} is out of map bounds", i));
+                    throw new Exception(string.Format("StartPoint {0} is out of map bounds", i));
 
                 // Prüfen, ob es sich um eine flache Zelle handelt
                 if (!this[startPoint.X, startPoint.Y].CanEnter)
-                    throw new InvalidMapException(string.Format("StartPoint {0} is not placed on a plane Cell", i));
+                    throw new Exception(string.Format("StartPoint {0} is not placed on a plane Cell", i));
 
                 // Prüfen, ob noch ein anderer Startpoint auf der selben Zelle ist.
                 for (int j = 0; j < StartPoints.Length; j++)
                     if (i != j && StartPoints[i] == StartPoints[j])
-                        throw new InvalidMapException(string.Format("StartPoints {0} and {1} are on the same Cell", i, j));
+                        throw new Exception(string.Format("StartPoints {0} and {1} are on the same Cell", i, j));
             }
         }
 
@@ -556,44 +637,204 @@ namespace AntMe
             Vector2 local = GetLocalPosition(x, y);
             return this[cell.X, cell.Y].GetHeight(local);
         }
-    }
 
-    /// <summary>
-    ///     Basis Exception für alle Fehler innerhalb einer Map.
-    /// </summary>
-    public sealed class InvalidMapException : Exception
-    {
         /// <summary>
-        /// Erstellt eine neue Instanz der Map-Exception.
+        /// Serializes the Map.
         /// </summary>
-        public InvalidMapException()
+        /// <param name="writer">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public void SerializeFirst(BinaryWriter writer, byte version)
         {
+            switch (version)
+            {
+                case 2: SerializeV2(writer); break;
+                default: throw new ArgumentException("File Version not supported");
+            }
         }
 
         /// <summary>
-        /// Erstellt eine neue Instanz der Map-Exception.
+        /// Serializes the Map in Stream Format 2.
         /// </summary>
-        /// <param name="message">Zusätzliche Nachricht</param>
-        public InvalidMapException(string message) : base(message)
+        /// <param name="writer">Output Writer</param>
+        private void SerializeV2(BinaryWriter writer)
         {
+            var size = GetCellCount();
+
+            // Map Data
+            writer.Write(BlockBorder);
+
+            // Startpoints
+            writer.Write((byte)StartPoints.Length);
+            for (int i = 0; i < StartPoints.GetLength(0); i++)
+            {
+                writer.Write(StartPoints[i].X);
+                writer.Write(StartPoints[i].Y);
+            }
+
+            // Map Properties
+            writer.Write((byte)Properties.Count());
+            foreach (var property in Properties)
+            {
+                writer.Write(property.GetType().AssemblyQualifiedName);
+                SerializeType(writer, property);
+            }
+
+            // Collect MapTile/Material/TileProperty Types
+            // TODO: Type Lookup in Extension Loader?
+            List<Type> mapTileTypes = new List<Type>();
+            List<Type> materialTypes = new List<Type>();
+            List<Type> propertyTypes = new List<Type>();
+            for (int y = 0; y < size.Y; y++)
+            {
+                for (int x = 0; x < size.X; x++)
+                {
+                    MapTile tile = this[x, y];
+
+                    if (tile == null) continue;
+                    Type mapTileType = tile.GetType();
+                    if (!mapTileTypes.Contains(mapTileType))
+                        mapTileTypes.Add(mapTileType);
+
+                    foreach (var property in tile.Properties)
+                    {
+                        Type propertyType = property.GetType();
+                        if (!propertyTypes.Contains(propertyType))
+                            propertyTypes.Add(propertyType);
+                    }
+
+                    if (tile.Material == null) continue;
+                    Type materialType = tile.Material.GetType();
+                    if (!materialTypes.Contains(materialType))
+                        materialTypes.Add(materialType);
+                }
+            }
+
+            // TODO: Version Numbers of the related Extension?
+
+            // Write Map Tile Types
+            writer.Write((byte)mapTileTypes.Count);
+            foreach (var type in mapTileTypes)
+                writer.Write(type.AssemblyQualifiedName);
+
+            // Write Map Tile Property Types
+            writer.Write((byte)propertyTypes.Count);
+            foreach (var type in propertyTypes)
+                writer.Write(type.AssemblyQualifiedName);
+
+            // Write Material Types
+            writer.Write((byte)materialTypes.Count);
+            foreach (var type in materialTypes)
+                writer.Write(type.AssemblyQualifiedName);
+
+            // Zelleninfos
+            for (int y = 0; y < size.Y; y++)
+            {
+                for (int x = 0; x < size.X; x++)
+                {
+                    MapTile tile = this[x, y];
+
+                    // Map Tile
+                    if (tile != null)
+                    {
+                        int index = mapTileTypes.IndexOf(tile.GetType()) + 1;
+                        writer.Write((byte)index);
+                        SerializeType(writer, tile);
+                    }
+                    else
+                    {
+                        writer.Write((byte)0);
+                        continue;
+                    }
+
+                    // Material
+                    if (tile.Material != null)
+                    {
+                        int index = materialTypes.IndexOf(tile.Material.GetType()) + 1;
+                        writer.Write((byte)index);
+                        SerializeType(writer, tile.Material);
+                    }
+                    else
+                    {
+                        writer.Write((byte)0);
+                    }
+
+                    // Properties
+                    writer.Write((byte)tile.Properties.Count());
+                    foreach (var property in Properties)
+                    {
+                        int index = propertyTypes.IndexOf(property.GetType());
+                        writer.Write((byte)index);
+                        SerializeType(writer, property);
+                    }
+                }
+            }
         }
 
         /// <summary>
-        /// Erstellt eine neue Instanz der Map-Exception.
+        /// Serializes a single Type into the output Stream.
+        /// Format: length(byte), payload(byte[length])
         /// </summary>
-        /// <param name="message">Zusätzliche Nachricht</param>
-        /// <param name="innerException">Verpackte Exception</param>
-        public InvalidMapException(string message, Exception innerException) : base(message, innerException)
+        /// <param name="writer"></param>
+        /// <param name="state"></param>
+        private void SerializeType(BinaryWriter writer, ISerializableState state)
         {
+            using (MemoryStream mem = new MemoryStream())
+            {
+                using (BinaryWriter memWriter = new BinaryWriter(mem))
+                {
+                    // Serialize
+                    state.SerializeFirst(memWriter, 1);
+
+                    // Copy to Buffer
+                    int count = (int)mem.Position;
+                    byte[] buffer = new byte[count];
+                    mem.Position = 0;
+                    mem.Read(buffer, 0, count);
+
+                    // Write to main Stream
+                    writer.Write((short)count);
+                    writer.Write(buffer, 0, count);
+                }
+            }
         }
 
         /// <summary>
-        /// Erstellt eine neue Instanz der Map-Exception.
+        /// Serializes following Frames. (Not supported with the Map)
         /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public InvalidMapException(SerializationInfo info, StreamingContext context) : base(info, context)
+        /// <param name="writer">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public void SerializeUpdate(BinaryWriter writer, byte version)
         {
+            throw new NotSupportedException("Update is not supported for Map");
+        }
+
+        /// <summary>
+        /// Deserializes the Map.
+        /// </summary>
+        /// <param name="reader">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public void DeserializeFirst(BinaryReader reader, byte version)
+        {
+            switch (version)
+            {
+                case 2: DeserializeV2(reader); break;
+                default: throw new ArgumentException("File Version not supported");
+            }
+        }
+
+        private void DeserializeV2(BinaryReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Deserializes all following Frames. (Not supported with the Map)
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public void DeserializeUpdate(BinaryReader stream, byte version)
+        {
+            throw new NotSupportedException("Update is not supported for Map");
         }
     }
 }

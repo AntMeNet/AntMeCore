@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace AntMe
 {
@@ -8,6 +7,12 @@ namespace AntMe
     /// </summary>
     public abstract class MapMaterial : ISerializableState
     {
+        private float speed;
+
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        /// <param name="speed">Map Tile Speed</param>
         public MapMaterial(float speed)
         {
             Speed = speed;
@@ -16,26 +21,58 @@ namespace AntMe
         /// <summary>
         /// Speed Multiplier for walking Units.
         /// </summary>
-        public float Speed { get; protected set; }
-
-        public void DeserializeFirst(BinaryReader stream, byte version)
+        public float Speed
         {
-            throw new NotImplementedException();
+            get { return speed; }
+            private set
+            {
+                speed = value;
+                if (OnSpeedChanged != null)
+                    OnSpeedChanged(value);
+            }
         }
 
-        public void DeserializeUpdate(BinaryReader stream, byte version)
+        /// <summary>
+        /// Serializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public virtual void SerializeFirst(BinaryWriter stream, byte version)
         {
-            throw new NotImplementedException();
+            stream.Write(Speed);
         }
 
-        public void SerializeFirst(BinaryWriter stream, byte version)
+        /// <summary>
+        /// Serializes following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public virtual void SerializeUpdate(BinaryWriter stream, byte version)
         {
-            throw new NotImplementedException();
         }
 
-        public void SerializeUpdate(BinaryWriter stream, byte version)
+        /// <summary>
+        /// Deserializes the first Frame of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public virtual void DeserializeFirst(BinaryReader stream, byte version)
         {
-            throw new NotImplementedException();
+            Speed = stream.ReadSingle();
         }
+
+        /// <summary>
+        /// Deserializes all following Frames of this State.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public virtual void DeserializeUpdate(BinaryReader stream, byte version)
+        {
+        }
+
+        /// <summary>
+        /// Signal for a changed Speed.
+        /// </summary>
+        public ValueUpdate<float> OnSpeedChanged;
     }
 }

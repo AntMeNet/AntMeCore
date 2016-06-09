@@ -24,7 +24,9 @@ namespace AntMe.Levelpack.Levels
 
         public override Map GetMap()
         {
-            return new Map(30, 20, true);
+            Map map = new Map(Context, 30, 20);
+            map.BlockBorder = true;
+            return map;
         }
 
         protected override void OnUpdate()

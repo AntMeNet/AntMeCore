@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 
 namespace AntMe
 {
     /// <summary>
     /// Base Class for Map Tiles
     /// </summary>
-    public abstract class MapTile
+    public abstract class MapTile : PropertyList<MapTileProperty>, ISerializableState
     {
         /// <summary>
         /// Default Constructor.
@@ -95,5 +96,49 @@ namespace AntMe
         /// <param name="position">relative Position</param>
         /// <returns>Map Height</returns>
         public abstract float GetHeight(Vector2 position);
+
+        /// <summary>
+        /// Serializes the first Frame of this Map Tile.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public virtual void SerializeFirst(BinaryWriter stream, byte version)
+        {
+            stream.Write(CanEnter);
+            stream.Write((ushort)Orientation);
+            stream.Write(HeightLevel);
+        }
+
+        /// <summary>
+        /// Serializes following Frames. (Not supported in Map Tile)
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public void SerializeUpdate(BinaryWriter stream, byte version)
+        {
+            throw new NotSupportedException("Update is not supported for Map Tiles");
+        }
+
+        /// <summary>
+        /// Deserializes the first Frame of this Map Tile.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public virtual void DeserializeFirst(BinaryReader stream, byte version)
+        {
+            CanEnter = stream.ReadBoolean();
+            Orientation = (Compass)stream.ReadUInt16();
+            HeightLevel = stream.ReadByte();
+        }
+
+        /// <summary>
+        /// Deserializes all following Frames. (Not supported in Map Tile)
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public void DeserializeUpdate(BinaryReader stream, byte version)
+        {
+            throw new NotSupportedException("Update is not supported for Map Tiles");
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace AntMe.Levelpack.Levels
         {
             using (MemoryStream stream = new MemoryStream(Levelpack.Properties.Resources.arenaLevel))
             {
-                return Map.Deserialize(stream, true);
+                return Map.Deserialize(Context, stream);
             }
         }
 

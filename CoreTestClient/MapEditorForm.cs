@@ -1,4 +1,5 @@
 ﻿using AntMe;
+using AntMe.Runtime;
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -17,6 +18,8 @@ namespace CoreTestClient
 
         private void timer_Tick(object sender, EventArgs e)
         {
+            saveAsMenu.Enabled = map != null;
+
             if (editorPanel.HoveredCell.HasValue)
             {
                 hoverLabel.Text = string.Format("{0}/{1}", editorPanel.HoveredCell.Value.X, editorPanel.HoveredCell.Value.Y);
@@ -54,8 +57,27 @@ namespace CoreTestClient
                 {
                     using (Stream stream = File.Open(openFileDialog.FileName, FileMode.Open))
                     {
-                        map = Map.Deserialize(stream, true);
+                        SimulationContext context = new SimulationContext(ExtensionLoader.DefaultTypeResolver, ExtensionLoader.ExtensionSettings, new Random());
+                        map = Map.Deserialize(context, stream);
                         editorPanel.Map = map;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        private void saveAsMenu_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                try
+                {
+                    using (Stream stream = File.Open(saveFileDialog.FileName, FileMode.Create))
+                    {
+                        Map.Serialize(stream, map);
                     }
                 }
                 catch (Exception ex)
