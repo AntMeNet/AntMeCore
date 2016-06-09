@@ -100,7 +100,9 @@
   <ItemGroup>
     <Compile Include="BaseParseNode.cs" />
     <Compile Include="ClassParseNode.cs" />
+    <Compile Include="ConstructorParseNode.cs" />
     <Compile Include="LocaleGenerator.cs" />
+    <Compile Include="MethodParseNode.cs" />
     <Compile Include="ModpackGenerator.cs" />
     <Compile Include="ModpackGeneratorHost.cs" />
     <Compile Include="NamespaceParseNode.cs" />

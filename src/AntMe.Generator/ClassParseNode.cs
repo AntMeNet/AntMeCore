@@ -15,16 +15,24 @@ namespace AntMe.Generator
         public Type Type { get; private set; }
 
         public ClassParseNode(Type type)
+            :base()
         {
             Type = type;
-        }
+            references.Add(type);
+        } 
 
         public override MemberDeclarationSyntax Generate()
         {
-           return SyntaxFactory.ClassDeclaration(Type.Name).WithModifiers(
-               SyntaxFactory.TokenList(
-                   SyntaxFactory.Token(SyntaxKind.PublicKeyword))).AddMembers(
-               ChildNodes.Select(c => c.Generate()).ToArray());
+            return SyntaxFactory.ClassDeclaration("Loc" + Type.Name).WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword))).AddMembers(
+                ChildNodes.Select(c => c.Generate()).ToArray()).AddMembers(
+                SyntaxFactory.FieldDeclaration(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(Type.FullName)).AddVariables(
+                        SyntaxFactory.VariableDeclarator("_" + Type.Name))
+                ));
+
                                     
         }
     }

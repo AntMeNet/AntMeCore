@@ -13,12 +13,26 @@ namespace AntMe.Generator
 
         public IList<BaseParseNode> ChildNodes { get; private set; }
 
+        internal List<Type> references;
+
         public BaseParseNode()
         {
             ChildNodes = new List<BaseParseNode>();
+            references = new List<Type>();
         }
 
         public abstract MemberDeclarationSyntax Generate();
+
+        public List<Type> GetReferences()
+        {
+            List<Type> returnUsings = references.GetRange(0, references.Count);
+            foreach (BaseParseNode node in ChildNodes)
+            {
+                returnUsings.AddRange(node.GetReferences().ToArray());
+            }
+
+            return returnUsings;
+        }
 
 
     }

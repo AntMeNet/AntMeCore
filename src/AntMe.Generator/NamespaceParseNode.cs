@@ -14,14 +14,16 @@ namespace AntMe.Generator
 
         public string Name { get; private set; }
 
-        public NamespaceParseNode( string name)
+        public NamespaceParseNode(string name)
+            : base()
         {
             Name = name;
         }
 
         public override MemberDeclarationSyntax Generate()
         {
-            return SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName("AntMe.Deutsch")).AddMembers(ChildNodes.Select(c => c.Generate()).ToArray());
+            return SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(Name)).AddMembers(ChildNodes.Select(c => c.Generate()).ToArray());
         }
+
     }
 }

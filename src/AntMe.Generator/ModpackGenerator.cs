@@ -42,17 +42,34 @@ namespace AntMe.Generator
 
             foreach (var item in ExtensionLoader.DefaultTypeMapper.Items.Where(i => i.InfoType != null).Select(i => i.InfoType).Distinct())
             {
+                ClassParseNode classParseNode = new ClassParseNode(item);
+                root.ChildNodes.Add(classParseNode);
 
-                root.ChildNodes.Add(new ClassParseNode(item));
+                foreach (ConstructorInfo constructor in item.GetConstructors())
+                {
+                    classParseNode.ChildNodes.Add(new ConstructorParseNode(constructor));
+                }
 
+                foreach (MethodInfo methodInfo in item.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly ))
+                {
+                    //classParseNode.ChildNodes.Add(new MethodParseNode(methodInfo));
+                }
             }
-            syntaxTrees.Add(SyntaxFactory.SyntaxTree( SyntaxFactory.CompilationUnit().AddMembers(root.Generate())));
+
+            List<Type> RootReferences = root.GetReferences();
+
+            foreach (string codebase in RootReferences.Select(c => c.Assembly.CodeBase).Distinct())
+            {
+                references.Add(MetadataReference.CreateFromFile(codebase.Remove(0,8)));
+            }
+
+            syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(root.Generate())));
             var compilation = CSharpCompilation.Create(outputFile, syntaxTrees, references, options);
             var result = compilation.Emit(Path.Combine(output, outputFile));
 
             if (!result.Success)
-                throw new Exception();
-
+                throw new Exception(string.Join(Environment.NewLine,result.Diagnostics.Select(d => d.ToString())));
+            
             return Path.Combine(output, outputFile);
         }
 
@@ -70,7 +87,7 @@ namespace AntMe.Generator
                                 ))).AddUsings(
 
                                 ));
-           
+
         }
 
         #region Methods
