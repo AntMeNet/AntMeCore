@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.IO;
 using Microsoft.CodeAnalysis;
 using System.Linq;
+using Microsoft.CodeAnalysis.Text;
 
 namespace AntMe.Generator
 {
@@ -25,6 +26,8 @@ namespace AntMe.Generator
         public static string Generate(string[] paths, string output, ProgressToken token)
         {
             string outputFile = "Summary.dll";
+
+            GetLocaKeys();
 
             string frameworkRoot = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1\{0}.dll";
             List<MetadataReference> references = new List<MetadataReference>();
@@ -64,6 +67,12 @@ namespace AntMe.Generator
             }
 
             syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(root.Generate())));
+
+            StreamWriter streamWriter = new StreamWriter(File.Open(Path.Combine(output, "Assembly.cs"), FileMode.Create));
+            syntaxTrees[0].GetRoot().NormalizeWhitespace().GetText().Write(streamWriter);
+            streamWriter.Flush();
+            streamWriter.Close();
+            
             var compilation = CSharpCompilation.Create(outputFile, syntaxTrees, references, options);
             var result = compilation.Emit(Path.Combine(output, outputFile));
 

@@ -31,7 +31,7 @@ namespace AntMe.Generator
                     SyntaxFactory.VariableDeclaration(
                         SyntaxFactory.IdentifierName(Type.FullName)).AddVariables(
                         SyntaxFactory.VariableDeclarator("_" + Type.Name))
-                ));
+                ).AddModifiers(SyntaxFactory.Token(SyntaxKind.InternalKeyword)));
 
                                     
         }

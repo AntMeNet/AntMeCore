@@ -24,34 +24,35 @@ namespace AntMe.Generator
         public override MemberDeclarationSyntax Generate()
         {
 
-            SeparatedSyntaxList<ParameterSyntax> parameterList = new SeparatedSyntaxList<ParameterSyntax>();
-            SeparatedSyntaxList<ArgumentSyntax> argumentList = new SeparatedSyntaxList<ArgumentSyntax>();
+            List<ParameterSyntax> parameterList = new List<ParameterSyntax>();
+            List<ArgumentSyntax> argumentList = new List<ArgumentSyntax>();
 
             foreach (ParameterInfo info in ConstructorInfo.GetParameters())
             {
 
                 parameterList.Add(SyntaxFactory.Parameter(
-                    SyntaxFactory.Identifier(info.Name)).WithType(
-                    SyntaxFactory.IdentifierName(info.ParameterType.FullName)));
+                    SyntaxFactory.Identifier("Loc" + info.Name)).WithType(
+                    SyntaxFactory.IdentifierName("Loc" + info.ParameterType.Name)));
 
                 argumentList.Add(SyntaxFactory.Argument(
-                    SyntaxFactory.IdentifierName(info.Name)));
+                    SyntaxFactory.IdentifierName(string.Format("Loc{0}._{0}", info.Name))));
 
                 references.Add(info.ParameterType);
 
             }
 
             return SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier("Loc" + ConstructorInfo.Name)).AddModifiers(
-                SyntaxFactory.Token(SyntaxKind.PublicKeyword)).AddParameterListParameters(parameterList.ToArray()).WithBody(
+                SyntaxFactory.Identifier("Loc" + ConstructorInfo.ReflectedType.Name)).AddModifiers(
+                SyntaxFactory.Token(SyntaxKind.PublicKeyword)).AddParameterListParameters(
+                parameterList.ToArray()).WithBody(
                 SyntaxFactory.Block(SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
                         SyntaxFactory.IdentifierName("_" + ConstructorInfo.DeclaringType.Name),
                         SyntaxFactory.ObjectCreationExpression(
-                            SyntaxFactory.IdentifierName(ConstructorInfo.DeclaringType.FullName)).WithArgumentList(
-                            SyntaxFactory.ArgumentList(argumentList)
-                            )))));
+                            SyntaxFactory.IdentifierName(ConstructorInfo.DeclaringType.FullName)).AddArgumentListArguments(
+                            argumentList.ToArray())
+                            ))));
         }
     }
 }

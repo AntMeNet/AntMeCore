@@ -22,7 +22,9 @@ namespace AntMe.Generator
 
         public override MemberDeclarationSyntax Generate()
         {
-            return SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(Name)).AddMembers(ChildNodes.Select(c => c.Generate()).ToArray());
+            return SyntaxFactory.NamespaceDeclaration(
+                SyntaxFactory.IdentifierName(Name)).AddMembers(
+                ChildNodes.Select(c => c.Generate()).ToArray());
         }
 
     }

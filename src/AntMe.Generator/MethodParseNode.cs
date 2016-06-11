@@ -22,7 +22,11 @@ namespace AntMe.Generator
 
         public override MemberDeclarationSyntax Generate()
         {
-            return SyntaxFactory.MethodDeclaration(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),MethodInfo.Name).WithBody(SyntaxFactory.Block());
+            return SyntaxFactory.MethodDeclaration(
+                SyntaxFactory.PredefinedType(
+                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                MethodInfo.Name).WithBody(
+                SyntaxFactory.Block());
         }
 
     }
