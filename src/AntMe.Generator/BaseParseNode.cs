@@ -23,12 +23,17 @@ namespace AntMe.Generator
 
         public abstract MemberDeclarationSyntax Generate();
 
+        public void add(BaseParseNode node)
+        {
+            ChildNodes.Add(node);
+        }
+
         public List<Type> GetReferences()
         {
             List<Type> returnUsings = references.GetRange(0, references.Count);
             foreach (BaseParseNode node in ChildNodes)
             {
-                returnUsings.AddRange(node.GetReferences().ToArray());
+                returnUsings.AddRange(node.GetReferences());
             }
 
             return returnUsings;

@@ -27,7 +27,7 @@ namespace AntMe.Generator
         {
             string outputFile = "Summary.dll";
 
-            GetLocaKeys();
+            Dictionary<Type,List<string>> TypeKeys = GetLocaKeys();
 
             string frameworkRoot = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1\{0}.dll";
             List<MetadataReference> references = new List<MetadataReference>();
@@ -43,7 +43,20 @@ namespace AntMe.Generator
 
             BaseParseNode root = new NamespaceParseNode("AntMe.Deutsch");
 
-            foreach (var item in ExtensionLoader.DefaultTypeMapper.Items.Where(i => i.InfoType != null).Select(i => i.InfoType).Distinct())
+            // Collect all Item Infos and link them to the Localized ItemInfos
+            foreach (var item in ExtensionLoader.DefaultTypeMapper.Items)
+            {
+                if (item.InfoType == null) continue;
+
+
+
+                root.add();
+
+
+
+            }
+
+            foreach (var item in TypeKeys.Keys)
             {
                 ClassParseNode classParseNode = new ClassParseNode(item);
                 root.ChildNodes.Add(classParseNode);
@@ -82,86 +95,25 @@ namespace AntMe.Generator
             return Path.Combine(output, outputFile);
         }
 
-        private static SyntaxTree GenerateItem(Type item)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static List<SyntaxTree> GenerateSyntaxtrees()
         {
+            List<SyntaxTree> trees = new List<SyntaxTree>();
 
-
-            return SyntaxFactory.SyntaxTree(
-                SyntaxFactory.CompilationUnit().AddMembers(
-                    SyntaxFactory.NamespaceDeclaration(
-                        SyntaxFactory.IdentifierName("AntMe.Deutsch")).AddMembers(
-                            SyntaxFactory.ClassDeclaration(item.Name).WithModifiers(
-                                SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword))).AddMembers(
-                                    generateLinkedMethods(item)
-                                ))).AddUsings(
-
-                                ));
-
-        }
-
-        #region Methods
-
-        private static MemberDeclarationSyntax[] generateLinkedMethods(Type item)
-        {
-            List<MemberDeclarationSyntax> members = new List<MemberDeclarationSyntax>();
-
-            foreach (MethodInfo methodInfo in item.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public))
+            // Collect all Item Infos
+            foreach (var item in ExtensionLoader.DefaultTypeMapper.Items)
             {
-                members.Add(SyntaxFactory.MethodDeclaration(
-                    generateMethodTypeSyntax(methodInfo),
-                    methodInfo.Name).WithModifiers(
-                        SyntaxFactory.TokenList(
-                            SyntaxFactory.Token(SyntaxKind.PublicKeyword))).WithBody(
-                                SyntaxFactory.Block(
-                                    SyntaxFactory.ReturnStatement(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(item.Name)
-                                            )))));
+                if (item.InfoType == null) continue;
+                
+
+
             }
 
-            return members.ToArray();
+            return trees;
         }
-
-        private static TypeSyntax generateMethodTypeSyntax(MethodInfo info)
-        {
-            // returntype
-            SyntaxKind syntaxKind;
-            if (info.ReturnType == typeof(string))
-                syntaxKind = SyntaxKind.StringKeyword;
-            else if (info.ReturnType == typeof(bool))
-                syntaxKind = SyntaxKind.BoolKeyword;
-            else if (info.ReturnType == typeof(byte))
-                syntaxKind = SyntaxKind.ByteKeyword;
-            else if (info.ReturnType == typeof(char))
-                syntaxKind = SyntaxKind.CharKeyword;
-            else if (info.ReturnType == typeof(decimal))
-                syntaxKind = SyntaxKind.DecimalKeyword;
-            else if (info.ReturnType == typeof(double))
-                syntaxKind = SyntaxKind.DoubleKeyword;
-            else if (info.ReturnType == typeof(float))
-                syntaxKind = SyntaxKind.FloatKeyword;
-            else if (info.ReturnType == typeof(long))
-                syntaxKind = SyntaxKind.LongKeyword;
-            else if (info.ReturnType == typeof(object))
-                syntaxKind = SyntaxKind.ObjectKeyword;
-            else if (info.ReturnType == typeof(sbyte))
-                syntaxKind = SyntaxKind.SByteKeyword;
-            else if (info.ReturnType == typeof(short))
-                syntaxKind = SyntaxKind.ShortKeyword;
-            else if (info.ReturnType == typeof(uint))
-                syntaxKind = SyntaxKind.UIntKeyword;
-            else if (info.ReturnType == typeof(ulong))
-                syntaxKind = SyntaxKind.ULongKeyword;
-            else if (info.ReturnType == typeof(ushort))
-                syntaxKind = SyntaxKind.UShortKeyword;
-            else
-                return SyntaxFactory.IdentifierName(info.ReturnType.Name);
-            return SyntaxFactory.PredefinedType(SyntaxFactory.Token(syntaxKind));
-        }
-
-
-
-        #endregion
 
         /// <summary>
         /// 
@@ -300,5 +252,6 @@ namespace AntMe.Generator
                     result.Add(e.Name);
             }
         }
+
     }
 }

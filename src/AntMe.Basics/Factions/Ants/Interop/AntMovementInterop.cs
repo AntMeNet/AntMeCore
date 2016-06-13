@@ -336,9 +336,11 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// </summary>
         public event InteropEvent<Compass> OnHitWall;
 
+        
         /// <summary>
         /// Signals a Collision with another Item.
         /// </summary>
+        [GeneratorHint(typeof(CollidableProperty))]
         public event InteropEvent OnCollision;
 
         public event InteropEvent<ItemInfo> OnTargetReched;

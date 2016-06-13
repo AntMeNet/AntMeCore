@@ -69,6 +69,7 @@
     <Compile Include="FactionUnit.cs" />
     <Compile Include="FactoryInterop.cs" />
     <Compile Include="FactoryInteropProperty.cs" />
+    <Compile Include="GeneratorHint.cs" />
     <Compile Include="IExtensionPack.cs" />
     <Compile Include="InfoProperty.cs" />
     <Compile Include="Interop.cs" />
@@ -115,9 +116,6 @@
     <Compile Include="UnitInteropProperty.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Vector3.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="PropertyStructure.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
