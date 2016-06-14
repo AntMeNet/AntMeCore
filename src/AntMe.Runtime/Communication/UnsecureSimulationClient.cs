@@ -18,7 +18,8 @@ namespace AntMe.Runtime.Communication
             Type levelType = levelAssembly.GetType(level.Type.TypeName);
 
             SimulationContext context = new SimulationContext(
-                ExtensionLoader.DefaultTypeResolver, 
+                ExtensionLoader.DefaultTypeResolver,
+                ExtensionLoader.DefaultTypeMapper,
                 ExtensionLoader.ExtensionSettings);
 
             simulation = Activator.CreateInstance(levelType, context) as Level;

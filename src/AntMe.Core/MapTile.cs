@@ -35,7 +35,7 @@ namespace AntMe
             Context = context;
             infos = new Dictionary<Item, MapTileInfo>();
 
-            context.Resolver.ResolveMapTile(this);
+            context.Resolver.ResolveMapTile(context, this);
         }
 
         /// <summary>

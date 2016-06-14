@@ -544,7 +544,7 @@ namespace AntMe.Runtime
             }
 
             // Load Map
-            SimulationContext context = new SimulationContext(DefaultTypeResolver, ExtensionSettings);
+            SimulationContext context = new SimulationContext(DefaultTypeResolver, DefaultTypeMapper, ExtensionSettings);
             Level level = Activator.CreateInstance(type, context) as Level;
             levelInfo.Map = level.GetMap();
 

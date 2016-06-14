@@ -100,7 +100,7 @@ namespace AntMe
         /// </summary>
         protected Level(SimulationContext context)
         {
-            Context = new SimulationContext(context.Resolver, context.Settings);
+            Context = new SimulationContext(context.Resolver, context.Mapper, context.Settings);
 
             // Clone Settings for Slots
             slotSettings = new KeyValueStore[MAX_SLOTS];
@@ -156,6 +156,7 @@ namespace AntMe
             // Generate the Simulation Context for this Level.
             Context = new SimulationContext(
                 Context.Resolver,
+                Context.Mapper,
                 Context.Settings,
                 new Random(RandomSeed));
 
@@ -264,7 +265,7 @@ namespace AntMe
                 if (slots[i] == null)
                     continue;
 
-                SimulationContext factionContext = new SimulationContext(Context.Resolver, slotSettings[i]);
+                SimulationContext factionContext = new SimulationContext(Context.Resolver, Context.Mapper, slotSettings[i]);
 
                 // Identify and generate Faction
                 try

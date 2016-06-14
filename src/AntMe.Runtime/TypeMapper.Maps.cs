@@ -67,7 +67,7 @@ namespace AntMe.Runtime
 
             // Handle Property Type
             Type type = typeof(T);
-            ValidateType<MapProperty>(type, new Type[] { typeof(Map) }, false);
+            ValidateType<MapProperty>(type, new Type[] { typeof(SimulationContext), typeof(Map) }, false);
 
             // Registration Collision
             if (mapProperties.Any(p => p.Type == type))
@@ -389,7 +389,7 @@ namespace AntMe.Runtime
         /// Resolves the given Map.
         /// </summary>
         /// <param name="map">Map</param>
-        public void ResolveMap(Map map)
+        public void ResolveMap(SimulationContext context, Map map)
         {
             if (map == null)
                 throw new ArgumentNullException("Map");
@@ -412,7 +412,7 @@ namespace AntMe.Runtime
                 }
                 else
                 {
-                    map.AddProperty(Activator.CreateInstance(mapProperty.Type, map) as MapProperty);
+                    map.AddProperty(Activator.CreateInstance(mapProperty.Type, context, map) as MapProperty);
                 }
             }
 
@@ -423,60 +423,57 @@ namespace AntMe.Runtime
             }
         }
 
-        public void ResolveMapTile(MapTile tile)
+        public void ResolveMapTile(SimulationContext context, MapTile tile)
         {
-            //if (tile == null)
-            //    throw new ArgumentNullException("tile");
+            if (tile == null)
+                throw new ArgumentNullException("tile");
 
-            //// Sicherstellen, dass das Item registriert ist.
-            //if (!MapTiles.Any(c => c.Type == item.GetType()))
-            //{
-            //    // TODO: Trace
-            //    throw new NotSupportedException("Item is not registered.");
-            //}
+            if (!MapTiles.Any(c => c.Type == tile.GetType()))
+                throw new NotSupportedException("Item is not registered.");
 
-            //// Vererbungskette auflösen
-            //List<Type> types = new List<Type>();
-            //Type current = item.GetType();
-            //types.Add(current);
-            //while (current != typeof(Item))
-            //{
-            //    current = current.BaseType;
-            //    types.Add(current);
-            //}
-            //Type[] itemTypes = types.ToArray();
-            //Array.Reverse(itemTypes);
+            // Type Order
+            List<Type> types = new List<Type>();
+            Type current = tile.GetType();
+            types.Add(current);
+            while (current != typeof(MapTile))
+            {
+                current = current.BaseType;
+                types.Add(current);
+            }
+            Type[] itemTypes = types.ToArray();
+            Array.Reverse(itemTypes);
 
-            //// Attachements
-            //foreach (var type in itemTypes)
-            //{
-            //    foreach (var attachment in itemAttachments.Where(c => c.Type == type))
-            //    {
-            //        if (attachment.CreateDelegate != null)
-            //        {
-            //            ItemProperty property = attachment.CreateDelegate(item);
-            //            if (property != null)
-            //            {
-            //                if (property.GetType() != attachment.AttachmentType)
-            //                {
-            //                    // TODO: Trace
-            //                    throw new NotSupportedException("Delegate returned wrong Property Type");
-            //                }
-            //                item.AddProperty(property);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            item.AddProperty(Activator.CreateInstance(attachment.AttachmentType, item) as ItemProperty);
-            //        }
-            //    }
-            //}
+            // Attachements
+            foreach (var type in itemTypes)
+            {
+                foreach (var attachment in mapTileAttachments.Where(c => c.Type == type))
+                {
+                    // Skip if allready available
+                    if (tile.Properties.Any(p => p.GetType() == attachment.AttachmentType))
+                        continue;
 
-            //// Extender
-            //foreach (var extender in itemExtender.Where(c => itemTypes.Contains(c.Type)).OrderBy(c => c.Rank))
-            //{
-            //    extender.ExtenderDelegate(item);
-            //}
+                    if (attachment.CreateDelegate != null)
+                    {
+                        MapTileProperty property = attachment.CreateDelegate(tile);
+                        if (property != null)
+                        {
+                            if (property.GetType() != attachment.AttachmentType)
+                                throw new NotSupportedException("Delegate returned wrong Property Type");
+                            tile.AddProperty(property);
+                        }
+                    }
+                    else
+                    {
+                        tile.AddProperty(Activator.CreateInstance(attachment.AttachmentType, context, tile) as MapTileProperty);
+                    }
+                }
+            }
+
+            // Extender
+            foreach (var extender in mapTileExtender.Where(c => itemTypes.Contains(c.Type)).OrderBy(c => c.Rank))
+            {
+                extender.ExtenderDelegate(tile);
+            }
         }
 
         /// <summary>

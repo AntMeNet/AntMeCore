@@ -162,7 +162,7 @@ namespace AntMe
             if (playerCount >= 8)
                 StartPoints[7] = new Index2(5 * dx, 3 * dy);
 
-            this.context.Resolver.ResolveMap(this);
+            this.context.Resolver.ResolveMap(context, this);
         }
 
         /// <summary>
@@ -192,6 +192,7 @@ namespace AntMe
         /// Deserialize a Map
         /// </summary>
         /// <param name="context">Reference to the Simulation Context</param>
+        /// <param name="typeMapper">Local Type Mapper</param>
         /// <param name="stream">Source</param>
         /// <returns>Map</returns>
         public static Map Deserialize(SimulationContext context, Stream stream)
@@ -223,7 +224,7 @@ namespace AntMe
         /// </summary>
         /// <param name="context">Current Simulation Context</param>
         /// <param name="stream">Input Stream</param>
-        /// <returns></returns>
+        /// <returns>Map Instance</returns>
         private static Map DeserializeV1(SimulationContext context, Stream stream)
         {
             using (BinaryReader reader = new BinaryReader(stream))
@@ -362,10 +363,14 @@ namespace AntMe
                                 break;
                         }
 
-                        MapTile tile = Activator.CreateInstance(Type.GetType(typeName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null")) as MapTile;
+                        // Lookup Map Tile
+                        var tileMap = context.Mapper.MapTiles.First(t => t.Type.FullName.Equals(typeName));
+                        MapTile tile = Activator.CreateInstance(tileMap.Type, context) as MapTile;
                         tile.HeightLevel = level;
                         tile.Orientation = orientation;
-                        tile.Material = Activator.CreateInstance(Type.GetType(materialName + ", AntMe.Basics, Version=2.0.0.63, Culture=neutral, PublicKeyToken=null")) as MapMaterial;
+
+                        var materialMap = context.Mapper.MapMaterials.First(m => m.Type.FullName.Equals(materialName));
+                        tile.Material = Activator.CreateInstance(materialMap.Type, context) as MapMaterial;
                         map[x, y] = tile;
                     }
                 }

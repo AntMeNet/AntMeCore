@@ -57,7 +57,10 @@ namespace CoreTestClient
                 {
                     using (Stream stream = File.Open(openFileDialog.FileName, FileMode.Open))
                     {
-                        SimulationContext context = new SimulationContext(ExtensionLoader.DefaultTypeResolver, ExtensionLoader.ExtensionSettings, new Random());
+                        SimulationContext context = new SimulationContext(
+                            ExtensionLoader.DefaultTypeResolver, 
+                            ExtensionLoader.DefaultTypeMapper, 
+                            ExtensionLoader.ExtensionSettings, new Random());
                         map = Map.Deserialize(context, stream);
                         editorPanel.Map = map;
                     }

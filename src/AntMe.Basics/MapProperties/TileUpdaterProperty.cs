@@ -9,7 +9,7 @@ namespace AntMe.Basics.MapProperties
     /// </summary>
     public class TileUpdaterProperty : MapProperty
     {
-        public TileUpdaterProperty(Map map) : base(map)
+        public TileUpdaterProperty(SimulationContext context, Map map) : base(context, map)
         {
         }
 

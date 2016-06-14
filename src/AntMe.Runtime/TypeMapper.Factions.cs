@@ -208,16 +208,6 @@ namespace AntMe.Runtime
             if (factionAttachments.Any(c => c.Type == typeof(F) && c.AttachmentType == typeof(P)))
                 throw new NotSupportedException("Item Property Combination is already reagistered");
 
-            if (createPropertyDelegate == null)
-            {
-                // TODO: Construktor prüfen
-                if (typeof(P).GetConstructor(new Type[] { typeof(Faction) }) == null)
-                {
-                    // TODO: Tracer
-                    throw new NotSupportedException("Property has no fitting Constructor.");
-                }
-            }
-
             factionAttachments.Add(new FactionAttachmentTypeMap()
             {
                 ExtensionPack = extensionPack,

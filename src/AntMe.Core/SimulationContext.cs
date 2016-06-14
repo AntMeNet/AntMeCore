@@ -13,6 +13,11 @@ namespace AntMe
         public ITypeResolver Resolver { get; private set; }
 
         /// <summary>
+        /// Reference to the Type Mapper.
+        /// </summary>
+        public ITypeMapper Mapper { get; private set; }
+
+        /// <summary>
         /// Settings for the current Context.
         /// </summary>
         public KeyValueStore Settings { get; private set; }
@@ -26,11 +31,13 @@ namespace AntMe
         /// Default Constructor.
         /// </summary>
         /// <param name="resolver">Reference to the Type Resolver</param>
+        /// <param name="mapper">Reference to the Type Mapper</param>
         /// <param name="settings">Settings for the current Context</param>
         /// <param name="random">Randomizer for the current Context</param>
-        public SimulationContext(ITypeResolver resolver, KeyValueStore settings, Random random = null)
+        public SimulationContext(ITypeResolver resolver, ITypeMapper mapper, KeyValueStore settings, Random random = null)
         {
             Resolver = resolver;
+            Mapper = mapper;
             Settings = settings;
             Random = random;
         }

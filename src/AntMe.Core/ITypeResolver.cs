@@ -23,9 +23,9 @@ namespace AntMe
         /// Resolves the given Map.
         /// </summary>
         /// <param name="map">Map</param>
-        void ResolveMap(Map map);
+        void ResolveMap(SimulationContext context, Map map);
 
-        void ResolveMapTile(MapTile tile);
+        void ResolveMapTile(SimulationContext context, MapTile tile);
 
         /// <summary>
         /// Generates a Map State for the given Map.
