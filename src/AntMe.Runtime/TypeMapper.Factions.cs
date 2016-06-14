@@ -22,32 +22,9 @@ namespace AntMe.Runtime
 
         private List<FactionTypeMap> factions = new List<FactionTypeMap>();
 
-        /// <summary>
-        /// Liefert eine Liste der registrierten Factions.
-        /// </summary>
-        public IEnumerable<ITypeMapperFactionEntry> Factions
-        {
-            get
-            {
-                return factions;
-            }
-        }
+        public IEnumerable<ITypeMapperFactionEntry> Factions { get { return factions; } }
 
-        /// <summary>
-        /// Registriert eine neue Faction am System.
-        /// </summary>
-        /// <param name="extensionPack">Referenz auf die Extension</param>
-        /// <param name="name">Name der Faction</param>
-        /// <typeparam name="T">Typ der spezialisierten Faction</typeparam>
-        /// <typeparam name="F">Typ der Fabric</typeparam>
-        /// <typeparam name="U">Typ der Unit</typeparam>
-        /// <typeparam name="S">Typ der State Klasse</typeparam>
-        /// <typeparam name="I">Typ der Info Klasse</typeparam>
-        /// <typeparam name="FI"></typeparam>
-        /// <typeparam name="UI"></typeparam>
-        /// <param name="createInfoDelegate"></param>
-        /// <param name="createStateDelegate"></param>
-        public void RegisterFaction<T, S, I, F, FI, U, UI>(IExtensionPack extensionPack, string name,
+        public void RegisterFaction<T, S, I, F, FI, U, UI, IT>(IExtensionPack extensionPack, string name,
             Func<Faction, S> createStateDelegate = null,
             Func<Faction, Item, I> createInfoDelegate = null)
             where T : Faction
@@ -57,19 +34,51 @@ namespace AntMe.Runtime
             where FI : FactoryInterop
             where U : FactionUnit
             where UI : UnitInterop
+            where IT : FactionItem
         {
-            // TODO: Null-Check und Vererbungscheck
+            ValidateDefaults(extensionPack, name);
+
+            // Handle Faction Type
+            Type type = typeof(T);
+            ValidateType<Faction>(type, new Type[] { typeof(SimulationContext), typeof(Type), typeof(Level) }, false);
+
+            // TODO: Check Collisions
+
+            // Handle Faction State
+            Type stateType = typeof(S);
+            ValidateType<FactionState>(stateType, new Type[] { typeof(T) }, true);
+
+            // Handle Faction Info
+            Type infoType = typeof(I);
+            ValidateType<FactionInfo>(infoType, new Type[] { typeof(T), typeof(Item) }, false);
+
+            // Handle Factory
+            Type factoryType = typeof(F);
+            // TODO: Anything to check here?
+
+            // Handle Factory Interop
+            Type factoryInteropType = typeof(FI);
+            ValidateType<FactoryInterop>(factoryInteropType, new Type[] { typeof(SimulationContext), typeof(T) }, false);
+
+            // Handle Unit
+            Type unitType = typeof(U);
+            // TODO: Anything to check here?
+
+            // Handle Unit Interop
+            Type unitInteropType = typeof(UI);
+            ValidateType<UnitInterop>(unitInteropType, new Type[] { typeof(SimulationContext), typeof(T), typeof(IT) }, false);
+
             factions.Add(new FactionTypeMap()
             {
                 ExtensionPack = extensionPack,
                 Name = name,
-                Type = typeof(T),
-                StateType = typeof(S),
-                InfoType = typeof(I),
-                FactoryType = typeof(F),
-                FactoryInteropType = typeof(FI),
-                UnitType = typeof(U),
-                UnitInteropType = typeof(UI),
+                Type = type,
+                StateType = stateType,
+                InfoType = infoType,
+                FactoryType = factoryType,
+                FactoryInteropType = factoryInteropType,
+                UnitType = unitType,
+                UnitInteropType = unitInteropType,
                 CreateStateDelegate = createStateDelegate,
                 CreateInfoDelegate = createInfoDelegate
             });
@@ -139,114 +148,43 @@ namespace AntMe.Runtime
             where S : FactionStateProperty
             where I : FactionInfoProperty
         {
-            // Extension prüfen
-            if (extensionPack == null)
-            {
-                // tracer.Trace(TraceEventType.Critical, 19, "Extension Pack not set");
-                throw new ArgumentNullException("extensionPack");
-            }
+            ValidateDefaults(extensionPack, name);
 
-            // Namen prüfen
-            if (string.IsNullOrEmpty(name))
-            {
-                // tracer.Trace(TraceEventType.Critical, 18, "Name of Property not set");
-                throw new ArgumentNullException("name");
-            }
-
-            // Type
+            // Handle Type
             Type type = typeof(T);
-            if (type.IsAbstract)
-            {
-                // tracer.Trace(TraceEventType.Critical, 20, "Property is abstract '{0}' ({1})", name, type.FullName);
-                throw new ArgumentException("Type is abstract");
-            }
+            ValidateType<FactionProperty>(type, new Type[] { typeof(SimulationContext), typeof(Faction) }, false);
 
-            // Kollisionen prüfen
+            // Check Registration Collision
             if (factionProperties.Any(p => p.Type == type))
-            {
-                // tracer.Trace(TraceEventType.Critical, 21, "Property is already registered. '{0}' ({1})", name, type.FullName);
                 throw new NotSupportedException("Property is already registered");
-            }
 
-            // TODO: Konstruktoren prüfen
-
+            // Handle State Type
             Type stateType = null;
-
-            // Prüfen, ob State Type angegeben wurde.
             if (stateSet)
             {
                 stateType = typeof(S);
-                // tracer.Trace(TraceEventType.Information, 22, "Property contains State Property. '{0}' ({1})", name, stateType.FullName);
-
-                // Abstract
-                if (stateType.IsAbstract)
-                {
-                    // TODO: Tracer
-                    throw new ArgumentException("State Type is abstract");
-                }
-
-                // Braucht einen parameterlosen Konstruktor
-                if (stateType.GetConstructor(new Type[] { }) == null)
-                {
-                    // tracer.Trace(TraceEventType.Critical, 23, "State Property contains no parameterless Constructor. '{0}' ({1})", name, stateType.FullName);
-                    throw new NotSupportedException("State Type has no parameterless Constructor");
-                }
-
-                // Braucht einen Konstruktor der das Item und das Item Property entgegen nimmt.
-                if (stateType.GetConstructor(new Type[] { typeof(Faction), typeof(T) }) == null)
-                {
-                    // tracer.Trace(TraceEventType.Critical, 24, "State Property contains no Constructor with Property Type. '{0}' ({1})", name, stateType.FullName);
-                    throw new NotSupportedException("State Type has no Constructor with Item Property Type");
-                }
-            }
-            else
-            {
-                // tracer.Trace(TraceEventType.Information, 26, "Property contains no State Property. '{0}'", name);
+                ValidateType<FactionStateProperty>(stateType, new Type[] { typeof(Faction), typeof(T) }, true);
             }
 
-            // Check Info Type
+            // Handle Info Type
             Type infoType = null;
-
-            // Prüfen, ob Info Type angegeben wurde.
             if (infoSet)
             {
                 infoType = typeof(I);
-                // tracer.Trace(TraceEventType.Information, 25, "Property contains Info Property. '{0}' ({1})", name, infoType.FullName);
-
-                // Auf Abstract prüfen
-                if (infoType.IsAbstract)
-                {
-                    // TODO: Tracer
-                    throw new ArgumentException("Info Type is abstract");
-                }
-
-                // Braucht einen Konstruktor mit Item Property 
-                if (infoType.GetConstructor(new Type[] { typeof(Faction), typeof(T), typeof(Item) }) == null)
-                {
-                    // tracer.Trace(TraceEventType.Critical, 28, "Info Property does not contain a Constructor with Property Type and Observer Item. '{0}' ({1})", name, infoType.FullName);
-                    throw new NotSupportedException("Info Type has no Constructor with Item Property and a Game Item");
-                }
-            }
-            else
-            {
-                // tracer.Trace(TraceEventType.Information, 27, "Property contains no Info Property. '{0}'", name);
+                ValidateType<FactionInfoProperty>(infoType, new Type[] { typeof(Faction), typeof(T), typeof(Item) }, false);
             }
 
             factionProperties.Add(new FactionPropertyTypeMap()
             {
                 ExtensionPack = extensionPack,
                 Name = name,
-                Type = typeof(T),
+                Type = type,
                 StateType = stateType,
                 InfoType = infoType,
                 CreateStateDelegate = createStateDelegate,
                 CreateInfoDelegate = createInfoDelegate
             });
-
-            // tracer.Trace(TraceEventType.Information, 29, "Property registered successful. '{0}'", name);
         }
-
-
 
         #endregion
 
@@ -262,31 +200,13 @@ namespace AntMe.Runtime
             where F : Faction
             where P : FactionProperty
         {
-            // Extension prüfen
-            if (extensionPack == null)
-            {
-                // TODO: Tracer
-                throw new ArgumentNullException("extensionPack");
-            }
-
-            // Name prüfen
-            if (string.IsNullOrEmpty(name))
-            {
-                // TODO: Tracer
-                throw new ArgumentNullException("name");
-            }
+            ValidateDefaults(extensionPack, name);
 
             if (!factionProperties.Any(c => c.Type == typeof(P)))
-            {
-                // TODO: Tracer
                 throw new ArgumentException("Property is not registered");
-            }
 
             if (factionAttachments.Any(c => c.Type == typeof(F) && c.AttachmentType == typeof(P)))
-            {
-                // TODO: Tracer
                 throw new NotSupportedException("Item Property Combination is already reagistered");
-            }
 
             if (createPropertyDelegate == null)
             {
@@ -323,6 +243,8 @@ namespace AntMe.Runtime
 
         public void RegisterFactionExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<Faction> extenderDelegate)
         {
+            ValidateDefaults(extensionPack, name);
+
             // TODO: Check Stuff
             factionExtender.Add(new FactionExtenderTypeMap()
             {

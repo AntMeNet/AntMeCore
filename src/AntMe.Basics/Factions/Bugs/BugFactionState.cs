@@ -7,6 +7,10 @@ namespace AntMe.Basics.Factions.Bugs
     /// </summary>
     public sealed class BugFactionState : FactionState
     {
+        public BugFactionState() : base() { }
+
+        public BugFactionState(BugFaction faction) : base(faction) { }
+
         /// <summary>
         /// Serializes the first Frame of this State.
         /// </summary>

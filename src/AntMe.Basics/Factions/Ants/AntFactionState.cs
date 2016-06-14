@@ -8,6 +8,17 @@ namespace AntMe.Basics.Factions.Ants
     public sealed class AntFactionState : FactionState
     {
         /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
+        public AntFactionState() : base() { }
+
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="faction">Faction</param>
+        public AntFactionState(AntFaction faction) : base(faction) { }
+
+        /// <summary>
         /// Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>

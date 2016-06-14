@@ -223,32 +223,14 @@ namespace AntMe.Runtime
         /// <param name="rank">Rang der Extension</param>
         /// <param name="createExtensionDelegate">Delegat zum Erstellen einer neuen Instanz</param>
         /// <typeparam name="T">Extension Type</typeparam>
-        public void RegisterEngineProperty<T>(IExtensionPack extensionPack, string name, int rank, Func<Engine, T> createExtensionDelegate = null) where T : EngineProperty
+        public void RegisterEngineProperty<T>(IExtensionPack extensionPack, string name, int rank, Func<Engine, T> createExtensionDelegate = null) 
+            where T : EngineProperty
         {
+            ValidateDefaults(extensionPack, name);
+
+            // Handle Type
             Type t = typeof(T);
-
-            tracer.Trace(TraceEventType.Information, 3, "Try to register new Extension '{0}' ({1})", name, t.FullName);
-
-            // Extension Pack darf nicht null sein.
-            if (extensionPack == null)
-            {
-                tracer.Trace(TraceEventType.Critical, 4, "Extension Pack is null ({0})", t.FullName);
-                throw new ArgumentNullException("extensionPack");
-            }
-
-            // Existenz eines Namens sicher stellen
-            if (string.IsNullOrEmpty(name))
-            {
-                tracer.Trace(TraceEventType.Critical, 4, "Extension Name is not set ({0})", t.FullName);
-                throw new ArgumentNullException("name");
-            }
-
-            // Instaniierbarkeit prüfen
-            if (t.IsAbstract)
-            {
-                tracer.Trace(TraceEventType.Critical, 5, "Extension is abstract '{0}' ({1})", name, t.FullName);
-                throw new NotSupportedException("Extension is abstract");
-            }
+            ValidateType<EngineProperty>(t, new[] { typeof(Engine) }, false);
 
             // Collision checken
             if (enginePropertyContainer.Any(e => e.Type == t))

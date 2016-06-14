@@ -3,7 +3,7 @@
     /// <summary>
     /// Base Class for Faction Infos.
     /// </summary>
-    public abstract class FactionInfo : PropertyList<InfoProperty>
+    public class FactionInfo : PropertyList<InfoProperty>
     {
         /// <summary>
         /// Reference to the observed Faction.

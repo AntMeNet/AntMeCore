@@ -27,8 +27,9 @@ namespace AntMe.Basics.FactionProperties
         /// <summary>
         /// Default Constructor.
         /// </summary>
+        /// <param name="context">Simulation Context</param>
         /// <param name="faction">Reference to the related Faction</param>
-        public PointsProperty(Faction faction) : base(faction)
+        public PointsProperty(SimulationContext context, Faction faction) : base(context, faction)
         {
             collectors = new HashSet<IPointsCollector>();
             pointsPerCategory = new Dictionary<string, int>();

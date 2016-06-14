@@ -9,6 +9,11 @@ namespace AntMe
     public class FactionState : PropertyList<FactionStateProperty>, ISerializableState
     {
         /// <summary>
+        /// Reference to the related Faction.
+        /// </summary>
+        protected readonly Faction Faction;
+
+        /// <summary>
         /// Name of the Player.
         /// </summary>
         [DisplayName("Name")]
@@ -52,6 +57,22 @@ namespace AntMe
         [ReadOnly(true)]
         [Category("Static")]
         public Vector2 StartPoint { get; set; }
+
+        /// <summary>
+        /// Default Contructor for the Deserializer.
+        /// </summary>
+        public FactionState() : base() { }
+
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="faction">Faction</param>
+        public FactionState(Faction faction) : base()
+        {
+            Faction = faction;
+
+            // TODO: Bind Fields
+        }
 
         /// <summary>
         /// Serializes the first Frame of this State.

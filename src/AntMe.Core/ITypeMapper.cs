@@ -321,11 +321,12 @@ namespace AntMe
         /// <typeparam name="FI">Typ der Factory Interop</typeparam>
         /// <typeparam name="U">Typ der Unit</typeparam>
         /// <typeparam name="UI">Typ der Unit Interop</typeparam>
+        /// <typeparam name="IT">Item Type</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack.</param>
         /// <param name="name">Name der Faction.</param>
         /// <param name="createStateDelegate">Optionaler Delegat zur Erstellung des Faction States.</param>
         /// <param name="createInfoDelegate">Optionaler Delegat zur Erstellung der Faction Info.</param>
-        void RegisterFaction<T, S, I, F, FI, U, UI>(IExtensionPack extensionPack, string name,
+        void RegisterFaction<T, S, I, F, FI, U, UI, IT>(IExtensionPack extensionPack, string name,
             Func<Faction, S> createStateDelegate = null,
             Func<Faction, Item, I> createInfoDelegate = null)
             where T : Faction
@@ -334,7 +335,8 @@ namespace AntMe
             where F : FactionFactory
             where FI : FactoryInterop
             where U : FactionUnit
-            where UI : UnitInterop;
+            where UI : UnitInterop
+            where IT : FactionItem;
 
         /// <summary>
         /// Liefert eine Liste der registrierten Factions.

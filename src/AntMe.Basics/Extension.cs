@@ -127,7 +127,7 @@ namespace AntMe.Basics
             settings.Set<AntFaction>("TotalAntCount", int.MaxValue, "Total Number of Ants per Simulation");
             settings.Set<AntFaction>("TotalAnthillCount", 1, "Number of total Anthills per Simulation");
             settings.Set<AntFaction>("AntRespawnDelay", 1, "Number of Rounds until another Respawn");
-            typeMapper.RegisterFaction<AntFaction, AntFactionState, FactionInfo, AntFactory, AntFactoryInterop, AntUnit, AntUnitInterop>(this, "Ants");
+            typeMapper.RegisterFaction<AntFaction, AntFactionState, FactionInfo, AntFactory, AntFactoryInterop, AntUnit, AntUnitInterop, AntItem>(this, "Ants");
 
             // Ant Factory Interops
             typeMapper.AttachFactoryInteropProperty<AntFactoryInterop, TotalStatisticsInterop>(this, "Ant Total Statistics", (f, i) =>
@@ -149,7 +149,7 @@ namespace AntMe.Basics
             typeMapper.AttachUnitInteropProperty<AntUnitInterop, InteractionInterop>(this, "Ant Interaction Interop");
 
             // Bug Faction
-            typeMapper.RegisterFaction<BugFaction, BugFactionState, FactionInfo, BugFactory, BugFactoryInterop, BugUnit, BugUnitInterop>(this, "Bugs");
+            typeMapper.RegisterFaction<BugFaction, BugFactionState, FactionInfo, BugFactory, BugFactoryInterop, BugUnit, BugUnitInterop, BugItem>(this, "Bugs");
 
             // Bug Factory Interops
             typeMapper.AttachFactoryInteropProperty<BugFactoryInterop, TotalStatisticsInterop>(this, "Bug Total Statistics", (f, i) =>

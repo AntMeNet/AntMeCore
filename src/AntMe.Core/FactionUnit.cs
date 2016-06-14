@@ -1,14 +1,14 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Basis-Klasse für alle Spieler-Implementierten Einheiten.
+    /// Base Class for all Unit Classes of different Factions.
     /// </summary>
     public abstract class FactionUnit
     {
         /// <summary>
-        /// Initialisierung der Spieler-Klasse.
+        /// Gets a call during Initialization of single Units to handle the Interop Instance.
         /// </summary>
-        /// <param name="interop">Zentrales Interop-Objekt für diese Einheit.</param>
+        /// <param name="interop">Interop Instance</param>
         public abstract void Init(UnitInterop interop);
     }
 }

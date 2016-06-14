@@ -5,7 +5,8 @@ namespace AntMe.Basics.Factions.Bugs
 {
     public sealed class BugUnitInterop : UnitInterop
     {
-        public BugUnitInterop(BugFaction faction, BugItem item) : base(faction, item)
+        public BugUnitInterop(SimulationContext context, BugFaction faction, BugItem item)
+            : base(context, faction, item)
         {
         }
 
