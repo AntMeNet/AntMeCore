@@ -24,11 +24,6 @@ namespace AntMe
         public MapMaterial Material { get; set; }
 
         /// <summary>
-        /// Gets or sets whenever an Item can enter this Tile.
-        /// </summary>
-        public bool CanEnter { get; set; }
-
-        /// <summary>
         /// Gets or sets the Orientation of this Tile.
         /// </summary>
         public Compass Orientation { get; set; }
@@ -46,7 +41,6 @@ namespace AntMe
         {
             MapTile = mapTile;
 
-            MapTile.OnCanEnterChanged += (v) => { CanEnter = v; };
             MapTile.OnHeightLevelChanged += (v) => { HeightLevel = v; };
             MapTile.OnMaterialChanged += (v) => { Material = v; };
             MapTile.OnOrientationChanged += (v) => { Orientation = v; };

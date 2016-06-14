@@ -4,14 +4,12 @@ using System.IO;
 
 namespace AntMe.Basics.MapProperties
 {
-    public class UpdateTileProperty : MapProperty
+    /// <summary>
+    /// Map Property for individual Tile Updates.
+    /// </summary>
+    public class TileUpdaterProperty : MapProperty
     {
-        /// <summary>
-        /// List of all updateable Map Tiles.
-        /// </summary>
-        private HashSet<IUpdateableMapTile> updateableMapTiles;
-
-        public UpdateTileProperty(Map map) : base(map)
+        public TileUpdaterProperty(Map map) : base(map)
         {
         }
 

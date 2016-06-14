@@ -164,7 +164,10 @@
     <Compile Include="LevelProperties\TimerTrigger.cs" />
     <Compile Include="LevelProperties\TriggerLevelProperty.cs" />
     <Compile Include="MapProperties\IUpdateableMapTile.cs" />
-    <Compile Include="MapProperties\UpdateTileProperty.cs" />
+    <Compile Include="MapProperties\TileUpdaterProperty.cs" />
+    <Compile Include="MapTileProperties\WalkableTileInfoProperty.cs" />
+    <Compile Include="MapTileProperties\WalkableTileProperty.cs" />
+    <Compile Include="MapTileProperties\WalkableTileStateProperty.cs" />
     <Compile Include="MapTiles\CliffMapTile.cs" />
     <Compile Include="MapTiles\CliffMapTileInfo.cs" />
     <Compile Include="MapTiles\CliffMapTileState.cs" />

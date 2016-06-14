@@ -8,6 +8,7 @@ using AntMe.Basics.ItemProperties;
 using AntMe.Basics.Items;
 using AntMe.Basics.LevelProperties;
 using AntMe.Basics.MapProperties;
+using AntMe.Basics.MapTileProperties;
 using AntMe.Basics.MapTiles;
 using System;
 
@@ -67,7 +68,7 @@ namespace AntMe.Basics
             // ##########################
             // Map Properties
             // ##########################
-            typeMapper.RegisterMapProperty<UpdateTileProperty>(this, "Updateable Tiles");
+            typeMapper.RegisterMapProperty<TileUpdaterProperty>(this, "Updateable Tiles");
 
             // ##########################
             // Map Tiles
@@ -83,6 +84,13 @@ namespace AntMe.Basics
             // ##########################
             // Map Tile Properties
             // ##########################
+            typeMapper.RegisterMapTilePropertySI<WalkableTileProperty, WalkableTileStateProperty, WalkableTileInfoProperty>(this, "Walkable Map Tiles");
+
+            // ##########################
+            // Attach Tile Properties
+            // ##########################
+            typeMapper.AttachMapTileProperty<FlatMapTile, WalkableTileProperty>(this, "Walkable Flat Tiles");
+            typeMapper.AttachMapTileProperty<RampMapTile, WalkableTileProperty>(this, "Walkable Ramps");
 
             // ##########################
             // Standard Item Properties

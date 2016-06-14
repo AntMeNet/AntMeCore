@@ -18,8 +18,6 @@ namespace AntMe
 
         private byte heightLevel;
 
-        private bool canEnter;
-
         private Dictionary<Item, MapTileInfo> infos;
 
         /// <summary>
@@ -35,7 +33,6 @@ namespace AntMe
         public MapTile(SimulationContext context, bool canEnter)
         {
             Context = context;
-            CanEnter = canEnter;
             infos = new Dictionary<Item, MapTileInfo>();
 
             context.Resolver.ResolveMapTile(this);
@@ -124,22 +121,6 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gets or sets the possibility to enter the Tile.
-        /// </summary>
-        [DisplayName("Can Enter")]
-        [Description("Gets or sets if Items can enter this Tile.")]
-        public bool CanEnter
-        {
-            get { return canEnter; }
-            set
-            {
-                canEnter = value;
-                if (OnCanEnterChanged != null)
-                    OnCanEnterChanged(value);
-            }
-        }
-
-        /// <summary>
         /// Returns the Level to enter on the East Side.
         /// </summary>
         [DisplayName("Enter Level East")]
@@ -188,7 +169,6 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public virtual void SerializeFirst(BinaryWriter stream, byte version)
         {
-            stream.Write(CanEnter);
             stream.Write((ushort)Orientation);
             stream.Write(HeightLevel);
         }
@@ -210,7 +190,6 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public virtual void DeserializeFirst(BinaryReader stream, byte version)
         {
-            CanEnter = stream.ReadBoolean();
             Orientation = (Compass)stream.ReadUInt16();
             HeightLevel = stream.ReadByte();
         }
@@ -239,10 +218,5 @@ namespace AntMe
         /// Signal for a changed HeightLevel.
         /// </summary>
         public event ValueUpdate<byte> OnHeightLevelChanged;
-
-        /// <summary>
-        /// Signal for a changed Can Enter Flag.
-        /// </summary>
-        public event ValueUpdate<bool> OnCanEnterChanged;
     }
 }

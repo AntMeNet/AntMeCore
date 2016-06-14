@@ -240,7 +240,7 @@ namespace AntMe.Runtime
             where T : MapTileProperty
             where S : MapTileStateProperty
         {
-            RegisterMapTileProperty<T, MapTileStateProperty, MapTileInfoProperty>(extensionPack, name, true, false, createStateDelegate, null);
+            RegisterMapTileProperty<T, S, MapTileInfoProperty>(extensionPack, name, true, false, createStateDelegate, null);
         }
 
         public void RegisterMapTilePropertyI<T, I>(IExtensionPack extensionPack, string name,
@@ -248,7 +248,7 @@ namespace AntMe.Runtime
             where T : MapTileProperty
             where I : MapTileInfoProperty
         {
-            RegisterMapTileProperty<T, MapTileStateProperty, MapTileInfoProperty>(extensionPack, name, false, true, null, createInfoDelegate);
+            RegisterMapTileProperty<T, MapTileStateProperty, I>(extensionPack, name, false, true, null, createInfoDelegate);
         }
 
         public void RegisterMapTilePropertySI<T, S, I>(IExtensionPack extensionPack, string name,
@@ -258,7 +258,7 @@ namespace AntMe.Runtime
             where S : MapTileStateProperty
             where I : MapTileInfoProperty
         {
-            RegisterMapTileProperty<T, MapTileStateProperty, MapTileInfoProperty>(extensionPack, name, true, true, createStateDelegate, createInfoDelegate);
+            RegisterMapTileProperty<T, S, I>(extensionPack, name, true, true, createStateDelegate, createInfoDelegate);
         }
 
         private void RegisterMapTileProperty<T, S, I>(IExtensionPack extensionPack, string name,
@@ -269,108 +269,31 @@ namespace AntMe.Runtime
             where S : MapTileStateProperty
             where I : MapTileInfoProperty
         {
-            // Extension prüfen
-            if (extensionPack == null)
-            {
-                // tracer.Trace(TraceEventType.Critical, 19, "Extension Pack not set");
-                throw new ArgumentNullException("extensionPack");
-            }
+            ValidateDefaults(extensionPack, name);
 
-            // Namen prüfen
-            if (string.IsNullOrEmpty(name))
-            {
-                // tracer.Trace(TraceEventType.Critical, 18, "Name of Property not set");
-                throw new ArgumentNullException("name");
-            }
-
-            // Type
+            // Handle Property Type
             Type type = typeof(T);
-            if (type.IsAbstract)
-            {
-                // tracer.Trace(TraceEventType.Critical, 20, "Property is abstract '{0}' ({1})", name, type.FullName);
-                throw new ArgumentException("Type is abstract");
-            }
+            ValidateType<MapTileProperty>(type, new Type[] { typeof(SimulationContext), typeof(MapTile) }, false);
 
-            // Kollisionen prüfen
+            // Registration Collision
             if (mapTileProperties.Any(p => p.Type == type))
-            {
-                // tracer.Trace(TraceEventType.Critical, 21, "Property is already registered. '{0}' ({1})", name, type.FullName);
                 throw new NotSupportedException("Property is already registered");
-            }
 
-            // Konstruktoren prüfen
-            if (type.GetConstructor(new Type[] { typeof(MapTile) }) == null)
-            {
-                string msg = string.Format("Property contains no Constructor with Item. '{0}' ({1})", name, type.FullName);
-                // tracer.Trace(TraceEventType.Critical, 23, msg);
-                throw new NotSupportedException(msg);
-            }
 
+            // Handle State Type
             Type stateType = null;
-
-            // Prüfen, ob State Type angegeben wurde.
             if (stateSet)
             {
                 stateType = typeof(S);
-                // tracer.Trace(TraceEventType.Information, 22, "Property contains State Property. '{0}' ({1})", name, stateType.FullName);
-
-                // Abstract
-                if (stateType.IsAbstract)
-                {
-                    // TODO: Tracer
-                    string msg = string.Format("State Type '{0}' from Extension Pack '{1}' is abstract", stateType.FullName, extensionPack.Name);
-                    throw new ArgumentException(msg);
-                }
-
-                // Braucht einen parameterlosen Konstruktor
-                if (stateType.GetConstructor(new Type[] { }) == null)
-                {
-                    string msg = string.Format("State Property contains no parameterless Constructor. '{0}' ({1})", name, stateType.FullName);
-                    // tracer.Trace(TraceEventType.Critical, 23, msg);
-                    throw new NotSupportedException(msg);
-                }
-
-                // Braucht einen Konstruktor der das Item und das Item Property entgegen nimmt.
-                if (stateType.GetConstructor(new Type[] { typeof(MapTile), typeof(T) }) == null)
-                {
-                    string msg = string.Format("State Property contains no Constructor with Property Type. '{0}' ({1})", name, stateType.FullName);
-                    // tracer.Trace(TraceEventType.Critical, 24, msg);
-                    throw new NotSupportedException(msg);
-                }
-            }
-            else
-            {
-                // tracer.Trace(TraceEventType.Information, 26, "Property contains no State Property. '{0}'", name);
+                ValidateType<MapTileStateProperty>(stateType, new Type[] { typeof(MapTile), typeof(T) }, true);
             }
 
-            // Check Info Type
+            // Handle Info Type
             Type infoType = null;
-
-            // Prüfen, ob Info Type angegeben wurde.
             if (infoSet)
             {
                 infoType = typeof(I);
-                // tracer.Trace(TraceEventType.Information, 25, "Property contains Info Property. '{0}' ({1})", name, infoType.FullName);
-
-                // Auf Abstract prüfen
-                if (infoType.IsAbstract)
-                {
-                    // TODO: Tracer
-                    string msg = string.Format("Info Type '{0}' from Extension Pack '{1}' is abstract", infoType.FullName, extensionPack.Name);
-                    throw new ArgumentException(msg);
-                }
-
-                // Braucht einen Konstruktor mit Item Property 
-                if (infoType.GetConstructor(new Type[] { typeof(MapTile), typeof(T), typeof(Item) }) == null)
-                {
-                    string msg = string.Format("Info Property does not contain a Constructor with Property Type and Observer Item. '{0}' ({1})", name, infoType.FullName);
-                    // tracer.Trace(TraceEventType.Critical, 28, msg);
-                    throw new NotSupportedException(msg);
-                }
-            }
-            else
-            {
-                // tracer.Trace(TraceEventType.Information, 27, "Property contains no Info Property. '{0}'", name);
+                ValidateType<MapTileInfoProperty>(infoType, new Type[] { typeof(MapTile), typeof(T), typeof(Item) });
             }
 
             mapTileProperties.Add(new MapTilePropertyTypeMap()
@@ -383,8 +306,6 @@ namespace AntMe.Runtime
                 CreateStateDelegate = createStateDelegate,
                 CreateInfoDelegate = createInfoDelegate
             });
-
-            // tracer.Trace(TraceEventType.Information, 29, "Property registered successful. '{0}'", name);
         }
 
         /// <summary>
@@ -404,42 +325,16 @@ namespace AntMe.Runtime
             where I : MapTile
             where P : MapTileProperty
         {
-            // Extension prüfen
-            if (extensionPack == null)
-            {
-                // TODO: Tracer
-                throw new ArgumentNullException("extensionPack");
-            }
-
-            // Name prüfen
-            if (string.IsNullOrEmpty(name))
-            {
-                // TODO: Tracer
-                throw new ArgumentNullException("name");
-            }
+            ValidateDefaults(extensionPack, name);
 
             if (!mapTileProperties.Any(c => c.Type == typeof(P)))
-            {
-                // TODO: Tracer
                 throw new ArgumentException("Property is not registered");
-            }
 
             if (mapTileAttachments.Any(c => c.Type == typeof(I) && c.AttachmentType == typeof(P)))
             {
                 // TODO: Tracer
                 string msg = string.Format("Item Property Combination '{0}'/'{1}' is already reagistered", typeof(I).FullName, typeof(P).FullName);
                 throw new NotSupportedException(msg);
-            }
-
-            if (createPropertyDelegate == null)
-            {
-                // TODO: Construktor prüfen
-                if (typeof(P).GetConstructor(new Type[] { typeof(MapTile) }) == null)
-                {
-                    // TODO: Tracer
-                    string msg = string.Format("Property '{0}' has no fitting Constructor.", typeof(P).FullName);
-                    throw new NotSupportedException(msg);
-                }
             }
 
             mapTileAttachments.Add(new MapTileAttachmentTypeMap()

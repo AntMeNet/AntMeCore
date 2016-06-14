@@ -274,7 +274,8 @@ namespace CoreTestClient
 
         private SolidBrush GetCellcolor(MapTileState tile)
         {
-            if (!tile.CanEnter)
+            // TODO: Workaruond aufheben -> Walkable State suchen
+            if (tile.Properties.Count() == 0)
                 return new SolidBrush(Color.Black);
 
             Color baseColor = Color.SandyBrown;

@@ -497,10 +497,6 @@ namespace AntMe
                     startPoint.Y < 0 || startPoint.Y >= tiles.GetLength(1))
                     throw new Exception(string.Format("StartPoint {0} is out of map bounds", i));
 
-                // Prüfen, ob es sich um eine flache Zelle handelt
-                if (!this[startPoint.X, startPoint.Y].CanEnter)
-                    throw new Exception(string.Format("StartPoint {0} is not placed on a plane Cell", i));
-
                 // Prüfen, ob noch ein anderer Startpoint auf der selben Zelle ist.
                 for (int j = 0; j < StartPoints.Length; j++)
                     if (i != j && StartPoints[i] == StartPoints[j])

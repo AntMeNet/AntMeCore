@@ -111,7 +111,7 @@ namespace AntMe.Runtime
         /// <param name="type">Type to test</param>
         /// <param name="needEmptyConstructor">Checks for empty Constructor</param>
         /// <param name="constructorParameters">Checks for a specific Constructor</param>
-        private void ValidateType<T>(Type type, Type[] constructorParameters, bool needEmptyConstructor)
+        private void ValidateType<T>(Type type, Type[] constructorParameters, bool needEmptyConstructor = false)
         {
             // Empty Type
             if (type == null)
