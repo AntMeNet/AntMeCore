@@ -9,7 +9,10 @@ namespace AntMe
     /// </summary>
     public abstract class MapProperty : Property, ISerializableState
     {
-        public Map Map { get; private set; }
+        /// <summary>
+        /// Reference to the Map.
+        /// </summary>
+        protected readonly Map Map;
 
         /// <summary>
         /// Default Constructor for the Type Mapper.

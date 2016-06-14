@@ -19,7 +19,7 @@ namespace AntMe.Basics.MapTiles
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public ConcaveCliffMapTile() { }
+        public ConcaveCliffMapTile(SimulationContext context) : base(context) { }
 
         /// <summary>
         /// Returns the Level to enter on the East Side.

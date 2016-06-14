@@ -17,9 +17,7 @@ namespace AntMe.Basics.MapTiles
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public WallCliffMapTile()
-        {
-        }
+        public WallCliffMapTile(SimulationContext context) : base(context) { }
 
         /// <summary>
         /// Returns the Level to enter on the East Side.

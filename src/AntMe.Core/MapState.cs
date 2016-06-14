@@ -9,6 +9,22 @@ namespace AntMe
     /// </summary>
     public sealed class MapState : PropertyList<MapStateProperty>, ISerializableState
     {
+        private readonly Map Map;
+
+        /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
+        public MapState() : base() { }
+
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="map">Reference to the related Map</param>
+        public MapState(Map map) : base()
+        {
+            Map = map;
+        }
+
         /// <summary>
         /// Is Border blocked.
         /// </summary>

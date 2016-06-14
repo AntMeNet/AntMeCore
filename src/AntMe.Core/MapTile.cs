@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
@@ -9,13 +10,24 @@ namespace AntMe
     /// </summary>
     public abstract class MapTile : PropertyList<MapTileProperty>, ISerializableState
     {
+        private MapTileState state;
+
+        private Dictionary<Item, MapTileInfo> infos;
+
+        protected readonly SimulationContext Context;
+
         /// <summary>
         /// Default Constructor.
         /// </summary>
+        /// <param name="context">Simulation Context</param>
         /// <param name="canEnter">Can Item Enter?</param>
-        public MapTile(bool canEnter)
+        public MapTile(SimulationContext context, bool canEnter)
         {
+            Context = context;
             CanEnter = canEnter;
+            infos = new Dictionary<Item, MapTileInfo>();
+
+            context.Resolver.ResolveMapTile(this);
         }
 
         /// <summary>
@@ -24,7 +36,32 @@ namespace AntMe
         /// <returns></returns>
         public MapTileState GetState()
         {
-            throw new NotImplementedException();
+            if (state == null)
+                state = Context.Resolver.CreateMapTileState(this);
+            return state;
+        }
+
+        /// <summary>
+        /// Returns an Info Object for the current Tile for the giben Observer.
+        /// </summary>
+        /// <param name="observer">Observer Item</param>
+        /// <returns>Info Object</returns>
+        public MapTileInfo GetInfo(Item observer)
+        {
+            if (observer == null)
+                throw new ArgumentNullException("observer");
+
+            // Check Info Cache
+            if (infos.ContainsKey(observer))
+                return infos[observer];
+
+            // Generate new Instance
+            var info = Context.Resolver.CreateMapTileInfo(this, observer);
+            if (info == null)
+                throw new NotSupportedException("Could not create new Map Tile Info");
+
+            infos.Add(observer, info);
+            return info;
         }
 
         /// <summary>

@@ -5,5 +5,6 @@
     /// </summary>
     public class LeftRampToCliffMapTile : WallCliffMapTile
     {
+        public LeftRampToCliffMapTile(SimulationContext context) : base(context) { }
     }
 }

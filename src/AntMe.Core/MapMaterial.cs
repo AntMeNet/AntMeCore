@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 
 namespace AntMe
 {
@@ -21,6 +22,8 @@ namespace AntMe
         /// <summary>
         /// Speed Multiplier for walking Units.
         /// </summary>
+        [DisplayName("Speed")]
+        [Description("Speed Multiplier for walking Units.")]
         public float Speed
         {
             get { return speed; }

@@ -19,7 +19,7 @@ namespace AntMe.Basics.MapTiles
         /// <summary>
         /// Default Constrcutor.
         /// </summary>
-        public ConvexCliffMapTile()
+        public ConvexCliffMapTile(SimulationContext context) : base(context)
         {
         }
 

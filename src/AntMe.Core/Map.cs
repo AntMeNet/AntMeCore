@@ -74,6 +74,10 @@ namespace AntMe
 
         #endregion
 
+        private MapState state;
+
+        private SimulationContext context;
+
         /// <summary>
         /// Holds all Map Tiles.
         /// </summary>
@@ -118,6 +122,8 @@ namespace AntMe
         /// <param name="playerCount"></param>
         public Map(SimulationContext context, int width, int height, int playerCount)
         {
+            this.context = context;
+
             // Check Parameter
             if (width < MIN_WIDTH)
                 throw new ArgumentOutOfRangeException(string.Format("Map must have at least {0} Columns", MIN_WIDTH));
@@ -155,6 +161,8 @@ namespace AntMe
                 StartPoints[6] = new Index2(dx, 3 * dy);
             if (playerCount >= 8)
                 StartPoints[7] = new Index2(5 * dx, 3 * dy);
+
+            this.context.Resolver.ResolveMap(this);
         }
 
         /// <summary>
@@ -165,6 +173,17 @@ namespace AntMe
         {
             foreach (var property in Properties)
                 property.Update(round);
+        }
+
+        /// <summary>
+        /// Creates a Map State.
+        /// </summary>
+        /// <returns>Map State</returns>
+        public MapState GetState()
+        {
+            if (state == null)
+                state = context.Resolver.CreateMapState(this);
+            return state;
         }
 
         #region Statische Methoden (Generatoren und Serialisierer)
