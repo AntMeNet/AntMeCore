@@ -14,19 +14,30 @@ namespace AntMe.Generator
 
         public MethodInfo MethodInfo { get; private set; }
 
-        public MethodParseNode(MethodInfo methodeInfo)
-            : base()
+        public MethodParseNode(MethodInfo methodeInfo,WrapType wrapType)
+            : base(wrapType)
         {
             MethodInfo = methodeInfo;
         }
 
         public override MemberDeclarationSyntax Generate()
         {
-            return SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                MethodInfo.Name).WithBody(
-                SyntaxFactory.Block());
+            switch (wrapType)
+            {
+                case WrapType.InfoWrap:
+                    return SyntaxFactory.MethodDeclaration(
+                            SyntaxFactory.PredefinedType(
+                                SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                            MethodInfo.Name).WithBody(
+                            SyntaxFactory.Block());
+                case WrapType.BaseTypeWrap:
+                    return null;
+                case WrapType.BaseClasses:
+                    return null;
+                default:
+                    return null;
+            }
+
         }
 
     }

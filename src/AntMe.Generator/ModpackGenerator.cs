@@ -27,7 +27,9 @@ namespace AntMe.Generator
         {
             string outputFile = "Summary.dll";
 
-            Dictionary<Type,List<string>> TypeKeys = GetLocaKeys();
+            Dictionary<Type, List<string>> TypeKeys = GetLocaKeys();
+            List<Type> typeReferences = new List<Type>();
+
 
             string frameworkRoot = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1\{0}.dll";
             List<MetadataReference> references = new List<MetadataReference>();
@@ -39,44 +41,40 @@ namespace AntMe.Generator
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                     .WithOverflowChecks(true).WithOptimizationLevel(OptimizationLevel.Release);
 
+
             List<SyntaxTree> syntaxTrees = new List<SyntaxTree>();
 
-            BaseParseNode root = new NamespaceParseNode("AntMe.Deutsch");
+            #region Info-Wrapper
+
+            BaseParseNode root = new NamespaceParseNode("AntMe.Deutsch", WrapType.InfoWrap);
+            List<Type> wrapped = new List<Type>();
 
             // Collect all Item Infos and link them to the Localized ItemInfos
             foreach (var item in ExtensionLoader.DefaultTypeMapper.Items)
             {
                 if (item.InfoType == null) continue;
+                Type t = item.InfoType;
 
+                while (t != typeof(PropertyList<ItemInfoProperty>) && t != null && !wrapped.Contains(t))
+                {
+                    
+                    ClassParseNode classNode = new ClassParseNode(t, WrapType.InfoWrap);
+                    wrapped.Add(t);
+                    root.add(classNode);
 
-
-                root.add();
-
-
-
+                    foreach (MethodInfo methodInfo in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
+                    {
+                        classNode.add(new MethodParseNode(methodInfo, WrapType.InfoWrap));
+                    }
+                    t = t.BaseType;
+                } 
             }
 
-            foreach (var item in TypeKeys.Keys)
+            #endregion
+
+            foreach (string codebase in typeReferences.Select(c => c.Assembly.CodeBase).Distinct())
             {
-                ClassParseNode classParseNode = new ClassParseNode(item);
-                root.ChildNodes.Add(classParseNode);
-
-                foreach (ConstructorInfo constructor in item.GetConstructors())
-                {
-                    classParseNode.ChildNodes.Add(new ConstructorParseNode(constructor));
-                }
-
-                foreach (MethodInfo methodInfo in item.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly ))
-                {
-                    //classParseNode.ChildNodes.Add(new MethodParseNode(methodInfo));
-                }
-            }
-
-            List<Type> RootReferences = root.GetReferences();
-
-            foreach (string codebase in RootReferences.Select(c => c.Assembly.CodeBase).Distinct())
-            {
-                references.Add(MetadataReference.CreateFromFile(codebase.Remove(0,8)));
+                references.Add(MetadataReference.CreateFromFile(codebase.Remove(0, 8)));
             }
 
             syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(root.Generate())));
@@ -85,34 +83,14 @@ namespace AntMe.Generator
             syntaxTrees[0].GetRoot().NormalizeWhitespace().GetText().Write(streamWriter);
             streamWriter.Flush();
             streamWriter.Close();
-            
+
             var compilation = CSharpCompilation.Create(outputFile, syntaxTrees, references, options);
             var result = compilation.Emit(Path.Combine(output, outputFile));
 
             if (!result.Success)
-                throw new Exception(string.Join(Environment.NewLine,result.Diagnostics.Select(d => d.ToString())));
-            
+                throw new Exception(string.Join(Environment.NewLine, result.Diagnostics.Select(d => d.ToString())));
+
             return Path.Combine(output, outputFile);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public static List<SyntaxTree> GenerateSyntaxtrees()
-        {
-            List<SyntaxTree> trees = new List<SyntaxTree>();
-
-            // Collect all Item Infos
-            foreach (var item in ExtensionLoader.DefaultTypeMapper.Items)
-            {
-                if (item.InfoType == null) continue;
-                
-
-
-            }
-
-            return trees;
         }
 
         /// <summary>

@@ -14,26 +14,49 @@ namespace AntMe.Generator
 
         public Type Type { get; private set; }
 
-        public ClassParseNode(Type type)
-            :base()
+        public ClassParseNode(Type type, WrapType wrapType)
+            : base(wrapType)
         {
             Type = type;
             references.Add(type);
-        } 
+        }
 
         public override MemberDeclarationSyntax Generate()
         {
-            return SyntaxFactory.ClassDeclaration("Loc" + Type.Name).WithModifiers(
-                SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword))).AddMembers(
-                ChildNodes.Select(c => c.Generate()).ToArray()).AddMembers(
-                SyntaxFactory.FieldDeclaration(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName(Type.FullName)).AddVariables(
-                        SyntaxFactory.VariableDeclarator("_" + Type.Name))
-                ).AddModifiers(SyntaxFactory.Token(SyntaxKind.InternalKeyword)));
+            switch (wrapType)
+            {
+                case WrapType.InfoWrap:
+                    ClassDeclarationSyntax classSyntax = 
+                        SyntaxFactory.ClassDeclaration("Loc" + Type.Name).WithModifiers(
+                            SyntaxFactory.TokenList(
+                                SyntaxFactory.Token(SyntaxKind.PublicKeyword))).AddMembers(
+                        ChildNodes.Select(c => c.Generate()).ToArray()).AddMembers(
+                            SyntaxFactory.FieldDeclaration(
+                                SyntaxFactory.VariableDeclaration(
+                                    SyntaxFactory.IdentifierName(Type.FullName)).AddVariables(
+                                    SyntaxFactory.VariableDeclarator("_" + Type.Name))).AddModifiers(
+                                SyntaxFactory.Token(SyntaxKind.InternalKeyword))).AddMembers(
+                        SyntaxFactory.ConstructorDeclaration("Loc" + Type.Name).AddModifiers(
+                            SyntaxFactory.Token(SyntaxKind.PublicKeyword)).AddParameterListParameters(
+                            SyntaxFactory.Parameter(SyntaxFactory.Identifier("info")).WithType(
+                                SyntaxFactory.IdentifierName(Type.FullName))).WithBody(
+                            SyntaxFactory.Block(SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.IdentifierName("_" + Type.Name),
+                                    SyntaxFactory.IdentifierName("info"))))));
 
-                                    
+                    if (Type.BaseType != typeof(PropertyList<ItemInfoProperty>))
+                        classSyntax = classSyntax.AddBaseListTypes(SyntaxFactory.SimpleBaseType(SyntaxFactory.IdentifierName("Loc" + Type.BaseType.Name)));
+
+                    return classSyntax;
+                case WrapType.BaseTypeWrap:
+                    return null;
+                case WrapType.BaseClasses:
+                    return null;
+                default:
+                    return null;
+            }
         }
     }
 }

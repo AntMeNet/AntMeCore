@@ -15,8 +15,11 @@ namespace AntMe.Generator
 
         internal List<Type> references;
 
-        public BaseParseNode()
+        protected WrapType wrapType;
+
+        public BaseParseNode(WrapType wrapType)
         {
+            this.wrapType = wrapType;
             ChildNodes = new List<BaseParseNode>();
             references = new List<Type>();
         }
@@ -40,5 +43,12 @@ namespace AntMe.Generator
         }
 
 
+    }
+
+    internal enum WrapType
+    {
+        InfoWrap,
+        BaseTypeWrap,
+        BaseClasses
     }
 }

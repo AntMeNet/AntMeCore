@@ -15,44 +15,26 @@ namespace AntMe.Generator
 
         public ConstructorInfo ConstructorInfo { get; private set; }
 
-        public ConstructorParseNode(ConstructorInfo constructorInfo)
-            : base()
+        public ConstructorParseNode(ConstructorInfo constructorInfo, WrapType wrapType)
+            : base(wrapType)
         {
             ConstructorInfo = constructorInfo;
         }
 
         public override MemberDeclarationSyntax Generate()
         {
-
-            List<ParameterSyntax> parameterList = new List<ParameterSyntax>();
-            List<ArgumentSyntax> argumentList = new List<ArgumentSyntax>();
-
-            foreach (ParameterInfo info in ConstructorInfo.GetParameters())
+            switch (wrapType)
             {
-
-                parameterList.Add(SyntaxFactory.Parameter(
-                    SyntaxFactory.Identifier("Loc" + info.Name)).WithType(
-                    SyntaxFactory.IdentifierName("Loc" + info.ParameterType.Name)));
-
-                argumentList.Add(SyntaxFactory.Argument(
-                    SyntaxFactory.IdentifierName(string.Format("Loc{0}._{0}", info.Name))));
-
-                references.Add(info.ParameterType);
-
+                case WrapType.InfoWrap:
+                    return null;
+                case WrapType.BaseTypeWrap:
+                    return null;
+                case WrapType.BaseClasses:
+                    return null;
+                default:
+                    return null;
             }
 
-            return SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier("Loc" + ConstructorInfo.ReflectedType.Name)).AddModifiers(
-                SyntaxFactory.Token(SyntaxKind.PublicKeyword)).AddParameterListParameters(
-                parameterList.ToArray()).WithBody(
-                SyntaxFactory.Block(SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.AssignmentExpression(
-                        SyntaxKind.SimpleAssignmentExpression,
-                        SyntaxFactory.IdentifierName("_" + ConstructorInfo.DeclaringType.Name),
-                        SyntaxFactory.ObjectCreationExpression(
-                            SyntaxFactory.IdentifierName(ConstructorInfo.DeclaringType.FullName)).AddArgumentListArguments(
-                            argumentList.ToArray())
-                            ))));
         }
     }
 }
