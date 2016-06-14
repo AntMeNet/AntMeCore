@@ -88,6 +88,51 @@ namespace AntMe.Runtime
                 levelExtender.Remove(item);
         }
 
+        /// <summary>
+        /// Validator for the default Register-Parameter
+        /// </summary>
+        /// <param name="extensionPack">Extension Pack</param>
+        /// <param name="name">Name</param>
+        private void ValidateDefaults(IExtensionPack extensionPack, string name)
+        {
+            // Check for Extension Pack
+            if (extensionPack == null)
+                throw new ArgumentNullException("extensionPack");
+
+            // Check for empty Name
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
+        }
+
+        /// <summary>
+        /// Validator for all kind of Types.
+        /// </summary>
+        /// <typeparam name="T">Required Base Type</typeparam>
+        /// <param name="type">Type to test</param>
+        /// <param name="needEmptyConstructor">Checks for empty Constructor</param>
+        /// <param name="constructorParameters">Checks for a specific Constructor</param>
+        private void ValidateType<T>(Type type, Type[] constructorParameters, bool needEmptyConstructor)
+        {
+            // Empty Type
+            if (type == null)
+                throw new ArgumentNullException("type");
+
+            // Wrong Type Hierarchy
+            if (!typeof(T).IsAssignableFrom(type))
+                throw new ArgumentException(string.Format("Type '{0}' does not inherit the given Base Type", type.FullName));
+
+            // Check for Abstract Type
+            if (type.IsAbstract)
+                throw new ArgumentException(string.Format("Type '{0}' can't be an abstract Type", type.FullName));
+
+            // Check for empty Constructor
+            if (needEmptyConstructor && type.GetConstructor(new Type[] { }) == null)
+                throw new ArgumentException(string.Format("Type '{0}' does not have an empty Constructor", type.FullName));
+
+            if (constructorParameters != null && type.GetConstructor(constructorParameters) == null)
+                throw new ArgumentException(string.Format("Type '{0}' does not have the right Constructor Structure", type.FullName));
+        }
+
         #endregion
 
         #region Type Maps

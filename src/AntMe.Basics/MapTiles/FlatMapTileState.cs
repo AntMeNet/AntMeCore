@@ -5,5 +5,8 @@
     /// </summary>
     public class FlatMapTileState : MapTileState
     {
+        public FlatMapTileState() : base() { }
+
+        public FlatMapTileState(FlatMapTile mapTile) : base(mapTile) { }
     }
 }

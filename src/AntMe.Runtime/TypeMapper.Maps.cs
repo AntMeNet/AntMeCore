@@ -34,10 +34,10 @@ namespace AntMe.Runtime
         /// </summary>
         /// <typeparam name="T">Type of Map Property</typeparam>
         /// <typeparam name="S">Type of State for the Map Property</typeparam>
-        /// <param name="extensionPack"></param>
-        /// <param name="name"></param>
-        /// <param name="createPropertyDelegate"></param>
-        /// <param name="createStateDelegate"></param>
+        /// <param name="extensionPack">Reference to the Extension Pack</param>
+        /// <param name="name">Name</param>
+        /// <param name="createPropertyDelegate">Optional Delegate to create the Property</param>
+        /// <param name="createStateDelegate">Optional Delegate to create State Property</param>
         public void RegisterMapProperty<T, S>(IExtensionPack extensionPack, string name,
             Func<Map, T> createPropertyDelegate = null,
             Func<Map, MapProperty, S> createStateDelegate = null)
@@ -47,84 +47,38 @@ namespace AntMe.Runtime
             RegisterMapProperty<T, S>(extensionPack, name, true, createPropertyDelegate, createStateDelegate);
         }
 
+        /// <summary>
+        /// Registers additional Map Properties.
+        /// </summary>
+        /// <typeparam name="T">Type of Map Property</typeparam>
+        /// <typeparam name="S">Type of State for the Map Property</typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="stateSet"></param>
+        /// <param name="createPropertyDelegate"></param>
+        /// <param name="createStateDelegate"></param>
         private void RegisterMapProperty<T, S>(IExtensionPack extensionPack, string name, bool stateSet,
             Func<Map, T> createPropertyDelegate = null,
             Func<Map, MapProperty, S> createStateDelegate = null)
             where T : MapProperty
             where S : MapStateProperty
         {
-            // Extension prüfen
-            if (extensionPack == null)
-            {
-                // tracer.Trace(TraceEventType.Critical, 19, "Extension Pack not set");
-                throw new ArgumentNullException("extensionPack");
-            }
+            ValidateDefaults(extensionPack, name);
 
-            // Namen prüfen
-            if (string.IsNullOrEmpty(name))
-            {
-                // tracer.Trace(TraceEventType.Critical, 18, "Name of Property not set");
-                throw new ArgumentNullException("name");
-            }
-
-            // Type
+            // Handle Property Type
             Type type = typeof(T);
-            if (type.IsAbstract)
-            {
-                // tracer.Trace(TraceEventType.Critical, 20, "Property is abstract '{0}' ({1})", name, type.FullName);
-                throw new ArgumentException("Type is abstract");
-            }
+            ValidateType<MapProperty>(type, new Type[] { typeof(Map) }, false);
 
-            // Kollisionen prüfen
+            // Registration Collision
             if (mapProperties.Any(p => p.Type == type))
-            {
-                // tracer.Trace(TraceEventType.Critical, 21, "Property is already registered. '{0}' ({1})", name, type.FullName);
                 throw new NotSupportedException("Property is already registered");
-            }
 
-            // Konstruktoren prüfen
-            if (type.GetConstructor(new Type[] { typeof(Map) }) == null)
-            {
-                string msg = string.Format("Property contains no Constructor with Map. '{0}' ({1})", name, type.FullName);
-                // tracer.Trace(TraceEventType.Critical, 23, msg);
-                throw new NotSupportedException(msg);
-            }
-
+            // Handle State Type
             Type stateType = null;
-
-            // Prüfen, ob State Type angegeben wurde.
             if (stateSet)
             {
                 stateType = typeof(S);
-                // tracer.Trace(TraceEventType.Information, 22, "Property contains State Property. '{0}' ({1})", name, stateType.FullName);
-
-                // Abstract
-                if (stateType.IsAbstract)
-                {
-                    // TODO: Tracer
-                    string msg = string.Format("State Type '{0}' from Extension Pack '{1}' is abstract", stateType.FullName, extensionPack.Name);
-                    throw new ArgumentException(msg);
-                }
-
-                // Braucht einen parameterlosen Konstruktor
-                if (stateType.GetConstructor(new Type[] { }) == null)
-                {
-                    string msg = string.Format("State Property contains no parameterless Constructor. '{0}' ({1})", name, stateType.FullName);
-                    // tracer.Trace(TraceEventType.Critical, 23, msg);
-                    throw new NotSupportedException(msg);
-                }
-
-                // Braucht einen Konstruktor der das Item und das Item Property entgegen nimmt.
-                if (stateType.GetConstructor(new Type[] { typeof(Map), typeof(T) }) == null)
-                {
-                    string msg = string.Format("State Property contains no Constructor with Property Type. '{0}' ({1})", name, stateType.FullName);
-                    // tracer.Trace(TraceEventType.Critical, 24, msg);
-                    throw new NotSupportedException(msg);
-                }
-            }
-            else
-            {
-                // tracer.Trace(TraceEventType.Information, 26, "Property contains no State Property. '{0}'", name);
+                ValidateType<MapStateProperty>(stateType, new Type[] { typeof(Map), typeof(T) }, true);
             }
 
             mapProperties.Add(new MapPropertiesTypeMap()
@@ -136,8 +90,6 @@ namespace AntMe.Runtime
                 CreatePropertyDelegate = createPropertyDelegate,
                 CreateStateDelegate = createStateDelegate,
             });
-
-            // tracer.Trace(TraceEventType.Information, 29, "Property registered successful. '{0}'", name);
         }
 
         /// <summary>
@@ -162,9 +114,7 @@ namespace AntMe.Runtime
         /// <param name="extenderDelegate">Extender Delegate</param>
         public void RegisterMapExtender(IExtensionPack extensionPack, string name, Action<Map> extenderDelegate, int priority)
         {
-            // Kein Name angegeben
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException("name");
+            ValidateDefaults(extensionPack, name);
 
             // Kein Delegat angegeben
             if (extenderDelegate == null)
@@ -187,7 +137,44 @@ namespace AntMe.Runtime
 
         #endregion
 
+        #region Map Material
+
+        private List<TypeMap> mapMaterials = new List<TypeMap>();
+
+        /// <summary>
+        /// Registers a new Material.
+        /// </summary>
+        /// <typeparam name="T">Material Type</typeparam>
+        /// <param name="extensionPack">Extension Pack</param>
+        /// <param name="name">Material Name</param>
+        public void RegisterMapMaterial<T>(IExtensionPack extensionPack, string name)
+            where T : MapMaterial
+        {
+            ValidateDefaults(extensionPack, name);
+
+            Type t = typeof(T);
+            ValidateType<MapMaterial>(t, new Type[] { typeof(SimulationContext) }, false);
+
+            mapMaterials.Add(new TypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = t
+            });
+        }
+
+        /// <summary>
+        /// List of all available Materials.
+        /// </summary>
+        public IEnumerable<ITypeMapperEntry> MapMaterials { get { return mapMaterials; } }
+
+        #endregion
+
         #region Map Tiles
+
+        private class MapTileTypeMap : StateInfoTypeMap<Func<MapTile, MapTileState>, Func<MapTile, Item, MapTileInfo>> { }
+
+        private List<MapTileTypeMap> mapTiles = new List<MapTileTypeMap>();
 
         /// <summary>
         /// Registeres a Map Tile.
@@ -200,19 +187,39 @@ namespace AntMe.Runtime
         /// <param name="createStateDelegate">Optional Create State Delegate</param>
         /// <param name="createInfoDelegate">Optional Create Info Delegate</param>
         public void RegisterMapTile<T, S, I>(IExtensionPack extensionPack, string name,
-            Func<Item, S> createStateDelegate = null,
-            Func<Item, Item, I> createInfoDelegate = null)
+            Func<MapTile, S> createStateDelegate = null,
+            Func<MapTile, Item, I> createInfoDelegate = null)
             where T : MapTile
             where S : MapTileState
             where I : MapTileInfo
         {
-            throw new NotImplementedException();
+            ValidateDefaults(extensionPack, name);
+
+            Type t = typeof(T);
+            ValidateType<MapTile>(t, new Type[] { typeof(SimulationContext) }, false);
+
+            Type stateType = typeof(S);
+            ValidateType<MapTileState>(stateType, new Type[] { typeof(T) }, true);
+
+            Type infoType = typeof(I);
+            ValidateType<MapTileInfo>(infoType, new Type[] { typeof(T), typeof(Item) }, false);
+
+            mapTiles.Add(new MapTileTypeMap()
+            {
+                ExtensionPack = extensionPack,
+                Name = name,
+                Type = t,
+                StateType = stateType,
+                InfoType = infoType,
+                CreateStateDelegate = createStateDelegate,
+                CreateInfoDelegate = createInfoDelegate
+            });
         }
 
         /// <summary>
         /// List of all Map Tiles
         /// </summary>
-        public IEnumerable<IStateInfoTypeMapperEntry> MapTiles { get { throw new NotImplementedException(); } }
+        public IEnumerable<IStateInfoTypeMapperEntry> MapTiles { get { return mapTiles; } }
 
         #endregion
 

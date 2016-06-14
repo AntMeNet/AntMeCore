@@ -8,7 +8,8 @@
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public StoneMaterial() : base(1.2f)
+        /// <param name="context">Simulation Context</param>
+        public StoneMaterial(SimulationContext context) : base(context, 1.2f)
         {
         }
     }

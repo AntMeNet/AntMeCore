@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AntMe
 {
     /// <summary>
-    /// Zentrales Type Repository zur Auflistung von erweiterbaren Engine Fragmenten.
+    /// Type Repository for all dynamic Elements within the Game Simulation.
     /// </summary>
     public interface ITypeMapper
     {
@@ -90,6 +90,24 @@ namespace AntMe
 
         #endregion
 
+        #region Map Material
+
+        /// <summary>
+        /// Registers a new Material.
+        /// </summary>
+        /// <typeparam name="T">Material Type</typeparam>
+        /// <param name="extensionPack">Extension Pack</param>
+        /// <param name="name">Material Name</param>
+        void RegisterMapMaterial<T>(IExtensionPack extensionPack, string name) 
+            where T : MapMaterial;
+
+        /// <summary>
+        /// List of all available Materials.
+        /// </summary>
+        IEnumerable<ITypeMapperEntry> MapMaterials { get; }
+
+        #endregion
+
         #region Map Tiles
 
         /// <summary>
@@ -103,8 +121,8 @@ namespace AntMe
         /// <param name="createStateDelegate">Optional Create State Delegate</param>
         /// <param name="createInfoDelegate">Optional Create Info Delegate</param>
         void RegisterMapTile<T, S, I>(IExtensionPack extensionPack, string name,
-            Func<Item, S> createStateDelegate = null,
-            Func<Item, Item, I> createInfoDelegate = null)
+            Func<MapTile, S> createStateDelegate = null,
+            Func<MapTile, Item, I> createInfoDelegate = null)
             where T : MapTile
             where S : MapTileState
             where I : MapTileInfo;

@@ -5,5 +5,8 @@
     /// </summary>
     public class ConvexCliffMapTileState : CliffMapTileState
     {
+        public ConvexCliffMapTileState() : base() { }
+
+        public ConvexCliffMapTileState(ConvexCliffMapTile mapTile) : base(mapTile) { }
     }
 }

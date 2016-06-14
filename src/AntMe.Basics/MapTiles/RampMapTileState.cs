@@ -5,5 +5,8 @@
     /// </summary>
     public class RampMapTileState : MapTileState
     {
+        public RampMapTileState() : base() { }
+
+        public RampMapTileState(RampMapTile mapTile) : base(mapTile) { }
     }
 }

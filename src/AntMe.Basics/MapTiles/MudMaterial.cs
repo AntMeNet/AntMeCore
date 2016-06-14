@@ -8,7 +8,8 @@
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public MudMaterial() : base(0.5f)
+        /// <param name="context">Simulation Context</param>
+        public MudMaterial(SimulationContext context) : base(context, 0.5f)
         {
         }
     }

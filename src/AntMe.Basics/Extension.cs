@@ -56,6 +56,15 @@ namespace AntMe.Basics
             typeMapper.RegisterEngineProperty<RecognitionProperty>(this, "Recognition Extension (Core)", 150);
 
             // ##########################
+            // Map Materials
+            // ##########################
+            typeMapper.RegisterMapMaterial<LavaMaterial>(this, "Lava Material");
+            typeMapper.RegisterMapMaterial<MudMaterial>(this, "Mud Material");
+            typeMapper.RegisterMapMaterial<SandMaterial>(this, "Sand Material");
+            typeMapper.RegisterMapMaterial<GrasMaterial>(this, "Gras Material");
+            typeMapper.RegisterMapMaterial<StoneMaterial>(this, "Stone Material");
+
+            // ##########################
             // Map Properties
             // ##########################
             typeMapper.RegisterMapProperty<UpdateTileProperty>(this, "Updateable Tiles");
@@ -66,6 +75,8 @@ namespace AntMe.Basics
             typeMapper.RegisterMapTile<ConcaveCliffMapTile, ConcaveCliffMapTileState, ConcaveCliffMapTileInfo>(this, "Concave Cliff Map Tile");
             typeMapper.RegisterMapTile<ConvexCliffMapTile, ConvexCliffMapTileState, ConvexCliffMapTileInfo>(this, "Convex Cliff Map Tile");
             typeMapper.RegisterMapTile<WallCliffMapTile, WallCliffMapTileState, WallCliffMapTileInfo>(this, "Cliff Wall Map Tile");
+            typeMapper.RegisterMapTile<LeftRampToCliffMapTile, LeftRampToCliffMapTileState, WallCliffMapTileInfo>(this, "Left Ramp To Cliff Wall Map Tile");
+            typeMapper.RegisterMapTile<RightRampToCliffMapTile, RightRampToCliffMapTileState, WallCliffMapTileInfo>(this, "Right Ramp To Cliff Wall Map Tile");
             typeMapper.RegisterMapTile<FlatMapTile, FlatMapTileState, FlatMapTileInfo>(this, "Flat Map Tile");
             typeMapper.RegisterMapTile<RampMapTile, RampMapTileState, RampMapTileInfo>(this, "Ramp Map Tile");
 

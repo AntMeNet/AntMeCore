@@ -12,7 +12,8 @@ namespace AntMe.Basics.MapTiles
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public LavaMaterial() : base(0.1f)
+        /// <param name="context">Simulation Context</param>
+        public LavaMaterial(SimulationContext context) : base(context, 0.1f)
         {
         }
 

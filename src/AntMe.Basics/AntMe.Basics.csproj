@@ -178,12 +178,14 @@
     <Compile Include="MapTiles\FlatMapTileInfo.cs" />
     <Compile Include="MapTiles\FlatMapTileState.cs" />
     <Compile Include="MapTiles\GrasMaterial.cs" />
+    <Compile Include="MapTiles\LeftRampToCliffMapTileState.cs" />
     <Compile Include="MapTiles\MudMaterial.cs" />
     <Compile Include="MapTiles\RampMapTile.cs" />
     <Compile Include="MapTiles\RampMapTileInfo.cs" />
     <Compile Include="MapTiles\RampMapTileState.cs" />
     <Compile Include="MapTiles\LeftRampToCliffMapTile.cs" />
     <Compile Include="MapTiles\RightRampToCliffMapTile.cs" />
+    <Compile Include="MapTiles\RightRampToCliffMapTileState.cs" />
     <Compile Include="MapTiles\SandMaterial.cs" />
     <Compile Include="MapTiles\StoneMaterial.cs" />
     <Compile Include="MapTiles\LavaMaterial.cs" />

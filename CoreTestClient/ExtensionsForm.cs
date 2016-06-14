@@ -29,6 +29,18 @@ namespace CoreTestClient
         private TreeNode levelPropertiesNode;
         private TreeNode levelExtenderNode;
 
+        private TreeNode mapNode;
+        private TreeNode mapPropertiesNode;
+        private TreeNode mapExtenderNode;
+
+        private TreeNode materialsNode;
+
+        private TreeNode mapTilesNode;
+        private TreeNode mapTilePropertiesNode;
+        private TreeNode mapTileAttachmentPropertiesNode;
+        private TreeNode mapTileExtenderNode;
+
+
         public ExtensionsForm()
         {
             InitializeComponent();
@@ -58,6 +70,17 @@ namespace CoreTestClient
             levelNode = treeView.Nodes["levelNode"];
             levelPropertiesNode = levelNode.Nodes["levelPropertiesNode"];
             levelExtenderNode = levelNode.Nodes["levelExtenderNode"];
+
+            mapNode = treeView.Nodes["mapNode"];
+            mapPropertiesNode = mapNode.Nodes["mapPropertiesNode"];
+            mapExtenderNode = mapNode.Nodes["mapExtenderNode"];
+
+            materialsNode = treeView.Nodes["materialsNode"];
+
+            mapTilesNode = treeView.Nodes["mapTilesNode"];
+            mapTilePropertiesNode = mapTilesNode.Nodes["mapTilePropertiesNode"];
+            mapTileAttachmentPropertiesNode = mapTilesNode.Nodes["mapTileAttachmentPropertiesNode"];
+            mapTileExtenderNode = mapTilesNode.Nodes["mapTileExtenderNode"];
         }
 
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -203,6 +226,69 @@ namespace CoreTestClient
                 else if (treeView.SelectedNode == levelExtenderNode)
                 {
                     foreach (var item in ExtensionLoader.DefaultTypeMapper.LevelExtender)
+                    {
+                        var node = listView.Items.Add(item.Name);
+                        node.SubItems.Add(item.Type.FullName);
+                        node.SubItems.Add(item.ExtensionPack.Name);
+                    }
+                }
+                else if (treeView.SelectedNode == mapPropertiesNode)
+                {
+                    foreach (var item in ExtensionLoader.DefaultTypeMapper.MapProperties)
+                    {
+                        var node = listView.Items.Add(item.Name);
+                        node.SubItems.Add(item.Type.FullName);
+                        node.SubItems.Add(item.ExtensionPack.Name);
+                    }
+                }
+                else if (treeView.SelectedNode == mapExtenderNode)
+                {
+                    foreach (var item in ExtensionLoader.DefaultTypeMapper.MapExtender)
+                    {
+                        var node = listView.Items.Add(item.Name);
+                        node.SubItems.Add(item.Type.FullName);
+                        node.SubItems.Add(item.ExtensionPack.Name);
+                    }
+                }
+                else if (treeView.SelectedNode == materialsNode)
+                {
+                    foreach (var item in ExtensionLoader.DefaultTypeMapper.MapMaterials)
+                    {
+                        var node = listView.Items.Add(item.Name);
+                        node.SubItems.Add(item.Type.FullName);
+                        node.SubItems.Add(item.ExtensionPack.Name);
+                    }
+                }
+                else if (treeView.SelectedNode == mapTilesNode)
+                {
+                    foreach (var item in ExtensionLoader.DefaultTypeMapper.MapTiles)
+                    {
+                        var node = listView.Items.Add(item.Name);
+                        node.SubItems.Add(item.Type.FullName);
+                        node.SubItems.Add(item.ExtensionPack.Name);
+                    }
+                }
+                else if (treeView.SelectedNode == mapTilePropertiesNode)
+                {
+                    foreach (var item in ExtensionLoader.DefaultTypeMapper.MapTileProperties)
+                    {
+                        var node = listView.Items.Add(item.Name);
+                        node.SubItems.Add(item.Type.FullName);
+                        node.SubItems.Add(item.ExtensionPack.Name);
+                    }
+                }
+                else if (treeView.SelectedNode == mapTileAttachmentPropertiesNode)
+                {
+                    foreach (var item in ExtensionLoader.DefaultTypeMapper.MapTileAttachments)
+                    {
+                        var node = listView.Items.Add(item.Name);
+                        node.SubItems.Add(item.Type.FullName);
+                        node.SubItems.Add(item.ExtensionPack.Name);
+                    }
+                }
+                else if (treeView.SelectedNode == mapTileExtenderNode)
+                {
+                    foreach (var item in ExtensionLoader.DefaultTypeMapper.MapTileExtender)
                     {
                         var node = listView.Items.Add(item.Name);
                         node.SubItems.Add(item.Type.FullName);

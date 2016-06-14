@@ -8,7 +8,8 @@
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public GrasMaterial() : base(1f)
+        /// <param name="context">Simulation Context</param>
+        public GrasMaterial(SimulationContext context) : base(context, 1f)
         {
         }
     }

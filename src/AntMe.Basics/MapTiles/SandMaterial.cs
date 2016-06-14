@@ -8,7 +8,8 @@
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public SandMaterial() : base(0.8f)
+        /// <param name="context">Simulation Context</param>
+        public SandMaterial(SimulationContext context) : base(context, 0.8f)
         {
         }
     }

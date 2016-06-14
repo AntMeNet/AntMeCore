@@ -8,14 +8,27 @@ namespace AntMe
     /// </summary>
     public abstract class MapMaterial : ISerializableState
     {
+        /// <summary>
+        /// Reference to the Simulation Context.
+        /// </summary>
+        protected readonly SimulationContext Context;
+
         private float speed;
+
+        /// <summary>
+        /// Default Constructor without Parameters.
+        /// </summary>
+        /// <param name="context">Simulation Context</param>
+        public MapMaterial(SimulationContext context) : this(context, 1f) { }
 
         /// <summary>
         /// Default Constructor.
         /// </summary>
+        /// <param name="context">Simulation Context</param>
         /// <param name="speed">Map Tile Speed</param>
-        public MapMaterial(float speed)
+        public MapMaterial(SimulationContext context, float speed)
         {
+            Context = context;
             Speed = speed;
         }
 
@@ -27,7 +40,7 @@ namespace AntMe
         public float Speed
         {
             get { return speed; }
-            private set
+            protected set
             {
                 speed = value;
                 if (OnSpeedChanged != null)

@@ -12,8 +12,19 @@ namespace AntMe
     {
         private MapTileState state;
 
+        private MapMaterial material;
+
+        private Compass orientation;
+
+        private byte heightLevel;
+
+        private bool canEnter;
+
         private Dictionary<Item, MapTileInfo> infos;
 
+        /// <summary>
+        /// Reference to the Simulation Context.
+        /// </summary>
         protected readonly SimulationContext Context;
 
         /// <summary>
@@ -69,28 +80,64 @@ namespace AntMe
         /// </summary>
         [DisplayName("Material")]
         [Description("Gets or sets the Material.")]
-        public MapMaterial Material { get; set; }
+        public MapMaterial Material
+        {
+            get { return material; }
+            set
+            {
+                material = value;
+                if (OnMaterialChanged != null)
+                    OnMaterialChanged(value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the Orientation of this Tile.
         /// </summary>
         [DisplayName("Orientation")]
         [Description("Gets or sets the Orientation of this Tile.")]
-        public Compass Orientation { get; set; }
+        public Compass Orientation
+        {
+            get { return orientation; }
+            set
+            {
+                orientation = value;
+                if (OnOrientationChanged != null)
+                    OnOrientationChanged(value);
+            }
+        }
 
         /// <summary>
         /// Sets or gets the base Height Level.
         /// </summary>
         [DisplayName("Height Level")]
         [Description("Sets or gets the base Height Level.")]
-        public byte HeightLevel { get; set; }
+        public byte HeightLevel
+        {
+            get { return heightLevel; }
+            set
+            {
+                heightLevel = value;
+                if (OnHeightLevelChanged != null)
+                    OnHeightLevelChanged(value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the possibility to enter the Tile.
         /// </summary>
-        [DisplayName("Orientation")]
-        [Description("Gets or sets the Orientation of this Tile.")]
-        public bool CanEnter { get; private set; }
+        [DisplayName("Can Enter")]
+        [Description("Gets or sets if Items can enter this Tile.")]
+        public bool CanEnter
+        {
+            get { return canEnter; }
+            set
+            {
+                canEnter = value;
+                if (OnCanEnterChanged != null)
+                    OnCanEnterChanged(value);
+            }
+        }
 
         /// <summary>
         /// Returns the Level to enter on the East Side.
@@ -177,5 +224,25 @@ namespace AntMe
         {
             throw new NotSupportedException("Update is not supported for Map Tiles");
         }
+
+        /// <summary>
+        /// Signal for a changed Material.
+        /// </summary>
+        public event ValueUpdate<MapMaterial> OnMaterialChanged;
+
+        /// <summary>
+        /// Signal for a changed Orientation.
+        /// </summary>
+        public event ValueUpdate<Compass> OnOrientationChanged;
+
+        /// <summary>
+        /// Signal for a changed HeightLevel.
+        /// </summary>
+        public event ValueUpdate<byte> OnHeightLevelChanged;
+
+        /// <summary>
+        /// Signal for a changed Can Enter Flag.
+        /// </summary>
+        public event ValueUpdate<bool> OnCanEnterChanged;
     }
 }

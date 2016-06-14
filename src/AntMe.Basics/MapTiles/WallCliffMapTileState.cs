@@ -5,5 +5,8 @@
     /// </summary>
     public class WallCliffMapTileState : CliffMapTileState
     {
+        public WallCliffMapTileState() : base() { }
+
+        public WallCliffMapTileState(WallCliffMapTile mapTile) : base(mapTile) { }
     }
 }

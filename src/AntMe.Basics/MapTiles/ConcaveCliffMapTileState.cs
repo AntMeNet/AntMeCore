@@ -5,5 +5,12 @@
     /// </summary>
     public class ConcaveCliffMapTileState : CliffMapTileState
     {
+        public ConcaveCliffMapTileState() : base() { }
+
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="mapTile">Related Tile</param>
+        public ConcaveCliffMapTileState(ConcaveCliffMapTile mapTile) : base(mapTile) { }
     }
 }
