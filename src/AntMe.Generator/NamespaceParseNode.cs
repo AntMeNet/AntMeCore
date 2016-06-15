@@ -14,7 +14,7 @@ namespace AntMe.Generator
 
         public string Name { get; private set; }
 
-        public NamespaceParseNode(string name,WrapType wrapType)
+        public NamespaceParseNode(string name, WrapType wrapType)
             : base(wrapType)
         {
             Name = name;

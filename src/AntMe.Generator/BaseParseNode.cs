@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,34 @@ namespace AntMe.Generator
             return returnUsings;
         }
 
+        protected static TypeSyntax GetTypeSyntax(string fullName)
+        {
+            string[] parts = fullName.Split('.');
+
+            if (parts.Length > 1)
+            {
+                return GenerateQualifedName(parts);
+            }
+            else if (parts.Length == 1)
+            {
+                return SyntaxFactory.IdentifierName(fullName);
+            }
+            throw new Exception("Failed to generate TypeName");
+
+
+        }
+
+        private static QualifiedNameSyntax GenerateQualifedName(string[] parts)
+        {
+            if (parts.Length > 2)
+            {
+                return SyntaxFactory.QualifiedName(GenerateQualifedName(parts.Take(parts.Length - 1).ToArray()), SyntaxFactory.IdentifierName(parts[parts.Length - 1]));
+            }
+            else
+            {
+                return SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName(parts[0]), SyntaxFactory.IdentifierName(parts[1]));
+            }
+        }
 
     }
 

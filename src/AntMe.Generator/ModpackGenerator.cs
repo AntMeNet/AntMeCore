@@ -25,17 +25,17 @@ namespace AntMe.Generator
         /// <returns>Filename</returns>
         public static string Generate(string[] paths, string output, ProgressToken token)
         {
-            string outputFile = "Summary.dll";
+            string outputFile = "Summary.dll_";
 
             Dictionary<Type, List<string>> TypeKeys = GetLocaKeys();
             List<Type> typeReferences = new List<Type>();
 
 
-            string frameworkRoot = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1\{0}.dll";
+            //string frameworkRoot = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1\{0}.dll";
             List<MetadataReference> references = new List<MetadataReference>();
-            references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "mscorlib")));
-            references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "System")));
-            references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "System.Core")));
+            //references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "mscorlib")));
+            //references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "System")));
+            //references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "System.Core")));
 
             CSharpCompilationOptions options =
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
@@ -57,27 +57,37 @@ namespace AntMe.Generator
 
                 while (t != typeof(PropertyList<ItemInfoProperty>) && t != null && !wrapped.Contains(t))
                 {
-                    
+
                     ClassParseNode classNode = new ClassParseNode(t, WrapType.InfoWrap);
                     wrapped.Add(t);
                     root.add(classNode);
 
                     foreach (MethodInfo methodInfo in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
                     {
-                        classNode.add(new MethodParseNode(methodInfo, WrapType.InfoWrap));
+                        if (methodInfo.IsSpecialName)
+                            continue;
+                        //classNode.add(new MethodParseNode(methodInfo, WrapType.InfoWrap));
                     }
+
+                    foreach (PropertyInfo propertyInfo in t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
+                    {
+                        classNode.add(new PropertyParseNode(propertyInfo, WrapType.InfoWrap));
+                    }
+
                     t = t.BaseType;
-                } 
+                }
             }
 
             #endregion
 
-            foreach (string codebase in typeReferences.Select(c => c.Assembly.CodeBase).Distinct())
+            typeReferences.AddRange(root.GetReferences());
+
+            foreach (string location in typeReferences.Select(c => c.Assembly.Location).Distinct())
             {
-                references.Add(MetadataReference.CreateFromFile(codebase.Remove(0, 8)));
+                references.Add(MetadataReference.CreateFromFile(location));
             }
 
-            syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(root.Generate())));
+            syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(root.Generate()).AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System"))).AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("AntMe")))));
 
             StreamWriter streamWriter = new StreamWriter(File.Open(Path.Combine(output, "Assembly.cs"), FileMode.Create));
             syntaxTrees[0].GetRoot().NormalizeWhitespace().GetText().Write(streamWriter);
@@ -85,6 +95,7 @@ namespace AntMe.Generator
             streamWriter.Close();
 
             var compilation = CSharpCompilation.Create(outputFile, syntaxTrees, references, options);
+
             var result = compilation.Emit(Path.Combine(output, outputFile));
 
             if (!result.Success)
