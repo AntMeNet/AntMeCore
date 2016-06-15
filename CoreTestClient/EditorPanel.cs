@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using CoreTestClient.Renderer;
 using System;
 using System.Drawing;
-using CoreTestClient.Properties;
+using AntMe.Runtime;
+using System.IO;
 
 namespace CoreTestClient
 {
@@ -25,6 +26,10 @@ namespace CoreTestClient
         private Map map;
 
         private Bitmap buffer;
+
+        private Brush hoverBrush;
+
+        private Pen highlightPen;
 
         public Map Map
         {
@@ -51,31 +56,52 @@ namespace CoreTestClient
 
         public Index2? HoveredCell { get; private set; }
 
-        public Index2? SelectedCell { get; private set; }
+        /// <summary>
+        /// Gets or sets the Cell that should be highlighted
+        /// </summary>
+        public Index2? HighlightedCell { get; set; }
+
+        /// <summary>
+        /// Gets or sets whenever the Buffer is dirty.
+        /// </summary>
+        public bool DirtyBuffer { get; set; }
 
         public EditorPanel()
         {
             DoubleBuffered = true;
 
+            hoverBrush = new SolidBrush(Color.FromArgb(80, Color.White));
+            highlightPen = new Pen(Color.Red, 3);
+
             materials = new Dictionary<string, MaterialRenderer>();
-            materials.Add("AntMe.Basics.MapTiles.LavaMaterial", new MaterialRenderer(Resources.lava));
-            materials.Add("AntMe.Basics.MapTiles.MudMaterial", new MaterialRenderer(Resources.mud));
-            materials.Add("AntMe.Basics.MapTiles.SandMaterial", new MaterialRenderer(Resources.sand));
-            materials.Add("AntMe.Basics.MapTiles.GrasMaterial", new MaterialRenderer(Resources.gras));
-            materials.Add("AntMe.Basics.MapTiles.StoneMaterial", new MaterialRenderer(Resources.stone));
+            foreach (var material in ExtensionLoader.DefaultTypeMapper.MapMaterials)
+            {
+                string path = Path.Combine(".", "Resources", material.Type.Name + ".png");
+                Bitmap bitmap = new Bitmap(Image.FromFile(path));
+                materials.Add(material.Type.FullName, new MaterialRenderer(bitmap));
+            } 
 
             tiles = new Dictionary<string, TileRenderer>();
-            tiles.Add("AntMe.Basics.MapTiles.RampMapTile", new TileRenderer(Resources.Ramp));
-            tiles.Add("AntMe.Basics.MapTiles.ConcaveCliffMapTile", new TileRenderer(Resources.WallConcave));
-            tiles.Add("AntMe.Basics.MapTiles.ConvexCliffMapTile", new TileRenderer(Resources.WallConvex));
-            tiles.Add("AntMe.Basics.MapTiles.LeftRampToCliffMapTile", new TileRenderer(Resources.RampWallLeft));
-            tiles.Add("AntMe.Basics.MapTiles.RightRampToCliffMapTile", new TileRenderer(Resources.RampWallRight));
-            tiles.Add("AntMe.Basics.MapTiles.WallCliffMapTile", new TileRenderer(Resources.Wall));
+            foreach (var mapTile in ExtensionLoader.DefaultTypeMapper.MapTiles)
+            {
+                string path = Path.Combine(".", "Resources", mapTile.Type.Name + ".png");
+                Bitmap bitmap = new Bitmap(Image.FromFile(path));
+                tiles.Add(mapTile.Type.FullName, new TileRenderer(bitmap));
+            }
+
+            Timer timer = new Timer();
+            timer.Interval = 20;
+            timer.Tick += (s,e) => { Invalidate(); };
+            timer.Enabled = true;
+
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.Clear(Color.CornflowerBlue);
+
+            if (DirtyBuffer)
+                RedrawBuffer();
 
             if (buffer != null)
             {
@@ -85,18 +111,13 @@ namespace CoreTestClient
                 e.Graphics.ScaleTransform(scale / TILEWIDTH, scale / TILEWIDTH);
                 e.Graphics.DrawImageUnscaled(buffer, 0, 0);
 
+                // Draw Highlighted Cell
+                if (HighlightedCell.HasValue)
+                    e.Graphics.DrawRectangle(highlightPen, new Rectangle(HighlightedCell.Value.X * TILEWIDTH, HighlightedCell.Value.Y * TILEWIDTH, TILEWIDTH, TILEWIDTH));
 
                 // Draw hovered
-                //if (HoveredCell.HasValue)
-                //{
-                //    Index2 cell = HoveredCell.Value;
-                //    int x1 = (int)(cell.X * scale);
-                //    int y1 = (int)(cell.Y * scale);
-                //    int x2 = (int)((cell.X + 1) * scale);
-                //    int y2 = (int)((cell.Y + 1) * scale);
-
-                //    // Rectangle rect = new Rectangle(x1 + offset.X, y1 + offset.Y, x2 - x1, y2 - y1);
-                //}
+                if (HoveredCell.HasValue)
+                    e.Graphics.FillRectangle(hoverBrush, new Rectangle(HoveredCell.Value.X * TILEWIDTH, HoveredCell.Value.Y * TILEWIDTH, TILEWIDTH, TILEWIDTH));
             }
         }
 
@@ -113,16 +134,6 @@ namespace CoreTestClient
                 HoveredCell = new Index2(cellX, cellY);
         }
 
-        protected override void OnMouseClick(MouseEventArgs e)
-        {
-            base.OnMouseClick(e);
-
-            if (e.Button == MouseButtons.Left && e.Clicks == 1)
-            {
-                SelectedCell = HoveredCell;
-            }
-        }
-
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             base.OnMouseWheel(e);
@@ -130,6 +141,19 @@ namespace CoreTestClient
             scale += e.Delta * 0.01f;
             scale = Math.Max(scale, 10f);
             Invalidate();
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+
+            if (e.Clicks == 1 && e.Button == MouseButtons.Left)
+                OnApply(this, e);
         }
 
         protected override void OnResize(EventArgs e)
@@ -179,5 +203,7 @@ namespace CoreTestClient
                 }
             }
         }
+
+        public event EventHandler<MouseEventArgs> OnApply;
     }
 }

@@ -168,6 +168,10 @@
     <Compile Include="SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tools\EditorTool.cs" />
+    <Compile Include="Tools\MapTileTool.cs" />
+    <Compile Include="Tools\MaterialTool.cs" />
+    <Compile Include="Tools\SelectionTool.cs" />
     <EmbeddedResource Include="CampaignPreview.resx">
       <DependentUpon>CampaignPreview.cs</DependentUpon>
     </EmbeddedResource>
@@ -255,17 +259,45 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="antme.ico" />
-    <None Include="Resources\WallConvex.png" />
-    <None Include="Resources\WallConcave.png" />
-    <None Include="Resources\Wall.png" />
-    <None Include="Resources\RampWallRight.png" />
-    <None Include="Resources\RampWallLeft.png" />
-    <None Include="Resources\Ramp.png" />
-    <None Include="Resources\lava.png" />
-    <None Include="Resources\stone.png" />
-    <None Include="Resources\sand.png" />
-    <None Include="Resources\mud.png" />
-    <None Include="Resources\gras.png" />
+    <Content Include="Resources\FlatMapTile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ConvexCliffMapTile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ConcaveCliffMapTile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\select.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\WallCliffMapTile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RightRampToCliffMapTile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\LeftRampToCliffMapTile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RampMapTile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\LavaMaterial.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\StoneMaterial.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\SandMaterial.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\MudMaterial.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\GrasMaterial.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\AntMe.Core\AntMe.Core.csproj">

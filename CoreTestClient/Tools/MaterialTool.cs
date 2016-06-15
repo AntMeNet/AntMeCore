@@ -15,7 +15,7 @@ namespace CoreTestClient.Tools
 
         public override ToolStripItem RootItem { get { return button; } }
 
-        public MaterialTool()
+        public MaterialTool(SimulationContext context) : base(context)
         {
             button = new ToolStripDropDownButton();
             button.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
@@ -24,7 +24,7 @@ namespace CoreTestClient.Tools
             button.Click += (s, e) => { Select(); };
 
             // Init Tools
-            foreach (var material in ExtensionLoader.DefaultTypeMapper.MapMaterials)
+            foreach (var material in Context.Mapper.MapMaterials)
             {
                 string path = Path.Combine(".", "Resources", material.Type.Name + ".png");
                 Image image = Image.FromFile(path);
@@ -57,10 +57,16 @@ namespace CoreTestClient.Tools
             if (map[cell.X, cell.Y] == null)
                 throw new NotSupportedException("There is no Map Type at this point");
 
-            //if (SelectedMaterial != null)
-            //    map[cell.X, cell.Y].Material = Activator.CreateInstance(SelectedMaterial) as MapMaterial;
-            //else
-            //    map[cell.X, cell.Y].Material = null;
+            MapTile tile = map[cell.X, cell.Y];
+
+            if (selected != null)
+            {
+                ITypeMapperEntry material = selected.Tag as ITypeMapperEntry;
+                if (tile.Material.GetType() != material.Type)
+                    map[cell.X, cell.Y].Material = Activator.CreateInstance(material.Type, Context) as MapMaterial;
+            }
+            else
+                map[cell.X, cell.Y].Material = null;
         }
     }
 }

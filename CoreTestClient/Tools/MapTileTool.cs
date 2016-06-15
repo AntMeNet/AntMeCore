@@ -15,7 +15,7 @@ namespace CoreTestClient.Tools
 
         public override ToolStripItem RootItem { get { return button; } }
 
-        public MapTileTool()
+        public MapTileTool(SimulationContext context) : base(context)
         {
             button = new ToolStripDropDownButton();
             button.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
@@ -23,7 +23,7 @@ namespace CoreTestClient.Tools
             button.ToolTipText = "Map Tile";
             button.Click += (s, e) => { Select(); };
 
-            foreach (var mapTile in ExtensionLoader.DefaultTypeMapper.MapTiles)
+            foreach (var mapTile in Context.Mapper.MapTiles)
             {
                 string path = Path.Combine(".", "Resources", mapTile.Type.Name + ".png");
                 Image image = Image.FromFile(path);
@@ -34,8 +34,12 @@ namespace CoreTestClient.Tools
 
                 // Set Default (Gras)
                 if (mapTile.Name == "Flat Map Tile")
-                    SelectMapTile(button);
+                    SelectMapTile(b);
             }
+
+            // Fallback -> take first
+            if (selected == null)
+                SelectMapTile(button.DropDownItems[0]);
         }
 
         private void SelectMapTile(ToolStripItem mapTile)
@@ -48,7 +52,27 @@ namespace CoreTestClient.Tools
 
         protected override void OnApply(Map map, Index2 cell)
         {
-            throw new NotImplementedException();
+            MapTile tile = map[cell.X, cell.Y];
+            MapMaterial material = null;
+            if (tile != null)
+                material = tile.Material;
+
+            if (selected == null)
+                throw new NotSupportedException("No Map Tile selected");
+
+            IStateInfoTypeMapperEntry mapTile = selected.Tag as IStateInfoTypeMapperEntry;
+
+            if (tile == null || tile.GetType() != mapTile.Type)
+            {
+                // Create a new Map Tile
+                map[cell.X, cell.Y] = Activator.CreateInstance(mapTile.Type, Context) as MapTile;
+                map[cell.X, cell.Y].Material = material;
+            }
+            else if (tile.GetType() == mapTile.Type)
+            {
+                // Rotate 90 Degrees
+                tile.Orientation = (Compass)(((int)tile.Orientation + 90) % 360);
+            }
         }
     }
 }

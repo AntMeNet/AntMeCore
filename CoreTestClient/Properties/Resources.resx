@@ -117,38 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="gras" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\gras.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="lava" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\lava.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="mud" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mud.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Ramp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Ramp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="RampWallLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\RampWallLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="RampWallRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\RampWallRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sand" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sand.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="stone" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\stone.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Wall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Wall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="WallConcave" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\WallConcave.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="WallConvex" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\WallConvex.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
 </root>

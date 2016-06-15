@@ -1,6 +1,9 @@
 ﻿using AntMe;
 using AntMe.Runtime;
+using CoreTestClient.Tools;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -8,12 +11,98 @@ namespace CoreTestClient
 {
     public partial class MapEditorForm : Form
     {
+        SimulationContext context;
+
         private Map map;
+
+        private Map Map
+        {
+            get { return map; }
+            set
+            {
+                map = value;
+                SetMap(value);
+            }
+        }
+
+        private MapTile tile;
+
+        private MapTile Tile
+        {
+            get { return tile; }
+            set
+            {
+                tile = value;
+                SetTile(value);
+            }
+        }
+
+        private TreeNode mapNode;
+
+        private TreeNode cellNode;
+
+        private List<EditorTool> tools;
+
+        private EditorTool activeTool;
 
         public MapEditorForm()
         {
+            context = new SimulationContext(
+                ExtensionLoader.DefaultTypeResolver,
+                ExtensionLoader.DefaultTypeMapper,
+                ExtensionLoader.ExtensionSettings, new Random());
+
             InitializeComponent();
+
+            editorPanel.OnApply += EditorPanel_OnApply;
+
+            tools = new List<EditorTool>();
+
+            SelectionTool selection = new SelectionTool(context);
+            tools.Add(selection);
+            tools.Add(new MapTileTool(context));
+            tools.Add(new MaterialTool(context));
+
+            foreach (var tool in tools)
+            {
+                toolStrip.Items.Add(tool.RootItem);
+                tool.OnSelect += Tool_OnSelect;
+            }
+
+            Tool_OnSelect(selection, null);
+
+            mapNode = treeView.Nodes["mapNode"];
+            cellNode = treeView.Nodes["cellNode"];
+
             timer.Enabled = true;
+        }
+
+        private void EditorPanel_OnApply(object sender, MouseEventArgs e)
+        {
+            if (activeTool != null &&
+                editorPanel.HoveredCell.HasValue &&
+                activeTool.CanApply(Map, editorPanel.HoveredCell.Value))
+            {
+                try
+                {
+                    activeTool.Apply(Map, editorPanel.HoveredCell.Value);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+                editorPanel.HighlightedCell = editorPanel.HoveredCell;
+                editorPanel.DirtyBuffer = true;
+                editorPanel.Invalidate();
+            }
+        }
+
+        private void Tool_OnSelect(object sender, EventArgs e)
+        {
+            activeTool = sender as EditorTool;
+            foreach (var tool in tools)
+                tool.RootItem.BackColor = (activeTool == tool ? Color.LightBlue : Color.Transparent);
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -23,24 +112,10 @@ namespace CoreTestClient
             if (editorPanel.HoveredCell.HasValue)
             {
                 hoverLabel.Text = string.Format("{0}/{1}", editorPanel.HoveredCell.Value.X, editorPanel.HoveredCell.Value.Y);
-            } 
+            }
             else
             {
                 hoverLabel.Text = string.Empty;
-            }
-
-            if (editorPanel.SelectedCell.HasValue)
-            {
-                Index2 cell = editorPanel.SelectedCell.Value;
-                MapTile tile = map[cell.X, cell.Y];
-                if (tile != propertyGrid.SelectedObject)
-                    propertyGrid.SelectedObject = tile;
-                selectedLabel.Text = string.Format("{0}/{1}", editorPanel.SelectedCell.Value.X, editorPanel.SelectedCell.Value.Y);
-            }
-            else
-            {
-                propertyGrid.SelectedObject = null;
-                selectedLabel.Text = string.Empty;
             }
         }
 
@@ -57,12 +132,7 @@ namespace CoreTestClient
                 {
                     using (Stream stream = File.Open(openFileDialog.FileName, FileMode.Open))
                     {
-                        SimulationContext context = new SimulationContext(
-                            ExtensionLoader.DefaultTypeResolver, 
-                            ExtensionLoader.DefaultTypeMapper, 
-                            ExtensionLoader.ExtensionSettings, new Random());
-                        map = Map.Deserialize(context, stream);
-                        editorPanel.Map = map;
+                        Map = Map.Deserialize(context, stream);
                     }
                 }
                 catch (Exception ex)
@@ -88,6 +158,49 @@ namespace CoreTestClient
                     MessageBox.Show(ex.Message);
                 }
             }
+        }
+
+        private void SetMap(Map map)
+        {
+            editorPanel.Map = map;
+
+            mapNode.Nodes.Clear();
+            mapNode.Tag = null;
+            if (map != null)
+            {
+                mapNode.Tag = map;
+                foreach (var property in map.Properties)
+                {
+                    var node = mapNode.Nodes.Add(property.ToString());
+                    node.Tag = property;
+                }
+            }
+        }
+
+        private void SetTile(MapTile tile)
+        {
+            cellNode.Nodes.Clear();
+            if (tile != null)
+            {
+                cellNode.Tag = tile;
+
+                if (tile.Material != null)
+                {
+                    var node = cellNode.Nodes.Add(tile.Material.ToString());
+                    node.Tag = tile.Material;
+                }
+
+                foreach (var property in tile.Properties)
+                {
+                    var node = cellNode.Nodes.Add(property.ToString());
+                    node.Tag = property;
+                }
+            }
+        }
+
+        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            propertyGrid.SelectedObject = e.Node.Tag;
         }
     }
 }

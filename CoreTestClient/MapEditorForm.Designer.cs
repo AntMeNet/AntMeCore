@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Map");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Selected Cell");
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.newMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,13 +42,13 @@
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.hoverLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.selectedLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.editorPanel = new CoreTestClient.EditorPanel();
             this.toolSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.treeView = new System.Windows.Forms.TreeView();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -55,6 +57,7 @@
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.toolSplitContainer)).BeginInit();
+            this.toolSplitContainer.Panel1.SuspendLayout();
             this.toolSplitContainer.Panel2.SuspendLayout();
             this.toolSplitContainer.SuspendLayout();
             this.SuspendLayout();
@@ -65,7 +68,7 @@
             this.fileMenu});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(820, 24);
+            this.menuStrip.Size = new System.Drawing.Size(938, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -85,13 +88,13 @@
             // newMenu
             // 
             this.newMenu.Name = "newMenu";
-            this.newMenu.Size = new System.Drawing.Size(152, 22);
+            this.newMenu.Size = new System.Drawing.Size(121, 22);
             this.newMenu.Text = "New";
             // 
             // loadMenu
             // 
             this.loadMenu.Name = "loadMenu";
-            this.loadMenu.Size = new System.Drawing.Size(152, 22);
+            this.loadMenu.Size = new System.Drawing.Size(121, 22);
             this.loadMenu.Text = "Load...";
             this.loadMenu.Click += new System.EventHandler(this.loadMenu_Click);
             // 
@@ -99,25 +102,25 @@
             // 
             this.saveMenu.Enabled = false;
             this.saveMenu.Name = "saveMenu";
-            this.saveMenu.Size = new System.Drawing.Size(152, 22);
+            this.saveMenu.Size = new System.Drawing.Size(121, 22);
             this.saveMenu.Text = "Save";
             // 
             // saveAsMenu
             // 
             this.saveAsMenu.Name = "saveAsMenu";
-            this.saveAsMenu.Size = new System.Drawing.Size(152, 22);
+            this.saveAsMenu.Size = new System.Drawing.Size(121, 22);
             this.saveAsMenu.Text = "Save as...";
             this.saveAsMenu.Click += new System.EventHandler(this.saveAsMenu_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(118, 6);
             // 
             // closeMenu
             // 
             this.closeMenu.Name = "closeMenu";
-            this.closeMenu.Size = new System.Drawing.Size(152, 22);
+            this.closeMenu.Size = new System.Drawing.Size(121, 22);
             this.closeMenu.Text = "Close";
             this.closeMenu.Click += new System.EventHandler(this.closeMenu_Click);
             // 
@@ -125,18 +128,16 @@
             // 
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(820, 25);
+            this.toolStrip.Size = new System.Drawing.Size(938, 25);
             this.toolStrip.TabIndex = 1;
-            this.toolStrip.Text = "toolStrip1";
             // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hoverLabel,
-            this.selectedLabel});
+            this.hoverLabel});
             this.statusStrip.Location = new System.Drawing.Point(0, 537);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(820, 22);
+            this.statusStrip.Size = new System.Drawing.Size(938, 22);
             this.statusStrip.TabIndex = 2;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -145,12 +146,6 @@
             this.hoverLabel.Name = "hoverLabel";
             this.hoverLabel.Size = new System.Drawing.Size(45, 17);
             this.hoverLabel.Text = "[hover]";
-            // 
-            // selectedLabel
-            // 
-            this.selectedLabel.Name = "selectedLabel";
-            this.selectedLabel.Size = new System.Drawing.Size(58, 17);
-            this.selectedLabel.Text = "[selected]";
             // 
             // openFileDialog
             // 
@@ -175,8 +170,8 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.toolSplitContainer);
-            this.splitContainer.Size = new System.Drawing.Size(820, 488);
-            this.splitContainer.SplitterDistance = 598;
+            this.splitContainer.Size = new System.Drawing.Size(938, 488);
+            this.splitContainer.SplitterDistance = 680;
             this.splitContainer.TabIndex = 4;
             // 
             // editorPanel
@@ -185,7 +180,7 @@
             this.editorPanel.Location = new System.Drawing.Point(0, 0);
             this.editorPanel.Map = null;
             this.editorPanel.Name = "editorPanel";
-            this.editorPanel.Size = new System.Drawing.Size(598, 488);
+            this.editorPanel.Size = new System.Drawing.Size(680, 488);
             this.editorPanel.TabIndex = 0;
             // 
             // toolSplitContainer
@@ -195,26 +190,46 @@
             this.toolSplitContainer.Name = "toolSplitContainer";
             this.toolSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
+            // toolSplitContainer.Panel1
+            // 
+            this.toolSplitContainer.Panel1.Controls.Add(this.treeView);
+            // 
             // toolSplitContainer.Panel2
             // 
             this.toolSplitContainer.Panel2.Controls.Add(this.propertyGrid);
-            this.toolSplitContainer.Size = new System.Drawing.Size(218, 488);
+            this.toolSplitContainer.Size = new System.Drawing.Size(254, 488);
             this.toolSplitContainer.SplitterDistance = 235;
             this.toolSplitContainer.TabIndex = 0;
+            // 
+            // treeView
+            // 
+            this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView.Location = new System.Drawing.Point(0, 0);
+            this.treeView.Name = "treeView";
+            treeNode7.Name = "mapNode";
+            treeNode7.Text = "Map";
+            treeNode8.Name = "cellNode";
+            treeNode8.Text = "Selected Cell";
+            this.treeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode7,
+            treeNode8});
+            this.treeView.Size = new System.Drawing.Size(254, 235);
+            this.treeView.TabIndex = 0;
+            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
             // 
             // propertyGrid
             // 
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Location = new System.Drawing.Point(0, 0);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(218, 249);
+            this.propertyGrid.Size = new System.Drawing.Size(254, 249);
             this.propertyGrid.TabIndex = 0;
             // 
             // MapEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(820, 559);
+            this.ClientSize = new System.Drawing.Size(938, 559);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.toolStrip);
@@ -233,6 +248,7 @@
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
+            this.toolSplitContainer.Panel1.ResumeLayout(false);
             this.toolSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.toolSplitContainer)).EndInit();
             this.toolSplitContainer.ResumeLayout(false);
@@ -260,7 +276,7 @@
         private System.Windows.Forms.SplitContainer toolSplitContainer;
         private System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.ToolStripStatusLabel hoverLabel;
-        private System.Windows.Forms.ToolStripStatusLabel selectedLabel;
         private EditorPanel editorPanel;
+        private System.Windows.Forms.TreeView treeView;
     }
 }

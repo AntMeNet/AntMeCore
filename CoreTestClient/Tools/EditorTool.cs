@@ -6,7 +6,14 @@ namespace CoreTestClient.Tools
 {
     public abstract class EditorTool
     {
+        protected readonly SimulationContext Context;
+
         public abstract ToolStripItem RootItem { get; }
+
+        public EditorTool(SimulationContext context)
+        {
+            Context = context;
+        }
 
         public virtual bool CanApply(Map map, Index2 cell)
         {

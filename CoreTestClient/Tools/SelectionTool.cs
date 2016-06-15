@@ -12,7 +12,7 @@ namespace CoreTestClient.Tools
 
         public override ToolStripItem RootItem { get { return selectionButton; } }
 
-        public SelectionTool()
+        public SelectionTool(SimulationContext context) : base(context)
         {
             string path = Path.Combine(".", "Resources", "select.png");
             Image image = Image.FromFile(path);
@@ -23,7 +23,6 @@ namespace CoreTestClient.Tools
 
         protected override void OnApply(Map map, Index2 cell)
         {
-            throw new NotImplementedException();
         }
     }
 }
