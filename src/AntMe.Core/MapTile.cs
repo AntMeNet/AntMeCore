@@ -26,14 +26,19 @@ namespace AntMe
         protected readonly SimulationContext Context;
 
         /// <summary>
+        /// List and Data of all unknown Property from Deserialization.
+        /// </summary>
+        public Dictionary<string, byte[]> UnknownProperties { get; private set; }
+
+        /// <summary>
         /// Default Constructor.
         /// </summary>
         /// <param name="context">Simulation Context</param>
-        /// <param name="canEnter">Can Item Enter?</param>
-        public MapTile(SimulationContext context, bool canEnter)
+        public MapTile(SimulationContext context)
         {
             Context = context;
             infos = new Dictionary<Item, MapTileInfo>();
+            UnknownProperties = new Dictionary<string, byte[]>();
 
             context.Resolver.ResolveMapTile(context, this);
         }

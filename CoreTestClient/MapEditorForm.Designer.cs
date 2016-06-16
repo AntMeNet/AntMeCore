@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Map");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Selected Cell");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Map");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Selected Cell");
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.newMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,10 +46,10 @@
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.editorPanel = new CoreTestClient.EditorPanel();
             this.toolSplitContainer = new System.Windows.Forms.SplitContainer();
             this.treeView = new System.Windows.Forms.TreeView();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.editorPanel = new CoreTestClient.EditorPanel();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -88,13 +88,13 @@
             // newMenu
             // 
             this.newMenu.Name = "newMenu";
-            this.newMenu.Size = new System.Drawing.Size(121, 22);
+            this.newMenu.Size = new System.Drawing.Size(152, 22);
             this.newMenu.Text = "New";
             // 
             // loadMenu
             // 
             this.loadMenu.Name = "loadMenu";
-            this.loadMenu.Size = new System.Drawing.Size(121, 22);
+            this.loadMenu.Size = new System.Drawing.Size(152, 22);
             this.loadMenu.Text = "Load...";
             this.loadMenu.Click += new System.EventHandler(this.loadMenu_Click);
             // 
@@ -102,25 +102,26 @@
             // 
             this.saveMenu.Enabled = false;
             this.saveMenu.Name = "saveMenu";
-            this.saveMenu.Size = new System.Drawing.Size(121, 22);
+            this.saveMenu.Size = new System.Drawing.Size(152, 22);
             this.saveMenu.Text = "Save";
+            this.saveMenu.Click += new System.EventHandler(this.saveMenu_Click);
             // 
             // saveAsMenu
             // 
             this.saveAsMenu.Name = "saveAsMenu";
-            this.saveAsMenu.Size = new System.Drawing.Size(121, 22);
+            this.saveAsMenu.Size = new System.Drawing.Size(152, 22);
             this.saveAsMenu.Text = "Save as...";
             this.saveAsMenu.Click += new System.EventHandler(this.saveAsMenu_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(118, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
             // 
             // closeMenu
             // 
             this.closeMenu.Name = "closeMenu";
-            this.closeMenu.Size = new System.Drawing.Size(121, 22);
+            this.closeMenu.Size = new System.Drawing.Size(152, 22);
             this.closeMenu.Text = "Close";
             this.closeMenu.Click += new System.EventHandler(this.closeMenu_Click);
             // 
@@ -149,7 +150,15 @@
             // 
             // openFileDialog
             // 
-            this.openFileDialog.FileName = "openFileDialog1";
+            this.openFileDialog.DefaultExt = "map";
+            this.openFileDialog.Filter = "AntMe! Maps|*.map";
+            this.openFileDialog.Title = "Load AntMe! Map";
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.DefaultExt = "map";
+            this.saveFileDialog.Filter = "AntMe! Maps|*.map";
+            this.saveFileDialog.Title = "Save AntMe! Map";
             // 
             // timer
             // 
@@ -174,15 +183,6 @@
             this.splitContainer.SplitterDistance = 680;
             this.splitContainer.TabIndex = 4;
             // 
-            // editorPanel
-            // 
-            this.editorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.editorPanel.Location = new System.Drawing.Point(0, 0);
-            this.editorPanel.Map = null;
-            this.editorPanel.Name = "editorPanel";
-            this.editorPanel.Size = new System.Drawing.Size(680, 488);
-            this.editorPanel.TabIndex = 0;
-            // 
             // toolSplitContainer
             // 
             this.toolSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -206,13 +206,13 @@
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView.Location = new System.Drawing.Point(0, 0);
             this.treeView.Name = "treeView";
-            treeNode7.Name = "mapNode";
-            treeNode7.Text = "Map";
-            treeNode8.Name = "cellNode";
-            treeNode8.Text = "Selected Cell";
+            treeNode1.Name = "mapNode";
+            treeNode1.Text = "Map";
+            treeNode2.Name = "cellNode";
+            treeNode2.Text = "Selected Cell";
             this.treeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode7,
-            treeNode8});
+            treeNode1,
+            treeNode2});
             this.treeView.Size = new System.Drawing.Size(254, 235);
             this.treeView.TabIndex = 0;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
@@ -224,6 +224,17 @@
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(254, 249);
             this.propertyGrid.TabIndex = 0;
+            // 
+            // editorPanel
+            // 
+            this.editorPanel.DirtyBuffer = false;
+            this.editorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.editorPanel.HighlightedCell = null;
+            this.editorPanel.Location = new System.Drawing.Point(0, 0);
+            this.editorPanel.Map = null;
+            this.editorPanel.Name = "editorPanel";
+            this.editorPanel.Size = new System.Drawing.Size(680, 488);
+            this.editorPanel.TabIndex = 0;
             // 
             // MapEditorForm
             // 

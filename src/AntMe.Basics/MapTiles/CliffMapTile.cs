@@ -8,7 +8,7 @@
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public CliffMapTile(SimulationContext context) : base(context, false)
+        public CliffMapTile(SimulationContext context) : base(context)
         {
         }
 

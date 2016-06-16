@@ -21,7 +21,7 @@ namespace AntMe.Basics.MapTiles
         /// <summary>
         /// Default Constrcutor.
         /// </summary>
-        public RampMapTile(SimulationContext context) : base(context, true)
+        public RampMapTile(SimulationContext context) : base(context)
         {
         }
 

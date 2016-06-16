@@ -11,12 +11,10 @@ namespace AntMe.Basics.MapTileProperties
 
         public override void DeserializeFirst(BinaryReader stream, byte version)
         {
-            throw new NotImplementedException();
         }
 
         public override void SerializeFirst(BinaryWriter stream, byte version)
         {
-            throw new NotImplementedException();
         }
     }
 }

@@ -8,7 +8,7 @@
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public FlatMapTile(SimulationContext context) : base(context, true)
+        public FlatMapTile(SimulationContext context) : base(context)
         {
         }
 

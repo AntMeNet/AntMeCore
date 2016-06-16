@@ -13,6 +13,8 @@ namespace CoreTestClient
     {
         SimulationContext context;
 
+        private string filename;
+
         private Map map;
 
         private Map Map
@@ -108,6 +110,7 @@ namespace CoreTestClient
         private void timer_Tick(object sender, EventArgs e)
         {
             saveAsMenu.Enabled = map != null;
+            saveMenu.Enabled = !string.IsNullOrEmpty(filename);
 
             if (editorPanel.HoveredCell.HasValue)
             {
@@ -133,6 +136,7 @@ namespace CoreTestClient
                     using (Stream stream = File.Open(openFileDialog.FileName, FileMode.Open))
                     {
                         Map = Map.Deserialize(context, stream);
+                        filename = openFileDialog.FileName;
                     }
                 }
                 catch (Exception ex)
@@ -201,6 +205,21 @@ namespace CoreTestClient
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
             propertyGrid.SelectedObject = e.Node.Tag;
+        }
+
+        private void saveMenu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (Stream stream = File.Open(filename, FileMode.Create))
+                {
+                    Map.Serialize(stream, map);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

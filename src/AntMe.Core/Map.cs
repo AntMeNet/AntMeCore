@@ -89,6 +89,11 @@ namespace AntMe
         public bool BlockBorder { get; set; }
 
         /// <summary>
+        /// Dictionary of missing Properties during Deserialization.
+        /// </summary>
+        public Dictionary<string, byte[]> UnknownProperties { get; private set; }
+
+        /// <summary>
         /// Gets or sets the Map Tiles.
         /// </summary>
         /// <param name="x">X Coordinate</param>
@@ -123,6 +128,8 @@ namespace AntMe
         public Map(SimulationContext context, int width, int height, int playerCount)
         {
             this.context = context;
+
+            UnknownProperties = new Dictionary<string, byte[]>();
 
             // Check Parameter
             if (width < MIN_WIDTH)
@@ -192,7 +199,6 @@ namespace AntMe
         /// Deserialize a Map
         /// </summary>
         /// <param name="context">Reference to the Simulation Context</param>
-        /// <param name="typeMapper">Local Type Mapper</param>
         /// <param name="stream">Source</param>
         /// <returns>Map</returns>
         public static Map Deserialize(SimulationContext context, Stream stream)
@@ -384,7 +390,7 @@ namespace AntMe
         /// </summary>
         /// <param name="context">Current Simulation Context</param>
         /// <param name="stream">Input Stream</param>
-        /// <returns></returns>
+        /// <returns>Map Instance</returns>
         private static Map DeserializeV2(SimulationContext context, Stream stream)
         {
             using (GZipStream zip = new GZipStream(stream, CompressionMode.Decompress))
@@ -408,7 +414,7 @@ namespace AntMe
         /// <param name="stream">Target Stream</param>
         /// <param name="map">Map</param>
         /// <param name="version">File Format Version</param>
-        public static void Serialize(Stream stream, Map map, byte version = 1)
+        public static void Serialize(Stream stream, Map map, byte version = 2)
         {
             // Check Map
             if (map == null)
@@ -422,7 +428,7 @@ namespace AntMe
                 throw new ArgumentException("Stream is read only");
 
             // Version Number
-            if (version != 1)
+            if (version != 2)
                 throw new ArgumentException("Invalid Version");
 
 
@@ -436,7 +442,7 @@ namespace AntMe
 
             switch (version)
             {
-                case 1: SerializeV2(stream, map); break;
+                case 2: SerializeV2(stream, map); break;
             }
         }
 
@@ -687,64 +693,108 @@ namespace AntMe
             writer.Write((byte)StartPoints.Length);
             for (int i = 0; i < StartPoints.GetLength(0); i++)
             {
-                writer.Write(StartPoints[i].X);
-                writer.Write(StartPoints[i].Y);
+                writer.Write((short)StartPoints[i].X);
+                writer.Write((short)StartPoints[i].Y);
             }
 
             // Map Properties
-            writer.Write((byte)Properties.Count());
+            writer.Write((byte)Properties.Count() + UnknownProperties.Count);
             foreach (var property in Properties)
             {
-                writer.Write(property.GetType().AssemblyQualifiedName);
+                writer.Write(property.GetType().FullName);
                 SerializeType(writer, property);
             }
 
+            // Add Data from unknown Property
+            foreach (var unknownProperty in UnknownProperties)
+            {
+                writer.Write(unknownProperty.Key);
+                writer.Write((short)unknownProperty.Value.Length);
+                writer.Write(unknownProperty.Value, 0, unknownProperty.Value.Length);
+            }
+
             // Collect MapTile/Material/TileProperty Types
-            // TODO: Type Lookup in Extension Loader?
-            List<Type> mapTileTypes = new List<Type>();
-            List<Type> materialTypes = new List<Type>();
-            List<Type> propertyTypes = new List<Type>();
+            List<string> mapTileTypes = new List<string>();
+            List<string> materialTypes = new List<string>();
+            List<string> propertyTypes = new List<string>();
             for (int y = 0; y < size.Y; y++)
             {
                 for (int x = 0; x < size.X; x++)
                 {
                     MapTile tile = this[x, y];
 
-                    if (tile == null) continue;
-                    Type mapTileType = tile.GetType();
-                    if (!mapTileTypes.Contains(mapTileType))
-                        mapTileTypes.Add(mapTileType);
+                    if (tile == null)
+                    {
+                        // No Tile -> skip
+                        continue;
+                    }
+                    else if (tile is UnknownMapTile)
+                    {
+                        // Unknown Tile Type
+                        UnknownMapTile unknownTile = tile as UnknownMapTile;
+                        if (!mapTileTypes.Contains(unknownTile.MapTileType))
+                            mapTileTypes.Add(unknownTile.MapTileType);
+                    }
+                    else
+                    {
+                        // Common Tile Type
+                        Type mapTileType = tile.GetType();
+                        if (!mapTileTypes.Contains(mapTileType.FullName))
+                            mapTileTypes.Add(mapTileType.FullName);
+                    }
 
+                    // Common Properties
                     foreach (var property in tile.Properties)
                     {
                         Type propertyType = property.GetType();
-                        if (!propertyTypes.Contains(propertyType))
-                            propertyTypes.Add(propertyType);
+                        if (!propertyTypes.Contains(propertyType.FullName))
+                            propertyTypes.Add(propertyType.FullName);
                     }
 
-                    if (tile.Material == null) continue;
-                    Type materialType = tile.Material.GetType();
-                    if (!materialTypes.Contains(materialType))
-                        materialTypes.Add(materialType);
+                    // Unknown Properties
+                    foreach (var property in tile.UnknownProperties.Keys)
+                    {
+                        if (!propertyTypes.Contains(property))
+                            propertyTypes.Add(property);
+                    }
+
+                    // Materials
+                    if (tile.Material == null)
+                    {
+                        // No Material -> Skip
+                        continue;
+                    }
+                    else if (tile.Material is UnknownMaterial)
+                    {
+                        // Unknown Material
+                        UnknownMaterial unknownMaterial = tile.Material as UnknownMaterial;
+                        if (!materialTypes.Contains(unknownMaterial.MaterialType))
+                            materialTypes.Add(unknownMaterial.MaterialType);
+                    }
+                    else
+                    {
+                        // Common Material
+                        Type materialType = tile.Material.GetType();
+                        if (!materialTypes.Contains(materialType.FullName))
+                            materialTypes.Add(materialType.FullName);
+                    }
                 }
             }
-
-            // TODO: Version Numbers of the related Extension?
 
             // Write Map Tile Types
             writer.Write((byte)mapTileTypes.Count);
             foreach (var type in mapTileTypes)
-                writer.Write(type.AssemblyQualifiedName);
+                writer.Write(type);
 
             // Write Map Tile Property Types
             writer.Write((byte)propertyTypes.Count);
             foreach (var type in propertyTypes)
-                writer.Write(type.AssemblyQualifiedName);
+                writer.Write(type);
 
             // Write Material Types
             writer.Write((byte)materialTypes.Count);
             foreach (var type in materialTypes)
-                writer.Write(type.AssemblyQualifiedName);
+                writer.Write(type);
 
             // Zelleninfos
             for (int y = 0; y < size.Y; y++)
@@ -756,36 +806,63 @@ namespace AntMe
                     // Map Tile
                     if (tile != null)
                     {
-                        int index = mapTileTypes.IndexOf(tile.GetType()) + 1;
+                        int index;
+                        if (tile is UnknownMapTile) index = mapTileTypes.IndexOf((tile as UnknownMapTile).MapTileType) + 1;
+                        else index = mapTileTypes.IndexOf(tile.GetType().FullName) + 1;
+
                         writer.Write((byte)index);
                         SerializeType(writer, tile);
+
+                        // Material
+                        if (tile.Material != null)
+                        {
+                            int materialIndex;
+                            if (tile.Material is UnknownMaterial)
+                                materialIndex = materialTypes.IndexOf((tile.Material as UnknownMaterial).MaterialType) + 1;
+                            else materialIndex = materialTypes.IndexOf(tile.Material.GetType().FullName) + 1;
+                            writer.Write((byte)materialIndex);
+                            SerializeType(writer, tile.Material);
+                        }
+                        else
+                        {
+                            writer.Write((byte)0);
+                        }
+
+                        // Properties
+                        writer.Write((byte)tile.Properties.Count() + tile.UnknownProperties.Count);
+                        foreach (var property in tile.Properties)
+                        {
+                            int propertyIndex = propertyTypes.IndexOf(property.GetType().FullName);
+                            writer.Write((byte)propertyIndex);
+                            SerializeType(writer, property);
+                        }
+                        foreach (var property in tile.UnknownProperties)
+                        {
+                            int propertyIndex = propertyTypes.IndexOf(property.Key);
+                            writer.Write((byte)propertyIndex);
+                            writer.Write(property.Value.Length);
+                            writer.Write(property.Value, 0, property.Value.Length);
+                        }
                     }
                     else
                     {
                         writer.Write((byte)0);
                         continue;
                     }
+                }
+            }
+        }
 
-                    // Material
-                    if (tile.Material != null)
-                    {
-                        int index = materialTypes.IndexOf(tile.Material.GetType()) + 1;
-                        writer.Write((byte)index);
-                        SerializeType(writer, tile.Material);
-                    }
-                    else
-                    {
-                        writer.Write((byte)0);
-                    }
+        private void DeserializeType(BinaryReader reader, ISerializableState state)
+        {
+            int dumpCount = reader.ReadInt16();
+            byte[] dump = reader.ReadBytes(dumpCount);
 
-                    // Properties
-                    writer.Write((byte)tile.Properties.Count());
-                    foreach (var property in Properties)
-                    {
-                        int index = propertyTypes.IndexOf(property.GetType());
-                        writer.Write((byte)index);
-                        SerializeType(writer, property);
-                    }
+            using (MemoryStream mem = new MemoryStream(dump))
+            {
+                using (BinaryReader memReader = new BinaryReader(mem))
+                {
+                    state.DeserializeFirst(memReader, 2);
                 }
             }
         }
@@ -803,7 +880,7 @@ namespace AntMe
                 using (BinaryWriter memWriter = new BinaryWriter(mem))
                 {
                     // Serialize
-                    state.SerializeFirst(memWriter, 1);
+                    state.SerializeFirst(memWriter, 2);
 
                     // Copy to Buffer
                     int count = (int)mem.Position;
@@ -844,7 +921,125 @@ namespace AntMe
 
         private void DeserializeV2(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            UnknownProperties.Clear();
+            Index2 size = GetCellCount();
+
+            // Map Data
+            BlockBorder = reader.ReadBoolean();
+
+            // Startpoints
+            StartPoints = new Index2[reader.ReadByte()];
+            for (int i = 0; i < StartPoints.Length; i++)
+                StartPoints[i] = new Index2(reader.ReadInt16(), reader.ReadInt16());
+
+            // Map Properties
+            int mapPropertyCount = reader.ReadByte();
+            for (int i = 0; i < mapPropertyCount; i++)
+            {
+                string propertyName = reader.ReadString();
+                MapProperty property = Properties.FirstOrDefault(p => p.GetType().FullName.Equals(propertyName));
+                if (property != null)
+                {
+                    DeserializeType(reader, property);
+                }
+                else
+                {
+                    // Dump Data in Unknown Properties
+                    int dumpCount = reader.ReadInt16();
+                    byte[] dump = reader.ReadBytes(dumpCount);
+                    UnknownProperties.Add(propertyName, dump);
+                }
+            }
+
+            // Read Map Tile Types
+            int mapTileTypeCount = reader.ReadByte();
+            List<string> mapTileTypes = new List<string>(mapTileTypeCount);
+            for (int i = 0; i < mapTileTypeCount; i++)
+                mapTileTypes.Add(reader.ReadString());
+
+            // Read Property Types
+            int propertyTypeCount = reader.ReadByte();
+            List<string> propertyTypes = new List<string>(propertyTypeCount);
+            for (int i = 0; i < propertyTypeCount; i++)
+                propertyTypes.Add(reader.ReadString());
+
+            // Read Material Types
+            int materialTypeCount = reader.ReadByte();
+            List<string> materialTypes = new List<string>(materialTypeCount);
+            for (int i = 0; i < materialTypeCount; i++)
+                materialTypes.Add(reader.ReadString());
+
+            for (int y = 0; y < size.Y; y++)
+            {
+                for (int x = 0; x < size.X; x++)
+                {
+                    short tileTypeIndex = reader.ReadByte();
+
+                    // Empty Cell
+                    if (tileTypeIndex == 0)
+                        continue;
+
+                    // Identify Map Tile Type
+                    string tileTypeName = mapTileTypes[tileTypeIndex];
+                    var tileTypeMap = context.Mapper.MapTiles.FirstOrDefault(t => t.Type.FullName.Equals(tileTypeName));
+                    MapTile mapTile;
+                    if (tileTypeMap != null)
+                    {
+                        // Deserialize known Type
+                        mapTile = Activator.CreateInstance(tileTypeMap.Type, context) as MapTile;
+                        DeserializeType(reader, mapTile);
+                    }
+                    else
+                    {
+                        // Handle missing Map Tile Type
+                        int bufferSize = reader.ReadInt16();
+                        byte[] payload = reader.ReadBytes(bufferSize);
+                        mapTile = new UnknownMapTile(context, tileTypeName, payload);
+                    }
+
+                    // Handle Material
+                    short materialIndex = reader.ReadByte();
+                    if (materialIndex > 0)
+                    {
+                        string materialTypeName = materialTypes[materialIndex];
+                        var materialMap = context.Mapper.MapMaterials.FirstOrDefault(m => m.Type.FullName.Equals(materialTypeName));
+                        if (materialMap != null)
+                        {
+                            // Deserialize known Type
+                            mapTile.Material = Activator.CreateInstance(materialMap.Type, context) as MapMaterial;
+                            DeserializeType(reader, mapTile.Material);
+                        }
+                        else
+                        {
+                            // Handle missing Material Type
+                            int bufferSize = reader.ReadInt16();
+                            byte[] payload = reader.ReadBytes(bufferSize);
+                            mapTile.Material = new UnknownMaterial(context, materialTypeName, payload);
+                        }
+                    }
+
+                    // Handle Map Tile Properties
+                    int propertyCount = reader.ReadByte();
+                    for (int i = 0; i < propertyCount; i++)
+                    {
+                        int propertyIndex = reader.ReadByte();
+                        string propertyName = propertyTypes[propertyIndex];
+                        var property = mapTile.Properties.FirstOrDefault(p => p.GetType().FullName.Equals(propertyName));
+                        if (property != null)
+                        {
+                            // Deserialize Data
+                            DeserializeType(reader, property);
+                        }
+                        else
+                        {
+                            // Handle missing Property Type
+                            int bufferSize = reader.ReadInt16();
+                            byte[] payload = reader.ReadBytes(bufferSize);
+                            UnknownProperties.Add(propertyName, payload);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
