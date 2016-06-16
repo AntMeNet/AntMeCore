@@ -20,9 +20,8 @@ namespace AntMe.Basics.Factions
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="context">Simulation Context</param>
         /// <param name="faction">Reference to the related Faction</param>
-        public DeathCountProperty(SimulationContext context, Faction faction) : base(context, faction)
+        public DeathCountProperty(Faction faction) : base(faction)
         {
             observedAttackables = new HashSet<AttackableProperty>();
             observedItems = new HashSet<T>();

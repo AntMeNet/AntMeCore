@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace AntMe
@@ -23,11 +24,6 @@ namespace AntMe
         /// Simulation Engine.
         /// </summary>
         private Engine engine = null;
-
-        /// <summary>
-        /// Cached Map State.
-        /// </summary>
-        private MapState mapState = null;
 
         /// <summary>
         /// Slot specific Settings.
@@ -172,7 +168,7 @@ namespace AntMe
             engine = new Engine(Context.Resolver);
 
             // Generate Map and validate.
-            Map map = GetMap();
+            Map map = Map.Deserialize(Context, GetMap());
             if (map == null)
             {
                 var exception = new NotSupportedException("No Map was created");
@@ -287,15 +283,6 @@ namespace AntMe
                 }
             }
 
-            // State erzeugen
-            mapState = new MapState();
-            mapState.BlockBorder = map.BlockBorder;
-            Index2 tileCount = map.GetCellCount();
-            mapState.Tiles = new MapTileState[tileCount.X, tileCount.Y];
-            for (int y = 0; y < tileCount.Y; y++)
-                for (int x = 0; x < tileCount.X; x++)
-                    mapState.Tiles[x, y] = map[x, y].GetState();
-
             engine.Init(map);
             engine.OnInsertItem += engine_OnInsertItem;
             engine.OnRemoveItem += engine_OnRemoveItem;
@@ -368,7 +355,7 @@ namespace AntMe
         /// Generates the Map for this Level.
         /// </summary>
         /// <returns>Map Instance</returns>
-        public abstract Map GetMap();
+        public abstract byte[] GetMap();
 
         /// <summary>
         /// Gives the Level Designer the chance to change Settings.
@@ -442,17 +429,16 @@ namespace AntMe
             // Create a new Instance of State
             if (State == null)
             {
+                // Base State
                 State = Context.Resolver.CreateLevelState(this);
-                State.Map = mapState;
 
-                // Collect all Faction States
+                // Map State
+                State.Map = Engine.Map.GetState();
+
+                // Collect Faction States
                 for (int i = 0; i < MAX_SLOTS; i++)
-                {
                     if (Factions[i] != null)
-                    {
                         State.Factions.Add(Factions[i].GetFactionState());
-                    }
-                }
             }
 
             State.Round = engine.Round;

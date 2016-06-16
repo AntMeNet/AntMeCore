@@ -11,9 +11,8 @@ namespace AntMe.Basics.Factions.Ants
         /// <summary>
         /// Default Constructor for Type Mapper.
         /// </summary>
-        /// <param name="context">Simulation Context</param>
         /// <param name="faction">Reference to the Faction</param>
-        public AntDeathCounterProperty(SimulationContext context, Faction faction) : base(context, faction) { }
+        public AntDeathCounterProperty(Faction faction) : base(faction) { }
 
         /// <summary>
         /// Returns the Points Category.

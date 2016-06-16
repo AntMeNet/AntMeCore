@@ -62,6 +62,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseSceneControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CampaignPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -74,11 +77,8 @@
     <Compile Include="CodeGeneratorForm.Designer.cs">
       <DependentUpon>CodeGeneratorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="EditorPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="EditorPanel.Designer.cs">
-      <DependentUpon>EditorPanel.cs</DependentUpon>
+    <Compile Include="EditorSceneControl.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="LevelSelectorForm.cs">
       <SubType>Form</SubType>
@@ -116,19 +116,15 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MapControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MapEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MapEditorForm.Designer.cs">
       <DependentUpon>MapEditorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MapPreview.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MapPreview.Designer.cs">
-      <DependentUpon>MapPreview.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Renderer\MaterialRenderer.cs" />
     <Compile Include="Renderer\TileRenderer.cs" />
     <Compile Include="PlayerPreview.cs">
       <SubType>UserControl</SubType>
@@ -168,6 +164,9 @@
     <Compile Include="SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="StateSceneControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Tools\EditorTool.cs" />
     <Compile Include="Tools\MapTileTool.cs" />
     <Compile Include="Tools\MaterialTool.cs" />
@@ -177,9 +176,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CodeGeneratorForm.resx">
       <DependentUpon>CodeGeneratorForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EditorPanel.resx">
-      <DependentUpon>EditorPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LevelSelectorForm.resx">
       <DependentUpon>LevelSelectorForm.cs</DependentUpon>
@@ -201,9 +197,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MapEditorForm.resx">
       <DependentUpon>MapEditorForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MapPreview.resx">
-      <DependentUpon>MapPreview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PlayerPreview.resx">
       <DependentUpon>PlayerPreview.cs</DependentUpon>

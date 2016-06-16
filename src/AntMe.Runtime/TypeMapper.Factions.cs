@@ -58,7 +58,7 @@ namespace AntMe.Runtime
 
             // Handle Factory Interop
             Type factoryInteropType = typeof(FI);
-            ValidateType<FactoryInterop>(factoryInteropType, new Type[] { typeof(SimulationContext), typeof(T) }, false);
+            ValidateType<FactoryInterop>(factoryInteropType, new Type[] { typeof(T) }, false);
 
             // Handle Unit
             Type unitType = typeof(U);
@@ -66,7 +66,7 @@ namespace AntMe.Runtime
 
             // Handle Unit Interop
             Type unitInteropType = typeof(UI);
-            ValidateType<UnitInterop>(unitInteropType, new Type[] { typeof(SimulationContext), typeof(T), typeof(IT) }, false);
+            ValidateType<UnitInterop>(unitInteropType, new Type[] { typeof(T), typeof(IT) }, false);
 
             factions.Add(new FactionTypeMap()
             {
@@ -152,7 +152,7 @@ namespace AntMe.Runtime
 
             // Handle Type
             Type type = typeof(T);
-            ValidateType<FactionProperty>(type, new Type[] { typeof(SimulationContext), typeof(Faction) }, false);
+            ValidateType<FactionProperty>(type, new Type[] { typeof(Faction) }, false);
 
             // Check Registration Collision
             if (factionProperties.Any(p => p.Type == type))

@@ -188,12 +188,34 @@ namespace AntMe
         /// <returns>Map State</returns>
         public MapState GetState()
         {
+            // On first Call create State
             if (state == null)
                 state = context.Resolver.CreateMapState(this);
+
+            // Update Tile States
+            Index2 size = GetCellCount();
+            for (int y = 0; y < size.Y; y++)
+                for (int x = 0; x < size.X; x++)
+                    state.Tiles[x, y] = this[x, y].GetState();
+
             return state;
         }
 
         #region Statische Methoden (Generatoren und Serialisierer)
+
+        /// <summary>
+        /// Deserialize a Map
+        /// </summary>
+        /// <param name="context">Reference to the Simulation Context</param>
+        /// <param name="filedump">Source</param>
+        /// <returns></returns>
+        public static Map Deserialize(SimulationContext context, byte[] filedump)
+        {
+            using (MemoryStream stream = new MemoryStream(filedump))
+            {
+                return Deserialize(context, stream);
+            }
+        }
 
         /// <summary>
         /// Deserialize a Map

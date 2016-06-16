@@ -26,11 +26,10 @@ namespace AntMe.Basics.Factions.Ants
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="context">Simulation Context</param>
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
-        public AntUnitInterop(SimulationContext context, AntFaction faction, AntItem item)
-            : base(context, faction, item)
+        public AntUnitInterop(AntFaction faction, AntItem item)
+            : base(faction, item)
         {
             Faction = faction;
             Item = item;

@@ -23,6 +23,9 @@ namespace AntMe
         public MapState(Map map) : base()
         {
             Map = map;
+
+            Index2 size = Map.GetCellCount();
+            Tiles = new MapTileState[size.X, size.Y];
         }
 
         /// <summary>
@@ -69,20 +72,6 @@ namespace AntMe
         public void SerializeFirst(BinaryWriter stream, byte version)
         {
             throw new NotImplementedException();
-            //if (Tiles == null)
-            //    throw new NotSupportedException("Tiles are not initialized");
-
-            //// Serialize Tiles
-            //stream.Write(BlockBorder);
-            //stream.Write(Tiles.GetLength(0));
-            //stream.Write(Tiles.GetLength(1));
-            //for (int y = 0; y < Tiles.GetLength(1); y++)
-            //    for (int x = 0; x < Tiles.GetLength(0); x++)
-            //    {
-            //        stream.Write((byte)Tiles[x, y].Shape);
-            //        stream.Write((byte)Tiles[x, y].Speed);
-            //        stream.Write((byte)Tiles[x, y].Height);
-            //    }
         }
 
         /// <summary>
@@ -92,6 +81,7 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void SerializeUpdate(BinaryWriter stream, byte version)
         {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -102,21 +92,6 @@ namespace AntMe
         public void DeserializeFirst(BinaryReader stream, byte version)
         {
             throw new NotImplementedException();
-            //BlockBorder = stream.ReadBoolean();
-            //int width = stream.ReadInt32();
-            //int height = stream.ReadInt32();
-            //Tiles = new MapTile[width, height];
-
-            //for (int y = 0; y < height; y++)
-            //    for (int x = 0; x < width; x++)
-            //    {
-            //        Tiles[x, y] = new MapTile()
-            //        {
-            //            Shape = (TileShape)stream.ReadByte(),
-            //            Speed = (TileSpeed)stream.ReadByte(),
-            //            Height = (TileHeight)stream.ReadByte()
-            //        }; 
-            //    }
         }
 
         /// <summary>
@@ -126,6 +101,7 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void DeserializeUpdate(BinaryReader stream, byte version)
         {
+            throw new NotImplementedException();
         }
     }
 }

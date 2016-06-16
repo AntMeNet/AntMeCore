@@ -104,11 +104,23 @@ namespace AntMe.Basics.MapTiles
         /// <returns>Map Height</returns>
         public override float GetHeight(Vector2 position)
         {
+            // Clamp Position to the Cell Boarders
             position = new Vector2(
                 Math.Max(0, Math.Min(Map.CELLSIZE, position.X)),
                 Math.Max(0, Math.Min(Map.CELLSIZE, position.Y)));
 
-            throw new NotImplementedException();
+            // Normalize to [0..1(
+            position /= Map.CELLSIZE;
+
+            // Calculation
+            switch (Orientation)
+            {
+                case Compass.East: return (1f - position.Y + HeightLevel) * Map.LEVELHEIGHT;
+                case Compass.West: return (position.Y + HeightLevel) * Map.LEVELHEIGHT;
+                case Compass.South: return (position.X + HeightLevel) * Map.LEVELHEIGHT;
+                case Compass.North: return (1f - position.X + HeightLevel) * Map.LEVELHEIGHT;
+                default: throw new NotSupportedException("Unsupported Map Tile Orientation");
+            }
         }
 
         /// <summary>

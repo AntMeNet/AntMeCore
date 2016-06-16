@@ -8,11 +8,6 @@ namespace AntMe
     public abstract class UnitInterop : Interop
     {
         /// <summary>
-        /// Reference to the Simulation Context.
-        /// </summary>
-        protected readonly SimulationContext Context;
-
-        /// <summary>
         /// Reference to the own Faction.
         /// </summary>
         protected readonly Faction Faction;
@@ -28,7 +23,7 @@ namespace AntMe
         /// <param name="context">Simulation Context</param>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="item">Refernce to the Item</param>
-        public UnitInterop(SimulationContext context, Faction faction, FactionItem item)
+        public UnitInterop(Faction faction, FactionItem item)
         {
             if (faction == null)
                 throw new ArgumentNullException("faction");
@@ -41,7 +36,6 @@ namespace AntMe
             if (item == null)
                 throw new ArgumentNullException("item");
 
-            Context = context;
             Faction = faction;
             Item = item;
         }

@@ -8,11 +8,6 @@ namespace AntMe
     public abstract class FactoryInterop : Interop
     {
         /// <summary>
-        /// Reference to the Simulation Context.
-        /// </summary>
-        protected readonly SimulationContext Context;
-
-        /// <summary>
         /// Protected Reference to the related Faction.
         /// </summary>
         protected readonly Faction Faction;
@@ -32,7 +27,7 @@ namespace AntMe
         /// </summary>
         /// <param name="context">Reference to the Simulation Context</param>
         /// <param name="faction">Instance of the related Faction</param>
-        public FactoryInterop(SimulationContext context, Faction faction)
+        public FactoryInterop(Faction faction)
         {
             if (faction == null)
                 throw new ArgumentNullException("faction");
@@ -41,7 +36,6 @@ namespace AntMe
             if (faction.Level == null)
                 throw new ArgumentException("Faction is not Part of a Level");
 
-            Context = context;
             Faction = faction;
         }
 

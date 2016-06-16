@@ -388,6 +388,7 @@ namespace AntMe.Runtime
         /// <summary>
         /// Resolves the given Map.
         /// </summary>
+        /// <param name="context"></param>
         /// <param name="map">Map</param>
         public void ResolveMap(SimulationContext context, Map map)
         {
@@ -530,7 +531,68 @@ namespace AntMe.Runtime
 
         public MapTileState CreateMapTileState(MapTile tile)
         {
-            throw new NotImplementedException();
+            if (tile == null)
+                throw new ArgumentNullException("tile");
+
+            // Identify State Type
+            var tileMapping = mapTiles.FirstOrDefault(m => m.Type == tile.GetType());
+            if (tileMapping == null)
+                throw new ArgumentException("Tile is not registered.");
+
+            MapTileState state;
+            if (tileMapping.CreateStateDelegate != null)
+            {
+                // Option 1: There is a Create State Delegate registered.
+                state = tileMapping.CreateStateDelegate(tile);
+                if (state == null || state.GetType() != tileMapping.StateType)
+                    throw new NotSupportedException("Delegate returns a wrong Type");
+            }
+            else
+            {
+                // Option 2: Create State by Type
+                state = Activator.CreateInstance(tileMapping.StateType, tile) as MapTileState;
+            }
+
+            // Handle Material
+            state.Material = tile.Material;
+
+            // State Properties
+            foreach (var property in tile.Properties)
+            {
+                var propertyMapping = mapTileProperties.FirstOrDefault(p => p.Type == property.GetType());
+                if (propertyMapping == null)
+                    throw new NotSupportedException("Property is not registered.");
+
+                MapTileStateProperty prop = null;
+                if (propertyMapping.CreateStateDelegate != null)
+                {
+                    // Option 1: Create Delegate
+                    prop = propertyMapping.CreateStateDelegate(tile, property);
+                    if (prop != null)
+                    {
+                        if (prop.GetType() != propertyMapping.StateType)
+                        {
+                            // TODO: Trace
+                            throw new NotSupportedException("Delegate returned a wrong Property Type");
+                        }
+
+                        state.AddProperty(prop);
+                    }
+                }
+                else if (propertyMapping.StateType != null)
+                {
+                    // Option 2: Dynamische Erzeugung
+                    prop = Activator.CreateInstance(propertyMapping.StateType, tile, property) as MapTileStateProperty;
+                    if (prop == null)
+                    {
+                        // TODO: Trace
+                        throw new Exception("Could not create State Property");
+                    }
+                    state.AddProperty(prop);
+                }
+            }
+
+            return state;
         }
 
         public MapTileInfo CreateMapTileInfo(MapTile tile, Item observer)

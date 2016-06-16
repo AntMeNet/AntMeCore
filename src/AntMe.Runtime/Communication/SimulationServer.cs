@@ -812,6 +812,9 @@ namespace AntMe.Runtime.Communication
                         Level = levelType
                     };
 
+                    SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                    Map map = Map.Deserialize(context, levelInfo.Map);
+
                     int count = 0;
                     for (int i = 0; i < Level.MAX_SLOTS; i++)
                     {
@@ -821,7 +824,7 @@ namespace AntMe.Runtime.Communication
                             count++;
 
                             // Start Positions
-                            if (i > levelInfo.Map.StartPoints.Length)
+                            if (i > map.StartPoints.Length)
                                 throw new InvalidOperationException("No Startpoint for Slot " + i + " on this map");
 
                             // Player File available

@@ -49,14 +49,11 @@ namespace CoreTestClient
 
         public MapEditorForm()
         {
-            context = new SimulationContext(
-                ExtensionLoader.DefaultTypeResolver,
-                ExtensionLoader.DefaultTypeMapper,
-                ExtensionLoader.ExtensionSettings, new Random());
+            context = ExtensionLoader.CreateSimulationContext();
 
             InitializeComponent();
 
-            editorPanel.OnApply += EditorPanel_OnApply;
+            //editorPanel.OnApply += EditorPanel_OnApply;
 
             tools = new List<EditorTool>();
 
@@ -82,21 +79,21 @@ namespace CoreTestClient
         private void EditorPanel_OnApply(object sender, MouseEventArgs e)
         {
             if (activeTool != null &&
-                editorPanel.HoveredCell.HasValue &&
-                activeTool.CanApply(Map, editorPanel.HoveredCell.Value))
+                scene.HoveredCell.HasValue &&
+                activeTool.CanApply(Map, scene.HoveredCell.Value))
             {
                 try
                 {
-                    activeTool.Apply(Map, editorPanel.HoveredCell.Value);
+                    activeTool.Apply(Map, scene.HoveredCell.Value);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
 
-                editorPanel.HighlightedCell = editorPanel.HoveredCell;
-                editorPanel.DirtyBuffer = true;
-                editorPanel.Invalidate();
+                //editorPanel.HighlightedCell = scene.HoveredCell;
+                //editorPanel.DirtyBuffer = true;
+                //editorPanel.Invalidate();
             }
         }
 
@@ -112,9 +109,9 @@ namespace CoreTestClient
             saveAsMenu.Enabled = map != null;
             saveMenu.Enabled = !string.IsNullOrEmpty(filename);
 
-            if (editorPanel.HoveredCell.HasValue)
+            if (scene.HoveredCell.HasValue)
             {
-                hoverLabel.Text = string.Format("{0}/{1}", editorPanel.HoveredCell.Value.X, editorPanel.HoveredCell.Value.Y);
+                hoverLabel.Text = string.Format("{0}/{1}", scene.HoveredCell.Value.X, scene.HoveredCell.Value.Y);
             }
             else
             {
@@ -166,7 +163,7 @@ namespace CoreTestClient
 
         private void SetMap(Map map)
         {
-            editorPanel.Map = map;
+            scene.SetMap(map);
 
             mapNode.Nodes.Clear();
             mapNode.Tag = null;

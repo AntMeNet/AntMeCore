@@ -17,12 +17,9 @@ namespace AntMe.Levelpack.Levels
     {
         public ArenaLevel(SimulationContext context) : base(context) { }
 
-        public override Map GetMap()
+        public override byte[] GetMap()
         {
-            using (MemoryStream stream = new MemoryStream(Levelpack.Properties.Resources.arenaLevel))
-            {
-                return Map.Deserialize(Context, stream);
-            }
+            return Levelpack.Properties.Resources.arenaLevel;
         }
 
         protected override void OnInit()

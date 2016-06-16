@@ -46,10 +46,10 @@
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.scene = new CoreTestClient.EditorSceneControl();
             this.toolSplitContainer = new System.Windows.Forms.SplitContainer();
             this.treeView = new System.Windows.Forms.TreeView();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.editorPanel = new CoreTestClient.EditorPanel();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -88,13 +88,13 @@
             // newMenu
             // 
             this.newMenu.Name = "newMenu";
-            this.newMenu.Size = new System.Drawing.Size(152, 22);
+            this.newMenu.Size = new System.Drawing.Size(121, 22);
             this.newMenu.Text = "New";
             // 
             // loadMenu
             // 
             this.loadMenu.Name = "loadMenu";
-            this.loadMenu.Size = new System.Drawing.Size(152, 22);
+            this.loadMenu.Size = new System.Drawing.Size(121, 22);
             this.loadMenu.Text = "Load...";
             this.loadMenu.Click += new System.EventHandler(this.loadMenu_Click);
             // 
@@ -102,26 +102,26 @@
             // 
             this.saveMenu.Enabled = false;
             this.saveMenu.Name = "saveMenu";
-            this.saveMenu.Size = new System.Drawing.Size(152, 22);
+            this.saveMenu.Size = new System.Drawing.Size(121, 22);
             this.saveMenu.Text = "Save";
             this.saveMenu.Click += new System.EventHandler(this.saveMenu_Click);
             // 
             // saveAsMenu
             // 
             this.saveAsMenu.Name = "saveAsMenu";
-            this.saveAsMenu.Size = new System.Drawing.Size(152, 22);
+            this.saveAsMenu.Size = new System.Drawing.Size(121, 22);
             this.saveAsMenu.Text = "Save as...";
             this.saveAsMenu.Click += new System.EventHandler(this.saveAsMenu_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(118, 6);
             // 
             // closeMenu
             // 
             this.closeMenu.Name = "closeMenu";
-            this.closeMenu.Size = new System.Drawing.Size(152, 22);
+            this.closeMenu.Size = new System.Drawing.Size(121, 22);
             this.closeMenu.Text = "Close";
             this.closeMenu.Click += new System.EventHandler(this.closeMenu_Click);
             // 
@@ -174,7 +174,7 @@
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.editorPanel);
+            this.splitContainer.Panel1.Controls.Add(this.scene);
             // 
             // splitContainer.Panel2
             // 
@@ -182,6 +182,15 @@
             this.splitContainer.Size = new System.Drawing.Size(938, 488);
             this.splitContainer.SplitterDistance = 680;
             this.splitContainer.TabIndex = 4;
+            // 
+            // scene
+            // 
+            this.scene.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scene.Location = new System.Drawing.Point(0, 0);
+            this.scene.Name = "scene";
+            this.scene.Size = new System.Drawing.Size(680, 488);
+            this.scene.TabIndex = 0;
+            this.scene.Text = "editorSceneControl1";
             // 
             // toolSplitContainer
             // 
@@ -224,17 +233,6 @@
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(254, 249);
             this.propertyGrid.TabIndex = 0;
-            // 
-            // editorPanel
-            // 
-            this.editorPanel.DirtyBuffer = false;
-            this.editorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.editorPanel.HighlightedCell = null;
-            this.editorPanel.Location = new System.Drawing.Point(0, 0);
-            this.editorPanel.Map = null;
-            this.editorPanel.Name = "editorPanel";
-            this.editorPanel.Size = new System.Drawing.Size(680, 488);
-            this.editorPanel.TabIndex = 0;
             // 
             // MapEditorForm
             // 
@@ -287,7 +285,7 @@
         private System.Windows.Forms.SplitContainer toolSplitContainer;
         private System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.ToolStripStatusLabel hoverLabel;
-        private EditorPanel editorPanel;
         private System.Windows.Forms.TreeView treeView;
+        private EditorSceneControl scene;
     }
 }

@@ -41,8 +41,13 @@ namespace AntMe
         {
             MapTile = mapTile;
 
+            HeightLevel = MapTile.HeightLevel;
             MapTile.OnHeightLevelChanged += (v) => { HeightLevel = v; };
+
+            Material = MapTile.Material;
             MapTile.OnMaterialChanged += (v) => { Material = v; };
+
+            Orientation = MapTile.Orientation;
             MapTile.OnOrientationChanged += (v) => { Orientation = v; };
         }
 

@@ -1,12 +1,11 @@
 ﻿using AntMe.Basics.Items;
-using System.Collections.Generic;
 
 namespace AntMe.Basics.Factions.Bugs
 {
     public sealed class BugUnitInterop : UnitInterop
     {
-        public BugUnitInterop(SimulationContext context, BugFaction faction, BugItem item)
-            : base(context, faction, item)
+        public BugUnitInterop(BugFaction faction, BugItem item)
+            : base(faction, item)
         {
         }
 
