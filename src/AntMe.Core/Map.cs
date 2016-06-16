@@ -691,14 +691,14 @@ namespace AntMe
 
             // Startpoints
             writer.Write((byte)StartPoints.Length);
-            for (int i = 0; i < StartPoints.GetLength(0); i++)
+            for (int i = 0; i < StartPoints.Length; i++)
             {
                 writer.Write((short)StartPoints[i].X);
                 writer.Write((short)StartPoints[i].Y);
             }
 
             // Map Properties
-            writer.Write((byte)Properties.Count() + UnknownProperties.Count);
+            writer.Write((byte)(Properties.Count() + UnknownProperties.Count));
             foreach (var property in Properties)
             {
                 writer.Write(property.GetType().FullName);
@@ -829,7 +829,7 @@ namespace AntMe
                         }
 
                         // Properties
-                        writer.Write((byte)tile.Properties.Count() + tile.UnknownProperties.Count);
+                        writer.Write((byte)(tile.Properties.Count() + tile.UnknownProperties.Count));
                         foreach (var property in tile.Properties)
                         {
                             int propertyIndex = propertyTypes.IndexOf(property.GetType().FullName);
@@ -980,7 +980,7 @@ namespace AntMe
                         continue;
 
                     // Identify Map Tile Type
-                    string tileTypeName = mapTileTypes[tileTypeIndex];
+                    string tileTypeName = mapTileTypes[tileTypeIndex - 1];
                     var tileTypeMap = context.Mapper.MapTiles.FirstOrDefault(t => t.Type.FullName.Equals(tileTypeName));
                     MapTile mapTile;
                     if (tileTypeMap != null)
@@ -996,12 +996,13 @@ namespace AntMe
                         byte[] payload = reader.ReadBytes(bufferSize);
                         mapTile = new UnknownMapTile(context, tileTypeName, payload);
                     }
+                    this[x, y] = mapTile;
 
                     // Handle Material
                     short materialIndex = reader.ReadByte();
                     if (materialIndex > 0)
                     {
-                        string materialTypeName = materialTypes[materialIndex];
+                        string materialTypeName = materialTypes[materialIndex - 1];
                         var materialMap = context.Mapper.MapMaterials.FirstOrDefault(m => m.Type.FullName.Equals(materialTypeName));
                         if (materialMap != null)
                         {
