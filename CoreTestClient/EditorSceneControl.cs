@@ -60,9 +60,9 @@ namespace CoreTestClient
             //    e.Graphics.DrawRectangle(highlightPen, new Rectangle(HighlightedCell.Value.X * TILEWIDTH, HighlightedCell.Value.Y * TILEWIDTH, TILEWIDTH, TILEWIDTH));
 
             // Draw hovered
-            // if (HoveredCell.HasValue)
+            if (HoveredCell.HasValue)
                 g.FillRectangle(hoverBrush,
-                    new RectangleF(10 * Map.CELLSIZE, 10 * Map.CELLSIZE, Map.CELLSIZE, Map.CELLSIZE));
+                    new RectangleF(HoveredCell.Value.X * Map.CELLSIZE, HoveredCell.Value.Y * Map.CELLSIZE, Map.CELLSIZE, Map.CELLSIZE));
         }
 
         #region Buffer Generation

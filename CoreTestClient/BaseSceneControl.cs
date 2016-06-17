@@ -23,7 +23,7 @@ namespace CoreTestClient
         /// </summary>
         protected const int BORDER = 20;
 
-        private float minCameraScale = 1f;
+        private float minCameraScale = 1f / 50;
         private float maxCameraScale = 1000f;
         private float cameraScale = 1f;
         private Vector2 cameraPosition = Vector2.Zero;
@@ -36,7 +36,7 @@ namespace CoreTestClient
             get { return minCameraScale; }
             private set
             {
-                minCameraScale = Math.Max(1f, value);
+                minCameraScale = Math.Max(1f / 50, value);
                 CameraScale = CameraScale;
             }
         }
@@ -94,6 +94,8 @@ namespace CoreTestClient
         bool mouseDragging = false;
         int mousePositionX = 0;
         int mousePositionY = 0;
+        float worldPositionX = 0f;
+        float worldPositionY = 0f;
 
         protected override void OnResize(EventArgs e)
         {
@@ -117,8 +119,7 @@ namespace CoreTestClient
             if (e.Button == MouseButtons.Right)
             {
                 mouseDragging = true;
-                mousePositionX = e.X;
-                mousePositionY = e.Y;
+                SetMousePosition(e.X, e.Y);
             }
         }
 
@@ -139,20 +140,19 @@ namespace CoreTestClient
                 // Camera move
                 int deltaX = mousePositionX - e.X;
                 int deltaY = mousePositionY - e.Y;
-                CameraPosition += new Vector2(deltaX, deltaY) * Map.CELLSIZE / CameraScale;
+                CameraPosition += new Vector2(deltaX, deltaY) / CameraScale;
                 Invalidate();
             }
 
-            mousePositionX = e.X;
-            mousePositionY = e.Y;
+            SetMousePosition(e.X, e.Y);
         }
 
         private void RecalcMinCameraScale()
         {
             if (mapSize != Index2.Zero)
             {
-                float scaleX = (float)(ClientSize.Width - BORDER) / mapSize.X;
-                float scaleY = (float)(ClientSize.Height - BORDER) / mapSize.Y;
+                float scaleX = (ClientSize.Width - BORDER) / (mapSize.X * Map.CELLSIZE);
+                float scaleY = (ClientSize.Height - BORDER) / (mapSize.Y * Map.CELLSIZE);
                 MinCameraScale = Math.Min(scaleX, scaleY);
                 CameraPosition = CameraPosition;
             }
@@ -160,6 +160,27 @@ namespace CoreTestClient
             {
                 MinCameraScale = 1f;
             }
+        }
+
+        private void SetMousePosition(int x, int y)
+        {
+            mousePositionX = x;
+            mousePositionY = y;
+
+            // Calc Camera Relative Position
+            int relX = mousePositionX - ((ClientSize.Width) / 2);
+            int relY = mousePositionY - ((ClientSize.Height) / 2);
+
+            worldPositionX = (relX / CameraScale) + CameraPosition.X;
+            worldPositionY = (relY / CameraScale) + CameraPosition.Y;
+
+            if (worldPositionX < 0f || worldPositionX >= mapSize.X * Map.CELLSIZE ||
+                worldPositionY < 0f || worldPositionY >= mapSize.Y * Map.CELLSIZE)
+                HoveredCell = null;
+            else
+                HoveredCell = new Index2(
+                    (int)(worldPositionX / Map.CELLSIZE), 
+                    (int)(worldPositionY / Map.CELLSIZE));
         }
 
         #endregion
@@ -201,7 +222,7 @@ namespace CoreTestClient
                 // Draw Buffer
                 e.Graphics.ResetTransform();
                 e.Graphics.TranslateTransform(ClientSize.Width / 2, ClientSize.Height / 2);
-                e.Graphics.ScaleTransform(CameraScale / 50f, CameraScale / 50f);
+                e.Graphics.ScaleTransform(CameraScale, CameraScale);
                 e.Graphics.TranslateTransform(-CameraPosition.X, -CameraPosition.Y);
                 e.Graphics.ScaleTransform(BUFFER_SCALE, BUFFER_SCALE);
                 e.Graphics.DrawImageUnscaled(buffer, 0, 0);
@@ -210,7 +231,7 @@ namespace CoreTestClient
             // Draw overlaying stuff
             e.Graphics.ResetTransform();
             e.Graphics.TranslateTransform(ClientSize.Width / 2, ClientSize.Height / 2);
-            e.Graphics.ScaleTransform(CameraScale / 50f, CameraScale / 50f);
+            e.Graphics.ScaleTransform(CameraScale, CameraScale);
             e.Graphics.TranslateTransform(-CameraPosition.X, -CameraPosition.Y);
             OnDraw(e.Graphics);
         }

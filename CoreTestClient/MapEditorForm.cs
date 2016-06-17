@@ -106,6 +106,7 @@ namespace CoreTestClient
 
         private void timer_Tick(object sender, EventArgs e)
         {
+            scene.Invalidate();
             saveAsMenu.Enabled = map != null;
             saveMenu.Enabled = !string.IsNullOrEmpty(filename);
 
