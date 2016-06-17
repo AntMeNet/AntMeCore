@@ -60,7 +60,7 @@ namespace CoreTestClient
         public float CameraScale
         {
             get { return cameraScale; }
-            private set
+            protected set
             {
                 cameraScale = Math.Min(MaxCameraScale, Math.Max(MinCameraScale, value));
             }
@@ -153,10 +153,7 @@ namespace CoreTestClient
             {
                 float scaleX = (float)(ClientSize.Width - BORDER) / mapSize.X;
                 float scaleY = (float)(ClientSize.Height - BORDER) / mapSize.Y;
-
-                float smallestScale = Math.Min(scaleX, scaleY);
-                MinCameraScale = Math.Max(CameraScale, smallestScale);
-
+                MinCameraScale = Math.Min(scaleX, scaleY);
                 CameraPosition = CameraPosition;
             }
             else

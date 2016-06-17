@@ -49,6 +49,12 @@ namespace CoreTestClient
         {
         }
 
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            CameraScale = MinCameraScale;
+        }
+
         #region Buffer Generation
 
         protected override TileRenderer OnRenderMaterial(int x, int y, out Compass orientation)
