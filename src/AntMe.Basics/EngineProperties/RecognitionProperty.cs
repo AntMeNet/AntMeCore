@@ -215,54 +215,7 @@ namespace AntMe.Basics.EngineProperties
 
         private void item_CellChanged(Item item, Index2 newValue)
         {
-            // Update Environment Data
-            VisibleEnvironment env = viewers[item.Id].Environment;
-
-            // Item is out of Map
-            Index2 limit = Engine.Map.GetCellCount();
-            if (newValue.X < 0 || newValue.X >= limit.X ||
-                newValue.Y < 0 || newValue.Y >= limit.Y)
-            {
-                env.Center = null;
-                env.North = null;
-                env.South = null;
-                env.West = null;
-                env.East = null;
-                env.NorthWest = null;
-                env.NorthEast = null;
-                env.SouthWest = null;
-                env.SouthEast = null;
-                return;
-            }
-
-            // Run through neighbor cells
-            for (int x = -1; x <= 1; x++)
-                for (int y = -1; y <= 1; y++)
-                {
-                    var offset = new Index2(x, y);
-                    Index2 cell = newValue + offset;
-
-                    if (cell.X < 0 || cell.X >= limit.X ||
-                        cell.Y < 0 || cell.Y >= limit.Y)
-                    {
-                        // No Cell available
-                        env[offset] = null;
-                    }
-                    else
-                    {
-                        // Get Cell Infos
-                        float speed = Engine.Map[cell.X, cell.Y].Material.Speed;
-                        float height = Engine.Map[cell.X, cell.Y].GetHeight(new Vector2(0.5f, 0.5f));
-                        env[offset] = new VisibleCell
-                        {
-                            Speed = speed,
-                            Height = height
-                        };
-                    }
-                }
-
-            // Inform user
-            viewers[item.Id].RefreshEnvironment();
+            viewers[item.Id].UpdateEnvironment(Engine.Map, item, newValue);
         }
 
         #endregion

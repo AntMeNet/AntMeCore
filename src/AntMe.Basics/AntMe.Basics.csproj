@@ -95,7 +95,6 @@
     <Compile Include="ItemProperties\SnifferState.cs" />
     <Compile Include="ItemProperties\SugarCollectorProperty.cs" />
     <Compile Include="ItemProperties\SugarCollectorState.cs" />
-    <Compile Include="ItemProperties\VisibleCell.cs" />
     <Compile Include="ItemProperties\VisibleEnvironment.cs" />
     <Compile Include="ItemProperties\VisibleProperty.cs" />
     <Compile Include="ItemProperties\VisibleState.cs" />

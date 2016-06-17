@@ -597,7 +597,71 @@ namespace AntMe.Runtime
 
         public MapTileInfo CreateMapTileInfo(MapTile tile, Item observer)
         {
-            throw new NotImplementedException();
+            if (tile == null)
+                throw new ArgumentNullException("tile");
+
+            if (observer == null)
+                throw new ArgumentNullException("observer");
+
+            var container = mapTiles.FirstOrDefault(g => g.Type == tile.GetType());
+            if (container == null)
+            {
+                // TODO: Trace
+                throw new ArgumentException("Item is not registered");
+            }
+
+            // Keine Info
+            if (container.InfoType == null)
+                return null;
+
+            if (container != null)
+            {
+                var info = Activator.CreateInstance(container.InfoType, tile, observer) as MapTileInfo;
+
+                // Info-Properties in Abhängigkeit der Item-Props
+                foreach (var property in tile.Properties)
+                {
+                    var map = mapTileProperties.FirstOrDefault(p => p.Type == property.GetType());
+                    if (map == null)
+                        throw new NotSupportedException("Property is not registered.");
+
+                    MapTileInfoProperty prop = null;
+                    if (map.CreateInfoDelegate != null)
+                    {
+                        // Option 1: Create Delegate
+                        prop = map.CreateInfoDelegate(tile, property, observer);
+
+                        if (prop != null)
+                        {
+                            if (prop.GetType() != map.InfoType)
+                            {
+                                // TODO: Tracing
+                                throw new NotSupportedException("Create Delegate returned a wrong type");
+                            }
+
+                            info.AddProperty(prop);
+                        }
+                    }
+                    else if (map.InfoType != null)
+                    {
+                        // Option 2: Automatische Erstellung
+                        prop = Activator.CreateInstance(map.InfoType, tile, property, observer) as MapTileInfoProperty;
+                        if (prop == null)
+                        {
+                            // TODO: Trace
+                            throw new Exception("Could not create Info Property");
+                        }
+                        info.AddProperty(prop);
+                    }
+
+                    // TODO: Logging falls Properties nicht gefunden werden
+                }
+
+
+                return info;
+            }
+
+            return null;
         }
 
         #endregion

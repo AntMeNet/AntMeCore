@@ -10,82 +10,73 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// Information about the current Cell.
         /// </summary>
-        public VisibleCell? Center { get; internal set; }
+        public MapTileInfo Center { get; private set; }
 
         /// <summary>
         /// Cell Information in North Direction.
         /// </summary>
-        public VisibleCell? North { get; internal set; }
+        public MapTileInfo North { get; private set; }
 
         /// <summary>
         /// Cell Information in South Direction.
         /// </summary>
-        public VisibleCell? South { get; internal set; }
+        public MapTileInfo South { get; private set; }
 
         /// <summary>
         /// Cell Information in West Direction.
         /// </summary>
-        public VisibleCell? West { get; internal set; }
+        public MapTileInfo West { get; private set; }
 
         /// <summary>
         /// Cell Information in East Direction.
         /// </summary>
-        public VisibleCell? East { get; internal set; }
+        public MapTileInfo East { get; private set; }
 
         /// <summary>
         /// Cell Information in Northwest Direction.
         /// </summary>
-        public VisibleCell? NorthWest { get; internal set; }
+        public MapTileInfo NorthWest { get; private set; }
 
         /// <summary>
         /// Cell Information in Northeast Direction.
         /// </summary>
-        public VisibleCell? NorthEast { get; internal set; }
+        public MapTileInfo NorthEast { get; private set; }
 
         /// <summary>
         /// Cell Information in Southwest Direction.
         /// </summary>
-        public VisibleCell? SouthWest { get; internal set; }
+        public MapTileInfo SouthWest { get; private set; }
 
         /// <summary>
         /// Cell Information in Southeast Direction.
         /// </summary>
-        public VisibleCell? SouthEast { get; internal set; }
+        public MapTileInfo SouthEast { get; private set; }
 
         /// <summary>
         ///     Liefert Zelleninfos in angegebener Richtung.
         /// </summary>
         /// <param name="compass">Kompass Information</param>
         /// <returns>Zellinfos</returns>
-        //public VisibleCell? this[Compass compass]
-        //{
-        //    get
-        //    {
-        //        switch (compass)
-        //        {
-        //            case Compass.North:
-        //                return North;
-        //            case Compass.South:
-        //                return South;
-        //            case Compass.West:
-        //                return West;
-        //            case Compass.East:
-        //                return East;
-        //            case Compass.NorthWest:
-        //                return NorthWest;
-        //            case Compass.NorthEast:
-        //                return NorthEast;
-        //            case Compass.SouthWest:
-        //                return SouthWest;
-        //            case Compass.SouthEast:
-        //                return SouthEast;
-        //            default:
-        //                throw new Exception("Unknown Compass Value");
-        //        }
-        //    }
-        //}
+        public MapTileInfo this[Compass compass]
+        {
+            get
+            {
+                switch (compass)
+                {
+                    case Compass.North: return North;
+                    case Compass.South: return South;
+                    case Compass.West: return West;
+                    case Compass.East: return East;
+                    case Compass.NorthWest: return NorthWest;
+                    case Compass.NorthEast: return NorthEast;
+                    case Compass.SouthWest: return SouthWest;
+                    case Compass.SouthEast: return SouthEast;
+                    default: throw new Exception("Unknown Compass Value");
+                }
+            }
+        }
 
-        internal VisibleCell? this[Index2 coordinate]
+        internal MapTileInfo this[Index2 coordinate]
         {
             get { return this[coordinate.X, coordinate.Y]; }
             set { this[coordinate.X, coordinate.Y] = value; }
@@ -97,7 +88,7 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="x">X Koordinate im Bereich [-1...1]</param>
         /// <param name="y">Y Koordinate im Bereich [-1...1]</param>
         /// <returns>Zelleninfos</returns>
-        internal VisibleCell? this[int x, int y]
+        internal MapTileInfo this[int x, int y]
         {
             get
             {
@@ -109,41 +100,28 @@ namespace AntMe.Basics.ItemProperties
                     case -1:
                         switch (x)
                         {
-                            case -1:
-                                return NorthWest;
-                            case 0:
-                                return North;
-                            case 1:
-                                return NorthEast;
-                            default:
-                                throw new Exception("Unknown Y Parameter");
+                            case -1: return NorthWest;
+                            case 0: return North;
+                            case 1: return NorthEast;
+                            default: throw new Exception("Unknown Y Parameter");
                         }
                     case 0:
                         switch (x)
                         {
-                            case -1:
-                                return West;
-                            case 0:
-                                return Center;
-                            case 1:
-                                return East;
-                            default:
-                                throw new Exception("Unknown Y Parameter");
+                            case -1: return West;
+                            case 0: return Center;
+                            case 1: return East;
+                            default: throw new Exception("Unknown Y Parameter");
                         }
                     case 1:
                         switch (x)
                         {
-                            case -1:
-                                return SouthWest;
-                            case 0:
-                                return South;
-                            case 1:
-                                return SouthEast;
-                            default:
-                                throw new Exception("Unknown Y Parameter");
+                            case -1: return SouthWest;
+                            case 0: return South;
+                            case 1: return SouthEast;
+                            default: throw new Exception("Unknown Y Parameter");
                         }
-                    default:
-                        throw new Exception("Unknown X Parameter");
+                    default: throw new Exception("Unknown X Parameter");
                 }
             }
             set
