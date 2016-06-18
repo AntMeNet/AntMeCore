@@ -74,6 +74,41 @@ namespace CoreTestClient
             get { return cameraPosition; }
             private set
             {
+                // Check against Borders
+                float width = ((ClientRectangle.Width - BORDER) / 2) / CameraScale;
+                if (width * 2 >= mapSize.X * Map.CELLSIZE)
+                {
+                    // Map smaller than the Screen
+                    value.X = mapSize.X * Map.CELLSIZE / 2;
+                }
+                else
+                {
+                    // Too far left
+                    if (value.X < width)
+                        value.X = width;
+
+                    // Too far right
+                    if (value.X > (mapSize.X * Map.CELLSIZE) - width)
+                        value.X = (mapSize.X * Map.CELLSIZE) - width;
+                }
+
+                float height = ((ClientRectangle.Height - BORDER) / 2) / CameraScale;
+                if (height * 2 >= mapSize.Y * Map.CELLSIZE)
+                {
+                    // Map smaller than the Screen
+                    value.Y = mapSize.Y * Map.CELLSIZE / 2;
+                }
+                else
+                {
+                    // Too far up
+                    if (value.Y < height)
+                        value.Y = height;
+
+                    // Too far down
+                    if (value.Y > (mapSize.Y * Map.CELLSIZE) - height)
+                        value.Y = (mapSize.Y * Map.CELLSIZE) - height;
+                }
+
                 cameraPosition = value;
             }
         }
@@ -82,6 +117,14 @@ namespace CoreTestClient
         private Index2 mapSize;
         private bool dirtyBuffer;
 
+        /// <summary>
+        /// Gets the current Position of the Mouse in World Coordinates.
+        /// </summary>
+        public Vector2? HoveredPosition { get; private set; }
+
+        /// <summary>
+        /// Gets the current Cell of the Mouse Pointer.
+        /// </summary>
         public Index2? HoveredCell { get; private set; }
 
         public BaseSceneControl()
@@ -92,10 +135,8 @@ namespace CoreTestClient
         #region Scaling and Navigation
 
         bool mouseDragging = false;
-        int mousePositionX = 0;
-        int mousePositionY = 0;
-        float worldPositionX = 0f;
-        float worldPositionY = 0f;
+        Vector2 mousePosition = Vector2.Zero;
+        Vector2 worldPosition = Vector2.Zero;
 
         protected override void OnResize(EventArgs e)
         {
@@ -109,7 +150,7 @@ namespace CoreTestClient
             base.OnMouseWheel(e);
 
             CameraScale += e.Delta * 0.0005f * cameraScale;
-            Invalidate();
+            CameraPosition = CameraPosition;
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -138,8 +179,8 @@ namespace CoreTestClient
             if (mouseDragging)
             {
                 // Camera move
-                int deltaX = mousePositionX - e.X;
-                int deltaY = mousePositionY - e.Y;
+                int deltaX = (int)mousePosition.X - e.X;
+                int deltaY = (int)mousePosition.Y - e.Y;
                 CameraPosition += new Vector2(deltaX, deltaY) / CameraScale;
                 Invalidate();
             }
@@ -162,25 +203,48 @@ namespace CoreTestClient
             }
         }
 
+        /// <summary>
+        /// Converts Screen- to World-Coordinates.
+        /// </summary>
+        /// <param name="position">Screen Position</param>
+        /// <returns>World Position</returns>
+        protected Vector2 ViewToWorld(Vector2 position)
+        {
+            Vector2 relativePosition = position -
+                (new Vector2(ClientSize.Width, ClientSize.Height) / 2f);
+
+            return (relativePosition / CameraScale) + CameraPosition;
+        }
+
+        /// <summary>
+        /// Converts World- to Screen-Coordinates.
+        /// </summary>
+        /// <param name="position">World Position</param>
+        /// <returns>Screen Position</returns>
+        protected Vector2 WorldToView(Vector2 position)
+        {
+            Vector2 relativePosition = position - CameraPosition;
+            return (relativePosition * CameraScale) + (new Vector2(ClientSize.Width, ClientSize.Height) / 2f);
+        }
+
         private void SetMousePosition(int x, int y)
         {
-            mousePositionX = x;
-            mousePositionY = y;
+            mousePosition = new Vector2(x, y);
+            worldPosition = ViewToWorld(mousePosition);
 
-            // Calc Camera Relative Position
-            int relX = mousePositionX - ((ClientSize.Width) / 2);
-            int relY = mousePositionY - ((ClientSize.Height) / 2);
-
-            worldPositionX = (relX / CameraScale) + CameraPosition.X;
-            worldPositionY = (relY / CameraScale) + CameraPosition.Y;
-
-            if (worldPositionX < 0f || worldPositionX >= mapSize.X * Map.CELLSIZE ||
-                worldPositionY < 0f || worldPositionY >= mapSize.Y * Map.CELLSIZE)
+            if (worldPosition.X < 0f || worldPosition.X >= mapSize.X * Map.CELLSIZE ||
+                worldPosition.Y < 0f || worldPosition.Y >= mapSize.Y * Map.CELLSIZE)
+            {
+                HoveredPosition = null;
                 HoveredCell = null;
+            }
             else
+            {
+                HoveredPosition = worldPosition;
                 HoveredCell = new Index2(
-                    (int)(worldPositionX / Map.CELLSIZE), 
-                    (int)(worldPositionY / Map.CELLSIZE));
+                    (int)(worldPosition.X / Map.CELLSIZE),
+                    (int)(worldPosition.Y / Map.CELLSIZE));
+            }
         }
 
         #endregion
