@@ -128,37 +128,54 @@ namespace AntMe
         /// <summary>
         /// Returns the Level to enter on the East Side.
         /// </summary>
-        [DisplayName("Enter Level East")]
-        [Description("Returns the Level to enter on the East Side.")]
+        [DisplayName("Connection Level East")]
+        [Description("Returns the Level on the East Side.")]
         public abstract byte? ConnectionLevelEast { get; }
 
         /// <summary>
         /// Returns the Level to enter on the South Side.
         /// </summary>
-        [DisplayName("Enter Level South")]
-        [Description("Returns the Level to enter on the South Side.")]
+        [DisplayName("Connection Level South")]
+        [Description("Returns the Level on the South Side.")]
         public abstract byte? ConnectionLevelSouth { get; }
 
         /// <summary>
         /// Returns the Level to enter on the West Side.
         /// </summary>
-        [DisplayName("Enter Level West")]
-        [Description("Returns the Level to enter on the West Side.")]
+        [DisplayName("Connection Level West")]
+        [Description("Returns the Level on the West Side.")]
         public abstract byte? ConnectionLevelWest { get; }
 
         /// <summary>
         /// Returns the Level to enter on the North Side.
         /// </summary>
-        [DisplayName("Enter Level North")]
-        [Description("Returns the Level to enter on the North Side.")]
+        [DisplayName("Connection Level North")]
+        [Description("Returns the Level on the North Side.")]
         public abstract byte? ConnectionLevelNorth { get; }
 
         /// <summary>
         /// Validates the current Map Tile against the given Tile.
         /// </summary>
-        /// <param name="compass">Direction</param>
         /// <param name="tile">Tile</param>
-        public virtual void ValidateAgainst(Compass compass, MapTile tile) { }
+        public virtual void ValidateTileToTheEast(MapTile tile) { }
+
+        /// <summary>
+        /// Validates the current Map Tile against the given Tile.
+        /// </summary>
+        /// <param name="tile">Tile</param>
+        public virtual void ValidateTileToTheSouth(MapTile tile) { }
+
+        /// <summary>
+        /// Validates the current Map Tile against the given Tile.
+        /// </summary>
+        /// <param name="tile">Tile</param>
+        public virtual void ValidateTileToTheWest(MapTile tile) { }
+
+        /// <summary>
+        /// Validates the current Map Tile against the given Tile.
+        /// </summary>
+        /// <param name="tile">Tile</param>
+        public virtual void ValidateTileToTheNorth(MapTile tile) { }
 
         /// <summary>
         /// Returns the Height at the given Position.
