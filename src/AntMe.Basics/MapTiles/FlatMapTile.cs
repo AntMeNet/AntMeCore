@@ -15,7 +15,7 @@
         /// <summary>
         /// Returns the Level to enter on the East Side.
         /// </summary>
-        public override byte? EnterLevelEast
+        public override byte? ConnectionLevelEast
         {
             get
             {
@@ -26,7 +26,7 @@
         /// <summary>
         /// Returns the Level to enter on the South Side.
         /// </summary>
-        public override byte? EnterLevelNorth
+        public override byte? ConnectionLevelNorth
         {
             get
             {
@@ -37,7 +37,7 @@
         /// <summary>
         /// Returns the Level to enter on the West Side.
         /// </summary>
-        public override byte? EnterLevelSouth
+        public override byte? ConnectionLevelSouth
         {
             get
             {
@@ -48,7 +48,7 @@
         /// <summary>
         /// Returns the Level to enter on the North Side.
         /// </summary>
-        public override byte? EnterLevelWest
+        public override byte? ConnectionLevelWest
         {
             get
             {

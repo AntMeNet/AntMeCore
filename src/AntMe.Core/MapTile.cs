@@ -130,28 +130,28 @@ namespace AntMe
         /// </summary>
         [DisplayName("Enter Level East")]
         [Description("Returns the Level to enter on the East Side.")]
-        public abstract byte? EnterLevelEast { get; }
+        public abstract byte? ConnectionLevelEast { get; }
 
         /// <summary>
         /// Returns the Level to enter on the South Side.
         /// </summary>
         [DisplayName("Enter Level South")]
         [Description("Returns the Level to enter on the South Side.")]
-        public abstract byte? EnterLevelSouth { get; }
+        public abstract byte? ConnectionLevelSouth { get; }
 
         /// <summary>
         /// Returns the Level to enter on the West Side.
         /// </summary>
         [DisplayName("Enter Level West")]
         [Description("Returns the Level to enter on the West Side.")]
-        public abstract byte? EnterLevelWest { get; }
+        public abstract byte? ConnectionLevelWest { get; }
 
         /// <summary>
         /// Returns the Level to enter on the North Side.
         /// </summary>
         [DisplayName("Enter Level North")]
         [Description("Returns the Level to enter on the North Side.")]
-        public abstract byte? EnterLevelNorth { get; }
+        public abstract byte? ConnectionLevelNorth { get; }
 
         /// <summary>
         /// Validates the current Map Tile against the given Tile.

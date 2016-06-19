@@ -27,13 +27,13 @@
             Payload = payload;
         }
 
-        public override byte? EnterLevelEast { get { return null; } }
+        public override byte? ConnectionLevelEast { get { return null; } }
 
-        public override byte? EnterLevelNorth { get { return null; } }
+        public override byte? ConnectionLevelNorth { get { return null; } }
 
-        public override byte? EnterLevelSouth { get { return null; } }
+        public override byte? ConnectionLevelSouth { get { return null; } }
 
-        public override byte? EnterLevelWest { get { return null; } }
+        public override byte? ConnectionLevelWest { get { return null; } }
 
         public override float GetHeight(Vector2 position)
         {

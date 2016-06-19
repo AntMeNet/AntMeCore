@@ -24,16 +24,16 @@ namespace AntMe.Basics.MapTiles
         /// <summary>
         /// Returns the Level to enter on the East Side.
         /// </summary>
-        public override byte? EnterLevelEast
+        public override byte? ConnectionLevelEast
         {
             get
             {
                 switch (Orientation)
                 {
                     case Compass.East: return null;
-                    case Compass.South: return null;
+                    case Compass.South: return (byte)(HeightLevel + 1);
                     case Compass.West: return (byte)(HeightLevel + 1);
-                    case Compass.North: return (byte)(HeightLevel + 1);
+                    case Compass.North: return null;
                     default: throw new NotSupportedException("Wrong Orientation");
                 }
             }
@@ -42,15 +42,15 @@ namespace AntMe.Basics.MapTiles
         /// <summary>
         /// Returns the Level to enter on the South Side.
         /// </summary>
-        public override byte? EnterLevelSouth
+        public override byte? ConnectionLevelSouth
         {
             get
             {
                 switch (Orientation)
                 {
-                    case Compass.East: return (byte)(HeightLevel + 1);
+                    case Compass.East: return null;
                     case Compass.South: return null;
-                    case Compass.West: return null;
+                    case Compass.West: return (byte)(HeightLevel + 1);
                     case Compass.North: return (byte)(HeightLevel + 1);
                     default: throw new NotSupportedException("Wrong Orientation");
                 }
@@ -60,16 +60,16 @@ namespace AntMe.Basics.MapTiles
         /// <summary>
         /// Returns the Level to enter on the West Side.
         /// </summary>
-        public override byte? EnterLevelWest
+        public override byte? ConnectionLevelWest
         {
             get
             {
                 switch (Orientation)
                 {
                     case Compass.East: return (byte)(HeightLevel + 1);
-                    case Compass.South: return (byte)(HeightLevel + 1);
+                    case Compass.South: return null;
                     case Compass.West: return null;
-                    case Compass.North: return null;
+                    case Compass.North: return (byte)(HeightLevel + 1);
                     default: throw new NotSupportedException("Wrong Orientation");
                 }
             }
@@ -78,15 +78,15 @@ namespace AntMe.Basics.MapTiles
         /// <summary>
         /// Returns the Level to enter on the North Side.
         /// </summary>
-        public override byte? EnterLevelNorth
+        public override byte? ConnectionLevelNorth
         {
             get
             {
                 switch (Orientation)
                 {
-                    case Compass.East: return null;
+                    case Compass.East: return (byte)(HeightLevel + 1);
                     case Compass.South: return (byte)(HeightLevel + 1);
-                    case Compass.West: return (byte)(HeightLevel + 1);
+                    case Compass.West: return null;
                     case Compass.North: return null;
                     default: throw new NotSupportedException("Wrong Orientation");
                 }
