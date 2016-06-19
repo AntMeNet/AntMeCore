@@ -369,7 +369,7 @@ namespace CoreTestClient
             CameraScale = MinCameraScale;
         }
 
-        protected void InvalidateMap()
+        public void InvalidateMap()
         {
             dirtyBuffer = true;
             Invalidate();

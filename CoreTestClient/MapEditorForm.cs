@@ -126,6 +126,8 @@ namespace CoreTestClient
                 {
                     MessageBox.Show(ex.Message);
                 }
+
+                scene.InvalidateMap();
             }
         }
 
