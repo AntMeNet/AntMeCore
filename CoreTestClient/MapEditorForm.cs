@@ -27,18 +27,6 @@ namespace CoreTestClient
             }
         }
 
-        private MapTile tile;
-
-        private MapTile Tile
-        {
-            get { return tile; }
-            set
-            {
-                tile = value;
-                SetTile(value);
-            }
-        }
-
         private TreeNode mapNode;
 
         private TreeNode cellNode;
@@ -47,17 +35,23 @@ namespace CoreTestClient
 
         private EditorTool activeTool;
 
+        private bool mouseDown = false;
+
         public MapEditorForm()
         {
             context = ExtensionLoader.CreateSimulationContext();
 
             InitializeComponent();
 
-            //editorPanel.OnApply += EditorPanel_OnApply;
+            scene.MouseDown += Scene_MouseDown;
+            scene.MouseUp += Scene_MouseUp;
+            scene.MouseLeave += Scene_MouseLeave;
+            scene.OnHoveredCellChanged += Scene_OnHoveredCellChanged;
 
             tools = new List<EditorTool>();
 
             SelectionTool selection = new SelectionTool(context);
+            selection.OnSelectedCellChanged += Selection_OnSelectedCellChanged;
             tools.Add(selection);
             tools.Add(new MapTileTool(context));
             tools.Add(new MaterialTool(context));
@@ -76,24 +70,62 @@ namespace CoreTestClient
             timer.Enabled = true;
         }
 
-        private void EditorPanel_OnApply(object sender, MouseEventArgs e)
+        private void Scene_MouseLeave(object sender, EventArgs e)
+        {
+            mouseDown = false;
+        }
+
+        private void Selection_OnSelectedCellChanged(Index2? newValue)
+        {
+            if (!newValue.HasValue)
+            {
+                SetTile(null, null);
+                return;
+            }
+
+            if (map == null)
+            {
+                SetTile(null, null);
+                return;
+            }
+
+            MapTile tile = map[newValue.Value.X, newValue.Value.Y];
+            SetTile(newValue, tile);
+        }
+
+        private void Scene_OnHoveredCellChanged(Index2? newValue)
+        {
+            if (mouseDown) Apply();
+        }
+
+        private void Scene_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                mouseDown = false;
+        }
+
+        private void Scene_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                mouseDown = true;
+                Apply();
+            }
+        }
+
+        private void Apply()
         {
             if (activeTool != null &&
-                scene.HoveredCell.HasValue &&
-                activeTool.CanApply(Map, scene.HoveredCell.Value))
+                activeTool.CanApply(Map, scene.HoveredCell, scene.HoveredPosition))
             {
                 try
                 {
-                    activeTool.Apply(Map, scene.HoveredCell.Value);
+                    activeTool.Apply(Map, scene.HoveredCell, scene.HoveredPosition);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
-
-                //editorPanel.HighlightedCell = scene.HoveredCell;
-                //editorPanel.DirtyBuffer = true;
-                //editorPanel.Invalidate();
             }
         }
 
@@ -179,9 +211,13 @@ namespace CoreTestClient
             }
         }
 
-        private void SetTile(MapTile tile)
+        private void SetTile(Index2? cell, MapTile tile)
         {
             cellNode.Nodes.Clear();
+            if (cell.HasValue)
+                cellNode.Text = string.Format("Selected Cell ({0})", cell.ToString());
+            else cellNode.Text = "No Selected Cell";
+
             if (tile != null)
             {
                 cellNode.Tag = tile;

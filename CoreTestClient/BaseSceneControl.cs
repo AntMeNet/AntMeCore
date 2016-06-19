@@ -27,6 +27,8 @@ namespace CoreTestClient
         private float maxCameraScale = 1000f;
         private float cameraScale = 1f;
         private Vector2 cameraPosition = Vector2.Zero;
+        private Vector2? hoveredPosition = null;
+        private Index2? hoveredCell = null;
 
         /// <summary>
         /// Gets the minimum Scale Level.
@@ -120,12 +122,29 @@ namespace CoreTestClient
         /// <summary>
         /// Gets the current Position of the Mouse in World Coordinates.
         /// </summary>
-        public Vector2? HoveredPosition { get; private set; }
+        public Vector2? HoveredPosition
+        {
+            get { return hoveredPosition; }
+            private set
+            {
+                hoveredPosition = value;
+                if (OnHoveredPositionChanged != null)
+                    OnHoveredPositionChanged(value);
+            }
+        }
 
         /// <summary>
         /// Gets the current Cell of the Mouse Pointer.
         /// </summary>
-        public Index2? HoveredCell { get; private set; }
+        public Index2? HoveredCell {
+            get { return hoveredCell; }
+            private set
+            {
+                hoveredCell = value;
+                if (OnHoveredCellChanged != null)
+                    OnHoveredCellChanged(value);
+            }
+        }
 
         public BaseSceneControl()
         {
@@ -143,6 +162,13 @@ namespace CoreTestClient
             base.OnResize(e);
 
             RecalcMinCameraScale();
+        }
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+
+            Focus();
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
@@ -354,5 +380,9 @@ namespace CoreTestClient
         protected abstract TileRenderer OnRenderTile(int x, int y, out Compass orientation);
 
         #endregion
+
+        public event ValueUpdate<Index2?> OnHoveredCellChanged;
+
+        public event ValueUpdate<Vector2?> OnHoveredPositionChanged;
     }
 }

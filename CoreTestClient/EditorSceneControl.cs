@@ -19,8 +19,6 @@ namespace CoreTestClient
 
         private Brush hoverBrush;
 
-        private Pen highlightPen;
-
         public EditorSceneControl()
         {
             materials = new Dictionary<string, TileRenderer>();
@@ -40,7 +38,6 @@ namespace CoreTestClient
             }
 
             hoverBrush = new SolidBrush(Color.FromArgb(80, Color.White));
-            highlightPen = new Pen(Color.Red, 3);
         }
 
         public void SetMap(Map map)
@@ -55,10 +52,6 @@ namespace CoreTestClient
 
         protected override void OnDraw(Graphics g)
         {
-            // Draw Highlighted Cell
-            //if (HighlightedCell.HasValue)
-            //    e.Graphics.DrawRectangle(highlightPen, new Rectangle(HighlightedCell.Value.X * TILEWIDTH, HighlightedCell.Value.Y * TILEWIDTH, TILEWIDTH, TILEWIDTH));
-
             // Draw hovered
             if (HoveredCell.HasValue)
                 g.FillRectangle(hoverBrush,

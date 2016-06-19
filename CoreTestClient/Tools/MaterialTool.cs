@@ -35,7 +35,7 @@ namespace CoreTestClient.Tools
 
                 // Set Default (Gras)
                 if (material.Name == "Gras Material")
-                    SelectMaterial(button);
+                    SelectMaterial(b);
             }
         }
 
@@ -47,26 +47,32 @@ namespace CoreTestClient.Tools
             Select();
         }
 
-        public override bool CanApply(Map map, Index2 cell)
+        public override bool CanApply(Map map, Index2? cell, Vector2? position)
         {
-            return (map != null && map[cell.X, cell.Y] != null);
+            if (!cell.HasValue)
+                return false;
+
+            return (map != null && map[cell.Value.X, cell.Value.Y] != null);
         }
 
-        protected override void OnApply(Map map, Index2 cell)
+        protected override void OnApply(Map map, Index2? cell, Vector2? position)
         {
-            if (map[cell.X, cell.Y] == null)
+            if (!cell.HasValue)
+                return;
+
+            if (map[cell.Value.X, cell.Value.Y] == null)
                 throw new NotSupportedException("There is no Map Type at this point");
 
-            MapTile tile = map[cell.X, cell.Y];
+            MapTile tile = map[cell.Value.X, cell.Value.Y];
 
             if (selected != null)
             {
                 ITypeMapperEntry material = selected.Tag as ITypeMapperEntry;
                 if (tile.Material.GetType() != material.Type)
-                    map[cell.X, cell.Y].Material = Activator.CreateInstance(material.Type, Context) as MapMaterial;
+                    map[cell.Value.X, cell.Value.Y].Material = Activator.CreateInstance(material.Type, Context) as MapMaterial;
             }
             else
-                map[cell.X, cell.Y].Material = null;
+                map[cell.Value.X, cell.Value.Y].Material = null;
         }
     }
 }

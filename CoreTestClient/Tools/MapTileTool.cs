@@ -50,9 +50,12 @@ namespace CoreTestClient.Tools
             Select();
         }
 
-        protected override void OnApply(Map map, Index2 cell)
+        protected override void OnApply(Map map, Index2? cell, Vector2? position)
         {
-            MapTile tile = map[cell.X, cell.Y];
+            if (!cell.HasValue)
+                return;
+
+            MapTile tile = map[cell.Value.X, cell.Value.Y];
             MapMaterial material = null;
             if (tile != null)
                 material = tile.Material;
@@ -65,8 +68,8 @@ namespace CoreTestClient.Tools
             if (tile == null || tile.GetType() != mapTile.Type)
             {
                 // Create a new Map Tile
-                map[cell.X, cell.Y] = Activator.CreateInstance(mapTile.Type, Context) as MapTile;
-                map[cell.X, cell.Y].Material = material;
+                map[cell.Value.X, cell.Value.Y] = Activator.CreateInstance(mapTile.Type, Context) as MapTile;
+                map[cell.Value.X, cell.Value.Y].Material = material;
             }
             else if (tile.GetType() == mapTile.Type)
             {

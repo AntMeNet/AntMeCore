@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using AntMe;
 using System.Drawing;
 using System.IO;
@@ -8,7 +7,20 @@ namespace CoreTestClient.Tools
 {
     public class SelectionTool : EditorTool
     {
+        private Index2? selectedCell;
+
         private ToolStripButton selectionButton;
+
+        public Index2? SelectedCell
+        {
+            get { return selectedCell; }
+            set
+            {
+                selectedCell = value;
+                if (OnSelectedCellChanged != null)
+                    OnSelectedCellChanged(value);
+            }
+        }
 
         public override ToolStripItem RootItem { get { return selectionButton; } }
 
@@ -21,8 +33,11 @@ namespace CoreTestClient.Tools
             selectionButton.Click += (s, e) => { Select(); };
         }
 
-        protected override void OnApply(Map map, Index2 cell)
+        protected override void OnApply(Map map, Index2? cell, Vector2? position)
         {
+            SelectedCell = cell;
         }
+
+        public event ValueUpdate<Index2?> OnSelectedCellChanged;
     }
 }
