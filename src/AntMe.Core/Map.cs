@@ -84,9 +84,14 @@ namespace AntMe
         private MapTile[,] tiles;
 
         /// <summary>
-        /// Gets or sets the border behavior of this map.
+        /// Gets or sets the border behavior of this Map.
         /// </summary>
         public bool BlockBorder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base Height Level for this Map.
+        /// </summary>
+        public byte BaseLevel { get; set; }
 
         /// <summary>
         /// Dictionary of missing Properties during Deserialization.
@@ -142,8 +147,8 @@ namespace AntMe
                 throw new ArgumentOutOfRangeException(string.Format("Map must have a max of {0} Rows", MAX_HEIGHT));
             if (playerCount < 0)
                 throw new ArgumentOutOfRangeException("Player Count can't me smaller than zero");
-            if (playerCount > 8)
-                throw new ArgumentOutOfRangeException("Player Count can't be greater than 8");
+            if (playerCount > Level.MAX_SLOTS)
+                throw new ArgumentOutOfRangeException(string.Format("Player Count can't be greater than {}", Level.MAX_SLOTS));
 
             // Create Tiles
             tiles = new MapTile[width, height];
@@ -265,6 +270,7 @@ namespace AntMe
 
                 var map = new Map(context, width, height);
                 map.BlockBorder = blockBorder;
+                map.BaseLevel = 1;
 
                 if (playercount < MIN_STARTPOINTS)
                     throw new Exception("Too less Player in this Map");
@@ -441,7 +447,7 @@ namespace AntMe
             // Check Map
             if (map == null)
                 throw new ArgumentNullException("map");
-            map.CheckMap();
+            map.ValidateMap();
 
             // Check Stream
             if (stream == null)
@@ -490,51 +496,160 @@ namespace AntMe
         /// <summary>
         ///     Führt eine Plausibilitätsprüfung der Karten-Einstellungen durch
         /// </summary>
-        public void CheckMap()
+        public void ValidateMap()
         {
-            // Tiles prüfen
-            if (tiles == null)
-                throw new Exception("Tiles Array is null");
+            List<Exception> exceptions = new List<Exception>();
 
-            Index2 cells = GetCellCount();
+            // Validate Tiles Stuff
+            if (tiles != null)
+            {
+                Index2 cells = GetCellCount();
 
-            // Karten Dimensionen checken
-            if (cells.X < MIN_WIDTH)
-                throw new Exception(string.Format("Map must have at least {0} Columns", MIN_WIDTH));
-            if (cells.X > MAX_WIDTH)
-                throw new Exception(string.Format("Map must have a maximum of {0} Columns", MAX_WIDTH));
+                // Check Map Dimensions
+                if (cells.X < MIN_WIDTH)
+                    exceptions.Add(new InvalidMapException(string.Format("Map must have at least {0} Columns", MIN_WIDTH)));
+                if (cells.X > MAX_WIDTH)
+                    exceptions.Add(new InvalidMapException(string.Format("Map must have a maximum of {0} Columns", MAX_WIDTH)));
+                if (cells.Y < MIN_HEIGHT)
+                    exceptions.Add(new InvalidMapException(string.Format("Map must have at least {0} Rows", MIN_HEIGHT)));
+                if (cells.Y > MAX_HEIGHT)
+                    exceptions.Add(new InvalidMapException(string.Format("Map must have a maximum of {0} Rows", MAX_HEIGHT)));
 
-            if (cells.Y < MIN_HEIGHT)
-                throw new Exception(string.Format("Map must have at least {0} Rows", MIN_HEIGHT));
-            if (cells.Y > MAX_HEIGHT)
-                throw new Exception(string.Format("Map must have a maximum of {0} Rows", MAX_HEIGHT));
+                // Check Individual Cells
+                for (int y = 0; y < cells.Y; y++)
+                {
+                    for (int x = 0; x < cells.X; x++)
+                    {
+                        MapTile tile = tiles[x, y];
+                        if (tile == null) continue;
+
+                        // Collect neighbors
+                        MapTile northTile = (y <= 0 ? null : tiles[x, y - 1]);
+                        MapTile southTile = (y >= cells.Y - 1 ? null : tiles[x, y + 1]);
+                        MapTile westTile = (x <= 0 ? null : tiles[x - 1, y]);
+                        MapTile eastTile = (x >= cells.Y - 1 ? null : tiles[x + 1, y]);
+
+                        // Check Height Map
+                        if (y <= 0)
+                        {
+                            if (tile.ConnectionLevelNorth != BaseLevel)
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level at the Border (North)"));
+                        }
+                        else
+                        {
+                            if (tile.ConnectionLevelNorth != (northTile != null ? northTile.ConnectionLevelSouth : null))
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the North"));
+                        }
+
+                        if (y >= cells.Y - 1)
+                        {
+                            if (tile.ConnectionLevelSouth != BaseLevel)
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level at the Border (South)"));
+                        }
+                        else
+                        {
+                            if (tile.ConnectionLevelSouth != (southTile != null ? southTile.ConnectionLevelNorth : null))
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the South"));
+                        }
+
+                        if (x <= 0)
+                        {
+                            if (tile.ConnectionLevelWest != BaseLevel)
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level at the Border (West)"));
+                        }
+                        else
+                        {
+                            if (tile.ConnectionLevelWest != (westTile != null ? westTile.ConnectionLevelEast : null))
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the West"));
+                        }
+
+                        if (x >= cells.Y - 1)
+                        {
+                            if (tile.ConnectionLevelEast != BaseLevel)
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level at the Border (East)"));
+                        }
+                        else
+                        {
+                            if (tile.ConnectionLevelEast != (eastTile != null ? eastTile.ConnectionLevelWest : null))
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the East"));
+                        }
+
+                        // Check Neighbors
+                        try
+                        {
+                            tile.ValidateTileToTheNorth(northTile);
+                        }
+                        catch (Exception ex)
+                        {
+                            exceptions.Add(new InvalidMapTileException(new Index2(x,y), "Invalid Neighbor Map Tile to the North", ex));
+                        }
+
+                        try
+                        {
+                            tile.ValidateTileToTheSouth(southTile);
+                        }
+                        catch (Exception ex)
+                        {
+                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the South", ex));
+                        }
+
+                        try
+                        {
+                            tile.ValidateTileToTheWest(westTile);
+                        }
+                        catch (Exception ex)
+                        {
+                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the West", ex));
+                        }
+
+                        try
+                        {
+                            tile.ValidateTileToTheEast(eastTile);
+                        }
+                        catch (Exception ex)
+                        {
+                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the East", ex));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                exceptions.Add(new InvalidMapException("Tiles Array is null"));
+            }
 
             // Startpunkte überprüfen
-            if (StartPoints == null)
-                throw new Exception("The List of StartPoints is null");
-
-            // Spieleranzahl prüfen
-            if (GetPlayerCount() < MIN_STARTPOINTS)
-                throw new Exception(string.Format("There must be at least {0} player", MIN_STARTPOINTS));
-            if (GetPlayerCount() > MAX_STARTPOINTS)
-                throw new Exception(string.Format("The maximum Player Count is {0}", MAX_STARTPOINTS));
-
-            // TODO: Check Cell-Structure
-
-            // Alle Startpunkte überprüfen
-            for (int i = 0; i < StartPoints.Length; i++)
+            if (StartPoints != null)
             {
-                // Prüfen, ob die Zelle existiert
-                Index2 startPoint = StartPoints[i];
-                if (startPoint.X < 0 || startPoint.X >= tiles.GetLength(0) ||
-                    startPoint.Y < 0 || startPoint.Y >= tiles.GetLength(1))
-                    throw new Exception(string.Format("StartPoint {0} is out of map bounds", i));
+                // Spieleranzahl prüfen
+                if (GetPlayerCount() < MIN_STARTPOINTS)
+                    exceptions.Add(new InvalidMapException(string.Format("There must be at least {0} player", MIN_STARTPOINTS)));
+                if (GetPlayerCount() > MAX_STARTPOINTS)
+                    exceptions.Add(new Exception(string.Format("The maximum Player Count is {0}", MAX_STARTPOINTS)));
 
-                // Prüfen, ob noch ein anderer Startpoint auf der selben Zelle ist.
-                for (int j = 0; j < StartPoints.Length; j++)
-                    if (i != j && StartPoints[i] == StartPoints[j])
-                        throw new Exception(string.Format("StartPoints {0} and {1} are on the same Cell", i, j));
+                // Alle Startpunkte überprüfen
+                for (int i = 0; i < StartPoints.Length; i++)
+                {
+                    // Prüfen, ob die Zelle existiert
+                    Index2 startPoint = StartPoints[i];
+                    if (startPoint.X < 0 || startPoint.X >= tiles.GetLength(0) ||
+                        startPoint.Y < 0 || startPoint.Y >= tiles.GetLength(1))
+                        exceptions.Add(new InvalidMapException(string.Format("StartPoint {0} is out of map bounds", i)));
+
+                    // Prüfen, ob noch ein anderer Startpoint auf der selben Zelle ist.
+                    for (int j = 0; j < StartPoints.Length; j++)
+                        if (i != j && StartPoints[i] == StartPoints[j])
+                            exceptions.Add(new InvalidMapException(string.Format("StartPoints {0} and {1} are on the same Cell", i, j)));
+                }
             }
+            else
+            {
+                exceptions.Add(new InvalidMapException("The List of StartPoints is null"));
+            }
+
+            // Throw aggregated Validation Exceptions
+            if (exceptions.Count > 0)
+                throw new AggregateException("There are several Map Validation Errors", exceptions);
         }
 
         /// <summary>
@@ -710,6 +825,7 @@ namespace AntMe
 
             // Map Data
             writer.Write(BlockBorder);
+            writer.Write(BaseLevel);
 
             // Startpoints
             writer.Write((byte)StartPoints.Length);
@@ -948,6 +1064,7 @@ namespace AntMe
 
             // Map Data
             BlockBorder = reader.ReadBoolean();
+            BaseLevel = reader.ReadByte();
 
             // Startpoints
             StartPoints = new Index2[reader.ReadByte()];

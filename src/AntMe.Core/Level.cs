@@ -175,7 +175,7 @@ namespace AntMe
                 SetMode(LevelMode.InitFailed, exception);
                 throw exception;
             }
-            map.CheckMap();
+            map.ValidateMap();
 
             int minPlayer = LevelDescription.MinPlayerCount;
             int maxPlayer = LevelDescription.MaxPlayerCount;

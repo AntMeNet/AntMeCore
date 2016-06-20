@@ -73,6 +73,7 @@
     <Compile Include="InfoProperty.cs" />
     <Compile Include="Interop.cs" />
     <Compile Include="InteropProperty.cs" />
+    <Compile Include="InvalidMapException.cs" />
     <Compile Include="ISerializableState.cs" />
     <Compile Include="ItemInfo.cs" />
     <Compile Include="ItemInfoProperty.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="MapState.cs" />
     <Compile Include="MapStateProperty.cs" />
     <Compile Include="MapTile.cs" />
+    <Compile Include="InvalidMapTileException.cs" />
     <Compile Include="MapTileInfo.cs" />
     <Compile Include="MapTileInfoProperty.cs" />
     <Compile Include="MapTileProperty.cs" />

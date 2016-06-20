@@ -79,7 +79,7 @@ namespace AntMe
                 throw new ArgumentNullException("map");
 
             // Check Map
-            map.CheckMap();
+            map.ValidateMap();
             Map = map;
 
             // Initialize Extensions
