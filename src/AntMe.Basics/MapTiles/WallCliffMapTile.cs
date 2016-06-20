@@ -34,5 +34,17 @@ namespace AntMe.Basics.MapTiles
         {
             return (byte)(HeightLevel + 1);
         }
+
+        protected override void OnValidateEastSide(MapTile tile)
+        {
+            if (!(tile is CliffMapTile))
+                throw new NotSupportedException("Map Tile must be a Cliff Tile");
+        }
+
+        protected override void OnValidateWestSide(MapTile tile)
+        {
+            if (!(tile is CliffMapTile))
+                throw new NotSupportedException("Map Tile must be a Cliff Tile");
+        }
     }
 }

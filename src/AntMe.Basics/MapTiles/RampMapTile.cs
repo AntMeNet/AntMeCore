@@ -41,6 +41,18 @@ namespace AntMe.Basics.MapTiles
             return (byte)(HeightLevel + 1);
         }
 
+        protected override void OnValidateEastSide(MapTile tile)
+        {
+            if (!(tile is RampMapTile) && !(tile is LeftRampToCliffMapTile))
+                    throw new NotSupportedException("Map Tile must be a Ramp or Left Cliff Tile");
+        }
+
+        protected override void OnValidateWestSide(MapTile tile)
+        {
+            if (!(tile is RampMapTile) && !(tile is LeftRampToCliffMapTile))
+                throw new NotSupportedException("Map Tile must be a Ramp or Left Cliff Tile");
+        }
+
         /// <summary>
         /// Returns the Height at the given Position.
         /// </summary>
