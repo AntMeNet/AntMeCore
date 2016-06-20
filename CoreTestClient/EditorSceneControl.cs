@@ -88,9 +88,9 @@ namespace CoreTestClient
 
         #region Buffer Generation
 
-        protected override TileRenderer OnRenderMaterial(int x, int y, out Compass orientation)
+        protected override TileRenderer OnRenderMaterial(int x, int y, out MapTileOrientation orientation)
         {
-            orientation = Compass.East;
+            orientation = MapTileOrientation.NotRotated;
 
             // No Map - no Renderer
             if (map == null)
@@ -110,9 +110,9 @@ namespace CoreTestClient
             return null;            
         }
 
-        protected override TileRenderer OnRenderTile(int x, int y, out Compass orientation)
+        protected override TileRenderer OnRenderTile(int x, int y, out MapTileOrientation orientation)
         {
-            orientation = Compass.East;
+            orientation = MapTileOrientation.NotRotated;
 
             // No Map - no Renderer
             if (map == null)

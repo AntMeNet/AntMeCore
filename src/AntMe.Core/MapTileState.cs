@@ -26,7 +26,7 @@ namespace AntMe
         /// <summary>
         /// Gets or sets the Orientation of this Tile.
         /// </summary>
-        public Compass Orientation { get; set; }
+        public MapTileOrientation Orientation { get; set; }
 
         /// <summary>
         /// Default Constructor for the Deserializer.

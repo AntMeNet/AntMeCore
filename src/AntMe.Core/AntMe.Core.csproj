@@ -97,6 +97,7 @@
     <Compile Include="InvalidMapTileException.cs" />
     <Compile Include="MapTileInfo.cs" />
     <Compile Include="MapTileInfoProperty.cs" />
+    <Compile Include="MapTileOrientation.cs" />
     <Compile Include="MapTileProperty.cs" />
     <Compile Include="MapTileState.cs" />
     <Compile Include="MapTileStateProperty.cs" />

@@ -14,7 +14,7 @@ namespace AntMe
 
         private MapMaterial material;
 
-        private Compass orientation;
+        private MapTileOrientation orientation;
 
         private byte heightLevel;
 
@@ -98,7 +98,7 @@ namespace AntMe
         /// </summary>
         [DisplayName("Orientation")]
         [Description("Gets or sets the Orientation of this Tile.")]
-        public Compass Orientation
+        public MapTileOrientation Orientation
         {
             get { return orientation; }
             set
@@ -130,52 +130,192 @@ namespace AntMe
         /// </summary>
         [DisplayName("Connection Level East")]
         [Description("Returns the Level on the East Side.")]
-        public abstract byte? ConnectionLevelEast { get; }
+        public byte? ConnectionLevelEast
+        {
+            get
+            {
+                switch (Orientation)
+                {
+                    case MapTileOrientation.NotRotated: return GetConnectionLevelEast();
+                    case MapTileOrientation.RotBy90Degrees: return GetConnectionLevelNorth();
+                    case MapTileOrientation.RotBy180Degrees: return GetConnectionLevelWest();
+                    case MapTileOrientation.RotBy270Degrees: return GetConnectionLevelSouth();
+                    default: throw new NotSupportedException("Wrong Orientation Value");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a call from ConnectionLevel[Orientation] depends on Map Tile Orientation.
+        /// </summary>
+        /// <returns>Height Level on an unrotated East Side</returns>
+        protected virtual byte? GetConnectionLevelEast() { return null; }
 
         /// <summary>
         /// Returns the Level to enter on the South Side.
         /// </summary>
         [DisplayName("Connection Level South")]
         [Description("Returns the Level on the South Side.")]
-        public abstract byte? ConnectionLevelSouth { get; }
+        public byte? ConnectionLevelSouth
+        {
+            get
+            {
+                switch (Orientation)
+                {
+                    case MapTileOrientation.NotRotated: return GetConnectionLevelSouth();
+                    case MapTileOrientation.RotBy90Degrees: return GetConnectionLevelEast();
+                    case MapTileOrientation.RotBy180Degrees: return GetConnectionLevelNorth();
+                    case MapTileOrientation.RotBy270Degrees: return GetConnectionLevelWest();
+                    default: throw new NotSupportedException("Wrong Orientation Value");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a call from ConnectionLevel[Orientation] depends on Map Tile Orientation.
+        /// </summary>
+        /// <returns>Height Level on an unrotated South Side</returns>
+        protected virtual byte? GetConnectionLevelSouth() { return null; }
 
         /// <summary>
         /// Returns the Level to enter on the West Side.
         /// </summary>
         [DisplayName("Connection Level West")]
         [Description("Returns the Level on the West Side.")]
-        public abstract byte? ConnectionLevelWest { get; }
+        public byte? ConnectionLevelWest
+        {
+            get
+            {
+                switch (Orientation)
+                {
+                    case MapTileOrientation.NotRotated: return GetConnectionLevelWest();
+                    case MapTileOrientation.RotBy90Degrees: return GetConnectionLevelSouth();
+                    case MapTileOrientation.RotBy180Degrees: return GetConnectionLevelEast();
+                    case MapTileOrientation.RotBy270Degrees: return GetConnectionLevelNorth();
+                    default: throw new NotSupportedException("Wrong Orientation Value");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a call from ConnectionLevel[Orientation] depends on Map Tile Orientation.
+        /// </summary>
+        /// <returns>Height Level on an unrotated West Side</returns>
+        protected virtual byte? GetConnectionLevelWest() { return null; }
 
         /// <summary>
         /// Returns the Level to enter on the North Side.
         /// </summary>
         [DisplayName("Connection Level North")]
         [Description("Returns the Level on the North Side.")]
-        public abstract byte? ConnectionLevelNorth { get; }
+        public byte? ConnectionLevelNorth
+        {
+            get
+            {
+                switch (Orientation)
+                {
+                    case MapTileOrientation.NotRotated: return GetConnectionLevelNorth();
+                    case MapTileOrientation.RotBy90Degrees: return GetConnectionLevelWest();
+                    case MapTileOrientation.RotBy180Degrees: return GetConnectionLevelSouth();
+                    case MapTileOrientation.RotBy270Degrees: return GetConnectionLevelEast();
+                    default: throw new NotSupportedException("Wrong Orientation Value");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a call from ConnectionLevel[Orientation] depends on Map Tile Orientation.
+        /// </summary>
+        /// <returns>Height Level on an unrotated North Side</returns>
+        protected virtual byte? GetConnectionLevelNorth() { return null; }
 
         /// <summary>
         /// Validates the current Map Tile against the given Tile.
         /// </summary>
         /// <param name="tile">Tile</param>
-        public virtual void ValidateTileToTheEast(MapTile tile) { }
+        public void ValidateTileToTheEast(MapTile tile)
+        {
+            switch (Orientation)
+            {
+                case MapTileOrientation.NotRotated: OnValidateEastSide(tile); break;
+                case MapTileOrientation.RotBy90Degrees: OnValidateNorthSide(tile); break;
+                case MapTileOrientation.RotBy180Degrees: OnValidateWestSide(tile); break;
+                case MapTileOrientation.RotBy270Degrees: OnValidateSouthSide(tile); break;
+                default: throw new NotSupportedException("Wrong Orientation Value");
+            }
+        }
+
+        /// <summary>
+        /// Gets called to validate the Map Tile close to this one.
+        /// </summary>
+        /// <param name="tile">Neighbor Tile</param>
+        protected virtual void OnValidateEastSide(MapTile tile) { }
 
         /// <summary>
         /// Validates the current Map Tile against the given Tile.
         /// </summary>
         /// <param name="tile">Tile</param>
-        public virtual void ValidateTileToTheSouth(MapTile tile) { }
+        public virtual void ValidateTileToTheSouth(MapTile tile)
+        {
+            switch (Orientation)
+            {
+                case MapTileOrientation.NotRotated: OnValidateSouthSide(tile); break;
+                case MapTileOrientation.RotBy90Degrees: OnValidateEastSide(tile); break;
+                case MapTileOrientation.RotBy180Degrees: OnValidateNorthSide(tile); break;
+                case MapTileOrientation.RotBy270Degrees: OnValidateWestSide(tile); break;
+                default: throw new NotSupportedException("Wrong Orientation Value");
+            }
+        }
+
+        /// <summary>
+        /// Gets called to validate the Map Tile close to this one.
+        /// </summary>
+        /// <param name="tile">Neighbor Tile</param>
+        protected virtual void OnValidateSouthSide(MapTile tile) { }
 
         /// <summary>
         /// Validates the current Map Tile against the given Tile.
         /// </summary>
         /// <param name="tile">Tile</param>
-        public virtual void ValidateTileToTheWest(MapTile tile) { }
+        public virtual void ValidateTileToTheWest(MapTile tile)
+        {
+            switch (Orientation)
+            {
+                case MapTileOrientation.NotRotated: OnValidateWestSide(tile); break;
+                case MapTileOrientation.RotBy90Degrees: OnValidateSouthSide(tile); break;
+                case MapTileOrientation.RotBy180Degrees: OnValidateEastSide(tile); break;
+                case MapTileOrientation.RotBy270Degrees: OnValidateNorthSide(tile); break;
+                default: throw new NotSupportedException("Wrong Orientation Value");
+            }
+        }
+
+        /// <summary>
+        /// Gets called to validate the Map Tile close to this one.
+        /// </summary>
+        /// <param name="tile">Neighbor Tile</param>
+        protected virtual void OnValidateWestSide(MapTile tile) { }
 
         /// <summary>
         /// Validates the current Map Tile against the given Tile.
         /// </summary>
         /// <param name="tile">Tile</param>
-        public virtual void ValidateTileToTheNorth(MapTile tile) { }
+        public virtual void ValidateTileToTheNorth(MapTile tile)
+        {
+            switch (Orientation)
+            {
+                case MapTileOrientation.NotRotated: OnValidateNorthSide(tile); break;
+                case MapTileOrientation.RotBy90Degrees: OnValidateWestSide(tile); break;
+                case MapTileOrientation.RotBy180Degrees: OnValidateSouthSide(tile); break;
+                case MapTileOrientation.RotBy270Degrees: OnValidateEastSide(tile); break;
+                default: throw new NotSupportedException("Wrong Orientation Value");
+            }
+        }
+
+        /// <summary>
+        /// Gets called to validate the Map Tile close to this one.
+        /// </summary>
+        /// <param name="tile">Neighbor Tile</param>
+        protected virtual void OnValidateNorthSide(MapTile tile) { }
 
         /// <summary>
         /// Returns the Height at the given Position.
@@ -212,7 +352,7 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public virtual void DeserializeFirst(BinaryReader stream, byte version)
         {
-            Orientation = (Compass)stream.ReadUInt16();
+            Orientation = (MapTileOrientation)stream.ReadUInt16();
             HeightLevel = stream.ReadByte();
         }
 
@@ -234,7 +374,7 @@ namespace AntMe
         /// <summary>
         /// Signal for a changed Orientation.
         /// </summary>
-        public event ValueUpdate<Compass> OnOrientationChanged;
+        public event ValueUpdate<MapTileOrientation> OnOrientationChanged;
 
         /// <summary>
         /// Signal for a changed HeightLevel.

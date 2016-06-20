@@ -8,19 +8,19 @@ namespace CoreTestClient.Renderer
     {
         private Bitmap bitmap;
 
-        private Dictionary<Compass, Bitmap> bitmaps;
+        private Dictionary<MapTileOrientation, Bitmap> bitmaps;
 
         public TileRenderer(Bitmap bitmap)
         {
             this.bitmap = bitmap;
-            bitmaps = new Dictionary<Compass, Bitmap>();
-            bitmaps.Add(Compass.East, Rotate(bitmap, Compass.East));
-            bitmaps.Add(Compass.South, Rotate(bitmap, Compass.South));
-            bitmaps.Add(Compass.West, Rotate(bitmap, Compass.West));
-            bitmaps.Add(Compass.North, Rotate(bitmap, Compass.North));
+            bitmaps = new Dictionary<MapTileOrientation, Bitmap>();
+            bitmaps.Add(MapTileOrientation.NotRotated, Rotate(bitmap, MapTileOrientation.NotRotated));
+            bitmaps.Add(MapTileOrientation.RotBy90Degrees, Rotate(bitmap, MapTileOrientation.RotBy90Degrees));
+            bitmaps.Add(MapTileOrientation.RotBy180Degrees, Rotate(bitmap, MapTileOrientation.RotBy180Degrees));
+            bitmaps.Add(MapTileOrientation.RotBy270Degrees, Rotate(bitmap, MapTileOrientation.RotBy270Degrees));
         }
 
-        private Bitmap Rotate(Bitmap input, Compass orientation)
+        private Bitmap Rotate(Bitmap input, MapTileOrientation orientation)
         {
             Bitmap result = new Bitmap(input.Height, input.Width);
             for (int y = 0; y < input.Height; y++)
@@ -30,16 +30,16 @@ namespace CoreTestClient.Renderer
                     Color pixel = input.GetPixel(x, y);
                     switch (orientation)
                     {
-                        case Compass.East:
+                        case MapTileOrientation.NotRotated:
                             result.SetPixel(x, y, pixel);
                             break;
-                        case Compass.South:
+                        case MapTileOrientation.RotBy90Degrees:
                             result.SetPixel(result.Width - 1 - y, x, pixel);
                             break;
-                        case Compass.West:
+                        case MapTileOrientation.RotBy180Degrees:
                             result.SetPixel(result.Width - 1 - x, result.Height - 1 - y, pixel);
                             break;
-                        case Compass.North:
+                        case MapTileOrientation.RotBy270Degrees:
                             result.SetPixel(y, result.Height - 1 - x, pixel);
                             break;
                     }
@@ -49,7 +49,7 @@ namespace CoreTestClient.Renderer
             return result;
         }
 
-        public void Draw(Graphics g, int x, int y, Compass orientation)
+        public void Draw(Graphics g, int x, int y, MapTileOrientation orientation)
         {
             g.DrawImageUnscaled(bitmaps[orientation], x, y);
         }

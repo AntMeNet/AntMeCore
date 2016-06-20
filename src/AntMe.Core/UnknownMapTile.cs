@@ -27,17 +27,14 @@
             Payload = payload;
         }
 
-        public override byte? ConnectionLevelEast { get { return null; } }
-
-        public override byte? ConnectionLevelNorth { get { return null; } }
-
-        public override byte? ConnectionLevelSouth { get { return null; } }
-
-        public override byte? ConnectionLevelWest { get { return null; } }
-
+        /// <summary>
+        /// Returns the Height at the given Position.
+        /// </summary>
+        /// <param name="position">relative Position</param>
+        /// <returns>Map Height</returns>
         public override float GetHeight(Vector2 position)
         {
-            return 0f;
+            return HeightLevel;
         }
     }
 }

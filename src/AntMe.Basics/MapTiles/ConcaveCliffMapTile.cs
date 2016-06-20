@@ -22,75 +22,19 @@ namespace AntMe.Basics.MapTiles
         public ConcaveCliffMapTile(SimulationContext context) : base(context) { }
 
         /// <summary>
-        /// Returns the Level to enter on the East Side.
-        /// </summary>
-        public override byte? ConnectionLevelEast
-        {
-            get
-            {
-                switch (Orientation)
-                {
-                    case Compass.East: return null;
-                    case Compass.South: return (byte)(HeightLevel + 1);
-                    case Compass.West: return (byte)(HeightLevel + 1);
-                    case Compass.North: return null;
-                    default: throw new NotSupportedException("Wrong Orientation");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns the Level to enter on the South Side.
-        /// </summary>
-        public override byte? ConnectionLevelSouth
-        {
-            get
-            {
-                switch (Orientation)
-                {
-                    case Compass.East: return null;
-                    case Compass.South: return null;
-                    case Compass.West: return (byte)(HeightLevel + 1);
-                    case Compass.North: return (byte)(HeightLevel + 1);
-                    default: throw new NotSupportedException("Wrong Orientation");
-                }
-            }
-        }
-
-        /// <summary>
         /// Returns the Level to enter on the West Side.
         /// </summary>
-        public override byte? ConnectionLevelWest
+        protected override byte? GetConnectionLevelWest()
         {
-            get
-            {
-                switch (Orientation)
-                {
-                    case Compass.East: return (byte)(HeightLevel + 1);
-                    case Compass.South: return null;
-                    case Compass.West: return null;
-                    case Compass.North: return (byte)(HeightLevel + 1);
-                    default: throw new NotSupportedException("Wrong Orientation");
-                }
-            }
+            return (byte)(HeightLevel + 1);
         }
 
         /// <summary>
         /// Returns the Level to enter on the North Side.
         /// </summary>
-        public override byte? ConnectionLevelNorth
+        protected override byte? GetConnectionLevelNorth()
         {
-            get
-            {
-                switch (Orientation)
-                {
-                    case Compass.East: return (byte)(HeightLevel + 1);
-                    case Compass.South: return (byte)(HeightLevel + 1);
-                    case Compass.West: return null;
-                    case Compass.North: return null;
-                    default: throw new NotSupportedException("Wrong Orientation");
-                }
-            }
+            return (byte)(HeightLevel + 1);
         }
     }
 }

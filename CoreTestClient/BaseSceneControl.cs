@@ -292,7 +292,7 @@ namespace CoreTestClient
                         {
                             for (int x = 0; x < mapSize.X; x++)
                             {
-                                Compass orientation;
+                                MapTileOrientation orientation;
                                 TileRenderer renderer = OnRenderMaterial(x, y, out orientation);
                                 if (renderer != null)
                                     renderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
@@ -379,9 +379,9 @@ namespace CoreTestClient
             Invalidate();
         }
 
-        protected abstract TileRenderer OnRenderMaterial(int x, int y, out Compass orientation);
+        protected abstract TileRenderer OnRenderMaterial(int x, int y, out MapTileOrientation orientation);
 
-        protected abstract TileRenderer OnRenderTile(int x, int y, out Compass orientation);
+        protected abstract TileRenderer OnRenderTile(int x, int y, out MapTileOrientation orientation);
 
         #endregion
 

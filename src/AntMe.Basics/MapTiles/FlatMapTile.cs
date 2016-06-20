@@ -15,45 +15,34 @@
         /// <summary>
         /// Returns the Level to enter on the East Side.
         /// </summary>
-        public override byte? ConnectionLevelEast
+        protected override byte? GetConnectionLevelEast()
         {
-            get
-            {
-                return HeightLevel;
-            }
+            return HeightLevel;
         }
 
         /// <summary>
         /// Returns the Level to enter on the South Side.
         /// </summary>
-        public override byte? ConnectionLevelNorth
+        protected override byte? GetConnectionLevelNorth()
         {
-            get
-            {
-                return HeightLevel;
-            }
+            return HeightLevel;
         }
 
         /// <summary>
         /// Returns the Level to enter on the West Side.
         /// </summary>
-        public override byte? ConnectionLevelSouth
+        protected override byte? GetConnectionLevelSouth()
         {
-            get
-            {
-                return HeightLevel;
-            }
+            return HeightLevel;
         }
 
         /// <summary>
         /// Returns the Level to enter on the North Side.
         /// </summary>
-        public override byte? ConnectionLevelWest
+        protected override byte? GetConnectionLevelWest()
         {
-            get
-            {
-                return HeightLevel;
-            }
+            return HeightLevel;
+
         }
 
         /// <summary>

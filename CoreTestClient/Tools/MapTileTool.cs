@@ -74,7 +74,7 @@ namespace CoreTestClient.Tools
             else if (tile.GetType() == mapTile.Type)
             {
                 // Rotate 90 Degrees
-                tile.Orientation = (Compass)(((int)tile.Orientation + 90) % 360);
+                tile.Orientation = (MapTileOrientation)(((int)tile.Orientation + 90) % 360);
             }
         }
     }
