@@ -11,7 +11,7 @@ namespace CoreTestClient
         /// <summary>
         /// Gets the Size of a cell in Pixel for the Buffer.
         /// </summary>
-        private const int TILEWIDTH = 64;
+        protected const int TILEWIDTH = 64;
 
         /// <summary>
         /// Gets the Scale Factor for the Buffer.
@@ -302,6 +302,8 @@ namespace CoreTestClient
                                     renderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
                             }
                         }
+
+                        OnBufferDraw(g, mapSize);
                     }
 
                     dirtyBuffer = false;
@@ -325,6 +327,8 @@ namespace CoreTestClient
             e.Graphics.TranslateTransform(-CameraPosition.X, -CameraPosition.Y);
             OnDraw(e.Graphics);
         }
+
+        protected virtual void OnBufferDraw(Graphics g, Index2 mapSize) { }
 
         protected abstract void OnDraw(Graphics g);
 

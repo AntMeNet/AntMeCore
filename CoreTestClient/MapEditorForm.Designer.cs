@@ -46,16 +46,27 @@
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.errorContainer = new System.Windows.Forms.SplitContainer();
             this.scene = new CoreTestClient.EditorSceneControl();
+            this.errorsList = new System.Windows.Forms.ListView();
+            this.cellColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.descriptionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label1 = new System.Windows.Forms.Label();
             this.toolSplitContainer = new System.Windows.Forms.SplitContainer();
             this.treeView = new System.Windows.Forms.TreeView();
+            this.label2 = new System.Windows.Forms.Label();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.label3 = new System.Windows.Forms.Label();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorContainer)).BeginInit();
+            this.errorContainer.Panel1.SuspendLayout();
+            this.errorContainer.Panel2.SuspendLayout();
+            this.errorContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.toolSplitContainer)).BeginInit();
             this.toolSplitContainer.Panel1.SuspendLayout();
             this.toolSplitContainer.Panel2.SuspendLayout();
@@ -174,7 +185,7 @@
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.scene);
+            this.splitContainer.Panel1.Controls.Add(this.errorContainer);
             // 
             // splitContainer.Panel2
             // 
@@ -183,14 +194,67 @@
             this.splitContainer.SplitterDistance = 680;
             this.splitContainer.TabIndex = 4;
             // 
+            // errorContainer
+            // 
+            this.errorContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.errorContainer.Location = new System.Drawing.Point(0, 0);
+            this.errorContainer.Name = "errorContainer";
+            this.errorContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // errorContainer.Panel1
+            // 
+            this.errorContainer.Panel1.Controls.Add(this.scene);
+            // 
+            // errorContainer.Panel2
+            // 
+            this.errorContainer.Panel2.Controls.Add(this.errorsList);
+            this.errorContainer.Panel2.Controls.Add(this.label1);
+            this.errorContainer.Size = new System.Drawing.Size(680, 488);
+            this.errorContainer.SplitterDistance = 388;
+            this.errorContainer.TabIndex = 1;
+            // 
             // scene
             // 
             this.scene.Dock = System.Windows.Forms.DockStyle.Fill;
             this.scene.Location = new System.Drawing.Point(0, 0);
             this.scene.Name = "scene";
-            this.scene.Size = new System.Drawing.Size(680, 488);
+            this.scene.Size = new System.Drawing.Size(680, 388);
             this.scene.TabIndex = 0;
-            this.scene.Text = "editorSceneControl1";
+            // 
+            // errorsList
+            // 
+            this.errorsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.cellColumn,
+            this.descriptionColumn});
+            this.errorsList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.errorsList.Location = new System.Drawing.Point(0, 18);
+            this.errorsList.Name = "errorsList";
+            this.errorsList.Size = new System.Drawing.Size(680, 78);
+            this.errorsList.TabIndex = 1;
+            this.errorsList.UseCompatibleStateImageBehavior = false;
+            this.errorsList.View = System.Windows.Forms.View.Details;
+            // 
+            // cellColumn
+            // 
+            this.cellColumn.Text = "Cell";
+            // 
+            // descriptionColumn
+            // 
+            this.descriptionColumn.Text = "Description";
+            this.descriptionColumn.Width = 583;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Padding = new System.Windows.Forms.Padding(2);
+            this.label1.Size = new System.Drawing.Size(680, 18);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Errors";
             // 
             // toolSplitContainer
             // 
@@ -202,10 +266,12 @@
             // toolSplitContainer.Panel1
             // 
             this.toolSplitContainer.Panel1.Controls.Add(this.treeView);
+            this.toolSplitContainer.Panel1.Controls.Add(this.label2);
             // 
             // toolSplitContainer.Panel2
             // 
             this.toolSplitContainer.Panel2.Controls.Add(this.propertyGrid);
+            this.toolSplitContainer.Panel2.Controls.Add(this.label3);
             this.toolSplitContainer.Size = new System.Drawing.Size(254, 488);
             this.toolSplitContainer.SplitterDistance = 235;
             this.toolSplitContainer.TabIndex = 0;
@@ -213,7 +279,7 @@
             // treeView
             // 
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView.Location = new System.Drawing.Point(0, 0);
+            this.treeView.Location = new System.Drawing.Point(0, 18);
             this.treeView.Name = "treeView";
             treeNode1.Name = "mapNode";
             treeNode1.Text = "Map";
@@ -222,17 +288,43 @@
             this.treeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2});
-            this.treeView.Size = new System.Drawing.Size(254, 235);
+            this.treeView.Size = new System.Drawing.Size(254, 217);
             this.treeView.TabIndex = 0;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.White;
+            this.label2.Location = new System.Drawing.Point(0, 0);
+            this.label2.Name = "label2";
+            this.label2.Padding = new System.Windows.Forms.Padding(2);
+            this.label2.Size = new System.Drawing.Size(254, 18);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Map Structure";
             // 
             // propertyGrid
             // 
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Location = new System.Drawing.Point(0, 0);
+            this.propertyGrid.Location = new System.Drawing.Point(0, 18);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(254, 249);
+            this.propertyGrid.Size = new System.Drawing.Size(254, 231);
             this.propertyGrid.TabIndex = 0;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Location = new System.Drawing.Point(0, 0);
+            this.label3.Name = "label3";
+            this.label3.Padding = new System.Windows.Forms.Padding(2);
+            this.label3.Size = new System.Drawing.Size(254, 18);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "Properties";
             // 
             // MapEditorForm
             // 
@@ -257,6 +349,10 @@
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
+            this.errorContainer.Panel1.ResumeLayout(false);
+            this.errorContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.errorContainer)).EndInit();
+            this.errorContainer.ResumeLayout(false);
             this.toolSplitContainer.Panel1.ResumeLayout(false);
             this.toolSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.toolSplitContainer)).EndInit();
@@ -287,5 +383,12 @@
         private System.Windows.Forms.ToolStripStatusLabel hoverLabel;
         private System.Windows.Forms.TreeView treeView;
         private EditorSceneControl scene;
+        private System.Windows.Forms.SplitContainer errorContainer;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ListView errorsList;
+        private System.Windows.Forms.ColumnHeader cellColumn;
+        private System.Windows.Forms.ColumnHeader descriptionColumn;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }

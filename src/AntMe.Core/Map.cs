@@ -270,7 +270,7 @@ namespace AntMe
 
                 var map = new Map(context, width, height);
                 map.BlockBorder = blockBorder;
-                map.BaseLevel = 1;
+                map.BaseLevel = 2;
 
                 if (playercount < MIN_STARTPOINTS)
                     throw new Exception("Too less Player in this Map");
@@ -527,7 +527,7 @@ namespace AntMe
                         MapTile northTile = (y <= 0 ? null : tiles[x, y - 1]);
                         MapTile southTile = (y >= cells.Y - 1 ? null : tiles[x, y + 1]);
                         MapTile westTile = (x <= 0 ? null : tiles[x - 1, y]);
-                        MapTile eastTile = (x >= cells.Y - 1 ? null : tiles[x + 1, y]);
+                        MapTile eastTile = (x >= cells.X - 1 ? null : tiles[x + 1, y]);
 
                         // Check Height Map
                         if (y <= 0)
@@ -563,7 +563,7 @@ namespace AntMe
                                 exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the West"));
                         }
 
-                        if (x >= cells.Y - 1)
+                        if (x >= cells.X - 1)
                         {
                             if (tile.ConnectionLevelEast != BaseLevel)
                                 exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level at the Border (East)"));

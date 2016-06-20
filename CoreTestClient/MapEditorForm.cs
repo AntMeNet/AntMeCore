@@ -42,6 +42,7 @@ namespace CoreTestClient
             context = ExtensionLoader.CreateSimulationContext();
 
             InitializeComponent();
+            errorContainer.Panel2Collapsed = true;
 
             scene.MouseDown += Scene_MouseDown;
             scene.MouseUp += Scene_MouseUp;
@@ -128,6 +129,7 @@ namespace CoreTestClient
                 }
 
                 scene.InvalidateMap();
+                RevalidateMap();
             }
         }
 
@@ -199,6 +201,7 @@ namespace CoreTestClient
         private void SetMap(Map map)
         {
             scene.SetMap(map);
+            RevalidateMap();
 
             mapNode.Nodes.Clear();
             mapNode.Tag = null;
@@ -213,6 +216,34 @@ namespace CoreTestClient
             }
         }
 
+        private void RevalidateMap()
+        {
+            scene.Revalidate();
+
+            errorsList.Items.Clear();
+            foreach (var error in scene.ValidationExceptions)
+            {
+                List<string> messages = new List<string>();
+                Exception ex = error;
+                do
+                {
+                    messages.Add(ex.Message);
+                    ex = ex.InnerException;
+                } while (ex != null);
+
+                ListViewItem item = errorsList.Items.Add("");
+                if (error is InvalidMapTileException)
+                {
+                    InvalidMapTileException mapTileError = error as InvalidMapTileException;
+                    item.Text = mapTileError.CellIndex.ToString();
+                }
+                item.Tag = error;
+                item.SubItems.Add(string.Join(" => ", messages));
+            }
+
+            errorContainer.Panel2Collapsed = scene.ValidationExceptions.Count == 0;
+        }
+
         private void SetTile(Index2? cell, MapTile tile)
         {
             cellNode.Nodes.Clear();
@@ -223,6 +254,8 @@ namespace CoreTestClient
             if (tile != null)
             {
                 cellNode.Tag = tile;
+                treeView.SelectedNode = cellNode;
+                propertyGrid.SelectedObject = tile;
 
                 if (tile.Material != null)
                 {

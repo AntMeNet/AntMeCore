@@ -6,6 +6,7 @@ using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using System;
+using System.Linq;
 
 namespace CoreTestClient
 {
@@ -19,8 +20,14 @@ namespace CoreTestClient
 
         private Brush hoverBrush;
 
+        private Brush errorBrush;
+
+        public List<Exception> ValidationExceptions { get; private set; }
+
         public EditorSceneControl()
         {
+            ValidationExceptions = new List<Exception>();
+
             materials = new Dictionary<string, TileRenderer>();
             foreach (var material in ExtensionLoader.DefaultTypeMapper.MapMaterials)
             {
@@ -38,6 +45,7 @@ namespace CoreTestClient
             }
 
             hoverBrush = new SolidBrush(Color.FromArgb(80, Color.White));
+            errorBrush = new SolidBrush(Color.FromArgb(80, Color.Red));
         }
 
         public void SetMap(Map map)
@@ -47,6 +55,26 @@ namespace CoreTestClient
                 this.map = map;
                 if (map != null) SetMapSize(map.GetCellCount());
                 else SetMapSize(Index2.Zero);
+            }
+        }
+
+        public void Revalidate()
+        {
+            ValidationExceptions.Clear();
+            if (map != null)
+            {
+                try
+                {
+                    map.ValidateMap();
+                }
+                catch (AggregateException ex)
+                {
+                    ValidationExceptions.AddRange(ex.InnerExceptions);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 
@@ -102,6 +130,20 @@ namespace CoreTestClient
                 return renderer;
 
             return null;
+        }
+
+        protected override void OnBufferDraw(Graphics g, Index2 mapSize)
+        {
+            List<Index2> invalidCells = ValidationExceptions.OfType<InvalidMapTileException>().Select(e => e.CellIndex).Distinct().ToList();
+
+            for (int y = 0; y < mapSize.Y; y++)
+            {
+                for (int x = 0; x < mapSize.X; x++)
+                {
+                    if (invalidCells.Contains(new Index2(x, y)))
+                        g.FillRectangle(errorBrush, new Rectangle(x * TILEWIDTH, y * TILEWIDTH, TILEWIDTH, TILEWIDTH));
+                }
+            }
         }
 
         #endregion
