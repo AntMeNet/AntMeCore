@@ -8,6 +8,11 @@ namespace AntMe
     public abstract class StateProperty : Property, ISerializableState
     {
         /// <summary>
+        /// Reference to the related Property.
+        /// </summary>
+        protected readonly Property Property;
+
+        /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
         public StateProperty() { }
@@ -16,7 +21,10 @@ namespace AntMe
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="property">Reference to the related Engine Property</param>
-        public StateProperty(Property property) { }
+        public StateProperty(Property property)
+        {
+            Property = property;
+        }
 
         /// <summary>
         /// Serializes the first Frame of this State.

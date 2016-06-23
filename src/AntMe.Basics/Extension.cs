@@ -7,6 +7,9 @@ using AntMe.Basics.Factions.Bugs;
 using AntMe.Basics.ItemProperties;
 using AntMe.Basics.Items;
 using AntMe.Basics.LevelProperties;
+using AntMe.Basics.MapProperties;
+using AntMe.Basics.MapTileProperties;
+using AntMe.Basics.MapTiles;
 using System;
 
 namespace AntMe.Basics
@@ -54,6 +57,42 @@ namespace AntMe.Basics
             typeMapper.RegisterEngineProperty<RecognitionProperty>(this, "Recognition Extension (Core)", 150);
 
             // ##########################
+            // Map Materials
+            // ##########################
+            typeMapper.RegisterMapMaterial<LavaMaterial>(this, "Lava Material");
+            typeMapper.RegisterMapMaterial<MudMaterial>(this, "Mud Material");
+            typeMapper.RegisterMapMaterial<SandMaterial>(this, "Sand Material");
+            typeMapper.RegisterMapMaterial<GrasMaterial>(this, "Gras Material");
+            typeMapper.RegisterMapMaterial<StoneMaterial>(this, "Stone Material");
+
+            // ##########################
+            // Map Properties
+            // ##########################
+            typeMapper.RegisterMapProperty<TileUpdaterProperty>(this, "Updateable Tiles");
+
+            // ##########################
+            // Map Tiles
+            // ##########################
+            typeMapper.RegisterMapTile<ConcaveCliffMapTile, ConcaveCliffMapTileState, ConcaveCliffMapTileInfo>(this, "Concave Cliff Map Tile");
+            typeMapper.RegisterMapTile<ConvexCliffMapTile, ConvexCliffMapTileState, ConvexCliffMapTileInfo>(this, "Convex Cliff Map Tile");
+            typeMapper.RegisterMapTile<WallCliffMapTile, WallCliffMapTileState, WallCliffMapTileInfo>(this, "Cliff Wall Map Tile");
+            typeMapper.RegisterMapTile<LeftRampToCliffMapTile, LeftRampToCliffMapTileState, WallCliffMapTileInfo>(this, "Left Ramp To Cliff Wall Map Tile");
+            typeMapper.RegisterMapTile<RightRampToCliffMapTile, RightRampToCliffMapTileState, WallCliffMapTileInfo>(this, "Right Ramp To Cliff Wall Map Tile");
+            typeMapper.RegisterMapTile<FlatMapTile, FlatMapTileState, FlatMapTileInfo>(this, "Flat Map Tile");
+            typeMapper.RegisterMapTile<RampMapTile, RampMapTileState, RampMapTileInfo>(this, "Ramp Map Tile");
+
+            // ##########################
+            // Map Tile Properties
+            // ##########################
+            typeMapper.RegisterMapTilePropertySI<WalkableTileProperty, WalkableTileStateProperty, WalkableTileInfoProperty>(this, "Walkable Map Tiles");
+
+            // ##########################
+            // Attach Tile Properties
+            // ##########################
+            typeMapper.AttachMapTileProperty<FlatMapTile, WalkableTileProperty>(this, "Walkable Flat Tiles");
+            typeMapper.AttachMapTileProperty<RampMapTile, WalkableTileProperty>(this, "Walkable Ramps");
+
+            // ##########################
             // Standard Item Properties
             // ##########################
             typeMapper.RegisterItemPropertySI<AttackableProperty, AttackableState, AttackableInfo>(this, "Attackable");
@@ -88,7 +127,7 @@ namespace AntMe.Basics
             settings.Set<AntFaction>("TotalAntCount", int.MaxValue, "Total Number of Ants per Simulation");
             settings.Set<AntFaction>("TotalAnthillCount", 1, "Number of total Anthills per Simulation");
             settings.Set<AntFaction>("AntRespawnDelay", 1, "Number of Rounds until another Respawn");
-            typeMapper.RegisterFaction<AntFaction, AntFactionState, FactionInfo, AntFactory, AntFactoryInterop, AntUnit, AntUnitInterop>(this, "Ants");
+            typeMapper.RegisterFaction<AntFaction, AntFactionState, FactionInfo, AntFactory, AntFactoryInterop, AntUnit, AntUnitInterop, AntItem>(this, "Ants");
 
             // Ant Factory Interops
             typeMapper.AttachFactoryInteropProperty<AntFactoryInterop, TotalStatisticsInterop>(this, "Ant Total Statistics", (f, i) =>
@@ -110,7 +149,7 @@ namespace AntMe.Basics
             typeMapper.AttachUnitInteropProperty<AntUnitInterop, InteractionInterop>(this, "Ant Interaction Interop");
 
             // Bug Faction
-            typeMapper.RegisterFaction<BugFaction, BugFactionState, FactionInfo, BugFactory, BugFactoryInterop, BugUnit, BugUnitInterop>(this, "Bugs");
+            typeMapper.RegisterFaction<BugFaction, BugFactionState, FactionInfo, BugFactory, BugFactoryInterop, BugUnit, BugUnitInterop, BugItem>(this, "Bugs");
 
             // Bug Factory Interops
             typeMapper.AttachFactoryInteropProperty<BugFactoryInterop, TotalStatisticsInterop>(this, "Bug Total Statistics", (f, i) =>

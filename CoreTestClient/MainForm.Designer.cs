@@ -39,6 +39,8 @@
             this.extensionsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.globalSettingsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.codeGeneratorMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.localizationMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.mapEditorMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stateLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.timeLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -54,7 +56,6 @@
             this.frames80ToolButton = new System.Windows.Forms.ToolStripMenuItem();
             this.framesMaxToolButton = new System.Windows.Forms.ToolStripMenuItem();
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.localizationMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -64,7 +65,8 @@
             // 
             this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.programMenu,
-            this.loaderMenu});
+            this.loaderMenu,
+            this.mapEditorMenu});
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Size = new System.Drawing.Size(784, 24);
@@ -131,6 +133,20 @@
             this.codeGeneratorMenu.Size = new System.Drawing.Size(194, 22);
             this.codeGeneratorMenu.Text = "Code Generator";
             this.codeGeneratorMenu.Click += new System.EventHandler(this.codeGeneratorMenu_Click);
+            // 
+            // localizationMenu
+            // 
+            this.localizationMenu.Name = "localizationMenu";
+            this.localizationMenu.Size = new System.Drawing.Size(194, 22);
+            this.localizationMenu.Text = "Localization Dictionary";
+            this.localizationMenu.Click += new System.EventHandler(this.localizationMenu_Click);
+            // 
+            // mapEditorMenu
+            // 
+            this.mapEditorMenu.Name = "mapEditorMenu";
+            this.mapEditorMenu.Size = new System.Drawing.Size(77, 20);
+            this.mapEditorMenu.Text = "Map Editor";
+            this.mapEditorMenu.Click += new System.EventHandler(this.mapEditorMenu_Click);
             // 
             // statusStrip
             // 
@@ -255,13 +271,6 @@
             this.timer.Enabled = true;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
-            // localizationMenu
-            // 
-            this.localizationMenu.Name = "localizationMenu";
-            this.localizationMenu.Size = new System.Drawing.Size(194, 22);
-            this.localizationMenu.Text = "Localization Dictionary";
-            this.localizationMenu.Click += new System.EventHandler(this.localizationMenu_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -271,6 +280,7 @@
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.mainMenu);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mainMenu;
             this.MinimizeBox = false;
@@ -315,6 +325,7 @@
         private System.Windows.Forms.ToolStripMenuItem frames80ToolButton;
         private System.Windows.Forms.ToolStripMenuItem framesMaxToolButton;
         private System.Windows.Forms.ToolStripMenuItem localizationMenu;
+        private System.Windows.Forms.ToolStripMenuItem mapEditorMenu;
     }
 }
 

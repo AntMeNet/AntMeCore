@@ -127,8 +127,33 @@ namespace AntMe.Basics.ItemProperties
         /// <summary>
         /// Internal in case of a Cell Switch and a new Environment.
         /// </summary>
-        internal void RefreshEnvironment()
+        internal void UpdateEnvironment(Map map, Item item, Index2 newCell)
         {
+            // Run through neighbor cells
+            Index2 limit = map.GetCellCount();
+
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    var offset = new Index2(x, y);
+                    Index2 cell = newCell + offset;
+
+                    if (cell.X < 0 || cell.X >= limit.X ||
+                        cell.Y < 0 || cell.Y >= limit.Y)
+                    {
+                        // No Cell available
+                        Environment[offset] = null;
+                    }
+                    else
+                    {
+                        // Get Cell Infos
+                        MapTile tile = map[cell.X, cell.Y];
+                        Environment[offset.X, offset.Y] = tile != null ? tile.GetInfo(item) : null;
+                    }
+                }
+            }
+
             if (OnEnvironmentChanged != null)
                 OnEnvironmentChanged(Item, Environment);
         }

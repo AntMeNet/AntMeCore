@@ -10,7 +10,7 @@ namespace AntMe.Basics.Factions.Ants
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="faction"></param>
+        /// <param name="faction">Reference to the Faction</param>
         public AnthillDeathCounterProperty(Faction faction) : base(faction) { }
 
         /// <summary>

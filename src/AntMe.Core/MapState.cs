@@ -7,8 +7,27 @@ namespace AntMe
     /// <summary>
     /// Map State.
     /// </summary>
-    public sealed class MapState : ISerializableState
+    public sealed class MapState : PropertyList<MapStateProperty>, ISerializableState
     {
+        private readonly Map Map;
+
+        /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
+        public MapState() : base() { }
+
+        /// <summary>
+        /// Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="map">Reference to the related Map</param>
+        public MapState(Map map) : base()
+        {
+            Map = map;
+
+            Index2 size = Map.GetCellCount();
+            Tiles = new MapTileState[size.X, size.Y];
+        }
+
         /// <summary>
         /// Is Border blocked.
         /// </summary>
@@ -22,7 +41,7 @@ namespace AntMe
         /// Cell Description for the Map as a 2D Array of Map Tiles.
         /// </summary>
         [Browsable(false)]
-        public MapTile[,] Tiles { get; set; }
+        public MapTileState[,] Tiles { get; set; }
 
         /// <summary>
         /// Returns the Cell Count of this Map.
@@ -46,58 +65,13 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Calculates the Z Coordinate in World Units at the given Position.
-        /// </summary>
-        /// <param name="x">X Position</param>
-        /// <param name="y">Y Position</param>
-        /// <returns>Z Coordinate</returns>
-        public float GetHeight(float x, float y)
-        {
-            return GetHeight(new Vector2(x, y));
-        }
-
-        /// <summary>
-        /// Calculates the Z Coordinate in World Units at the given Position.
-        /// </summary>
-        /// <param name="point">Koordinate</param>
-        /// <returns>Z Coordinate</returns>
-        public float GetHeight(Vector2 point)
-        {
-            if (Tiles == null)
-                throw new NotSupportedException("Map is not Initialized");
-
-            // Determinate the right Cell
-            Index2 cellCount = GetCellCount();
-            Index2 cell = Map.GetCellIndex(point, cellCount);
-
-            // Calculate Height based on the Cell Type
-            return Map.GetHeight(Tiles[cell.X, cell.Y],
-                new Vector2(
-                    point.X - (cell.X * Map.CELLSIZE), 
-                    point.Y - (cell.Y * Map.CELLSIZE)));
-        }
-
-        /// <summary>
         /// Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
         public void SerializeFirst(BinaryWriter stream, byte version)
         {
-            if (Tiles == null)
-                throw new NotSupportedException("Tiles are not initialized");
-
-            // Serialize Tiles
-            stream.Write(BlockBorder);
-            stream.Write(Tiles.GetLength(0));
-            stream.Write(Tiles.GetLength(1));
-            for (int y = 0; y < Tiles.GetLength(1); y++)
-                for (int x = 0; x < Tiles.GetLength(0); x++)
-                {
-                    stream.Write((byte)Tiles[x, y].Shape);
-                    stream.Write((byte)Tiles[x, y].Speed);
-                    stream.Write((byte)Tiles[x, y].Height);
-                }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -107,6 +81,7 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void SerializeUpdate(BinaryWriter stream, byte version)
         {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -116,21 +91,7 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void DeserializeFirst(BinaryReader stream, byte version)
         {
-            BlockBorder = stream.ReadBoolean();
-            int width = stream.ReadInt32();
-            int height = stream.ReadInt32();
-            Tiles = new MapTile[width, height];
-
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
-                {
-                    Tiles[x, y] = new MapTile()
-                    {
-                        Shape = (TileShape)stream.ReadByte(),
-                        Speed = (TileSpeed)stream.ReadByte(),
-                        Height = (TileHeight)stream.ReadByte()
-                    }; 
-                }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -140,6 +101,7 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void DeserializeUpdate(BinaryReader stream, byte version)
         {
+            throw new NotImplementedException();
         }
     }
 }

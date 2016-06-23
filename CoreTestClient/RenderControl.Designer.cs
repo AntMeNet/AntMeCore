@@ -35,7 +35,6 @@
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Items");
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.mainSplitter = new System.Windows.Forms.SplitContainer();
-            this.renderScreen = new System.Windows.Forms.PictureBox();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.roundLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.itemLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -43,11 +42,11 @@
             this.propertySplitter = new System.Windows.Forms.SplitContainer();
             this.itemTree = new System.Windows.Forms.TreeView();
             this.gameUpdateTimer = new System.Windows.Forms.Timer(this.components);
+            this.scene = new CoreTestClient.StateSceneControl();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitter)).BeginInit();
             this.mainSplitter.Panel1.SuspendLayout();
             this.mainSplitter.Panel2.SuspendLayout();
             this.mainSplitter.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.renderScreen)).BeginInit();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.propertySplitter)).BeginInit();
             this.propertySplitter.Panel1.SuspendLayout();
@@ -72,7 +71,7 @@
             // 
             // mainSplitter.Panel1
             // 
-            this.mainSplitter.Panel1.Controls.Add(this.renderScreen);
+            this.mainSplitter.Panel1.Controls.Add(this.scene);
             this.mainSplitter.Panel1.Controls.Add(this.statusStrip);
             // 
             // mainSplitter.Panel2
@@ -81,15 +80,6 @@
             this.mainSplitter.Size = new System.Drawing.Size(734, 413);
             this.mainSplitter.SplitterDistance = 534;
             this.mainSplitter.TabIndex = 2;
-            // 
-            // renderScreen
-            // 
-            this.renderScreen.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.renderScreen.Location = new System.Drawing.Point(0, 0);
-            this.renderScreen.Name = "renderScreen";
-            this.renderScreen.Size = new System.Drawing.Size(534, 391);
-            this.renderScreen.TabIndex = 0;
-            this.renderScreen.TabStop = false;
             // 
             // statusStrip
             // 
@@ -168,6 +158,15 @@
             this.gameUpdateTimer.Interval = 20;
             this.gameUpdateTimer.Tick += new System.EventHandler(this.gameUpdateTimer_Tick);
             // 
+            // scene
+            // 
+            this.scene.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scene.Location = new System.Drawing.Point(0, 0);
+            this.scene.Name = "scene";
+            this.scene.Size = new System.Drawing.Size(534, 391);
+            this.scene.TabIndex = 2;
+            this.scene.Text = "stateSceneControl1";
+            // 
             // RenderControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -182,7 +181,6 @@
             this.mainSplitter.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitter)).EndInit();
             this.mainSplitter.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.renderScreen)).EndInit();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.propertySplitter.Panel1.ResumeLayout(false);
@@ -197,7 +195,6 @@
 
         private System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.SplitContainer mainSplitter;
-        private System.Windows.Forms.PictureBox renderScreen;
         private System.Windows.Forms.SplitContainer propertySplitter;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel roundLabel;
@@ -205,5 +202,6 @@
         private System.Windows.Forms.ToolStripStatusLabel mapLabel;
         private System.Windows.Forms.Timer gameUpdateTimer;
         private System.Windows.Forms.TreeView itemTree;
+        private StateSceneControl scene;
     }
 }

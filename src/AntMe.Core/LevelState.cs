@@ -23,13 +23,13 @@ namespace AntMe
         /// List of all Factions.
         /// </summary>
         [Browsable(false)]
-        public IList<FactionState> Factions;
+        public ICollection<FactionState> Factions;
 
         /// <summary>
         /// List of all Items.
         /// </summary>
         [Browsable(false)]
-        public IList<ItemState> Items;
+        public ICollection<ItemState> Items;
 
         /// <summary>
         /// Map State.
@@ -65,8 +65,8 @@ namespace AntMe
             Mode = LevelMode.Uninit;
 
             Date = DateTimeOffset.Now;
-            Factions = new List<FactionState>();
-            Items = new List<ItemState>();
+            Factions = new HashSet<FactionState>();
+            Items = new HashSet<ItemState>();
         }
 
         /// <summary>

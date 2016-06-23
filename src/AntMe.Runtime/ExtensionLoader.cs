@@ -544,7 +544,7 @@ namespace AntMe.Runtime
             }
 
             // Load Map
-            SimulationContext context = new SimulationContext(DefaultTypeResolver, ExtensionSettings);
+            SimulationContext context = CreateSimulationContext();
             Level level = Activator.CreateInstance(type, context) as Level;
             levelInfo.Map = level.GetMap();
 
@@ -725,6 +725,16 @@ namespace AntMe.Runtime
             AppDomain.Unload(appDomain);
 
             return info;
+        }
+
+        /// <summary>
+        /// Generates a Simulatio Context from the Default Mapper and Settings from this Extension Loader.
+        /// </summary>
+        /// <param name="random">Optional Randomizer</param>
+        /// <returns>New Instance of Simulation Context</returns>
+        public static SimulationContext CreateSimulationContext(Random random = null)
+        {
+            return new SimulationContext(DefaultTypeResolver, DefaultTypeMapper, ExtensionSettings, random);
         }
 
         /// <summary>

@@ -106,7 +106,7 @@ namespace AntMe
             Home = home;
 
             // Creates the Simulation Context for this Faction
-            Context = new SimulationContext(Context.Resolver, Context.Settings, random);
+            Context = new SimulationContext(Context.Resolver, Context.Mapper, Context.Settings, random);
 
             // Init all Properties
             foreach (var property in Properties)

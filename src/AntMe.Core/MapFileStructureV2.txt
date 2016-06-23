@@ -1,0 +1,59 @@
+﻿[Intro]
+- Hello Message Length (byte)
+- "AntMe! Map" (char[])
+- Version Number (byte)
+
+[Header]
+- Map Width (byte)
+- Map Height (byte) 
+
+[Mapdata]
+- BlockBorder (bool)
+- Startpoint Count (byte)
+- for Count
+	* X (short)
+	* Y (short)
+
+[MapProperties]
+- PropertyType Count (byte)
+- For Count
+	* PropertyName (string) [FullName]
+	* ByteCount (short)
+	* PropertyLoad (byte[])
+
+[TileType Map]
+- TileType Count (byte)
+- For Count
+	* TileType Name (string) [FullName]
+
+[TileProperty Map]
+- TilePropertyType Count (byte)
+- For Count
+	* TilePropertyType Name (string) [FullName]
+
+[Material Map]
+- Material Count (byte)
+- For Count
+	* MaterialType Name (string) [FullName]
+   
+[Tiles]
+- for y
+  - for x
+  
+	[MapTile]
+	* Type Index (byte) (0 for unavailable)
+	* ByteCount (short)
+	* Load (byte[])
+	
+	if tile available
+		[Material]
+		* Type Index (byte) (0 for unavailable)
+		* ByteCount (short)
+		* Load (byte[])
+		
+		[MapTileProperties]
+		* Property Count (byte)
+		* for Count
+			+ Property Type Index (byte)
+			+ ByteCount (short)
+			+ Load (byte[])

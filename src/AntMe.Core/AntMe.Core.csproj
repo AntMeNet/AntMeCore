@@ -73,6 +73,7 @@
     <Compile Include="InfoProperty.cs" />
     <Compile Include="Interop.cs" />
     <Compile Include="InteropProperty.cs" />
+    <Compile Include="InvalidMapException.cs" />
     <Compile Include="ISerializableState.cs" />
     <Compile Include="ItemInfo.cs" />
     <Compile Include="ItemInfoProperty.cs" />
@@ -88,8 +89,18 @@
     <Compile Include="LevelSlot.cs" />
     <Compile Include="LevelState.cs" />
     <Compile Include="LevelStateProperty.cs" />
+    <Compile Include="MapMaterial.cs" />
+    <Compile Include="MapProperty.cs" />
     <Compile Include="MapState.cs" />
+    <Compile Include="MapStateProperty.cs" />
     <Compile Include="MapTile.cs" />
+    <Compile Include="InvalidMapTileException.cs" />
+    <Compile Include="MapTileInfo.cs" />
+    <Compile Include="MapTileInfoProperty.cs" />
+    <Compile Include="MapTileOrientation.cs" />
+    <Compile Include="MapTileProperty.cs" />
+    <Compile Include="MapTileState.cs" />
+    <Compile Include="MapTileStateProperty.cs" />
     <Compile Include="MipMap.cs" />
     <Compile Include="MipMapLayer.cs" />
     <Compile Include="Engine.cs" />
@@ -116,11 +127,17 @@
     <Compile Include="UnitGroupAttribute.cs" />
     <Compile Include="UnitInterop.cs" />
     <Compile Include="UnitInteropProperty.cs" />
+    <Compile Include="UnknownMapTile.cs" />
+    <Compile Include="UnknownMaterial.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Vector3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertyStructure.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MapFileStructureV1.txt" />
+    <Content Include="MapFileStructureV2.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

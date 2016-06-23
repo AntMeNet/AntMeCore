@@ -1,5 +1,5 @@
 ﻿using AntMe.Basics.ItemProperties;
-
+using AntMe.Basics.MapTileProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -263,7 +263,7 @@ namespace AntMe.Basics.EngineProperties
 
             // Zelle berücksichtigen
             Index2 cell = map.GetCellIndex(item.Position);
-            float cellspeed = map.Tiles[cell.X, cell.Y].GetSpeedMultiplicator();
+            float cellspeed = map[cell.X, cell.Y].Material.Speed;
 
             // Eigenständige Bewegung
             if (moving != null)
@@ -711,7 +711,7 @@ namespace AntMe.Basics.EngineProperties
             if (cell != item.Cell)
             {
                 // Prüft, ob die neue Zelle begehbar ist.
-                if (!map.Tiles[cell.X, cell.Y].CanEnter())
+                if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
                     position.X = ((cell.X + 1)*Map.CELLSIZE) + Radius;
@@ -736,7 +736,7 @@ namespace AntMe.Basics.EngineProperties
             if (cell != item.Cell)
             {
                 // Prüft, ob die neue Zelle begehbar ist.
-                if (!map.Tiles[cell.X, cell.Y].CanEnter())
+                if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
                     position.X = (cell.X*Map.CELLSIZE) - Radius;
@@ -761,7 +761,7 @@ namespace AntMe.Basics.EngineProperties
             if (cell != item.Cell)
             {
                 // Prüft, ob die neue Zelle begehbar ist.
-                if (!map.Tiles[cell.X, cell.Y].CanEnter())
+                if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
                     position.Y = ((cell.Y + 1)*Map.CELLSIZE) + Radius;
@@ -786,7 +786,7 @@ namespace AntMe.Basics.EngineProperties
             if (cell != item.Cell)
             {
                 // Prüft, ob die neue Zelle begehbar ist.
-                if (!map.Tiles[cell.X, cell.Y].CanEnter())
+                if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
                     position.Y = (cell.Y*Map.CELLSIZE) - Radius;

@@ -66,6 +66,10 @@
       <Project>{A2A811C2-600D-451B-AA15-346BF7ECED4A}</Project>
       <Name>AntMe.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AntMe.Runtime\AntMe.Runtime.csproj">
+      <Project>{B15F5FBE-7460-4F89-AD30-CC3D135293B4}</Project>
+      <Name>AntMe.Runtime</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -17,6 +17,29 @@ namespace AntMe
 
         #endregion
 
+        #region Map Resolver
+
+        /// <summary>
+        /// Resolves the given Map.
+        /// </summary>
+        /// <param name="map">Map</param>
+        void ResolveMap(SimulationContext context, Map map);
+
+        void ResolveMapTile(SimulationContext context, MapTile tile);
+
+        /// <summary>
+        /// Generates a Map State for the given Map.
+        /// </summary>
+        /// <param name="map">Map</param>
+        /// <returns>Map State</returns>
+        MapState CreateMapState(Map map);
+
+        MapTileState CreateMapTileState(MapTile tile);
+
+        MapTileInfo CreateMapTileInfo(MapTile tile, Item observer);
+
+        #endregion
+
         #region Item Resolver
 
         /// <summary>

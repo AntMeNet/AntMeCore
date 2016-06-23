@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.mapPreview1 = new AntMe.Simulation.Debug.MapPreview();
+            this.mapPreview1 = new CoreTestClient.MapControl();
             this.nameLabel = new System.Windows.Forms.Label();
             this.descriptionLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -39,7 +39,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mapPreview1.BackColor = System.Drawing.Color.SkyBlue;
-            this.mapPreview1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.mapPreview1.Location = new System.Drawing.Point(3, 3);
             this.mapPreview1.Name = "mapPreview1";
             this.mapPreview1.Size = new System.Drawing.Size(267, 231);
@@ -82,7 +81,7 @@
 
         #endregion
 
-        private MapPreview mapPreview1;
+        private CoreTestClient.MapControl mapPreview1;
         private System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.Label descriptionLabel;
     }

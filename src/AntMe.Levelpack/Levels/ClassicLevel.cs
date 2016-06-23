@@ -22,9 +22,12 @@ namespace AntMe.Levelpack.Levels
 
         public ClassicLevel(SimulationContext context) : base(context) { }
 
-        public override Map GetMap()
+        public override byte[] GetMap()
         {
-            return new Map(30, 20, true, TileSpeed.Normal, TileHeight.Medium);
+            return null;
+            //Map map = new Map(Context, 30, 20);
+            //map.BlockBorder = true;
+            //return map;
         }
 
         protected override void OnUpdate()
