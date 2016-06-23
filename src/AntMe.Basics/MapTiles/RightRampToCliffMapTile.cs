@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AntMe.Basics.MapTiles
 {
@@ -9,16 +10,24 @@ namespace AntMe.Basics.MapTiles
     {
         public RightRampToCliffMapTile(SimulationContext context) : base(context) { }
 
-        protected override void OnValidateEastSide(MapTile tile)
+        protected override bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions)
         {
             if (!(tile is CliffMapTile))
-                throw new NotSupportedException("Map Tile must be a Cliff Tile");
+            {
+                exceptions.Add(new NotSupportedException("Map Tile must be a Cliff Tile"));
+                return false;
+            }
+            return true;
         }
 
-        protected override void OnValidateWestSide(MapTile tile)
+        protected override bool OnValidateWestSide(MapTile tile, IList<Exception> exceptions)
         {
             if (!(tile is RampMapTile))
-                throw new NotSupportedException("Map Tile must be a Ramp Tile");
+            {
+                exceptions.Add(new NotSupportedException("Map Tile must be a Ramp Tile"));
+                return false;
+            }
+            return true;
         }
     }
 }

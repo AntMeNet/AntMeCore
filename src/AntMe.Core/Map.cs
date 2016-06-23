@@ -516,6 +516,7 @@ namespace AntMe
                     exceptions.Add(new InvalidMapException(string.Format("Map must have a maximum of {0} Rows", MAX_HEIGHT)));
 
                 // Check Individual Cells
+                List<Exception> result = new List<Exception>();
                 for (int y = 0; y < cells.Y; y++)
                 {
                     for (int x = 0; x < cells.X; x++)
@@ -575,40 +576,32 @@ namespace AntMe
                         }
 
                         // Check Neighbors
-                        try
+                        result.Clear();
+                        if (!tile.ValidateTileToTheNorth(northTile, result))
                         {
-                            tile.ValidateTileToTheNorth(northTile);
-                        }
-                        catch (Exception ex)
-                        {
-                            exceptions.Add(new InvalidMapTileException(new Index2(x,y), "Invalid Neighbor Map Tile to the North", ex));
+                            foreach (var ex in result)
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
                         }
 
-                        try
+                        result.Clear();
+                        if (!tile.ValidateTileToTheSouth(southTile, result))
                         {
-                            tile.ValidateTileToTheSouth(southTile);
-                        }
-                        catch (Exception ex)
-                        {
-                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the South", ex));
+                            foreach (var ex in result)
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
                         }
 
-                        try
+                        result.Clear();
+                        if (!tile.ValidateTileToTheWest(westTile, result))
                         {
-                            tile.ValidateTileToTheWest(westTile);
-                        }
-                        catch (Exception ex)
-                        {
-                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the West", ex));
+                            foreach (var ex in result)
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
                         }
 
-                        try
+                        result.Clear();
+                        if (!tile.ValidateTileToTheEast(eastTile, result))
                         {
-                            tile.ValidateTileToTheEast(eastTile);
-                        }
-                        catch (Exception ex)
-                        {
-                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the East", ex));
+                            foreach (var ex in result)
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
                         }
                     }
                 }

@@ -41,16 +41,24 @@ namespace AntMe.Basics.MapTiles
             return (byte)(HeightLevel + 1);
         }
 
-        protected override void OnValidateEastSide(MapTile tile)
+        protected override bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions)
         {
             if (!(tile is RampMapTile) && !(tile is LeftRampToCliffMapTile))
-                    throw new NotSupportedException("Map Tile must be a Ramp or Left Cliff Tile");
+            {
+                exceptions.Add(new NotSupportedException("Map Tile must be a Ramp or Left Cliff Tile"));
+                return false;
+            }
+            return true;
         }
 
-        protected override void OnValidateWestSide(MapTile tile)
+        protected override bool OnValidateWestSide(MapTile tile, IList<Exception> exceptions)
         {
             if (!(tile is RampMapTile) && !(tile is LeftRampToCliffMapTile))
-                throw new NotSupportedException("Map Tile must be a Ramp or Left Cliff Tile");
+            {
+                exceptions.Add(new NotSupportedException("Map Tile must be a Ramp or Left Cliff Tile"));
+                return false;
+            }
+            return true;
         }
 
         /// <summary>

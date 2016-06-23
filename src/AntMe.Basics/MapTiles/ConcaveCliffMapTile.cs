@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AntMe.Basics.MapTiles
 {
@@ -37,16 +38,25 @@ namespace AntMe.Basics.MapTiles
             return (byte)(HeightLevel + 1);
         }
 
-        protected override void OnValidateEastSide(MapTile tile)
+        protected override bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions)
         {
             if (!(tile is CliffMapTile))
-                throw new NotSupportedException("Map Tile must be a Cliff Tile");
+            {
+                exceptions.Add(new NotSupportedException("Map Tile must be a Cliff Tile"));
+                return false;
+            }
+
+            return true;
         }
 
-        protected override void OnValidateSouthSide(MapTile tile)
+        protected override bool OnValidateSouthSide(MapTile tile, IList<Exception> exceptions)
         {
             if (!(tile is CliffMapTile))
-                throw new NotSupportedException("Map Tile must be a Cliff Tile");
+            {
+                exceptions.Add(new NotSupportedException("Map Tile must be a Cliff Tile"));
+                return false;
+            }
+            return true;
         }
     }
 }

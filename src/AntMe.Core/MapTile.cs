@@ -233,14 +233,15 @@ namespace AntMe
         /// Validates the current Map Tile against the given Tile.
         /// </summary>
         /// <param name="tile">Tile</param>
-        public void ValidateTileToTheEast(MapTile tile)
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        public bool ValidateTileToTheEast(MapTile tile, IList<Exception> exceptions)
         {
             switch (Orientation)
             {
-                case MapTileOrientation.NotRotated: OnValidateEastSide(tile); break;
-                case MapTileOrientation.RotBy90Degrees: OnValidateNorthSide(tile); break;
-                case MapTileOrientation.RotBy180Degrees: OnValidateWestSide(tile); break;
-                case MapTileOrientation.RotBy270Degrees: OnValidateSouthSide(tile); break;
+                case MapTileOrientation.NotRotated: return OnValidateEastSide(tile, exceptions);
+                case MapTileOrientation.RotBy90Degrees: return OnValidateNorthSide(tile, exceptions);
+                case MapTileOrientation.RotBy180Degrees: return OnValidateWestSide(tile, exceptions);
+                case MapTileOrientation.RotBy270Degrees: return OnValidateSouthSide(tile, exceptions);
                 default: throw new NotSupportedException("Wrong Orientation Value");
             }
         }
@@ -249,20 +250,22 @@ namespace AntMe
         /// Gets called to validate the Map Tile close to this one.
         /// </summary>
         /// <param name="tile">Neighbor Tile</param>
-        protected virtual void OnValidateEastSide(MapTile tile) { }
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        protected virtual bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions) { return true; }
 
         /// <summary>
         /// Validates the current Map Tile against the given Tile.
         /// </summary>
         /// <param name="tile">Tile</param>
-        public virtual void ValidateTileToTheSouth(MapTile tile)
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        public virtual bool ValidateTileToTheSouth(MapTile tile, IList<Exception> exceptions)
         {
             switch (Orientation)
             {
-                case MapTileOrientation.NotRotated: OnValidateSouthSide(tile); break;
-                case MapTileOrientation.RotBy90Degrees: OnValidateEastSide(tile); break;
-                case MapTileOrientation.RotBy180Degrees: OnValidateNorthSide(tile); break;
-                case MapTileOrientation.RotBy270Degrees: OnValidateWestSide(tile); break;
+                case MapTileOrientation.NotRotated: return OnValidateSouthSide(tile, exceptions);
+                case MapTileOrientation.RotBy90Degrees: return OnValidateEastSide(tile, exceptions);
+                case MapTileOrientation.RotBy180Degrees: return OnValidateNorthSide(tile, exceptions);
+                case MapTileOrientation.RotBy270Degrees: return OnValidateWestSide(tile, exceptions);
                 default: throw new NotSupportedException("Wrong Orientation Value");
             }
         }
@@ -271,20 +274,22 @@ namespace AntMe
         /// Gets called to validate the Map Tile close to this one.
         /// </summary>
         /// <param name="tile">Neighbor Tile</param>
-        protected virtual void OnValidateSouthSide(MapTile tile) { }
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        protected virtual bool OnValidateSouthSide(MapTile tile, IList<Exception> exceptions) { return true; }
 
         /// <summary>
         /// Validates the current Map Tile against the given Tile.
         /// </summary>
         /// <param name="tile">Tile</param>
-        public virtual void ValidateTileToTheWest(MapTile tile)
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        public virtual bool ValidateTileToTheWest(MapTile tile, IList<Exception> exceptions)
         {
             switch (Orientation)
             {
-                case MapTileOrientation.NotRotated: OnValidateWestSide(tile); break;
-                case MapTileOrientation.RotBy90Degrees: OnValidateSouthSide(tile); break;
-                case MapTileOrientation.RotBy180Degrees: OnValidateEastSide(tile); break;
-                case MapTileOrientation.RotBy270Degrees: OnValidateNorthSide(tile); break;
+                case MapTileOrientation.NotRotated: return OnValidateWestSide(tile, exceptions);
+                case MapTileOrientation.RotBy90Degrees: return OnValidateSouthSide(tile, exceptions);
+                case MapTileOrientation.RotBy180Degrees: return OnValidateEastSide(tile, exceptions);
+                case MapTileOrientation.RotBy270Degrees: return OnValidateNorthSide(tile, exceptions);
                 default: throw new NotSupportedException("Wrong Orientation Value");
             }
         }
@@ -293,20 +298,22 @@ namespace AntMe
         /// Gets called to validate the Map Tile close to this one.
         /// </summary>
         /// <param name="tile">Neighbor Tile</param>
-        protected virtual void OnValidateWestSide(MapTile tile) { }
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        protected virtual bool OnValidateWestSide(MapTile tile, IList<Exception> exceptions) { return true; }
 
         /// <summary>
         /// Validates the current Map Tile against the given Tile.
         /// </summary>
         /// <param name="tile">Tile</param>
-        public virtual void ValidateTileToTheNorth(MapTile tile)
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        public virtual bool ValidateTileToTheNorth(MapTile tile, IList<Exception> exceptions)
         {
             switch (Orientation)
             {
-                case MapTileOrientation.NotRotated: OnValidateNorthSide(tile); break;
-                case MapTileOrientation.RotBy90Degrees: OnValidateWestSide(tile); break;
-                case MapTileOrientation.RotBy180Degrees: OnValidateSouthSide(tile); break;
-                case MapTileOrientation.RotBy270Degrees: OnValidateEastSide(tile); break;
+                case MapTileOrientation.NotRotated: return OnValidateNorthSide(tile, exceptions);
+                case MapTileOrientation.RotBy90Degrees: return OnValidateWestSide(tile, exceptions);
+                case MapTileOrientation.RotBy180Degrees: return OnValidateSouthSide(tile, exceptions);
+                case MapTileOrientation.RotBy270Degrees: return OnValidateEastSide(tile, exceptions);
                 default: throw new NotSupportedException("Wrong Orientation Value");
             }
         }
@@ -315,7 +322,8 @@ namespace AntMe
         /// Gets called to validate the Map Tile close to this one.
         /// </summary>
         /// <param name="tile">Neighbor Tile</param>
-        protected virtual void OnValidateNorthSide(MapTile tile) { }
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        protected virtual bool OnValidateNorthSide(MapTile tile, IList<Exception> exceptions) { return true; }
 
         /// <summary>
         /// Returns the Height at the given Position.
