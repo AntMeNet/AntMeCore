@@ -125,6 +125,12 @@
     <Compile Include="MapEditorForm.Designer.cs">
       <DependentUpon>MapEditorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NewMapDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewMapDialog.Designer.cs">
+      <DependentUpon>NewMapDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Renderer\TileRenderer.cs" />
     <Compile Include="PlayerPreview.cs">
       <SubType>UserControl</SubType>
@@ -197,6 +203,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MapEditorForm.resx">
       <DependentUpon>MapEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewMapDialog.resx">
+      <DependentUpon>NewMapDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PlayerPreview.resx">
       <DependentUpon>PlayerPreview.cs</DependentUpon>

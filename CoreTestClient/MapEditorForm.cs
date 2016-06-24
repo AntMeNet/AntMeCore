@@ -339,5 +339,21 @@ namespace CoreTestClient
             scene.InvalidateMap();
             mapChanged = true;
         }
+
+        private void newMenu_Click(object sender, EventArgs e)
+        {
+            using (NewMapDialog dialog = new NewMapDialog())
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    Map m = new Map(context, dialog.MapSize.X, dialog.MapSize.Y);
+                    m.BlockBorder = dialog.BlockedBorder;
+                    m.BaseLevel = dialog.DefaultHeightLevel;
+                    Map = m;
+                    filename = string.Empty;
+                    mapChanged = true;
+                }
+            }
+        }
     }
 }
