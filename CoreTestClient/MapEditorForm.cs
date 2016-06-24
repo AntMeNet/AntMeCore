@@ -327,6 +327,11 @@ namespace CoreTestClient
 
         private void saveMenu_Click(object sender, EventArgs e)
         {
+            Save();
+        }
+
+        private bool Save()
+        {
             if (map != null && !string.IsNullOrEmpty(filename))
             {
                 try
@@ -340,8 +345,11 @@ namespace CoreTestClient
                 catch (Exception ex)
                 {
                     MessageBox.Show(string.Format("Could not save: {0}", ex.Message));
+                    return false;
                 }
             }
+
+            return true;
         }
 
         private void errorsList_DoubleClick(object sender, EventArgs e)
@@ -394,6 +402,35 @@ namespace CoreTestClient
                     filename = string.Empty;
                     mapChanged = true;
                 }
+            }
+        }
+
+        private void MapEditorForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (mapChanged)
+            {
+                if (string.IsNullOrEmpty(filename))
+                {
+                    // Unsaved Changes in a new Map
+                    if (MessageBox.Show(this, "There are some unsaved Changes. Are you sure you want to close the Editor?", "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                        e.Cancel = true;
+                }
+                else
+                {
+                    // Unsaved Changes in an existing Map
+                    switch (MessageBox.Show(this, "There are some unsaved Changes. Do you want to save before close the Editor?", "Unsaved Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+                    {
+                        case DialogResult.Cancel:
+                            e.Cancel = true;
+                            break;
+                        case DialogResult.Yes:
+                            if (!Save())
+                                e.Cancel = true;
+                            break;
+                    }
+                }
+
+                
             }
         }
     }

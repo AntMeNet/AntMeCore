@@ -47,6 +47,7 @@
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.errorContainer = new System.Windows.Forms.SplitContainer();
+            this.scene = new CoreTestClient.EditorSceneControl();
             this.errorsList = new System.Windows.Forms.ListView();
             this.cellColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.descriptionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -56,7 +57,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.label3 = new System.Windows.Forms.Label();
-            this.scene = new CoreTestClient.EditorSceneControl();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -99,14 +99,14 @@
             // newMenu
             // 
             this.newMenu.Name = "newMenu";
-            this.newMenu.Size = new System.Drawing.Size(152, 22);
+            this.newMenu.Size = new System.Drawing.Size(121, 22);
             this.newMenu.Text = "New";
             this.newMenu.Click += new System.EventHandler(this.newMenu_Click);
             // 
             // loadMenu
             // 
             this.loadMenu.Name = "loadMenu";
-            this.loadMenu.Size = new System.Drawing.Size(152, 22);
+            this.loadMenu.Size = new System.Drawing.Size(121, 22);
             this.loadMenu.Text = "Load...";
             this.loadMenu.Click += new System.EventHandler(this.loadMenu_Click);
             // 
@@ -114,26 +114,26 @@
             // 
             this.saveMenu.Enabled = false;
             this.saveMenu.Name = "saveMenu";
-            this.saveMenu.Size = new System.Drawing.Size(152, 22);
+            this.saveMenu.Size = new System.Drawing.Size(121, 22);
             this.saveMenu.Text = "Save";
             this.saveMenu.Click += new System.EventHandler(this.saveMenu_Click);
             // 
             // saveAsMenu
             // 
             this.saveAsMenu.Name = "saveAsMenu";
-            this.saveAsMenu.Size = new System.Drawing.Size(152, 22);
+            this.saveAsMenu.Size = new System.Drawing.Size(121, 22);
             this.saveAsMenu.Text = "Save as...";
             this.saveAsMenu.Click += new System.EventHandler(this.saveAsMenu_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(118, 6);
             // 
             // closeMenu
             // 
             this.closeMenu.Name = "closeMenu";
-            this.closeMenu.Size = new System.Drawing.Size(152, 22);
+            this.closeMenu.Size = new System.Drawing.Size(121, 22);
             this.closeMenu.Text = "Close";
             this.closeMenu.Click += new System.EventHandler(this.closeMenu_Click);
             // 
@@ -213,6 +213,16 @@
             this.errorContainer.Size = new System.Drawing.Size(680, 488);
             this.errorContainer.SplitterDistance = 388;
             this.errorContainer.TabIndex = 1;
+            // 
+            // scene
+            // 
+            this.scene.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scene.Location = new System.Drawing.Point(0, 0);
+            this.scene.Name = "scene";
+            this.scene.SelectedCell = null;
+            this.scene.Size = new System.Drawing.Size(680, 388);
+            this.scene.StartPoints = null;
+            this.scene.TabIndex = 0;
             // 
             // errorsList
             // 
@@ -323,15 +333,6 @@
             this.label3.TabIndex = 1;
             this.label3.Text = "Properties";
             // 
-            // scene
-            // 
-            this.scene.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scene.Location = new System.Drawing.Point(0, 0);
-            this.scene.Name = "scene";
-            this.scene.SelectedCell = null;
-            this.scene.Size = new System.Drawing.Size(680, 388);
-            this.scene.TabIndex = 0;
-            // 
             // MapEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -347,6 +348,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Map Editor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MapEditorForm_FormClosing);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
