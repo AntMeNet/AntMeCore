@@ -33,6 +33,8 @@ namespace CoreTestClient
 
         private List<EditorTool> tools;
 
+        private SelectionTool selectionTool;
+
         private EditorTool activeTool;
 
         private bool mouseDown = false;
@@ -51,9 +53,9 @@ namespace CoreTestClient
 
             tools = new List<EditorTool>();
 
-            SelectionTool selection = new SelectionTool(context);
-            selection.OnSelectedCellChanged += Selection_OnSelectedCellChanged;
-            tools.Add(selection);
+            selectionTool = new SelectionTool(context);
+            selectionTool.OnSelectedCellChanged += Selection_OnSelectedCellChanged;
+            tools.Add(selectionTool);
             tools.Add(new MapTileTool(context));
             tools.Add(new MaterialTool(context));
 
@@ -63,7 +65,7 @@ namespace CoreTestClient
                 tool.OnSelect += Tool_OnSelect;
             }
 
-            Tool_OnSelect(selection, null);
+            Tool_OnSelect(selectionTool, null);
 
             mapNode = treeView.Nodes["mapNode"];
             cellNode = treeView.Nodes["cellNode"];
@@ -96,6 +98,7 @@ namespace CoreTestClient
 
         private void Scene_OnHoveredCellChanged(Index2? newValue)
         {
+            Console.WriteLine("Cell Changed {0}", newValue);
             if (mouseDown) Apply();
         }
 
@@ -250,6 +253,7 @@ namespace CoreTestClient
             if (cell.HasValue)
                 cellNode.Text = string.Format("Selected Cell ({0})", cell.ToString());
             else cellNode.Text = "No Selected Cell";
+            scene.SelectedCell = cell;
 
             if (tile != null)
             {
@@ -288,6 +292,17 @@ namespace CoreTestClient
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void errorsList_DoubleClick(object sender, EventArgs e)
+        {
+            if (map != null &&
+                errorsList.SelectedItems.Count > 0 &&
+                errorsList.SelectedItems[0].Tag is InvalidMapTileException)
+            {
+                InvalidMapTileException ex = errorsList.SelectedItems[0].Tag as InvalidMapTileException;
+                selectionTool.Apply(map, ex.CellIndex, new Vector2((ex.CellIndex.X + 0.5f) * Map.CELLSIZE, (ex.CellIndex.Y + 0.5f) * Map.CELLSIZE));
             }
         }
     }

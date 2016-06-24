@@ -22,7 +22,11 @@ namespace CoreTestClient
 
         private Brush errorBrush;
 
+        private Pen selectionFrame;
+
         public List<Exception> ValidationExceptions { get; private set; }
+
+        public Index2? SelectedCell { get; set; }
 
         public EditorSceneControl()
         {
@@ -46,6 +50,7 @@ namespace CoreTestClient
 
             hoverBrush = new SolidBrush(Color.FromArgb(80, Color.White));
             errorBrush = new SolidBrush(Color.FromArgb(80, Color.Red));
+            selectionFrame = new Pen(Color.White, 3f);
         }
 
         public void SetMap(Map map)
@@ -84,6 +89,17 @@ namespace CoreTestClient
             if (HoveredCell.HasValue)
                 g.FillRectangle(hoverBrush,
                     new RectangleF(HoveredCell.Value.X * Map.CELLSIZE, HoveredCell.Value.Y * Map.CELLSIZE, Map.CELLSIZE, Map.CELLSIZE));
+
+            // Draw Selection
+            if (SelectedCell.HasValue)
+            {
+                g.DrawRectangle(selectionFrame, 
+                    new Rectangle(
+                        (int)(SelectedCell.Value.X * Map.CELLSIZE), 
+                        (int)(SelectedCell.Value.Y * Map.CELLSIZE), 
+                        (int)Map.CELLSIZE, 
+                        (int)Map.CELLSIZE));
+            }
         }
 
         #region Buffer Generation
