@@ -529,7 +529,19 @@ namespace AntMe
                     for (int x = 0; x < cells.X; x++)
                     {
                         MapTile tile = tiles[x, y];
-                        if (tile == null) continue;
+
+                        // Check if Map Tile exists
+                        if (tile == null)
+                        {
+                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Map Tile is missing"));
+                            continue;
+                        }
+
+                        // Check if Material exists
+                        if (tile.Material == null)
+                        {
+                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Material is missing"));
+                        }
 
                         // Collect neighbors
                         MapTile northTile = (y <= 0 ? null : tiles[x, y - 1]);

@@ -177,6 +177,7 @@
     <Compile Include="Tools\MapTileTool.cs" />
     <Compile Include="Tools\MaterialTool.cs" />
     <Compile Include="Tools\SelectionTool.cs" />
+    <Compile Include="Tools\StartPointTool.cs" />
     <EmbeddedResource Include="CampaignPreview.resx">
       <DependentUpon>CampaignPreview.cs</DependentUpon>
     </EmbeddedResource>

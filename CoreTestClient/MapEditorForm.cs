@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace CoreTestClient
 {
@@ -349,6 +350,25 @@ namespace CoreTestClient
                     Map m = new Map(context, dialog.MapSize.X, dialog.MapSize.Y);
                     m.BlockBorder = dialog.BlockedBorder;
                     m.BaseLevel = dialog.DefaultHeightLevel;
+
+                    // Default Map Tile
+                    var flatTile = context.Mapper.MapTiles.First(t => t.Name.Equals("Flat Map Tile"));
+                    if (flatTile == null)
+                    {
+                        MessageBox.Show("Missing default Map Tile. Make sure the Basic Extension is loaded.");
+                        return;
+                    }
+
+                    Index2 size = m.GetCellCount();
+                    for (int y = 0; y < size.Y; y++)
+                    {
+                        for (int x = 0; x < size.X; x++)
+                        {
+                            m[x, y] = Activator.CreateInstance(flatTile.Type, context) as MapTile;
+                            m[x, y].HeightLevel = m.BaseLevel;
+                        }
+                    }
+
                     Map = m;
                     filename = string.Empty;
                     mapChanged = true;
