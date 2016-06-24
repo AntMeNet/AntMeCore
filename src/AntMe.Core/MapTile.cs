@@ -1,254 +1,392 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 
 namespace AntMe
 {
     /// <summary>
-    ///     Struktur zur Sammlung von zellenspezifischen Informationen der Karte.
+    /// Base Class for Map Tiles
     /// </summary>
-    [Serializable]
-    public struct MapTile
+    public abstract class MapTile : PropertyList<MapTileProperty>, ISerializableState
     {
-        #region Constants
+        private MapTileState state;
+
+        private MapMaterial material;
+
+        private MapTileOrientation orientation;
+
+        private byte heightLevel;
+
+        private Dictionary<Item, MapTileInfo> infos;
 
         /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Stop-Flag.
+        /// Reference to the Simulation Context.
         /// </summary>
-        public const float SPEED_STOP = 0.1f;
+        protected readonly SimulationContext Context;
 
         /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Slowest-Flag.
+        /// List and Data of all unknown Property from Deserialization.
         /// </summary>
-        public const float SPEED_SLOWEST = 0.5f;
+        public Dictionary<string, byte[]> UnknownProperties { get; private set; }
 
         /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Stlower-Flag.
+        /// Default Constructor.
         /// </summary>
-        public const float SPEED_SLOWER = 0.8f;
-
-        /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Normal-Flag.
-        /// </summary>
-        public const float SPEED_NORMAL = 1f;
-
-        /// <summary>
-        ///     Geschwindigkeitsmultiplikator für Flächen mit dem Faster-Flag.
-        /// </summary>
-        public const float SPEED_FASTER = 1.2f;
-
-        /// <summary>
-        ///     Höhen in Simulationseinheiten einer Fläche mit dem Low-Flag.
-        /// </summary>
-        public const float HEIGHT_LOW = 0f;
-
-        /// <summary>
-        ///     Höhen in Simulationseinheiten einer Fläche mit dem Medium-Flag.
-        /// </summary>
-        public const float HEIGHT_MEDIUM = 10f;
-
-        /// <summary>
-        ///     Höhen in Simulationseinheiten einer Fläche mit dem High-Flag.
-        /// </summary>
-        public const float HEIGHT_HIGH = 20f;
-
-        #endregion
-
-        /// <summary>
-        ///     Der Shape dieser Zelle.
-        /// </summary>
-        public TileShape Shape { get; set; }
-
-        /// <summary>
-        ///     Geschwindigkeitsmodifikator dieser Zelle. Hat nur bei flachen
-        ///     Bereichen und auf Rampen Einfluss.
-        /// </summary>
-        public TileSpeed Speed { get; set; }
-
-        /// <summary>
-        ///     Höhenangaben dieser Zelle. Bei Rampen und Canyons gibt dieser Wert
-        ///     die Höhe der tiefsten Stelle an.
-        /// </summary>
-        public TileHeight Height { get; set; }
-
-        #region static Methods
-
-        /// <summary>
-        ///     Ermittelt den Geschwindigkeitsmultiplikator zum angegebenen Parameter.
-        /// </summary>
-        /// <param name="speed">Geschwindigkeit</param>
-        /// <returns>Speedmultiplikator</returns>
-        public static float GetSpeedMultiplicator(TileSpeed speed)
+        /// <param name="context">Simulation Context</param>
+        public MapTile(SimulationContext context)
         {
-            switch (speed)
+            Context = context;
+            infos = new Dictionary<Item, MapTileInfo>();
+            UnknownProperties = new Dictionary<string, byte[]>();
+
+            context.Resolver.ResolveMapTile(context, this);
+        }
+
+        /// <summary>
+        /// Generates the Map Tile State.
+        /// </summary>
+        /// <returns></returns>
+        public MapTileState GetState()
+        {
+            if (state == null)
+                state = Context.Resolver.CreateMapTileState(this);
+            return state;
+        }
+
+        /// <summary>
+        /// Returns an Info Object for the current Tile for the giben Observer.
+        /// </summary>
+        /// <param name="observer">Observer Item</param>
+        /// <returns>Info Object</returns>
+        public MapTileInfo GetInfo(Item observer)
+        {
+            if (observer == null)
+                throw new ArgumentNullException("observer");
+
+            // Check Info Cache
+            if (infos.ContainsKey(observer))
+                return infos[observer];
+
+            // Generate new Instance
+            var info = Context.Resolver.CreateMapTileInfo(this, observer);
+            if (info == null)
+                throw new NotSupportedException("Could not create new Map Tile Info");
+
+            infos.Add(observer, info);
+            return info;
+        }
+
+        /// <summary>
+        /// Gets or sets the Material.
+        /// </summary>
+        [DisplayName("Material")]
+        [Description("Gets or sets the Material.")]
+        public MapMaterial Material
+        {
+            get { return material; }
+            set
             {
-                case TileSpeed.Stop:
-                    return SPEED_STOP;
-                case TileSpeed.Slowest:
-                    return SPEED_SLOWEST;
-                case TileSpeed.Slower:
-                    return SPEED_SLOWER;
-                case TileSpeed.Normal:
-                    return SPEED_NORMAL;
-                case TileSpeed.Faster:
-                    return SPEED_FASTER;
-                default:
-                    throw new NotSupportedException("Unknown TileSpeed Type");
+                material = value;
+                if (OnMaterialChanged != null)
+                    OnMaterialChanged(value);
             }
         }
 
-        #endregion
-
         /// <summary>
-        ///     Gibt den resultierenden Geschwindigkeitsmultiplikator zurück.
+        /// Gets or sets the Orientation of this Tile.
         /// </summary>
-        /// <returns>Geschwindigkeitsmultiplikator</returns>
-        public float GetSpeedMultiplicator()
+        [DisplayName("Orientation")]
+        [Description("Gets or sets the Orientation of this Tile.")]
+        public MapTileOrientation Orientation
         {
-            return GetSpeedMultiplicator(Speed);
+            get { return orientation; }
+            set
+            {
+                orientation = value;
+                if (OnOrientationChanged != null)
+                    OnOrientationChanged(value);
+            }
         }
 
         /// <summary>
-        ///     Gibt zurück, ob diese Zelle begehbar ist.
+        /// Sets or gets the base Height Level.
         /// </summary>
-        /// <returns>Zelle kann betreten werden</returns>
-        public bool CanEnter()
+        [DisplayName("Height Level")]
+        [Description("Sets or gets the base Height Level.")]
+        public byte HeightLevel
         {
-            return (Shape == TileShape.Flat ||
-                    Shape == TileShape.RampTop ||
-                    Shape == TileShape.RampBottom ||
-                    Shape == TileShape.RampLeft ||
-                    Shape == TileShape.RampRight);
+            get { return heightLevel; }
+            set
+            {
+                heightLevel = value;
+                if (OnHeightLevelChanged != null)
+                    OnHeightLevelChanged(value);
+            }
         }
-    }
-
-    /// <summary>
-    ///     Liste der möglichen Zellen-Typen.
-    /// </summary>
-    public enum TileShape
-    {
-        /// <summary>
-        ///     Ebene Fläche.
-        /// </summary>
-        Flat = 0x00,
 
         /// <summary>
-        ///     Rampe nach Süden.
+        /// Returns the Level to enter on the East Side.
         /// </summary>
-        RampBottom = 0x10,
-        /// <summary>
-        ///     Rampe nach Osten.
-        /// </summary>
-        RampRight = 0x11,
-        /// <summary>
-        ///     Rampe nach Norden.
-        /// </summary>
-        RampTop = 0x12,
-        /// <summary>
-        ///     Rampe nach Westen.
-        /// </summary>
-        RampLeft = 0x13,
+        [DisplayName("Connection Level East")]
+        [Description("Returns the Level on the East Side.")]
+        public byte? ConnectionLevelEast
+        {
+            get
+            {
+                switch (Orientation)
+                {
+                    case MapTileOrientation.NotRotated: return GetConnectionLevelEast();
+                    case MapTileOrientation.RotBy90Degrees: return GetConnectionLevelNorth();
+                    case MapTileOrientation.RotBy180Degrees: return GetConnectionLevelWest();
+                    case MapTileOrientation.RotBy270Degrees: return GetConnectionLevelSouth();
+                    default: throw new NotSupportedException("Wrong Orientation Value");
+                }
+            }
+        }
 
         /// <summary>
-        ///     Gerade Klippe nach Süden.
+        /// Gets a call from ConnectionLevel[Orientation] depends on Map Tile Orientation.
         /// </summary>
-        CanyonBottom = 0x20,
-        /// <summary>
-        ///     Gerade Klippe nach Osten.
-        /// </summary>
-        CanyonRight = 0x21,
-        /// <summary>
-        ///     Gerade Klippe nach Nordern.
-        /// </summary>
-        CanyonTop = 0x22,
-        /// <summary>
-        ///     Gerade Klippe nach Westen.
-        /// </summary>
-        CanyonLeft = 0x23,
+        /// <returns>Height Level on an unrotated East Side</returns>
+        protected virtual byte? GetConnectionLevelEast() { return null; }
 
         /// <summary>
-        ///     Innere Klippe nach Südwesten.
+        /// Returns the Level to enter on the South Side.
         /// </summary>
-        CanyonUpperRightConcave = 0x30,
-        /// <summary>
-        ///     Innere Klippe nach Südosten.
-        /// </summary>
-        CanyonUpperLeftConcave = 0x31,
-        /// <summary>
-        ///     Innere Klippe nach Nordosten.
-        /// </summary>
-        CanyonLowerLeftConcave = 0x32,
-        /// <summary>
-        ///     Innere Klippe nach Nordwesten.
-        /// </summary>
-        CanyonLowerRightConcave = 0x33,
+        [DisplayName("Connection Level South")]
+        [Description("Returns the Level on the South Side.")]
+        public byte? ConnectionLevelSouth
+        {
+            get
+            {
+                switch (Orientation)
+                {
+                    case MapTileOrientation.NotRotated: return GetConnectionLevelSouth();
+                    case MapTileOrientation.RotBy90Degrees: return GetConnectionLevelEast();
+                    case MapTileOrientation.RotBy180Degrees: return GetConnectionLevelNorth();
+                    case MapTileOrientation.RotBy270Degrees: return GetConnectionLevelWest();
+                    default: throw new NotSupportedException("Wrong Orientation Value");
+                }
+            }
+        }
 
         /// <summary>
-        ///     Äußere Klippe nach Südwesten.
+        /// Gets a call from ConnectionLevel[Orientation] depends on Map Tile Orientation.
         /// </summary>
-        CanyonLowerLeftConvex = 0x40,
-        /// <summary>
-        ///     Äußere Klippe nach Südosten.
-        /// </summary>
-        CanyonLowerRightConvex = 0x41,
-        /// <summary>
-        ///     Äußere Klippe nach Nordosten.
-        /// </summary>
-        CanyonUpperRightConvex = 0x42,
-        /// <summary>
-        ///     Äußere Klippe nach Nordwesten.
-        /// </summary>
-        CanyonUpperLeftConvex = 0x43,
-
-    }
-
-    /// <summary>
-    ///     Liste der möglichen Höhenlayern.
-    /// </summary>
-    public enum TileHeight
-    {
-        /// <summary>
-        ///     Niedrig.
-        /// </summary>
-        Low = 1,
+        /// <returns>Height Level on an unrotated South Side</returns>
+        protected virtual byte? GetConnectionLevelSouth() { return null; }
 
         /// <summary>
-        ///     Mittel.
+        /// Returns the Level to enter on the West Side.
         /// </summary>
-        Medium = 2,
+        [DisplayName("Connection Level West")]
+        [Description("Returns the Level on the West Side.")]
+        public byte? ConnectionLevelWest
+        {
+            get
+            {
+                switch (Orientation)
+                {
+                    case MapTileOrientation.NotRotated: return GetConnectionLevelWest();
+                    case MapTileOrientation.RotBy90Degrees: return GetConnectionLevelSouth();
+                    case MapTileOrientation.RotBy180Degrees: return GetConnectionLevelEast();
+                    case MapTileOrientation.RotBy270Degrees: return GetConnectionLevelNorth();
+                    default: throw new NotSupportedException("Wrong Orientation Value");
+                }
+            }
+        }
 
         /// <summary>
-        ///     Hoch.
+        /// Gets a call from ConnectionLevel[Orientation] depends on Map Tile Orientation.
         /// </summary>
-        High = 3
-    }
-
-    /// <summary>
-    ///     Liste möglicher Zellen-Geschwindigkeiten.
-    /// </summary>
-    public enum TileSpeed
-    {
-        /// <summary>
-        ///     Nahezu voller Stop (10%).
-        /// </summary>
-        Stop = 1,
+        /// <returns>Height Level on an unrotated West Side</returns>
+        protected virtual byte? GetConnectionLevelWest() { return null; }
 
         /// <summary>
-        ///     Sehr langsam (50%).
+        /// Returns the Level to enter on the North Side.
         /// </summary>
-        Slowest = 2,
+        [DisplayName("Connection Level North")]
+        [Description("Returns the Level on the North Side.")]
+        public byte? ConnectionLevelNorth
+        {
+            get
+            {
+                switch (Orientation)
+                {
+                    case MapTileOrientation.NotRotated: return GetConnectionLevelNorth();
+                    case MapTileOrientation.RotBy90Degrees: return GetConnectionLevelWest();
+                    case MapTileOrientation.RotBy180Degrees: return GetConnectionLevelSouth();
+                    case MapTileOrientation.RotBy270Degrees: return GetConnectionLevelEast();
+                    default: throw new NotSupportedException("Wrong Orientation Value");
+                }
+            }
+        }
 
         /// <summary>
-        ///     Langsamer (80%).
+        /// Gets a call from ConnectionLevel[Orientation] depends on Map Tile Orientation.
         /// </summary>
-        Slower = 3,
+        /// <returns>Height Level on an unrotated North Side</returns>
+        protected virtual byte? GetConnectionLevelNorth() { return null; }
 
         /// <summary>
-        ///     Normale Geschwindigkeit (100%).
+        /// Validates the current Map Tile against the given Tile.
         /// </summary>
-        Normal = 4,
+        /// <param name="tile">Tile</param>
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        public bool ValidateTileToTheEast(MapTile tile, IList<Exception> exceptions)
+        {
+            switch (Orientation)
+            {
+                case MapTileOrientation.NotRotated: return OnValidateEastSide(tile, exceptions);
+                case MapTileOrientation.RotBy90Degrees: return OnValidateNorthSide(tile, exceptions);
+                case MapTileOrientation.RotBy180Degrees: return OnValidateWestSide(tile, exceptions);
+                case MapTileOrientation.RotBy270Degrees: return OnValidateSouthSide(tile, exceptions);
+                default: throw new NotSupportedException("Wrong Orientation Value");
+            }
+        }
 
         /// <summary>
-        ///     Schneller (120%).
+        /// Gets called to validate the Map Tile close to this one.
         /// </summary>
-        Faster = 5,
+        /// <param name="tile">Neighbor Tile</param>
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        protected virtual bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions) { return true; }
+
+        /// <summary>
+        /// Validates the current Map Tile against the given Tile.
+        /// </summary>
+        /// <param name="tile">Tile</param>
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        public virtual bool ValidateTileToTheSouth(MapTile tile, IList<Exception> exceptions)
+        {
+            switch (Orientation)
+            {
+                case MapTileOrientation.NotRotated: return OnValidateSouthSide(tile, exceptions);
+                case MapTileOrientation.RotBy90Degrees: return OnValidateEastSide(tile, exceptions);
+                case MapTileOrientation.RotBy180Degrees: return OnValidateNorthSide(tile, exceptions);
+                case MapTileOrientation.RotBy270Degrees: return OnValidateWestSide(tile, exceptions);
+                default: throw new NotSupportedException("Wrong Orientation Value");
+            }
+        }
+
+        /// <summary>
+        /// Gets called to validate the Map Tile close to this one.
+        /// </summary>
+        /// <param name="tile">Neighbor Tile</param>
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        protected virtual bool OnValidateSouthSide(MapTile tile, IList<Exception> exceptions) { return true; }
+
+        /// <summary>
+        /// Validates the current Map Tile against the given Tile.
+        /// </summary>
+        /// <param name="tile">Tile</param>
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        public virtual bool ValidateTileToTheWest(MapTile tile, IList<Exception> exceptions)
+        {
+            switch (Orientation)
+            {
+                case MapTileOrientation.NotRotated: return OnValidateWestSide(tile, exceptions);
+                case MapTileOrientation.RotBy90Degrees: return OnValidateSouthSide(tile, exceptions);
+                case MapTileOrientation.RotBy180Degrees: return OnValidateEastSide(tile, exceptions);
+                case MapTileOrientation.RotBy270Degrees: return OnValidateNorthSide(tile, exceptions);
+                default: throw new NotSupportedException("Wrong Orientation Value");
+            }
+        }
+
+        /// <summary>
+        /// Gets called to validate the Map Tile close to this one.
+        /// </summary>
+        /// <param name="tile">Neighbor Tile</param>
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        protected virtual bool OnValidateWestSide(MapTile tile, IList<Exception> exceptions) { return true; }
+
+        /// <summary>
+        /// Validates the current Map Tile against the given Tile.
+        /// </summary>
+        /// <param name="tile">Tile</param>
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        public virtual bool ValidateTileToTheNorth(MapTile tile, IList<Exception> exceptions)
+        {
+            switch (Orientation)
+            {
+                case MapTileOrientation.NotRotated: return OnValidateNorthSide(tile, exceptions);
+                case MapTileOrientation.RotBy90Degrees: return OnValidateWestSide(tile, exceptions);
+                case MapTileOrientation.RotBy180Degrees: return OnValidateSouthSide(tile, exceptions);
+                case MapTileOrientation.RotBy270Degrees: return OnValidateEastSide(tile, exceptions);
+                default: throw new NotSupportedException("Wrong Orientation Value");
+            }
+        }
+
+        /// <summary>
+        /// Gets called to validate the Map Tile close to this one.
+        /// </summary>
+        /// <param name="tile">Neighbor Tile</param>
+        /// <param name="exceptions">Result-List of occured Exceptions</param>
+        protected virtual bool OnValidateNorthSide(MapTile tile, IList<Exception> exceptions) { return true; }
+
+        /// <summary>
+        /// Returns the Height at the given Position.
+        /// </summary>
+        /// <param name="position">relative Position</param>
+        /// <returns>Map Height</returns>
+        public abstract float GetHeight(Vector2 position);
+
+        /// <summary>
+        /// Serializes the first Frame of this Map Tile.
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public virtual void SerializeFirst(BinaryWriter stream, byte version)
+        {
+            stream.Write((ushort)Orientation);
+            stream.Write(HeightLevel);
+        }
+
+        /// <summary>
+        /// Serializes following Frames. (Not supported in Map Tile)
+        /// </summary>
+        /// <param name="stream">Output Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public void SerializeUpdate(BinaryWriter stream, byte version)
+        {
+            throw new NotSupportedException("Update is not supported for Map Tiles");
+        }
+
+        /// <summary>
+        /// Deserializes the first Frame of this Map Tile.
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public virtual void DeserializeFirst(BinaryReader stream, byte version)
+        {
+            Orientation = (MapTileOrientation)stream.ReadUInt16();
+            HeightLevel = stream.ReadByte();
+        }
+
+        /// <summary>
+        /// Deserializes all following Frames. (Not supported in Map Tile)
+        /// </summary>
+        /// <param name="stream">Input Stream</param>
+        /// <param name="version">Protocol Version</param>
+        public void DeserializeUpdate(BinaryReader stream, byte version)
+        {
+            throw new NotSupportedException("Update is not supported for Map Tiles");
+        }
+
+        /// <summary>
+        /// Signal for a changed Material.
+        /// </summary>
+        public event ValueUpdate<MapMaterial> OnMaterialChanged;
+
+        /// <summary>
+        /// Signal for a changed Orientation.
+        /// </summary>
+        public event ValueUpdate<MapTileOrientation> OnOrientationChanged;
+
+        /// <summary>
+        /// Signal for a changed HeightLevel.
+        /// </summary>
+        public event ValueUpdate<byte> OnHeightLevelChanged;
     }
 }

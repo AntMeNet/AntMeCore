@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AntMe
 {
     /// <summary>
-    /// Zentrales Type Repository zur Auflistung von erweiterbaren Engine Fragmenten.
+    /// Type Repository for all dynamic Elements within the Game Simulation.
     /// </summary>
     public interface ITypeMapper
     {
@@ -34,6 +34,151 @@ namespace AntMe
         /// Listet alle registrierten Extensions auf.
         /// </summary>
         IEnumerable<IRankedTypeMapperEntry> EngineProperties { get; }
+
+        #endregion
+
+        #region Map Properties
+
+        /// <summary>
+        /// Registers additional Map Properties.
+        /// </summary>
+        /// <typeparam name="T">Type of Map Property</typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createPropertyDelegate"></param>
+        void RegisterMapProperty<T>(IExtensionPack extensionPack, string name, 
+            Func<Map, T> createPropertyDelegate = null)
+            where T : MapProperty;
+
+        /// <summary>
+        /// Registers additional Map Properties.
+        /// </summary>
+        /// <typeparam name="T">Type of Map Property</typeparam>
+        /// <typeparam name="S">Type of State for the Map Property</typeparam>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createPropertyDelegate"></param>
+        /// <param name="createStateDelegate"></param>
+        void RegisterMapProperty<T, S>(IExtensionPack extensionPack, string name, 
+            Func<Map, T> createPropertyDelegate = null, 
+            Func<Map, MapProperty, S> createStateDelegate = null)
+            where T : MapProperty
+            where S : MapStateProperty;
+
+        /// <summary>
+        /// List all Map Properties.
+        /// </summary>
+        IEnumerable<IStateInfoTypeMapperEntry> MapProperties { get; }
+
+        #endregion
+
+        #region Map Extender
+
+        /// <summary>
+        /// Registeres a Delegate to extend a Map.
+        /// </summary>
+        /// <param name="extensionPack">Extension Pack</param>
+        /// <param name="name">Name</param>
+        /// <param name="priority">Priority</param>
+        /// <param name="extenderDelegate">Extender Delegate</param>
+        void RegisterMapExtender(IExtensionPack extensionPack, string name, Action<Map> extenderDelegate, int priority);
+
+        /// <summary>
+        /// List of all Map Extender.
+        /// </summary>
+        IEnumerable<IRankedTypeMapperEntry> MapExtender { get; }
+
+        #endregion
+
+        #region Map Material
+
+        /// <summary>
+        /// Registers a new Material.
+        /// </summary>
+        /// <typeparam name="T">Material Type</typeparam>
+        /// <param name="extensionPack">Extension Pack</param>
+        /// <param name="name">Material Name</param>
+        void RegisterMapMaterial<T>(IExtensionPack extensionPack, string name) 
+            where T : MapMaterial;
+
+        /// <summary>
+        /// List of all available Materials.
+        /// </summary>
+        IEnumerable<ITypeMapperEntry> MapMaterials { get; }
+
+        #endregion
+
+        #region Map Tiles
+
+        /// <summary>
+        /// Registeres a Map Tile.
+        /// </summary>
+        /// <typeparam name="T">Map Tile Type</typeparam>
+        /// <typeparam name="S">Map Tile State Type</typeparam>
+        /// <typeparam name="I">Map Tile Info Type</typeparam>
+        /// <param name="extensionPack">Extension Pack</param>
+        /// <param name="name">Name</param>
+        /// <param name="createStateDelegate">Optional Create State Delegate</param>
+        /// <param name="createInfoDelegate">Optional Create Info Delegate</param>
+        void RegisterMapTile<T, S, I>(IExtensionPack extensionPack, string name,
+            Func<MapTile, S> createStateDelegate = null,
+            Func<MapTile, Item, I> createInfoDelegate = null)
+            where T : MapTile
+            where S : MapTileState
+            where I : MapTileInfo;
+
+        /// <summary>
+        /// List of all Map Tiles
+        /// </summary>
+        IEnumerable<IStateInfoTypeMapperEntry> MapTiles { get; }
+
+        #endregion
+
+        #region Map Tile Properties
+
+        void RegisterMapTileProperty<T>(IExtensionPack extensionPack, string name)
+            where T : MapTileProperty;
+
+        void RegisterMapTilePropertyS<T, S>(IExtensionPack extensionPack, string name,
+            Func<MapTile, MapTileProperty, S> createStateDelegate = null)
+            where T : MapTileProperty
+            where S : MapTileStateProperty;
+
+        void RegisterMapTilePropertyI<T, I>(IExtensionPack extensionPack, string name,
+            Func<MapTile, MapTileProperty, Item, I> createInfoDelegate = null)
+            where T : MapTileProperty
+            where I : MapTileInfoProperty;
+
+        void RegisterMapTilePropertySI<T, S, I>(IExtensionPack extensionPack, string name,
+            Func<MapTile, MapTileProperty, S> createStateDelegate = null,
+            Func<MapTile, MapTileProperty, Item, I> createInfoDelegate = null)
+            where T : MapTileProperty
+            where S : MapTileStateProperty
+            where I : MapTileInfoProperty;
+
+        /// <summary>
+        /// List of all Map Tile Properties.
+        /// </summary>
+        IEnumerable<IStateInfoTypeMapperEntry> MapTileProperties { get; }
+
+        #endregion
+
+        #region Map Tile Attachments
+
+        void AttachMapTileProperty<I, P>(IExtensionPack extensionPack, string name, Func<MapTile, P> createPropertyDelegate = null)
+            where I : MapTile
+            where P : MapTileProperty;
+
+        IEnumerable<IAttachmentTypeMapperEntry> MapTileAttachments { get; }
+
+        #endregion
+
+        #region Map Tile Extender
+
+        void RegisterMapTileExtender<T>(IExtensionPack extensionPack, string name, Action<MapTile> extenderDelegate, int priority)
+            where T : MapTile;
+
+        IEnumerable<IRankedTypeMapperEntry> MapTileExtender { get; }
 
         #endregion
 
@@ -176,11 +321,12 @@ namespace AntMe
         /// <typeparam name="FI">Typ der Factory Interop</typeparam>
         /// <typeparam name="U">Typ der Unit</typeparam>
         /// <typeparam name="UI">Typ der Unit Interop</typeparam>
+        /// <typeparam name="IT">Item Type</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack.</param>
         /// <param name="name">Name der Faction.</param>
         /// <param name="createStateDelegate">Optionaler Delegat zur Erstellung des Faction States.</param>
         /// <param name="createInfoDelegate">Optionaler Delegat zur Erstellung der Faction Info.</param>
-        void RegisterFaction<T, S, I, F, FI, U, UI>(IExtensionPack extensionPack, string name,
+        void RegisterFaction<T, S, I, F, FI, U, UI, IT>(IExtensionPack extensionPack, string name,
             Func<Faction, S> createStateDelegate = null,
             Func<Faction, Item, I> createInfoDelegate = null)
             where T : Faction
@@ -189,7 +335,8 @@ namespace AntMe
             where F : FactionFactory
             where FI : FactoryInterop
             where U : FactionUnit
-            where UI : UnitInterop;
+            where UI : UnitInterop
+            where IT : FactionItem;
 
         /// <summary>
         /// Liefert eine Liste der registrierten Factions.

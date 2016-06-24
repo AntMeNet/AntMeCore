@@ -4,7 +4,8 @@ namespace AntMe.Basics.Factions.Bugs
 {
     public sealed class BugFactoryInterop : FactoryInterop
     {
-        public BugFactoryInterop(BugFaction faction) : base(faction)
+        public BugFactoryInterop(BugFaction faction) 
+            : base(faction)
         {
 
         }

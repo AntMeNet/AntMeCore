@@ -87,8 +87,14 @@
     <Compile Include="SimulationState.cs" />
     <Compile Include="TypeInfo.cs" />
     <Compile Include="TypeMapper.cs" />
+    <Compile Include="TypeMapper.Interops.cs" />
+    <Compile Include="TypeMapper.Items.cs" />
+    <Compile Include="TypeMapper.Levels.cs" />
+    <Compile Include="TypeMapper.Maps.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="TypeMapper.Factions.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

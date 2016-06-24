@@ -14,18 +14,25 @@ namespace AntMe.Basics.Factions.Ants
         private int markerDelay;
 
         /// <summary>
+        /// Reference to the Faction.
+        /// </summary>
+        private readonly new AntFaction Faction;
+
+        /// <summary>
         /// Reference to the related Ant Item.
         /// </summary>
-        private new readonly AntItem item;
+        private readonly new AntItem Item;
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
-        public AntUnitInterop(AntFaction faction, AntItem item) : base(faction, item)
+        public AntUnitInterop(AntFaction faction, AntItem item)
+            : base(faction, item)
         {
-            this.item = item;
+            Faction = faction;
+            Item = item;
         }
 
         /// <summary>
@@ -54,11 +61,11 @@ namespace AntMe.Basics.Factions.Ants
                 return false;
 
             // Marker erstellen
-            var marker = new MarkerItem(faction.Context, faction,
-                item.Position.ToVector2XY(), size, information);
+            var marker = new MarkerItem(Faction.Context, Faction,
+                Item.Position.ToVector2XY(), size, information);
 
-            item.Engine.InsertItem(marker);
-            markerDelay = faction.Settings.GetInt<AntItem>("MarkerDelay").Value;
+            Item.Engine.InsertItem(marker);
+            markerDelay = Faction.Settings.GetInt<AntItem>("MarkerDelay").Value;
             return true;
         }
 
@@ -67,7 +74,12 @@ namespace AntMe.Basics.Factions.Ants
         /// <summary>
         /// Gets the Name of this Item.
         /// </summary>
-        public string Name { get { return item.Name; } }
+        public string Name { get { return Item.Name; } }
+
+        /// <summary>
+        /// Returns the Caste Name for this Item.
+        /// </summary>
+        public string Caste { get { return Item.Attributes != null ? Item.Attributes.Name : string.Empty; } }
 
         #endregion
 

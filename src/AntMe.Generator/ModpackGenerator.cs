@@ -31,11 +31,6 @@ namespace AntMe.Generator
             List<Type> typeReferences = new List<Type>();
 
 
-            //string frameworkRoot = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1\{0}.dll";
-            List<MetadataReference> references = new List<MetadataReference>();
-            //references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "mscorlib")));
-            //references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "System")));
-            //references.Add(MetadataReference.CreateFromFile(string.Format(frameworkRoot, "System.Core")));
 
             CSharpCompilationOptions options =
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
@@ -66,7 +61,7 @@ namespace AntMe.Generator
                     {
                         if (methodInfo.IsSpecialName)
                             continue;
-                        //classNode.add(new MethodParseNode(methodInfo, WrapType.InfoWrap));
+                        classNode.add(new MethodParseNode(methodInfo, WrapType.InfoWrap));
                     }
 
                     foreach (PropertyInfo propertyInfo in t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
@@ -82,12 +77,14 @@ namespace AntMe.Generator
 
             typeReferences.AddRange(root.GetReferences());
 
+            List<MetadataReference> references = new List<MetadataReference>();
+
             foreach (string location in typeReferences.Select(c => c.Assembly.Location).Distinct())
             {
                 references.Add(MetadataReference.CreateFromFile(location));
             }
 
-            syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(root.Generate()).AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System"))).AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("AntMe")))));
+            syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(root.Generate())));
 
             StreamWriter streamWriter = new StreamWriter(File.Open(Path.Combine(output, "Assembly.cs"), FileMode.Create));
             syntaxTrees[0].GetRoot().NormalizeWhitespace().GetText().Write(streamWriter);

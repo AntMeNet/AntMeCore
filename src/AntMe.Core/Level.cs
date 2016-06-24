@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace AntMe
@@ -23,11 +24,6 @@ namespace AntMe
         /// Simulation Engine.
         /// </summary>
         private Engine engine = null;
-
-        /// <summary>
-        /// Cached Map State.
-        /// </summary>
-        private MapState mapState = null;
 
         /// <summary>
         /// Slot specific Settings.
@@ -100,7 +96,7 @@ namespace AntMe
         /// </summary>
         protected Level(SimulationContext context)
         {
-            Context = new SimulationContext(context.Resolver, context.Settings);
+            Context = new SimulationContext(context.Resolver, context.Mapper, context.Settings);
 
             // Clone Settings for Slots
             slotSettings = new KeyValueStore[MAX_SLOTS];
@@ -156,6 +152,7 @@ namespace AntMe
             // Generate the Simulation Context for this Level.
             Context = new SimulationContext(
                 Context.Resolver,
+                Context.Mapper,
                 Context.Settings,
                 new Random(RandomSeed));
 
@@ -171,14 +168,14 @@ namespace AntMe
             engine = new Engine(Context.Resolver);
 
             // Generate Map and validate.
-            Map map = GetMap();
+            Map map = Map.Deserialize(Context, GetMap());
             if (map == null)
             {
                 var exception = new NotSupportedException("No Map was created");
                 SetMode(LevelMode.InitFailed, exception);
                 throw exception;
             }
-            map.CheckMap();
+            map.ValidateMap();
 
             int minPlayer = LevelDescription.MinPlayerCount;
             int maxPlayer = LevelDescription.MaxPlayerCount;
@@ -264,7 +261,7 @@ namespace AntMe
                 if (slots[i] == null)
                     continue;
 
-                SimulationContext factionContext = new SimulationContext(Context.Resolver, slotSettings[i]);
+                SimulationContext factionContext = new SimulationContext(Context.Resolver, Context.Mapper, slotSettings[i]);
 
                 // Identify and generate Faction
                 try
@@ -285,11 +282,6 @@ namespace AntMe
                     throw exception;
                 }
             }
-
-            // State erzeugen
-            mapState = new MapState();
-            mapState.BlockBorder = map.BlockBorder;
-            mapState.Tiles = (MapTile[,])map.Tiles.Clone();
 
             engine.Init(map);
             engine.OnInsertItem += engine_OnInsertItem;
@@ -363,7 +355,7 @@ namespace AntMe
         /// Generates the Map for this Level.
         /// </summary>
         /// <returns>Map Instance</returns>
-        public abstract Map GetMap();
+        public abstract byte[] GetMap();
 
         /// <summary>
         /// Gives the Level Designer the chance to change Settings.
@@ -437,17 +429,16 @@ namespace AntMe
             // Create a new Instance of State
             if (State == null)
             {
+                // Base State
                 State = Context.Resolver.CreateLevelState(this);
-                State.Map = mapState;
 
-                // Collect all Faction States
+                // Map State
+                State.Map = Engine.Map.GetState();
+
+                // Collect Faction States
                 for (int i = 0; i < MAX_SLOTS; i++)
-                {
                     if (Factions[i] != null)
-                    {
                         State.Factions.Add(Factions[i].GetFactionState());
-                    }
-                }
             }
 
             State.Round = engine.Round;

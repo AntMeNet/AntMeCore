@@ -125,51 +125,16 @@ namespace AntMe.Basics.Factions.Ants
 
             // Prüfen, ob es sich um den richtigen Typen handelt
             if (!antType.IsSubclassOf(typeof(AntUnit)))
-                throw new ArgumentException("Given Type is not a primordial Ant");
+                throw new ArgumentException("Given Type is not an Ant Unit");
 
-            // Auf Kasten prüfen
-            var caste = new PrimordialCasteAttribute();
-            var castes = antType.GetCustomAttributes(typeof(CasteAttribute), true);
-            if (castes.Length > 0 && castes[0] is CasteAttribute)
-            {
-                var attribute = castes[0] as CasteAttribute;
-
-                // Caste Mapping ermitteln
-                Type casteType = attribute.GetType();
-                object[] mappings = casteType.GetCustomAttributes(typeof(CasteAttributeMappingAttribute), false);
-                if (mappings.Length != 1 || !(mappings[0] is CasteAttributeMappingAttribute))
-                    throw new ArgumentException("The used Caste-Attribute has no Mapping");
-
-                // Mapping versuchen
-                try
-                {
-                    var mapping = mappings[0] as CasteAttributeMappingAttribute;
-                    var tempCaste = new PrimordialCasteAttribute
-                    {
-                        Name = (string)casteType.GetProperty(mapping.NameProperty).GetValue(attribute, null),
-                        Attack = (int)casteType.GetProperty(mapping.AttackProperty).GetValue(attribute, null),
-                        Attention = (int)casteType.GetProperty(mapping.AttentionProperty).GetValue(attribute, null),
-                        Defense = (int)casteType.GetProperty(mapping.DefenseProperty).GetValue(attribute, null),
-                        Speed = (int)casteType.GetProperty(mapping.SpeedProperty).GetValue(attribute, null),
-                        Strength = (int)casteType.GetProperty(mapping.StrengthProperty).GetValue(attribute, null)
-                    };
-
-                    // Prüfung
-                    tempCaste.Check();
-
-                    caste = tempCaste;
-                }
-                catch (Exception ex)
-                {
-                    throw new ArgumentException("The mapping of the used Caste-Attribute failed", ex);
-                }
-            }
+            // Get Attributes
+            var attributes = GetAttributes(antType);
 
             // Namen erzeugen
             string name = names[Random.Next(0, names.Length - 1)];
 
             // AntItem erstellen
-            AntItem antItem = new AntItem(Context, this, position, direction, name);
+            AntItem antItem = new AntItem(Context, attributes, this, position, direction, name);
             AntUnit antUnit = (AntUnit)Activator.CreateInstance(antType);
 
             CreateUnit(antUnit, antItem);

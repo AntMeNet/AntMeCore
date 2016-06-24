@@ -47,6 +47,15 @@ namespace AntMe.Generator
         {
             string[] parts = fullName.Split('.');
 
+            //special Types
+            switch (fullName)
+            {
+                case "System.Void":
+                    return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword));
+                default:
+                    break;
+            }
+
             if (parts.Length > 1)
             {
                 return GenerateQualifedName(parts);

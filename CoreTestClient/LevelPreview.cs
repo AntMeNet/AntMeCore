@@ -20,7 +20,7 @@ namespace AntMe.Simulation.Debug
             {
                 nameLabel.Text = level.LevelDescription.Name;
                 descriptionLabel.Text = level.LevelDescription.Description;
-                mapPreview1.SetMap(level.Map);
+                mapPreview1.SetMap(Map.Deserialize(ExtensionLoader.CreateSimulationContext(), level.Map));
             }
             else
             {

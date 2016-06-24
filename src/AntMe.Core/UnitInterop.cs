@@ -10,16 +10,17 @@ namespace AntMe
         /// <summary>
         /// Reference to the own Faction.
         /// </summary>
-        protected readonly Faction faction;
+        protected readonly Faction Faction;
 
         /// <summary>
         /// Reference to the related Item.
         /// </summary>
-        protected readonly FactionItem item;
+        protected readonly FactionItem Item;
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
+        /// <param name="context">Simulation Context</param>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="item">Refernce to the Item</param>
         public UnitInterop(Faction faction, FactionItem item)
@@ -35,36 +36,31 @@ namespace AntMe
             if (item == null)
                 throw new ArgumentNullException("item");
 
-            this.faction = faction;
-            this.item = item;
+            Faction = faction;
+            Item = item;
         }
 
         #region Properties
 
         /// <summary>
-        /// Gets more Information about the own Faction.
-        /// </summary>
-        public FactionInfo Faction { get { return faction.GetFactionInfo(item); } }
-
-        /// <summary>
         /// Gets the Faction Randomizer.
         /// </summary>
-        public Random Random { get { return faction.Context.Random; } }
+        public Random Random { get { return Faction.Context.Random; } }
 
         /// <summary>
         /// Gets the Id of the related Item.
         /// </summary>
-        public int Id { get { return item.Id; } }
+        public int Id { get { return Item.Id; } }
 
         /// <summary>
         /// Gets the current Orientation.
         /// </summary>
-        public Angle Orientation { get { return item.Orientation; } }
+        public Angle Orientation { get { return Item.Orientation; } }
 
         /// <summary>
         /// Gets the Radius of the Item.
         /// </summary>
-        public float Radius { get { return item.Radius; } }
+        public float Radius { get { return Item.Radius; } }
 
         #endregion
     }

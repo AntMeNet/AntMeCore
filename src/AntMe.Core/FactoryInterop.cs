@@ -25,6 +25,7 @@ namespace AntMe
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
+        /// <param name="context">Reference to the Simulation Context</param>
         /// <param name="faction">Instance of the related Faction</param>
         public FactoryInterop(Faction faction)
         {

@@ -27,7 +27,7 @@ namespace AntMe.Runtime
         /// <summary>
         /// Level Map.
         /// </summary>
-        public Map Map { get; set; }
+        public byte[] Map { get; set; }
 
         /// <summary>
         /// Statistics for this Level.

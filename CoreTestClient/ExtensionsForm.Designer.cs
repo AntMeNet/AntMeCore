@@ -30,7 +30,7 @@
         {
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("ExtensionPacks");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Engine Properties");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("ItemProperties");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Item Properties");
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Item Attachment Properties");
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Item Extender");
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Items", new System.Windows.Forms.TreeNode[] {
@@ -59,6 +59,19 @@
             System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Level", new System.Windows.Forms.TreeNode[] {
             treeNode17,
             treeNode18});
+            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Map Properties");
+            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Map Extender");
+            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Map", new System.Windows.Forms.TreeNode[] {
+            treeNode20,
+            treeNode21});
+            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Materials");
+            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Map Tile Properties");
+            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Map Tile Attachment Properties");
+            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Map Tile Extender");
+            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Map Tiles", new System.Windows.Forms.TreeNode[] {
+            treeNode24,
+            treeNode25,
+            treeNode26});
             this.splitter = new System.Windows.Forms.SplitContainer();
             this.treeView = new System.Windows.Forms.TreeView();
             this.listView = new System.Windows.Forms.ListView();
@@ -101,7 +114,7 @@
             treeNode2.Name = "enginePropertiesNode";
             treeNode2.Text = "Engine Properties";
             treeNode3.Name = "itemPropertiesNode";
-            treeNode3.Text = "ItemProperties";
+            treeNode3.Text = "Item Properties";
             treeNode4.Name = "itemAttachmentPropertiesNode";
             treeNode4.Text = "Item Attachment Properties";
             treeNode5.Name = "itemExtenderNode";
@@ -134,6 +147,22 @@
             treeNode18.Text = "Level Extender";
             treeNode19.Name = "levelNode";
             treeNode19.Text = "Level";
+            treeNode20.Name = "mapPropertiesNode";
+            treeNode20.Text = "Map Properties";
+            treeNode21.Name = "mapExtenderNode";
+            treeNode21.Text = "Map Extender";
+            treeNode22.Name = "mapNode";
+            treeNode22.Text = "Map";
+            treeNode23.Name = "materialsNode";
+            treeNode23.Text = "Materials";
+            treeNode24.Name = "mapTilePropertiesNode";
+            treeNode24.Text = "Map Tile Properties";
+            treeNode25.Name = "mapTileAttachmentPropertiesNode";
+            treeNode25.Text = "Map Tile Attachment Properties";
+            treeNode26.Name = "mapTileExtenderNode";
+            treeNode26.Text = "Map Tile Extender";
+            treeNode27.Name = "mapTilesNode";
+            treeNode27.Text = "Map Tiles";
             this.treeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
@@ -141,7 +170,10 @@
             treeNode10,
             treeNode13,
             treeNode16,
-            treeNode19});
+            treeNode19,
+            treeNode22,
+            treeNode23,
+            treeNode27});
             this.treeView.Size = new System.Drawing.Size(196, 331);
             this.treeView.TabIndex = 0;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
