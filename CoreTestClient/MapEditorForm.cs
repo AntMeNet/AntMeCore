@@ -308,5 +308,11 @@ namespace CoreTestClient
                 selectionTool.Apply(map, ex.CellIndex, new Vector2((ex.CellIndex.X + 0.5f) * Map.CELLSIZE, (ex.CellIndex.Y + 0.5f) * Map.CELLSIZE));
             }
         }
+
+        private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            RevalidateMap();
+            scene.InvalidateMap();
+        }
     }
 }
