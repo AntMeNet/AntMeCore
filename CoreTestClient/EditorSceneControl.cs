@@ -24,9 +24,17 @@ namespace CoreTestClient
 
         private Pen selectionFrame;
 
+        private Font startPointFont;
+
+        private Brush startPointBackground;
+
+        private Brush startPointFontBrush;
+
         public List<Exception> ValidationExceptions { get; private set; }
 
         public Index2? SelectedCell { get; set; }
+
+        public Index2?[] StartPoints { get; set; }
 
         public EditorSceneControl()
         {
@@ -51,6 +59,9 @@ namespace CoreTestClient
             hoverBrush = new SolidBrush(Color.FromArgb(80, Color.White));
             errorBrush = new SolidBrush(Color.FromArgb(80, Color.Red));
             selectionFrame = new Pen(Color.White, 3f);
+            startPointFont = new Font("Courier New", 10f);
+            startPointFontBrush = new SolidBrush(Color.White);
+            startPointBackground = new SolidBrush(Color.Black);
         }
 
         public void SetMap(Map map)
@@ -100,6 +111,25 @@ namespace CoreTestClient
                         (int)Map.CELLSIZE, 
                         (int)Map.CELLSIZE));
             }
+
+            // Draw Startpoints
+            if (StartPoints != null)
+            {
+                for (int i = 0; i < StartPoints.Length; i++)
+                {
+                    if (StartPoints[i].HasValue)
+                    {
+                        PointF point = new PointF(
+                            ((StartPoints[i].Value.X + 0.5f) * Map.CELLSIZE), 
+                            ((StartPoints[i].Value.Y + 0.5f) * Map.CELLSIZE));
+
+                        SizeF size = g.MeasureString((i + 1).ToString(), startPointFont);
+                        g.FillRectangle(startPointBackground, new RectangleF(point.X - (size.Width / 2), point.Y - (size.Height / 2), size.Width, size.Height));
+                        g.DrawString((i + 1).ToString(), startPointFont, startPointFontBrush, point.X - (size.Width / 2), point.Y - (size.Height / 2));
+                    }
+                }
+            }
+
         }
 
         #region Buffer Generation

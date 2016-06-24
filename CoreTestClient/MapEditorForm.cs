@@ -38,6 +38,8 @@ namespace CoreTestClient
 
         private SelectionTool selectionTool;
 
+        private StartPointTool startPointTool;
+
         private EditorTool activeTool;
 
         private bool mouseDown = false;
@@ -61,6 +63,10 @@ namespace CoreTestClient
             tools.Add(selectionTool);
             tools.Add(new MapTileTool(context));
             tools.Add(new MaterialTool(context));
+
+            startPointTool = new StartPointTool(context);
+            scene.StartPoints = startPointTool.StartPoints;
+            tools.Add(startPointTool);
 
             foreach (var tool in tools)
             {
@@ -230,6 +236,14 @@ namespace CoreTestClient
 
         private void SetMap(Map map)
         {
+            for (int i = 0; i < startPointTool.StartPoints.Length; i++)
+            {
+                if (map != null && map.StartPoints.Length >= i + 1)
+                    startPointTool.StartPoints[i] = map.StartPoints[i];
+                else
+                    startPointTool.StartPoints[i] = null;
+            }
+
             scene.SetMap(map);
             RevalidateMap();
 
