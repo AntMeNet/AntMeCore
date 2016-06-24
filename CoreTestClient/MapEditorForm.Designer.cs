@@ -47,6 +47,7 @@
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.errorContainer = new System.Windows.Forms.SplitContainer();
+            this.scene = new CoreTestClient.EditorSceneControl();
             this.errorsList = new System.Windows.Forms.ListView();
             this.cellColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.descriptionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -56,7 +57,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.label3 = new System.Windows.Forms.Label();
-            this.scene = new CoreTestClient.EditorSceneControl();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -213,6 +213,15 @@
             this.errorContainer.SplitterDistance = 388;
             this.errorContainer.TabIndex = 1;
             // 
+            // scene
+            // 
+            this.scene.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scene.Location = new System.Drawing.Point(0, 0);
+            this.scene.Name = "scene";
+            this.scene.SelectedCell = null;
+            this.scene.Size = new System.Drawing.Size(680, 388);
+            this.scene.TabIndex = 0;
+            // 
             // errorsList
             // 
             this.errorsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -273,6 +282,7 @@
             // treeView
             // 
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView.HideSelection = false;
             this.treeView.Location = new System.Drawing.Point(0, 18);
             this.treeView.Name = "treeView";
             treeNode1.Name = "mapNode";
@@ -319,15 +329,6 @@
             this.label3.Size = new System.Drawing.Size(254, 18);
             this.label3.TabIndex = 1;
             this.label3.Text = "Properties";
-            // 
-            // scene
-            // 
-            this.scene.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scene.Location = new System.Drawing.Point(0, 0);
-            this.scene.Name = "scene";
-            this.scene.SelectedCell = null;
-            this.scene.Size = new System.Drawing.Size(680, 388);
-            this.scene.TabIndex = 0;
             // 
             // MapEditorForm
             // 

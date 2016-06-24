@@ -216,6 +216,7 @@ namespace CoreTestClient
                     node.Tag = property;
                 }
             }
+            mapNode.Expand();
         }
 
         private void RevalidateMap()
@@ -256,10 +257,6 @@ namespace CoreTestClient
 
             if (tile != null)
             {
-                cellNode.Tag = tile;
-                treeView.SelectedNode = cellNode;
-                propertyGrid.SelectedObject = tile;
-
                 if (tile.Material != null)
                 {
                     var node = cellNode.Nodes.Add(tile.Material.ToString());
@@ -268,6 +265,7 @@ namespace CoreTestClient
 
                 var tileNode = cellNode.Nodes.Add(tile.ToString());
                 tileNode.Tag = tile;
+                treeView.SelectedNode = tileNode;
 
                 foreach (var property in tile.Properties)
                 {
@@ -275,8 +273,8 @@ namespace CoreTestClient
                     node.Tag = property;
                 }
 
-                tileNode.Expand();
                 cellNode.Expand();
+                tileNode.Expand();
             }
         }
 
