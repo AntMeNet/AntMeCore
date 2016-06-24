@@ -98,7 +98,6 @@ namespace CoreTestClient
 
         private void Scene_OnHoveredCellChanged(Index2? newValue)
         {
-            Console.WriteLine("Cell Changed {0}", newValue);
             if (mouseDown) Apply();
         }
 
