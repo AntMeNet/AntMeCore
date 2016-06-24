@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Linq;
 using System.Text;
 using System.IO.Compression;
+using System.ComponentModel;
 
 namespace AntMe
 {
@@ -86,16 +87,21 @@ namespace AntMe
         /// <summary>
         /// Gets or sets the border behavior of this Map.
         /// </summary>
+        [DisplayName("Block Border")]
+        [Description("Gets or sets the border behavior of this Map.")]
         public bool BlockBorder { get; set; }
 
         /// <summary>
         /// Gets or sets the base Height Level for this Map.
         /// </summary>
+        [DisplayName("Base Height Level")]
+        [Description("Gets or sets the base Height Level for this Map.")]
         public byte BaseLevel { get; set; }
 
         /// <summary>
         /// Dictionary of missing Properties during Deserialization.
         /// </summary>
+        [Browsable(false)]
         public Dictionary<string, byte[]> UnknownProperties { get; private set; }
 
         /// <summary>
@@ -113,6 +119,7 @@ namespace AntMe
         /// <summary>
         /// List of Start Point for the available Player Slots.
         /// </summary>
+        [Browsable(false)]
         public Index2[] StartPoints { get; set; }
 
         /// <summary>
