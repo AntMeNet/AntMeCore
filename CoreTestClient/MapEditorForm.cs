@@ -162,9 +162,16 @@ namespace CoreTestClient
                 hoverLabel.Text = string.Empty;
             }
 
-            if (!string.IsNullOrEmpty(filename))
+            if (map != null)
             {
-                Text = string.Format("Map Editor ({0}){1}", filename, mapChanged ? "*" : "");
+                if (!string.IsNullOrEmpty(filename))
+                {
+                    Text = string.Format("Map Editor ({0}){1}", filename, mapChanged ? "*" : "");
+                }
+                else
+                {
+                    Text = "Map Editor (New Map)*";
+                }
             }
             else
             {
