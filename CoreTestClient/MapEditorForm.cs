@@ -15,6 +15,8 @@ namespace CoreTestClient
 
         private string filename;
 
+        private bool mapChanged = false;
+
         private Map map;
 
         private Map Map
@@ -124,6 +126,8 @@ namespace CoreTestClient
                 try
                 {
                     activeTool.Apply(Map, scene.HoveredCell, scene.HoveredPosition);
+                    if (activeTool != selectionTool)
+                        mapChanged = true;
                 }
                 catch (Exception ex)
                 {
@@ -156,6 +160,15 @@ namespace CoreTestClient
             {
                 hoverLabel.Text = string.Empty;
             }
+
+            if (!string.IsNullOrEmpty(filename))
+            {
+                Text = string.Format("Map Editor ({0}){1}", filename, mapChanged ? "*" : "");
+            }
+            else
+            {
+                Text = "Map Editor";
+            }
         }
 
         private void closeMenu_Click(object sender, EventArgs e)
@@ -173,6 +186,7 @@ namespace CoreTestClient
                     {
                         Map = Map.Deserialize(context, stream);
                         filename = openFileDialog.FileName;
+                        mapChanged = false;
                     }
                 }
                 catch (Exception ex)
@@ -184,6 +198,10 @@ namespace CoreTestClient
 
         private void saveAsMenu_Click(object sender, EventArgs e)
         {
+            // Prefill Filename if there is one
+            if (!string.IsNullOrEmpty(filename))
+                saveFileDialog.FileName = filename;
+
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 try
@@ -191,11 +209,13 @@ namespace CoreTestClient
                     using (Stream stream = File.Open(saveFileDialog.FileName, FileMode.Create))
                     {
                         Map.Serialize(stream, map);
+                        filename = saveFileDialog.FileName;
+                        mapChanged = false;
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(string.Format("Could not save: {0}", ex.Message));
                 }
             }
         }
@@ -285,16 +305,20 @@ namespace CoreTestClient
 
         private void saveMenu_Click(object sender, EventArgs e)
         {
-            try
+            if (map != null && !string.IsNullOrEmpty(filename))
             {
-                using (Stream stream = File.Open(filename, FileMode.Create))
+                try
                 {
-                    Map.Serialize(stream, map);
+                    using (Stream stream = File.Open(filename, FileMode.Create))
+                    {
+                        Map.Serialize(stream, map);
+                        mapChanged = false;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
+                catch (Exception ex)
+                {
+                    MessageBox.Show(string.Format("Could not save: {0}", ex.Message));
+                }
             }
         }
 
@@ -313,6 +337,7 @@ namespace CoreTestClient
         {
             RevalidateMap();
             scene.InvalidateMap();
+            mapChanged = true;
         }
     }
 }
