@@ -587,21 +587,21 @@ namespace AntMe
                         if (!tile.ValidateTileToTheSouth(southTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the South", ex));
                         }
 
                         result.Clear();
                         if (!tile.ValidateTileToTheWest(westTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the West", ex));
                         }
 
                         result.Clear();
                         if (!tile.ValidateTileToTheEast(eastTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the East", ex));
                         }
                     }
                 }
