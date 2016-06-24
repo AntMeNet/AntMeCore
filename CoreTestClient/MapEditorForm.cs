@@ -267,11 +267,17 @@ namespace CoreTestClient
                     node.Tag = tile.Material;
                 }
 
+                var tileNode = cellNode.Nodes.Add(tile.ToString());
+                tileNode.Tag = tile;
+
                 foreach (var property in tile.Properties)
                 {
-                    var node = cellNode.Nodes.Add(property.ToString());
+                    var node = tileNode.Nodes.Add(property.ToString());
                     node.Tag = property;
                 }
+
+                tileNode.Expand();
+                cellNode.Expand();
             }
         }
 
