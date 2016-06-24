@@ -1,4 +1,5 @@
 ﻿using AntMe.Basics.Items;
+using AntMe.Levelpack.Properties;
 using System;
 using System.Collections.Generic;
 
@@ -24,10 +25,7 @@ namespace AntMe.Levelpack.Levels
 
         public override byte[] GetMap()
         {
-            return null;
-            //Map map = new Map(Context, 30, 20);
-            //map.BlockBorder = true;
-            //return map;
+            return Resources.defaultmap;
         }
 
         protected override void OnUpdate()

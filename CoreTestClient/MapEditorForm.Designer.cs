@@ -101,6 +101,7 @@
             this.newMenu.Name = "newMenu";
             this.newMenu.Size = new System.Drawing.Size(121, 22);
             this.newMenu.Text = "New";
+            this.newMenu.Click += new System.EventHandler(this.newMenu_Click);
             // 
             // loadMenu
             // 
@@ -218,7 +219,9 @@
             this.scene.Dock = System.Windows.Forms.DockStyle.Fill;
             this.scene.Location = new System.Drawing.Point(0, 0);
             this.scene.Name = "scene";
+            this.scene.SelectedCell = null;
             this.scene.Size = new System.Drawing.Size(680, 388);
+            this.scene.StartPoints = null;
             this.scene.TabIndex = 0;
             // 
             // errorsList
@@ -227,12 +230,14 @@
             this.cellColumn,
             this.descriptionColumn});
             this.errorsList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.errorsList.FullRowSelect = true;
             this.errorsList.Location = new System.Drawing.Point(0, 18);
             this.errorsList.Name = "errorsList";
             this.errorsList.Size = new System.Drawing.Size(680, 78);
             this.errorsList.TabIndex = 1;
             this.errorsList.UseCompatibleStateImageBehavior = false;
             this.errorsList.View = System.Windows.Forms.View.Details;
+            this.errorsList.DoubleClick += new System.EventHandler(this.errorsList_DoubleClick);
             // 
             // cellColumn
             // 
@@ -279,6 +284,7 @@
             // treeView
             // 
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView.HideSelection = false;
             this.treeView.Location = new System.Drawing.Point(0, 18);
             this.treeView.Name = "treeView";
             treeNode1.Name = "mapNode";
@@ -312,6 +318,7 @@
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(254, 231);
             this.propertyGrid.TabIndex = 0;
+            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
             // 
             // label3
             // 
@@ -341,6 +348,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Map Editor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MapEditorForm_FormClosing);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);

@@ -75,6 +75,7 @@
   <ItemGroup>
     <None Include="Resources\arenaLevel.map" />
     <None Include="Resources\battlefield.map" />
+    <None Include="Resources\default.map" />
     <None Include="Resources\mace.map" />
     <None Include="Resources\openfield.map" />
     <None Include="Resources\plateau.map" />

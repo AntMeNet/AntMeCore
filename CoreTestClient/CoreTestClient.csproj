@@ -125,6 +125,12 @@
     <Compile Include="MapEditorForm.Designer.cs">
       <DependentUpon>MapEditorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NewMapDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewMapDialog.Designer.cs">
+      <DependentUpon>NewMapDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Renderer\TileRenderer.cs" />
     <Compile Include="PlayerPreview.cs">
       <SubType>UserControl</SubType>
@@ -171,6 +177,7 @@
     <Compile Include="Tools\MapTileTool.cs" />
     <Compile Include="Tools\MaterialTool.cs" />
     <Compile Include="Tools\SelectionTool.cs" />
+    <Compile Include="Tools\StartPointTool.cs" />
     <EmbeddedResource Include="CampaignPreview.resx">
       <DependentUpon>CampaignPreview.cs</DependentUpon>
     </EmbeddedResource>
@@ -197,6 +204,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MapEditorForm.resx">
       <DependentUpon>MapEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewMapDialog.resx">
+      <DependentUpon>NewMapDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PlayerPreview.resx">
       <DependentUpon>PlayerPreview.cs</DependentUpon>
@@ -262,6 +272,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\select.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\start.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\WallCliffMapTile.png">

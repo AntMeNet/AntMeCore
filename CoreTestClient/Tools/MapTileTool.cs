@@ -69,6 +69,7 @@ namespace CoreTestClient.Tools
             {
                 // Create a new Map Tile
                 map[cell.Value.X, cell.Value.Y] = Activator.CreateInstance(mapTile.Type, Context) as MapTile;
+                map[cell.Value.X, cell.Value.Y].HeightLevel = (tile != null ? tile.HeightLevel : map.BaseLevel);
                 map[cell.Value.X, cell.Value.Y].Material = material;
             }
             else if (tile.GetType() == mapTile.Type)
