@@ -44,8 +44,11 @@ namespace AntMe.Basics
         /// </summary>
         /// <param name="typeMapper">Reference to the Type Mapper</param>
         /// <param name="settings">Reference to the Extension Settings</param>
-        public void Load(ITypeMapper typeMapper, KeyValueStore settings)
+        /// <param name="dictionary"></param>
+        public void Load(ITypeMapper typeMapper, KeyValueStore settings, KeyValueStore dictionary)
         {
+            dictionary.Set<ItemInfo>("ItemInfo", "Something", "Base Info Class for Items");
+
             // ##########################
             // Standard Engine Extensions
             // ##########################
