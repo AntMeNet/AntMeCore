@@ -247,6 +247,77 @@ namespace AntMe.Core
             var KVS = new KeyValueStore();
 
             // Act
+            KVS.Set(typeof(TestType1), "TestKey1", true);
+
+            // Assert
+            Assert.True(KVS.GetBool(typeof(TestType1), "TestKey1"));
+            Assert.Null(KVS.GetBool(typeof(TestType1), "WrongKey"));
+        }
+
+        [Fact]
+        public void SetGetInt_Type()
+        {
+            // Arrange
+            var KVS = new KeyValueStore();
+
+            // Act
+            KVS.Set(typeof(TestType1), "TestKey2", 42);
+
+            // Assert
+            Assert.Equal(42, KVS.GetInt(typeof(TestType1), "TestKey2"));
+            Assert.Null(KVS.GetInt(typeof(TestType1), "WrongKey"));
+        }
+
+        [Fact]
+        public void SetGetFloat_Type()
+        {
+            // Arrange
+            var KVS = new KeyValueStore();
+
+            // Act
+            KVS.Set(typeof(TestType1), "TestKey3", 3.14159265f);
+
+            // Assert
+            Assert.Equal(3.14159265f, KVS.GetFloat(typeof(TestType1), "TestKey3").Value, 5);
+            Assert.Null(KVS.GetFloat(typeof(TestType1), "WrongKey"));
+        }
+
+        [Fact]
+        public void SetGetString_Type()
+        {
+            // Arrange
+            var KVS = new KeyValueStore();
+
+            // Act
+            KVS.Set(typeof(TestType1), "TestKey4", "TestSchlüßel4");
+
+            // Assert
+            Assert.Equal("TestSchlüßel4", KVS.GetString(typeof(TestType1), "TestKey4"));
+            Assert.Equal(string.Empty, KVS.GetString(typeof(TestType1), "WrongKey"));
+        }
+
+        [Fact]
+        public void SetGetDescription_Type()
+        {
+            // Arrange
+            var KVS = new KeyValueStore();
+
+            // Act
+            KVS.Set(typeof(TestType1), "TestKey4", "TestSchlüßel4", "Test4 Description");
+
+
+            // Assert
+            Assert.Equal("Test4 Description", KVS.GetDescription(typeof(TestType1), "TestKey4"));
+            Assert.Equal(string.Empty, KVS.GetDescription(typeof(TestType1), "WrongKey"));
+        }
+
+        [Fact]
+        public void SetGetBool_Type_Generic()
+        {
+            // Arrange
+            var KVS = new KeyValueStore();
+
+            // Act
             KVS.Set<TestType1>("TestKey1", true);
 
             // Assert
@@ -255,7 +326,7 @@ namespace AntMe.Core
         }
 
         [Fact]
-        public void SetGetInt_Type()
+        public void SetGetInt_Type_Generic()
         {
             // Arrange
             var KVS = new KeyValueStore();
@@ -269,7 +340,7 @@ namespace AntMe.Core
         }
 
         [Fact]
-        public void SetGetFloat_Type()
+        public void SetGetFloat_Type_Generic()
         {
             // Arrange
             var KVS = new KeyValueStore();
@@ -283,7 +354,7 @@ namespace AntMe.Core
         }
 
         [Fact]
-        public void SetGetString_Type()
+        public void SetGetString_Type_Generic()
         {
             // Arrange
             var KVS = new KeyValueStore();
@@ -297,7 +368,7 @@ namespace AntMe.Core
         }
 
         [Fact]
-        public void SetGetDescription_Type()
+        public void SetGetDescription_Type_Generic()
         {
             // Arrange
             var KVS = new KeyValueStore();
