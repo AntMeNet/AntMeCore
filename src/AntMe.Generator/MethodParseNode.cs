@@ -37,28 +37,18 @@ namespace AntMe.Generator
 
                     if (MethodInfo.IsVirtual)
                     {
-                        MethodInfo baseMethodInfo = MethodInfo.GetBaseDefinition();
+                         Type baseType = MethodInfo.GetBaseDefinition().DeclaringType;
 
-                        if (baseMethodInfo.DeclaringType is ItemInfo || !(baseMethodInfo.DeclaringType is PropertyList<ItemInfoProperty>))
-                            Method = Method.AddModifiers(
-                                    SyntaxFactory.Token(
-                                        SyntaxKind.OverrideKeyword));
-
-                        //bool search = true;
-                        //Type lastType = MethodInfo.DeclaringType;
-                        //while (true)
-                        //{
-                        //    if (baseMethodInfo.DeclaringType == lastType)
-                        //    {
-                                
-                        //        break;
-                        //    }
-                        //    else if (baseMethodInfo.DeclaringType == typeof(PropertyList<ItemInfoProperty>))
-                        //        break;
-
-                        //    lastType = lastType.DeclaringType;
-                        //}
-
+                        if (baseType is ItemInfo || !(baseType is PropertyList<ItemInfoProperty>))
+                        {
+                            Method = SyntaxFactory.MethodDeclaration(
+                                GetTypeSyntax(MethodInfo.ReturnType.FullName),
+                                MethodInfo.Name).AddModifiers(
+                                SyntaxFactory.Token(
+                                    SyntaxKind.PublicKeyword)).AddModifiers(
+                                        SyntaxFactory.Token(
+                                            SyntaxKind.OverrideKeyword));
+                        }
                     }
                     ArgumentListSyntax arguments = SyntaxFactory.ArgumentList();
 

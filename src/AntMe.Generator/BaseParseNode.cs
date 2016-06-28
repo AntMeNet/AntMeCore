@@ -27,6 +27,8 @@ namespace AntMe.Generator
 
         public abstract MemberDeclarationSyntax Generate();
 
+        public abstract KeyValueStore GetLocaKeys();
+
         public void add(BaseParseNode node)
         {
             ChildNodes.Add(node);
@@ -80,6 +82,10 @@ namespace AntMe.Generator
                 return SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName(parts[0]), SyntaxFactory.IdentifierName(parts[1]));
             }
         }
+
+        
+
+
 
     }
 

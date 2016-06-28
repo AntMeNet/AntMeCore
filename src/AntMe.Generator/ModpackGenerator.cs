@@ -30,8 +30,8 @@ namespace AntMe.Generator
             Dictionary<Type, List<string>> TypeKeys = GetLocaKeys();
             List<Type> typeReferences = new List<Type>();
 
-
-
+            KeyValueStore Translations = new KeyValueStore();
+             
             CSharpCompilationOptions options =
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                     .WithOverflowChecks(true).WithOptimizationLevel(OptimizationLevel.Release);

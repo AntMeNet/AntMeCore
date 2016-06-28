@@ -134,9 +134,6 @@
     <Compile Include="Vector3.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PropertyStructure.cd" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="MapFileStructureV1.txt" />
     <Content Include="MapFileStructureV2.txt" />
   </ItemGroup>

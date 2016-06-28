@@ -1,4 +1,5 @@
-﻿using AntMe.Generator;
+﻿using AntMe;
+using AntMe.Generator;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -20,6 +21,7 @@ namespace CoreTestClient
                 var node = typeList.Items.Add(type.FullName);
                 node.Tag = type;
             }
+
         }
 
         private void typeList_SelectedIndexChanged(object sender, EventArgs e)

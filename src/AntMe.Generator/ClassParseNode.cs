@@ -72,5 +72,31 @@ namespace AntMe.Generator
                     return null;
             }
         }
+
+        public override KeyValueStore GetLocaKeys()
+        {
+
+            KeyValueStore result = new KeyValueStore();
+
+            switch (wrapType)
+            {
+                case WrapType.InfoWrap:
+
+                    break;
+                case WrapType.BaseTypeWrap:
+                    break;
+                case WrapType.BaseClasses:
+                    break;
+                default:
+                    break;
+            }
+
+            foreach (BaseParseNode node in ChildNodes)
+            {
+                result.Merge(node.GetLocaKeys());
+            }
+
+            return result;
+        }
     }
 }

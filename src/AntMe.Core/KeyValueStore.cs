@@ -595,7 +595,7 @@ namespace AntMe
                     }
                 }
 
-                foreach (var key in Storage.Where(k => k.Key.StartsWith(typekey)).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
+                foreach (var key in Storage.Where(k => k.Key.Split(':')[0] == typekey).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
                 {
                     string fullkey = string.Format("{0}:{1}", typekey, key);
                     ValueDescriptionEntry VDE = GetValueDescriptionEntry(fullkey);
