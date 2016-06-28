@@ -99,5 +99,41 @@ namespace AntMe.Generator
 
         }
 
+        public override KeyValueStore GetLocaKeys()
+        {
+
+            KeyValueStore result = new KeyValueStore();
+
+            switch (wrapType)
+            {
+                case WrapType.InfoWrap:
+                    result.Set(MethodInfo.DeclaringType, MethodInfo.Name, MethodInfo.Name);
+
+                    foreach (ParameterInfo parameter in MethodInfo.GetParameters())
+                    {
+                        result.Set(MethodInfo.DeclaringType, parameter.Name, parameter.Name);
+                        if (CheckLocalizableType(parameter.ParameterType))
+                            result.Set(parameter.ParameterType, parameter.ParameterType.Name, parameter.ParameterType.Name);
+                    }
+
+                    if (CheckLocalizableType(MethodInfo.ReturnType))
+                        result.Set(MethodInfo.ReturnType, MethodInfo.ReturnType.Name, MethodInfo.ReturnType.Name);
+                    break;
+                case WrapType.BaseTypeWrap:
+                    break;
+                case WrapType.BaseClasses:
+                    break;
+                default:
+                    break;
+            }
+
+            foreach (BaseParseNode node in ChildNodes)
+            {
+                result.Merge(node.GetLocaKeys());
+            }
+
+            return result;
+        }
+
     }
 }

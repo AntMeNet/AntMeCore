@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,6 +15,8 @@ namespace AntMe.Runtime
     /// </summary>
     public static class ExtensionLoader
     {
+        private const string DEFAULT_LANGUAGE = "en";
+
         #region local Process Area
 
         private static bool extensionsLoaded = false;
@@ -22,6 +25,7 @@ namespace AntMe.Runtime
         private static IEnumerable<LevelInfo> levelCache = null;
         private static IEnumerable<PlayerInfo> playerCache = null;
         private static KeyValueStore extensionSettings = null;
+        private static Dictionary<string, KeyValueStore> dictionaries = null;
         private static Dictionary<Guid, PlayerStatistics> playerStatistics = new Dictionary<Guid, PlayerStatistics>();
         private static Dictionary<Guid, CampaignStatistics> campaignStatistics = new Dictionary<Guid, CampaignStatistics>();
         private static Dictionary<Guid, LevelStatistics> levelStatistics = new Dictionary<Guid, LevelStatistics>();
@@ -52,7 +56,8 @@ namespace AntMe.Runtime
             if (extensionsLoaded)
                 return;
 
-            List<string> files = new List<string>();
+            List<string> extensionfiles = new List<string>();
+            List<string> locaFiles = new List<string>();
             List<Exception> errors = new List<Exception>();
             List<Assembly> assemblies = new List<Assembly>();
 
@@ -63,19 +68,20 @@ namespace AntMe.Runtime
                     continue;
 
                 // Enumerate all dll-Files
-                files.AddRange(Directory.EnumerateFiles(path, "*.dll"));
+                extensionfiles.AddRange(Directory.EnumerateFiles(path, "*.dll"));
+                locaFiles.AddRange(Directory.EnumerateFiles(path, "*.language"));
             }
 
             // Calculation of total Tasks (based on the number of files)
             int currentTask = 0;
             if (token != null)
             {
-                token.TotalTasks = (full ? files.Count * 2 : files.Count) + 1;
+                token.TotalTasks = (full ? extensionfiles.Count * 2 : extensionfiles.Count) + 1;
                 token.CurrentTask = currentTask;
             }
 
             // Try to load all files from list
-            foreach (var file in files)
+            foreach (var file in extensionfiles)
             {
                 try
                 {
@@ -108,6 +114,7 @@ namespace AntMe.Runtime
             // Pass 1 Load Extension Packs
             List<IExtensionPack> extensionPacks = new List<IExtensionPack>();
             KeyValueStore settings = new KeyValueStore();
+            KeyValueStore dictionary = new KeyValueStore();
             foreach (var assembly in assemblies)
             {
                 foreach (var type in assembly.GetExportedTypes())
@@ -121,7 +128,7 @@ namespace AntMe.Runtime
                         {
                             // Instanz erzeugen & Laden
                             extensionPack = Activator.CreateInstance(type) as IExtensionPack;
-                            extensionPack.Load(DefaultTypeMapper, settings);
+                            extensionPack.Load(DefaultTypeMapper, settings, dictionary);
                             extensionPacks.Add(extensionPack);
                         }
                         catch (Exception ex)
@@ -150,6 +157,45 @@ namespace AntMe.Runtime
             extensionPackCache = extensionPacks;
             extensionSettings = settings;
 
+            dictionaries = new Dictionary<string, KeyValueStore>();
+            dictionaries.Add(DEFAULT_LANGUAGE, dictionary);
+
+            // Pass 2: Load Localization Files
+            // TODO: Recalc Progress Token
+            foreach (var file in locaFiles)
+            {
+                try
+                {
+                    string[] parts = file.Split('.');
+                    CultureInfo culture = new CultureInfo(parts[parts.Length - 2]);
+                    KeyValueStore store = new KeyValueStore(file);
+
+                    KeyValueStore target;
+                    if (!dictionaries.TryGetValue(culture.TwoLetterISOLanguageName, out target))
+                    {
+                        target = dictionaries[DEFAULT_LANGUAGE].Clone();
+                        dictionaries.Add(culture.TwoLetterISOLanguageName, target);
+                    }
+
+                    target.Merge(store);
+                }
+                catch (Exception ex)
+                {
+                    // Error dokumentieren
+                    if (token != null && token.Errors != null)
+                        token.Errors.Add(ex);
+                    errors.Add(ex);
+                }
+
+                if (token != null)
+                {
+                    token.CurrentTask = currentTask;
+                    if (token.Cancel) return;
+                }
+            }
+
+            // TODO: Make sure all required Dictionary Entries are available
+
             // Fill Caches
             if (full)
             {
@@ -157,7 +203,7 @@ namespace AntMe.Runtime
                 List<LevelInfo> levels = new List<LevelInfo>();
                 List<PlayerInfo> players = new List<PlayerInfo>();
 
-                // Pass 2 (Levels & Players) [campaigns, levels, players]
+                // Pass 3 (Levels & Players) [campaigns, levels, players]
                 foreach (var assembly in assemblies)
                 {
                     LoaderInfo loader = AnalyseAssembly(assembly, true, true, true);
@@ -417,6 +463,16 @@ namespace AntMe.Runtime
         /// Returns a copy of the Extension Settings.
         /// </summary>
         public static KeyValueStore ExtensionSettings { get { return extensionSettings.Clone(); } }
+
+        public static string[] LocalizedLanguages { get { return dictionaries.Keys.ToArray(); } }
+
+        public static KeyValueStore GetDictionary(string culture)
+        {
+            KeyValueStore result;
+            if (!dictionaries.TryGetValue(culture, out result))
+                result = dictionaries[DEFAULT_LANGUAGE];
+            return result.Clone();
+        }
 
         #endregion
 

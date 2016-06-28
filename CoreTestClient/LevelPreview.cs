@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using AntMe.Runtime;
+using System;
 
 namespace AntMe.Simulation.Debug
 {
@@ -20,13 +21,23 @@ namespace AntMe.Simulation.Debug
             {
                 nameLabel.Text = level.LevelDescription.Name;
                 descriptionLabel.Text = level.LevelDescription.Description;
-                mapPreview1.SetMap(Map.Deserialize(ExtensionLoader.CreateSimulationContext(), level.Map));
+
+                try
+                {
+                    byte[] mapBuffer = level.Map;
+                    if (mapBuffer == null) return;
+
+                    Map map = Map.Deserialize(ExtensionLoader.CreateSimulationContext(), level.Map);
+                    mapPreview.SetMap(map);
+                }
+                catch (Exception) { }
+
             }
             else
             {
                 nameLabel.Text = string.Empty;
                 descriptionLabel.Text = string.Empty;
-                mapPreview1.SetMap(null);
+                mapPreview.SetMap(null);
             }
 
         }

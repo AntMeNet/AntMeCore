@@ -54,7 +54,7 @@ namespace AntMe.Generator
                     {
                         classSyntax = classSyntax.AddBaseListTypes(SyntaxFactory.SimpleBaseType(SyntaxFactory.IdentifierName("Loc" + Type.BaseType.Name)));
                         constructor = constructor.WithInitializer(SyntaxFactory.ConstructorInitializer(
-                            SyntaxKind.BaseConstructorInitializer, 
+                            SyntaxKind.BaseConstructorInitializer,
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList(
                                 SyntaxFactory.Argument(
@@ -81,7 +81,7 @@ namespace AntMe.Generator
             switch (wrapType)
             {
                 case WrapType.InfoWrap:
-
+                    result.Set(Type, Type.Name, Type.Name);
                     break;
                 case WrapType.BaseTypeWrap:
                     break;

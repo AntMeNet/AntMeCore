@@ -77,6 +77,18 @@ namespace AntMe
         {
             return FullKey(typeof(T).FullName, key);
         }
+
+        /// <summary>
+        /// Generates the Full Key out of Type and Key.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <returns>Full Key</returns>
+        private static string FullKey(Type type, string key)
+        {
+            return FullKey(type.FullName, key);
+        }
+
         /// <summary>
         /// Generates the Full Key out of TypeKey and Key.
         /// </summary>
@@ -94,8 +106,8 @@ namespace AntMe
         /// Sets the Value and the Discription for the given Key.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Settings Key</param>
-        /// <param name="value">Settings Value</param>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value</param>
         /// <param name="description">Optional Description for this key</param>
         public void Set<T>(string key, string value, string description = null)
         {
@@ -103,11 +115,11 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Sets the Value and the Discription for the given Key.
+        /// Sets the Value and the Discription for the given key.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Settings Key</param>
-        /// <param name="value">Settings Value</param>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value</param>
         /// <param name="description">Optional Description for this key</param>
         public void Set<T>(string key, int value, string description = null)
         {
@@ -118,8 +130,8 @@ namespace AntMe
         /// Sets the Value and the Discription for the given Key.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Settings Key</param>
-        /// <param name="value">Settings Value</param>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value</param>
         /// <param name="description">Optional Description for this key</param>
         public void Set<T>(string key, float value, string description = null)
         {
@@ -142,7 +154,7 @@ namespace AntMe
         /// <summary>
         /// Sets the Value and the Discription for the given Key.
         /// </summary>
-        /// <param name="key">Full Key (incl. Type and Key)</param>
+        /// <param name="key">Full key (incl. Type and Key)</param>
         /// <param name="valueDescriptionEntry">ValueDescriptionEntry</param>
         private void Set(string key, ValueDescriptionEntry valueDescriptionEntry)
         {
@@ -152,7 +164,7 @@ namespace AntMe
         /// <summary>
         /// Sets the Value and the Discription for the given Key.
         /// </summary>
-        /// <param name="key">Full Key (incl. Type and Key)</param>
+        /// <param name="key">Full key (incl. Type and Key)</param>
         /// <param name="value"> Value</param>
         /// <param name="description">Optional Description for this key</param>
         public void Set(string key, string value, string description = null)
@@ -176,8 +188,8 @@ namespace AntMe
         /// <summary>
         /// Sets the Value and the Discription for the given Key.
         /// </summary>
-        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
-        /// <param name="value">Settings Value</param>
+        /// <param name="key">Full key (incl. Type and Key)</param>
+        /// <param name="value">Value</param>
         /// <param name="description">Optional Description for this key</param>
         public void Set(string key, int value, string description = null)
         {
@@ -198,12 +210,60 @@ namespace AntMe
         /// <summary>
         /// Sets the Value and the Discription for the given Key.
         /// </summary>
-        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
-        /// <param name="value">Settings Value</param>
+        /// <param name="key">Full key (incl. Type and Key)</param>
+        /// <param name="value"> Value</param>
         /// <param name="description">Optional Description for this key</param>
         public void Set(string key, bool value, string description = null)
         {
             Set(key, value.ToString(), description);
+        }
+
+        /// <summary>
+        /// Sets the Value and the Discription for the given Key.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set(Type type, string key, string value, string description = null)
+        {
+            Set(FullKey(type, key), value, description);
+        }
+
+        /// <summary>
+        /// Sets the Value and the Discription for the given Key.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set(Type type, string key, int value, string description = null)
+        {
+            Set(FullKey(type, key), value, description);
+        }
+
+        /// <summary>
+        /// Sets the Value and the Discription for the given Key.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set(Type type, string key, bool value, string description = null)
+        {
+            Set(FullKey(type, key), value, description);
+        }
+
+        /// <summary>
+        /// Sets the Value and the Discription for the given Key.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value</param>
+        /// <param name="description">Optional Description for this key</param>
+        public void Set(Type type, string key, float value, string description = null)
+        {
+            Set(FullKey(type, key), value, description);
         }
 
         /// <summary>
@@ -302,11 +362,22 @@ namespace AntMe
         /// Gets the Description with the given Object-Key interpreted as String.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Object-Key</param>
+        /// <param name="key">Key</param>
         /// <returns>Description</returns>
         public string GetDescription<T>(string key)
         {
             return GetDescription(FullKey<T>(key));
+        }
+
+        /// <summary>
+        /// Gets the Description with the given Object-Key interpreted as String.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <returns>Description</returns>
+        public string GetDescription(Type type, string key)
+        {
+            return GetDescription(FullKey(type, key));
         }
 
         /// <summary>
@@ -326,14 +397,22 @@ namespace AntMe
         /// Gets the Value with the given Object-Key interpreted as String.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Object-Key</param>
+        /// <param name="key">Key</param>
         /// <returns>Value</returns>
         public string GetString<T>(string key)
         {
-            ValueDescriptionEntry result;
-            if (Storage.TryGetValue(FullKey<T>(key), out result))
-                return result.Value;
-            return string.Empty;
+            return GetString(FullKey<T>(key));
+        }
+
+        /// <summary>
+        /// Gets the Value with the given Object-Key interpreted as String.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <returns>Value</returns>
+        public string GetString(Type type, string key)
+        {
+            return GetString(FullKey(type, key));
         }
 
         /// <summary>
@@ -353,21 +432,28 @@ namespace AntMe
         /// Gets the Value with the given Key interpreted as Integer.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Settings Key</param>
+        /// <param name="key">Key</param>
         /// <returns>Value</returns>
         public int? GetInt<T>(string key)
         {
-            string value = GetString<T>(key);
-            int result;
-            if (int.TryParse(value, out result))
-                return result;
-            return null;
+            return GetInt(FullKey<T>(key));
+        }
+
+        /// <summary>
+        /// Gets the Value with the given Key interpreted as Integer.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <returns>Value</returns>
+        public int? GetInt(Type type, string key)
+        {
+            return GetInt(FullKey(type, key));
         }
 
         /// <summary>
         /// Sets the Value with the given Key interpreted as Integer.
         /// </summary>
-        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <param name="key">Full Key (incl. Type and Key)</param>
         /// <returns>Value</returns>
         public int? GetInt(string key)
         {
@@ -382,21 +468,28 @@ namespace AntMe
         /// Sets the Value with the given Key interpreted as Bool.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Settings Key</param>
+        /// <param name="key">Key</param>
         /// <returns>Value</returns>
         public bool? GetBool<T>(string key)
         {
-            string value = GetString<T>(key);
-            bool result;
-            if (bool.TryParse(value, out result))
-                return result;
-            return null;
+            return GetBool(FullKey<T>(key));
+        }
+
+        /// <summary>
+        /// Gets the Value with the given Key interpreted as Bool.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <returns>Value</returns>
+        public bool? GetBool(Type type, string key)
+        {
+            return GetBool(FullKey(type, key));
         }
 
         /// <summary>
         /// Sets the Value with the given Key interpreted as Bool.
         /// </summary>
-        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <param name="key">Full Key (incl. Type and Key)</param>
         /// <returns>Value</returns>
         public bool? GetBool(string key)
         {
@@ -411,21 +504,28 @@ namespace AntMe
         /// Sets the Value with the given Key interpreted as Float.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Settings Key</param>
+        /// <param name="key">Key</param>
         /// <returns>Value</returns>
         public float? GetFloat<T>(string key)
         {
-            string value = GetString<T>(key);
-            float result;
-            if (float.TryParse(value,NumberStyles.Any,CultureInfo.InvariantCulture, out result))
-                return result;
-            return null;
+            return GetFloat(FullKey<T>(key));
+        }
+
+        /// <summary>
+        /// Gets the Value with the given Key interpreted as Float.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <param name="key">Key</param>
+        /// <returns>Value</returns>
+        public float? GetFloat(Type type, string key)
+        {
+            return GetFloat(FullKey(type, key));
         }
 
         /// <summary>
         /// Sets the Value with the given Key interpreted as Float.
         /// </summary>
-        /// <param name="key">Full Settings Key (incl. Type and Key)</param>
+        /// <param name="key">Full Key (incl. Type and Key)</param>
         /// <returns>Value</returns>
         public float? GetFloat(string key)
         {
@@ -437,10 +537,10 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gets the Description with the given Object-Key interpreted as String.
+        /// Gets the Description with the given Key interpreted as String.
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Object-Key</param>
+        /// <param name="key">Key</param>
         /// <returns>Description</returns>
         private ValueDescriptionEntry GetValueDescriptionEntry<T>(string key)
         {
@@ -448,7 +548,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gets the Description with the given Object-Key interpreted as String.
+        /// Gets the Description with the given Key interpreted as String.
         /// </summary>
         /// <param name="key">Full Key (incl. Type and Key)</param>
         /// <returns>Description</returns>
@@ -586,7 +686,7 @@ namespace AntMe
 
                 if (alignedValues)
                 {
-                    foreach (var key in Storage.Where(k => k.Key.StartsWith(typekey)).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
+                    foreach (var key in Storage.Where(k => k.Key.StartsWith(string.Format("{0}:", typekey))).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
                     {
                         string fullkey = string.Format("{0}:{1}", typekey, key);
                         ValueDescriptionEntry VDE = GetValueDescriptionEntry(fullkey);
@@ -595,7 +695,7 @@ namespace AntMe
                     }
                 }
 
-                foreach (var key in Storage.Where(k => k.Key.Split(':')[0] == typekey).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
+                foreach (var key in Storage.Where(k => k.Key.StartsWith(string.Format("{0}:", typekey))).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
                 {
                     string fullkey = string.Format("{0}:{1}", typekey, key);
                     ValueDescriptionEntry VDE = GetValueDescriptionEntry(fullkey);

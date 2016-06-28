@@ -45,6 +45,26 @@ namespace AntMe.Generator
             return returnUsings;
         }
 
+        protected bool CheckLocalizableType(Type type)
+        {
+            switch (wrapType)
+            {
+                case WrapType.InfoWrap:
+                    if (type.DeclaringType is ItemInfo)
+                        return true;
+                    break;
+                case WrapType.BaseTypeWrap:
+                    break;
+                case WrapType.BaseClasses:
+                    break;
+                default:
+                    break;
+            }
+
+
+            return false;
+        }
+
         protected static TypeSyntax GetTypeSyntax(string fullName)
         {
             string[] parts = fullName.Split('.');

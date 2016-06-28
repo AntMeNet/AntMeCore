@@ -27,5 +27,16 @@ namespace AntMe.Generator
                 ChildNodes.Select(c => c.Generate()).ToArray());
         }
 
+        public override KeyValueStore GetLocaKeys()
+        {
+            KeyValueStore result = new KeyValueStore();
+
+            foreach (BaseParseNode node in ChildNodes)
+            {
+                result.Merge(node.GetLocaKeys());
+            }
+
+            return result;
+        }
     }
 }
