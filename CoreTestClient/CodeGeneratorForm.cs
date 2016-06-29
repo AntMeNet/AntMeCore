@@ -73,23 +73,26 @@ namespace CoreTestClient
 
         private void regenerateButton_Click(object sender, EventArgs e)
         {
+            ModpackGenerator.GenerateLocaKeys().Save(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions\\NewLocaTable.Language.lng");
+        }
+
+        private void generateButton_Click(object sender, EventArgs e)
+        {
             string outputFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions";
-
-            string[] importPaths = new string[] {
-                    Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                    outputFolder,
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
-                };
-
             try
             {
-                string output = ModpackGenerator.Generate(importPaths, outputFolder, null);
+                templateGenerator.Generate(nameTextBox.Text, 
+                    authorTextBox.Text, 
+                    factionCombo.SelectedText, 
+                    languageCombo.SelectedText, 
+                    programmingLanguageCombo.SelectedText, 
+                    environmentComboBox.SelectedText, 
+                    outputFolder);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
-
     }
 }

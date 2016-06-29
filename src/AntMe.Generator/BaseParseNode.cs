@@ -14,15 +14,17 @@ namespace AntMe.Generator
 
         public IList<BaseParseNode> ChildNodes { get; private set; }
 
-        internal List<Type> references;
+        protected List<Type> references;
+        protected KeyValueStore LocaDictionary;
 
         protected WrapType wrapType;
 
-        public BaseParseNode(WrapType wrapType)
+        public BaseParseNode(WrapType wrapType, KeyValueStore locaDictionary)
         {
             this.wrapType = wrapType;
             ChildNodes = new List<BaseParseNode>();
             references = new List<Type>();
+            LocaDictionary = locaDictionary;
         }
 
         public abstract MemberDeclarationSyntax Generate();

@@ -14,8 +14,8 @@ namespace AntMe.Generator
 
         public PropertyInfo PropertyInfo { get; private set; }
 
-        public PropertyParseNode(PropertyInfo propertyInfo, WrapType wrapType)
-            : base(wrapType)
+        public PropertyParseNode(PropertyInfo propertyInfo, WrapType wrapType, KeyValueStore locaDictionary)
+            : base(wrapType, locaDictionary)
         {
             PropertyInfo = propertyInfo;
             this.wrapType = wrapType;

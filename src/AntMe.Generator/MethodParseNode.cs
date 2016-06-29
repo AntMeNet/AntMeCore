@@ -14,8 +14,8 @@ namespace AntMe.Generator
 
         public MethodInfo MethodInfo { get; private set; }
 
-        public MethodParseNode(MethodInfo methodeInfo, WrapType wrapType)
-            : base(wrapType)
+        public MethodParseNode(MethodInfo methodeInfo, WrapType wrapType, KeyValueStore locaDictionary)
+            : base(wrapType, locaDictionary)
         {
             MethodInfo = methodeInfo;
         }

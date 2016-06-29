@@ -23,14 +23,15 @@ namespace AntMe.Generator
         /// <param name="output">Output Path for the File</param>
         /// <param name="token">Optional Progress Token</param>
         /// <returns>Filename</returns>
-        public static string Generate(string[] paths, string output, ProgressToken token)
+        public static string Generate(string culture, string output, ProgressToken token)
         {
             string outputFile = "Summary.dll_";
 
-            Dictionary<Type, List<string>> TypeKeys = GetLocaKeys();
-            List<Type> typeReferences = new List<Type>();
 
-            KeyValueStore Translations = new KeyValueStore();
+            if (!ExtensionLoader.LocalizedLanguages.Contains(culture))
+                throw new ArgumentException("Language not available.");
+
+            List<Type> typeReferences = new List<Type>();
              
             CSharpCompilationOptions options =
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
@@ -38,54 +39,21 @@ namespace AntMe.Generator
 
 
             List<SyntaxTree> syntaxTrees = new List<SyntaxTree>();
+            List<BaseParseNode> parseNodeTrees = GenerateParseNodeTrees(culture);
 
-            #region Info-Wrapper
-
-            BaseParseNode root = new NamespaceParseNode("AntMe.Deutsch", WrapType.InfoWrap);
-            List<Type> wrapped = new List<Type>();
-
-            // Collect all Item Infos and link them to the Localized ItemInfos
-            foreach (var item in ExtensionLoader.DefaultTypeMapper.Items)
+            foreach (BaseParseNode node in parseNodeTrees)
             {
-                if (item.InfoType == null) continue;
-                Type t = item.InfoType;
-
-                while (t != typeof(PropertyList<ItemInfoProperty>) && t != null && !wrapped.Contains(t))
-                {
-
-                    ClassParseNode classNode = new ClassParseNode(t, WrapType.InfoWrap);
-                    wrapped.Add(t);
-                    root.add(classNode);
-
-                    foreach (MethodInfo methodInfo in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
-                    {
-                        if (methodInfo.IsSpecialName)
-                            continue;
-                        classNode.add(new MethodParseNode(methodInfo, WrapType.InfoWrap));
-                    }
-
-                    foreach (PropertyInfo propertyInfo in t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
-                    {
-                        classNode.add(new PropertyParseNode(propertyInfo, WrapType.InfoWrap));
-                    }
-
-                    t = t.BaseType;
-                }
+                typeReferences.AddRange(node.GetReferences());
+                syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(node.Generate())));
             }
-
-            #endregion
-
-            typeReferences.AddRange(root.GetReferences());
-
+            
             List<MetadataReference> references = new List<MetadataReference>();
 
             foreach (string location in typeReferences.Select(c => c.Assembly.Location).Distinct())
             {
                 references.Add(MetadataReference.CreateFromFile(location));
             }
-
-            syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(root.Generate())));
-
+            
             StreamWriter streamWriter = new StreamWriter(File.Open(Path.Combine(output, "Assembly.cs"), FileMode.Create));
             syntaxTrees[0].GetRoot().NormalizeWhitespace().GetText().Write(streamWriter);
             streamWriter.Flush();
@@ -101,12 +69,67 @@ namespace AntMe.Generator
             return Path.Combine(output, outputFile);
         }
 
+        private static List<BaseParseNode> GenerateParseNodeTrees(string culture)
+        {
+            List<BaseParseNode> trees = new List<BaseParseNode>();
+            KeyValueStore Translations = ExtensionLoader.GetDictionary(culture);
+
+            #region Info-Wrapper
+
+            BaseParseNode root = new NamespaceParseNode("AntMe.Deutsch", WrapType.InfoWrap,Translations);
+            List<Type> wrapped = new List<Type>();
+
+            // Collect all Item Infos and link them to the Localized ItemInfos
+            foreach (var item in ExtensionLoader.DefaultTypeMapper.Items)
+            {
+                if (item.InfoType == null) continue;
+                Type t = item.InfoType;
+
+                while (t != typeof(PropertyList<ItemInfoProperty>) && t != null && !wrapped.Contains(t))
+                {
+
+                    ClassParseNode classNode = new ClassParseNode(t, WrapType.InfoWrap, Translations);
+                    wrapped.Add(t);
+                    root.add(classNode);
+
+                    foreach (MethodInfo methodInfo in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
+                    {
+                        if (methodInfo.IsSpecialName)
+                            continue;
+                        classNode.add(new MethodParseNode(methodInfo, WrapType.InfoWrap, Translations));
+                    }
+
+                    foreach (PropertyInfo propertyInfo in t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
+                    {
+                        classNode.add(new PropertyParseNode(propertyInfo, WrapType.InfoWrap, Translations));
+                    }
+
+                    t = t.BaseType;
+                }
+            }
+
+            trees.Add(root);
+            #endregion
+
+            return trees;
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public static Dictionary<Type, List<string>> GetLocaKeys()
+        public static KeyValueStore GenerateLocaKeys()
         {
+            KeyValueStore result = new KeyValueStore();
+            foreach (BaseParseNode node in GenerateParseNodeTrees("en"))
+            {
+                result.Merge(node.GetLocaKeys());
+            }
+
+            return result;
+
+
             Dictionary<Type, List<string>> dictionary = new Dictionary<Type, List<string>>();
 
             // Collect all Item Infos
@@ -160,7 +183,6 @@ namespace AntMe.Generator
                 AnalyseType<FactionInfoProperty>(item.InfoType, dictionary);
             }
 
-            return dictionary;
         }
 
         private static void AnalyseType<T>(Type type, Dictionary<Type, List<string>> dict)

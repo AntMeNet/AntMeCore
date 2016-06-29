@@ -41,7 +41,7 @@ namespace AntMe.Generator
         public TemplateGenerator()
         {
             factions = new List<string>(ExtensionLoader.DefaultTypeMapper.Factions.Select(f => f.Name));
-            languages = new List<string>(new[] { "English", "Deutsch" });
+            languages = new List<string>(ExtensionLoader.LocalizedLanguages);
             programmingLanguages = new List<string>(new[] { "C#", "VB.NET" });
             environments = new List<string>(new[] { "Visual Studio 2015", "Visual Studio Code" });
         }
@@ -49,7 +49,7 @@ namespace AntMe.Generator
         public void Generate(string name, string author, string faction, string language, string programmingLanguage, string environment, string outputFolder)
         {
             // TODO: Do the Magic
-            throw new NotImplementedException();
+            ModpackGenerator.Generate(language, outputFolder, null);
         }
     }
 }

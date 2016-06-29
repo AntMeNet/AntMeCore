@@ -14,13 +14,13 @@ namespace CoreTestClient
         {
             InitializeComponent();
 
-            dictionary = ModpackGenerator.GetLocaKeys();
+            //dictionary = ModpackGenerator.GetLocaKeys();
 
-            foreach (var type in dictionary.Keys)
-            {
-                var node = typeList.Items.Add(type.FullName);
-                node.Tag = type;
-            }
+            //foreach (var type in dictionary.Keys)
+            //{
+            //    var node = typeList.Items.Add(type.FullName);
+            //    node.Tag = type;
+            //}
 
         }
 

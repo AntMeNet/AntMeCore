@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using AntMe.Runtime;
 
 namespace AntMe.Generator
 {
@@ -14,8 +15,8 @@ namespace AntMe.Generator
 
         public Type Type { get; private set; }
 
-        public ClassParseNode(Type type, WrapType wrapType)
-            : base(wrapType)
+        public ClassParseNode(Type type, WrapType wrapType, KeyValueStore locaDictionary)
+            : base(wrapType, locaDictionary)
         {
             Type = type;
             references.Add(type);
