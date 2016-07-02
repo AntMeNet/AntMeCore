@@ -98,6 +98,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttachmentParseNode.cs" />
     <Compile Include="BaseParseNode.cs" />
     <Compile Include="ClassParseNode.cs" />
     <Compile Include="LocaleGenerator.cs" />

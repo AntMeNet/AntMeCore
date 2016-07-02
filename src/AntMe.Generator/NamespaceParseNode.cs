@@ -14,17 +14,16 @@ namespace AntMe.Generator
 
         public string Name { get; private set; }
 
-        public NamespaceParseNode(string name, WrapType wrapType, KeyValueStore locaDictionary)
-            : base(wrapType, locaDictionary)
+        public NamespaceParseNode(string name, WrapType wrapType, KeyValueStore locaDictionary, string[] blackList) : base(wrapType, locaDictionary, blackList)
         {
             Name = name;
         }
 
-        public override MemberDeclarationSyntax Generate()
+        public override MemberDeclarationSyntax[] Generate()
         {
-            return SyntaxFactory.NamespaceDeclaration(
+            return new MemberDeclarationSyntax[] { SyntaxFactory.NamespaceDeclaration(
                 SyntaxFactory.IdentifierName(Name)).AddMembers(
-                ChildNodes.Select(c => c.Generate()).ToArray());
+                ChildNodes.SelectMany(c => c.Generate()).ToArray()) };
         }
 
         public override KeyValueStore GetLocaKeys()

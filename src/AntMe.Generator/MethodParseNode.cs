@@ -14,13 +14,12 @@ namespace AntMe.Generator
 
         public MethodInfo MethodInfo { get; private set; }
 
-        public MethodParseNode(MethodInfo methodeInfo, WrapType wrapType, KeyValueStore locaDictionary)
-            : base(wrapType, locaDictionary)
+        public MethodParseNode(MethodInfo methodeInfo, WrapType wrapType, KeyValueStore locaDictionary, string[] blackList) : base(wrapType, locaDictionary, blackList)
         {
             MethodInfo = methodeInfo;
         }
 
-        public override MemberDeclarationSyntax Generate()
+        public override MemberDeclarationSyntax[] Generate()
         {
 
             MethodDeclarationSyntax Method;
@@ -37,7 +36,7 @@ namespace AntMe.Generator
 
                     if (MethodInfo.IsVirtual)
                     {
-                         Type baseType = MethodInfo.GetBaseDefinition().DeclaringType;
+                        Type baseType = MethodInfo.GetBaseDefinition().DeclaringType;
 
                         if (baseType is ItemInfo || !(baseType is PropertyList<ItemInfoProperty>))
                         {
@@ -59,7 +58,7 @@ namespace AntMe.Generator
                                 SyntaxFactory.Identifier("Loc" + parameterInfo.Name)).WithType(
                                 GetTypeSyntax(parameterInfo.ParameterType.FullName)));
 
-                        // adding Arguments to argumentsList, for later use.
+                        // adding Arguments to argumentslist, for later use.
                         arguments = arguments.AddArguments(
                             SyntaxFactory.Argument(
                                 SyntaxFactory.IdentifierName("Loc" + parameterInfo.Name)));
@@ -86,17 +85,15 @@ namespace AntMe.Generator
                                 SyntaxFactory.ReturnStatement(invocation)));
                     }
 
-
-
-                    return Method;
+                    return new MemberDeclarationSyntax[] { Method };
                 case WrapType.BaseTypeWrap:
-                    return null;
+                    break;
                 case WrapType.BaseClasses:
-                    return null;
+                    break;
                 default:
-                    return null;
+                    break;
             }
-
+            return new MemberDeclarationSyntax[] { };
         }
 
         public override KeyValueStore GetLocaKeys()

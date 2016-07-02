@@ -17,5 +17,6 @@
             OnAmountChanged += (i, v) => { Points = v; };
 
         }
+
     }
 }

@@ -14,15 +14,14 @@ namespace AntMe.Generator
 
         public PropertyInfo PropertyInfo { get; private set; }
 
-        public PropertyParseNode(PropertyInfo propertyInfo, WrapType wrapType, KeyValueStore locaDictionary)
-            : base(wrapType, locaDictionary)
+        public PropertyParseNode(PropertyInfo propertyInfo, WrapType wrapType, KeyValueStore locaDictionary, string[] blackList) : base(wrapType, locaDictionary, blackList)
         {
             PropertyInfo = propertyInfo;
             this.wrapType = wrapType;
             references.Add(propertyInfo.PropertyType);
         }
 
-        public override MemberDeclarationSyntax Generate()
+        public override MemberDeclarationSyntax[] Generate()
         {
             
 
@@ -60,14 +59,15 @@ namespace AntMe.Generator
 
                     }
 
-                    return propertySyntax;
+                    return new MemberDeclarationSyntax[] { propertySyntax };
                 case WrapType.BaseTypeWrap:
-                    return null;
+                    break;
                 case WrapType.BaseClasses:
-                    return null;
+                    break;
                 default:
-                    return null;
+                    break;
             }
+            return new MemberDeclarationSyntax[] { };
         }
 
         public override KeyValueStore GetLocaKeys()

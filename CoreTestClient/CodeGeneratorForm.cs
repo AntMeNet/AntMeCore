@@ -52,8 +52,8 @@ namespace CoreTestClient
         {
             if (DialogResult == DialogResult.OK)
             {
-                try
-                {
+                //try
+                //{
                     templateGenerator.Generate(
                         nameTextBox.Text,
                         authorTextBox.Text,
@@ -62,12 +62,12 @@ namespace CoreTestClient
                         (string)programmingLanguageCombo.SelectedItem,
                         (string)environmentComboBox.SelectedItem,
                         outputTextBox.Text);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    e.Cancel = true;
-                }
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show(ex.Message);
+                //    e.Cancel = true;
+                //}
             }
         }
 
@@ -79,20 +79,20 @@ namespace CoreTestClient
         private void generateButton_Click(object sender, EventArgs e)
         {
             string outputFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions";
-            try
-            {
+            //try
+            //{
                 templateGenerator.Generate(nameTextBox.Text, 
                     authorTextBox.Text, 
-                    factionCombo.SelectedText, 
-                    languageCombo.SelectedText, 
-                    programmingLanguageCombo.SelectedText, 
-                    environmentComboBox.SelectedText, 
+                    factionCombo.SelectedItem.ToString(), 
+                    languageCombo.SelectedItem.ToString(), 
+                    programmingLanguageCombo.SelectedItem.ToString(), 
+                    environmentComboBox.SelectedItem.ToString(), 
                     outputFolder);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
     }
 }

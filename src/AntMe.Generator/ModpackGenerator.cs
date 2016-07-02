@@ -16,6 +16,16 @@ namespace AntMe.Generator
     /// </summary>
     public static class ModpackGenerator
     {
+
+        public static string[] BlackList = {  "AntMe.Basics.ItemProperties.CollidableProperty:ToString",
+                                    "AntMe.Basics.ItemProperties.CollidableProperty:Equals",
+                                    "AntMe.Basics.ItemProperties.CollidableProperty:GetHashCode",
+                                    "AntMe.Basics.ItemProperties.CollidableProperty:GetType",
+        "AntMe.Basics.ItemProperties.VisibleProperty:ToString",
+        "AntMe.Basics.ItemProperties.VisibleProperty:Equals",
+        "AntMe.Basics.ItemProperties.VisibleProperty:GetHashCode",
+        "AntMe.Basics.ItemProperties.VisibleProperty:GetType"};
+
         /// <summary>
         /// Generates the Summary-Assembly.
         /// </summary>
@@ -27,12 +37,14 @@ namespace AntMe.Generator
         {
             string outputFile = "Summary.dll_";
 
+            
+
 
             if (!ExtensionLoader.LocalizedLanguages.Contains(culture))
                 throw new ArgumentException("Language not available.");
 
             List<Type> typeReferences = new List<Type>();
-             
+
             CSharpCompilationOptions options =
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                     .WithOverflowChecks(true).WithOptimizationLevel(OptimizationLevel.Release);
@@ -46,14 +58,14 @@ namespace AntMe.Generator
                 typeReferences.AddRange(node.GetReferences());
                 syntaxTrees.Add(SyntaxFactory.SyntaxTree(SyntaxFactory.CompilationUnit().AddMembers(node.Generate())));
             }
-            
+
             List<MetadataReference> references = new List<MetadataReference>();
 
             foreach (string location in typeReferences.Select(c => c.Assembly.Location).Distinct())
             {
                 references.Add(MetadataReference.CreateFromFile(location));
             }
-            
+
             StreamWriter streamWriter = new StreamWriter(File.Open(Path.Combine(output, "Assembly.cs"), FileMode.Create));
             syntaxTrees[0].GetRoot().NormalizeWhitespace().GetText().Write(streamWriter);
             streamWriter.Flush();
@@ -76,7 +88,7 @@ namespace AntMe.Generator
 
             #region Info-Wrapper
 
-            BaseParseNode root = new NamespaceParseNode("AntMe.Deutsch", WrapType.InfoWrap,Translations);
+            BaseParseNode root = new NamespaceParseNode("AntMe.Deutsch", WrapType.InfoWrap, Translations,BlackList);
             List<Type> wrapped = new List<Type>();
 
             // Collect all Item Infos and link them to the Localized ItemInfos
@@ -88,21 +100,36 @@ namespace AntMe.Generator
                 while (t != typeof(PropertyList<ItemInfoProperty>) && t != null && !wrapped.Contains(t))
                 {
 
-                    ClassParseNode classNode = new ClassParseNode(t, WrapType.InfoWrap, Translations);
+                    ClassParseNode classNode = new ClassParseNode(t, WrapType.InfoWrap, Translations, BlackList);
                     wrapped.Add(t);
                     root.add(classNode);
 
+                    //Adding all Methods of the Type
                     foreach (MethodInfo methodInfo in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
                     {
                         if (methodInfo.IsSpecialName)
                             continue;
-                        classNode.add(new MethodParseNode(methodInfo, WrapType.InfoWrap, Translations));
+                        classNode.add(new MethodParseNode(methodInfo, WrapType.InfoWrap, Translations, BlackList));
                     }
 
+                    //Adding all Properties of the Type
                     foreach (PropertyInfo propertyInfo in t.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
                     {
-                        classNode.add(new PropertyParseNode(propertyInfo, WrapType.InfoWrap, Translations));
+                        classNode.add(new PropertyParseNode(propertyInfo, WrapType.InfoWrap, Translations, BlackList));
                     }
+
+                    //Adding Attached ItemProperties
+                    if (ExtensionLoader.DefaultTypeMapper.Items.Select(x => x.InfoType).Contains(t))
+                        foreach (IAttachmentTypeMapperEntry attachedItem in ExtensionLoader.DefaultTypeMapper.ItemAttachments.Where(p => p.Type == ExtensionLoader.DefaultTypeMapper.Items.FirstOrDefault(x => x.InfoType == t).Type))
+                        {
+
+
+                            classNode.add(new AttachmentParseNode(attachedItem.AttachmentType, WrapType.InfoWrap, Translations, BlackList));
+
+
+                        }
+
+
 
                     t = t.BaseType;
                 }

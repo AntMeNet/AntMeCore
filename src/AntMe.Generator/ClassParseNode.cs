@@ -15,14 +15,13 @@ namespace AntMe.Generator
 
         public Type Type { get; private set; }
 
-        public ClassParseNode(Type type, WrapType wrapType, KeyValueStore locaDictionary)
-            : base(wrapType, locaDictionary)
+        public ClassParseNode(Type type, WrapType wrapType, KeyValueStore locaDictionary, string[] blackList) : base(wrapType, locaDictionary, blackList)
         {
             Type = type;
             references.Add(type);
         }
 
-        public override MemberDeclarationSyntax Generate()
+        public override MemberDeclarationSyntax[] Generate()
         {
             references.Add(Type);
 
@@ -33,7 +32,7 @@ namespace AntMe.Generator
                         SyntaxFactory.ClassDeclaration("Loc" + Type.Name).WithModifiers(
                             SyntaxFactory.TokenList(
                                 SyntaxFactory.Token(SyntaxKind.PublicKeyword))).AddMembers(
-                        ChildNodes.Select(c => c.Generate()).ToArray()).AddMembers(
+                        ChildNodes.SelectMany(c => c.Generate()).ToArray()).AddMembers(
                             SyntaxFactory.FieldDeclaration(
                                 SyntaxFactory.VariableDeclaration(
                                      GetTypeSyntax(Type.FullName)).AddVariables(
@@ -64,14 +63,15 @@ namespace AntMe.Generator
 
                     classSyntax = classSyntax.AddMembers(constructor);
 
-                    return classSyntax;
+                    return new MemberDeclarationSyntax[] { classSyntax };
                 case WrapType.BaseTypeWrap:
-                    return null;
+                    break;
                 case WrapType.BaseClasses:
-                    return null;
+                    break;
                 default:
-                    return null;
+                    break;
             }
+            return new MemberDeclarationSyntax[] { };
         }
 
         public override KeyValueStore GetLocaKeys()

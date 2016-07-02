@@ -16,18 +16,19 @@ namespace AntMe.Generator
 
         protected List<Type> references;
         protected KeyValueStore LocaDictionary;
-
+        protected string[] BlackList;
         protected WrapType wrapType;
 
-        public BaseParseNode(WrapType wrapType, KeyValueStore locaDictionary)
-        {
-            this.wrapType = wrapType;
+        public BaseParseNode(WrapType wrapType, KeyValueStore locaDictionary,string[] blackList)
+        {          
             ChildNodes = new List<BaseParseNode>();
             references = new List<Type>();
             LocaDictionary = locaDictionary;
+            BlackList = blackList;
+            this.wrapType = wrapType;
         }
 
-        public abstract MemberDeclarationSyntax Generate();
+        public abstract MemberDeclarationSyntax[] Generate();
 
         public abstract KeyValueStore GetLocaKeys();
 
