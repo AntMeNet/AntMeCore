@@ -543,7 +543,7 @@ namespace AntMe
                             exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Material is missing"));
                         }
 
-                        // Collect neighbors
+                        // Collect neighbours
                         MapTile northTile = (y <= 0 ? null : tiles[x, y - 1]);
                         MapTile southTile = (y >= cells.Y - 1 ? null : tiles[x, y + 1]);
                         MapTile westTile = (x <= 0 ? null : tiles[x - 1, y]);
@@ -594,33 +594,33 @@ namespace AntMe
                                 exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the East"));
                         }
 
-                        // Check Neighbors
+                        // Check Neighbours
                         result.Clear();
                         if (!tile.ValidateTileToTheNorth(northTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbour Map Tile to the North", ex));
                         }
 
                         result.Clear();
                         if (!tile.ValidateTileToTheSouth(southTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the South", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbour Map Tile to the South", ex));
                         }
 
                         result.Clear();
                         if (!tile.ValidateTileToTheWest(westTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the West", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbour Map Tile to the West", ex));
                         }
 
                         result.Clear();
                         if (!tile.ValidateTileToTheEast(eastTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the East", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbour Map Tile to the East", ex));
                         }
                     }
                 }
