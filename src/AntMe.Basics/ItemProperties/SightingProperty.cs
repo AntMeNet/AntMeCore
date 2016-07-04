@@ -129,7 +129,7 @@ namespace AntMe.Basics.ItemProperties
         /// </summary>
         internal void UpdateEnvironment(Map map, Item item, Index2 newCell)
         {
-            // Run through neighbor cells
+            // Run through neighbour cells
             Index2 limit = map.GetCellCount();
 
             for (int x = -1; x <= 1; x++)

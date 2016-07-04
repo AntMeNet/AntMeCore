@@ -249,7 +249,7 @@ namespace AntMe
         /// <summary>
         /// Gets called to validate the Map Tile close to this one.
         /// </summary>
-        /// <param name="tile">Neighbor Tile</param>
+        /// <param name="tile">Neighbour Tile</param>
         /// <param name="exceptions">Result-List of occured Exceptions</param>
         protected virtual bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions) { return true; }
 
@@ -273,7 +273,7 @@ namespace AntMe
         /// <summary>
         /// Gets called to validate the Map Tile close to this one.
         /// </summary>
-        /// <param name="tile">Neighbor Tile</param>
+        /// <param name="tile">Neighbour Tile</param>
         /// <param name="exceptions">Result-List of occured Exceptions</param>
         protected virtual bool OnValidateSouthSide(MapTile tile, IList<Exception> exceptions) { return true; }
 
@@ -297,7 +297,7 @@ namespace AntMe
         /// <summary>
         /// Gets called to validate the Map Tile close to this one.
         /// </summary>
-        /// <param name="tile">Neighbor Tile</param>
+        /// <param name="tile">Neighbour Tile</param>
         /// <param name="exceptions">Result-List of occured Exceptions</param>
         protected virtual bool OnValidateWestSide(MapTile tile, IList<Exception> exceptions) { return true; }
 
@@ -321,7 +321,7 @@ namespace AntMe
         /// <summary>
         /// Gets called to validate the Map Tile close to this one.
         /// </summary>
-        /// <param name="tile">Neighbor Tile</param>
+        /// <param name="tile">Neighbour Tile</param>
         /// <param name="exceptions">Result-List of occured Exceptions</param>
         protected virtual bool OnValidateNorthSide(MapTile tile, IList<Exception> exceptions) { return true; }
 
