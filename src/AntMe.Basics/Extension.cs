@@ -621,8 +621,8 @@ namespace AntMe.Basics
         private void RegisterAnt(ITypeMapper typeMapper, KeyValueStore settings)
         {
             // Ant Item
-            settings.Set<AntItem>("ZickZackAngle", 10, "Correction Angle after Sprint");
-            settings.Set<AntItem>("ZickZackRange", 30f, "Distance to go every Sprint");
+            settings.Set<AntItem>("ZigZagAngle", 10, "Correction Angle after Sprint");
+            settings.Set<AntItem>("ZigZagRange", 30f, "Distance to go every Sprint");
             settings.Set<AntItem>("DropSugar", false, "Will an Ant leave a small Sugar on Drop");
             settings.Set<AntItem>("MarkerDelay", 10, "Time in Rounds between Marker-Drops");
             settings.Set<AntItem>("ClassicBorderBehavior", true, "Should an ant be reflected by Walls (like in AntMe! 1)");

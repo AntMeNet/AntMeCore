@@ -157,7 +157,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 Angle direction = destination.Direction;
                 int angle = Angle.ConvertToDegree(Angle.Diff(Item.Orientation, direction));
 
-                if (distance < Faction.Settings.GetFloat<AntItem>("ZickZackRange").Value)
+                if (distance < Faction.Settings.GetFloat<AntItem>("ZigZagRange").Value)
                 {
                     // Genaue Route
                     angleToGo = angle;
@@ -165,10 +165,10 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 }
                 else
                 {
-                    // Zickzack
-                    int zzAngle = Faction.Settings.GetInt<AntItem>("ZickZackAngle").Value;
+                    // ZigZag
+                    int zzAngle = Faction.Settings.GetInt<AntItem>("ZigZagAngle").Value;
                     angleToGo = angle + Faction.Random.Next(-zzAngle, zzAngle);
-                    distanceToGo = Faction.Settings.GetFloat<AntItem>("ZickZackRange").Value;
+                    distanceToGo = Faction.Settings.GetFloat<AntItem>("ZigZagRange").Value;
                 }
             }
             else
