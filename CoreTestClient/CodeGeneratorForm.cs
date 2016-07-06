@@ -50,30 +50,15 @@ namespace CoreTestClient
 
         private void CodeGeneratorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (DialogResult == DialogResult.OK)
-            {
-                //try
-                //{
-                    templateGenerator.Generate(
-                        nameTextBox.Text,
-                        authorTextBox.Text,
-                        (string)factionCombo.SelectedItem,
-                        (string)languageCombo.SelectedItem,
-                        (string)programmingLanguageCombo.SelectedItem,
-                        (string)environmentComboBox.SelectedItem,
-                        outputTextBox.Text);
-                //}
-                //catch (Exception ex)
-                //{
-                //    MessageBox.Show(ex.Message);
-                //    e.Cancel = true;
-                //}
-            }
+
         }
 
         private void regenerateButton_Click(object sender, EventArgs e)
         {
-            ModpackGenerator.GenerateLocaKeys().Save(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions\\NewLocaTable.Language.lng");
+            string outputFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions";
+            new ModpackGenerator(languageCombo.SelectedItem.ToString(), ExtensionLoader.DefaultTypeMapper)
+                .GenerateLocaKeys(languageCombo.SelectedItem.ToString())
+                .Save(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions\\NewLocaTable.Language.lng");
         }
 
         private void generateButton_Click(object sender, EventArgs e)
@@ -81,13 +66,13 @@ namespace CoreTestClient
             string outputFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions";
             //try
             //{
-                templateGenerator.Generate(nameTextBox.Text, 
-                    authorTextBox.Text, 
-                    factionCombo.SelectedItem.ToString(), 
-                    languageCombo.SelectedItem.ToString(), 
-                    programmingLanguageCombo.SelectedItem.ToString(), 
-                    environmentComboBox.SelectedItem.ToString(), 
-                    outputFolder);
+            templateGenerator.Generate(nameTextBox.Text,
+                authorTextBox.Text,
+                factionCombo.SelectedItem.ToString(),
+                languageCombo.SelectedItem.ToString(),
+                programmingLanguageCombo.SelectedItem.ToString(),
+                environmentComboBox.SelectedItem.ToString(),
+                outputFolder);
             //}
             //catch (Exception ex)
             //{

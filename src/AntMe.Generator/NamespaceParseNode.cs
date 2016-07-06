@@ -14,7 +14,7 @@ namespace AntMe.Generator
 
         public string Name { get; private set; }
 
-        public NamespaceParseNode(string name, WrapType wrapType, KeyValueStore locaDictionary, string[] blackList) : base(wrapType, locaDictionary, blackList)
+        public NamespaceParseNode(string name, WrapType wrapType, ModpackGenerator generator) : base(wrapType, generator)
         {
             Name = name;
         }

@@ -14,16 +14,15 @@ namespace AntMe.Generator
 
         public PropertyInfo PropertyInfo { get; private set; }
 
-        public PropertyParseNode(PropertyInfo propertyInfo, WrapType wrapType, KeyValueStore locaDictionary, string[] blackList) : base(wrapType, locaDictionary, blackList)
+        public PropertyParseNode(PropertyInfo propertyInfo, WrapType wrapType, ModpackGenerator generator) : base(wrapType, generator)
         {
             PropertyInfo = propertyInfo;
-            this.wrapType = wrapType;
             references.Add(propertyInfo.PropertyType);
         }
 
         public override MemberDeclarationSyntax[] Generate()
         {
-            
+
 
             switch (wrapType)
             {
@@ -39,7 +38,7 @@ namespace AntMe.Generator
                                 SyntaxFactory.ReturnStatement(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("_"+PropertyInfo.ReflectedType.Name),
+                                        SyntaxFactory.IdentifierName("_" + PropertyInfo.ReflectedType.Name),
                                         SyntaxFactory.IdentifierName(PropertyInfo.Name))))));
 
                     }

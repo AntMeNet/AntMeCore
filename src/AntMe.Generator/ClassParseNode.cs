@@ -15,7 +15,7 @@ namespace AntMe.Generator
 
         public Type Type { get; private set; }
 
-        public ClassParseNode(Type type, WrapType wrapType, KeyValueStore locaDictionary, string[] blackList) : base(wrapType, locaDictionary, blackList)
+        public ClassParseNode(Type type, WrapType wrapType, ModpackGenerator generator) : base(wrapType, generator)
         {
             Type = type;
             references.Add(type);

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AntMe.Generator
@@ -15,16 +16,14 @@ namespace AntMe.Generator
         public IList<BaseParseNode> ChildNodes { get; private set; }
 
         protected List<Type> references;
-        protected KeyValueStore LocaDictionary;
-        protected string[] BlackList;
-        protected WrapType wrapType;
+        protected ModpackGenerator generator;
+        public WrapType wrapType;
 
-        public BaseParseNode(WrapType wrapType, KeyValueStore locaDictionary,string[] blackList)
-        {          
+        public BaseParseNode(WrapType wrapType, ModpackGenerator generator)
+        {
             ChildNodes = new List<BaseParseNode>();
             references = new List<Type>();
-            LocaDictionary = locaDictionary;
-            BlackList = blackList;
+            this.generator = generator;
             this.wrapType = wrapType;
         }
 
@@ -68,6 +67,11 @@ namespace AntMe.Generator
             return false;
         }
 
+        protected bool CheckTypeBalckList(string fullKey)
+        {
+            return generator.CheckBlackList(fullKey);
+        }
+
         protected static TypeSyntax GetTypeSyntax(string fullName)
         {
             string[] parts = fullName.Split('.');
@@ -106,7 +110,7 @@ namespace AntMe.Generator
             }
         }
 
-        
+
 
 
 

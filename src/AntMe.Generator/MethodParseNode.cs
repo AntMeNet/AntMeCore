@@ -14,16 +14,14 @@ namespace AntMe.Generator
 
         public MethodInfo MethodInfo { get; private set; }
 
-        public MethodParseNode(MethodInfo methodeInfo, WrapType wrapType, KeyValueStore locaDictionary, string[] blackList) : base(wrapType, locaDictionary, blackList)
+        public MethodParseNode(MethodInfo methodeInfo, WrapType wrapType, ModpackGenerator generator) : base(wrapType, generator)
         {
             MethodInfo = methodeInfo;
         }
 
         public override MemberDeclarationSyntax[] Generate()
         {
-
             MethodDeclarationSyntax Method;
-
             switch (wrapType)
             {
                 case WrapType.InfoWrap:

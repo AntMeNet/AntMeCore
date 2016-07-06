@@ -49,7 +49,15 @@ namespace AntMe.Generator
         public void Generate(string name, string author, string faction, string language, string programmingLanguage, string environment, string outputFolder)
         {
             // TODO: Do the Magic
-            ModpackGenerator.Generate(language, outputFolder, null);
+            try
+            {
+                ModpackGenerator.Generate(language, outputFolder, ExtensionLoader.DefaultTypeMapper);
+            }
+            catch (Exception ex)
+            {
+
+            }
+           
         }
     }
 }

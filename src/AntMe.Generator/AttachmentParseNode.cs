@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace AntMe.Generator
 {
@@ -13,7 +14,7 @@ namespace AntMe.Generator
     {
         public Type AttachmentType;
 
-        public AttachmentParseNode(Type attachmentType, WrapType wrapType, KeyValueStore locaDictionary, string[] blackList) : base(wrapType, locaDictionary, blackList)
+        public AttachmentParseNode(Type attachmentType, WrapType wrapType, ModpackGenerator generator) : base(wrapType, generator)
         {
             AttachmentType = attachmentType;
         }
@@ -56,7 +57,7 @@ namespace AntMe.Generator
                     //adding Methods
                     foreach (MethodInfo methodInfo in AttachmentType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
                     {
-                        if (methodInfo.IsSpecialName || !(methodInfo.DeclaringType is ItemProperty))
+                        if (methodInfo.IsSpecialName || CheckTypeBalckList(string.Format("{0}:{1}", methodInfo.ReflectedType.FullName, methodInfo.Name)))
                             continue;
 
                         MethodDeclarationSyntax method = SyntaxFactory.MethodDeclaration(
