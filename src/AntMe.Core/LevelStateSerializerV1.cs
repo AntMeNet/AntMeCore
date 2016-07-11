@@ -6,10 +6,7 @@ using System.Text;
 
 namespace AntMe
 {
-    /// <summary>
-    /// Klasse zum Serialisieren der State-Daten einer Simulation
-    /// </summary>
-    public sealed class StateSerializer : IDisposable
+    internal sealed class LevelStateSerializerV1 : ILevelStateSerializer
     {
         private readonly MemoryStream _stream;
         private readonly BinaryWriter _writer;
@@ -31,7 +28,7 @@ namespace AntMe
         /// <summary>
         /// neue Instanz eines State Serializers.
         /// </summary>
-        public StateSerializer()
+        public LevelStateSerializerV1()
         {
             _stream = new MemoryStream();
             _writer = new BinaryWriter(_stream, Encoding.UTF8);
@@ -274,91 +271,91 @@ namespace AntMe
                 _factions.Clear();
             }
         }
-    }
-
-    /// <summary>
-    /// Liste der möglichen Serializer Packages.
-    /// </summary>
-    public enum SerializerPackage
-    {
-        /// <summary>
-        /// Intro [Versionsummer (byte)]
-        /// </summary>
-        StreamVersion = 1,
 
         /// <summary>
-        /// Start eines Simulationsframes [Framenummer (int)]
+        /// Liste der möglichen Serializer Packages.
         /// </summary>
-        FrameStart = 2,
+        internal enum SerializerPackage
+        {
+            /// <summary>
+            /// Intro [Versionsummer (byte)]
+            /// </summary>
+            StreamVersion = 1,
 
-        /// <summary>
-        /// Erster Main State [Größe (short), Ladung (byte[])]
-        /// </summary>
-        MainFirst = 11,
+            /// <summary>
+            /// Start eines Simulationsframes [Framenummer (int)]
+            /// </summary>
+            FrameStart = 2,
 
-        /// <summary>
-        /// Update Main State [Größe (short), Ladung (byte[])]
-        /// </summary>
-        MainUpdate = 12,
+            /// <summary>
+            /// Erster Main State [Größe (short), Ladung (byte[])]
+            /// </summary>
+            MainFirst = 11,
 
-        /// <summary>
-        /// Erster Map State [Größe (short), Ladung (byte[])]
-        /// </summary>
-        MapFirst = 21,
+            /// <summary>
+            /// Update Main State [Größe (short), Ladung (byte[])]
+            /// </summary>
+            MainUpdate = 12,
 
-        /// <summary>
-        /// Update Map State [Größe (short), Ladung (byte[])]
-        /// </summary>
-        MapUpdate = 22,
+            /// <summary>
+            /// Erster Map State [Größe (short), Ladung (byte[])]
+            /// </summary>
+            MapFirst = 21,
 
-        /// <summary>
-        /// Typ registrierung [Index (byte), Assembly (string), Name (string)]
-        /// </summary>
-        ItemTypeRegistration = 31,
+            /// <summary>
+            /// Update Map State [Größe (short), Ladung (byte[])]
+            /// </summary>
+            MapUpdate = 22,
 
-        /// <summary>
-        /// Erster Item State [ID (int), Typnummer (byte), Größe (short), Ladung (byte[])]
-        /// </summary>
-        ItemFirst = 41,
+            /// <summary>
+            /// Typ registrierung [Index (byte), Assembly (string), Name (string)]
+            /// </summary>
+            ItemTypeRegistration = 31,
 
-        /// <summary>
-        /// Erster FactionItem State [ID (int), Faction (byte), Typnummer (byte), Größe (short), Ladung (byte[])]
-        /// </summary>
-        ItemFactionFirst = 42,
+            /// <summary>
+            /// Erster Item State [ID (int), Typnummer (byte), Größe (short), Ladung (byte[])]
+            /// </summary>
+            ItemFirst = 41,
 
-        /// <summary>
-        /// Update Item State [ID (int), Größe (short), Ladung (byte[])]
-        /// </summary>
-        ItemUpdate = 43,
+            /// <summary>
+            /// Erster FactionItem State [ID (int), Faction (byte), Typnummer (byte), Größe (short), Ladung (byte[])]
+            /// </summary>
+            ItemFactionFirst = 42,
 
-        /// <summary>
-        /// Lost Item, [ID (int)]
-        /// </summary>
-        ItemLost = 44,
+            /// <summary>
+            /// Update Item State [ID (int), Größe (short), Ladung (byte[])]
+            /// </summary>
+            ItemUpdate = 43,
 
-        /// <summary>
-        /// Typ registrierung [Index (byte), Assembly (string), Name (string)]
-        /// </summary>
-        FactionTypeRegistration = 51,
+            /// <summary>
+            /// Lost Item, [ID (int)]
+            /// </summary>
+            ItemLost = 44,
 
-        /// <summary>
-        /// Erster Faction State [Index (byte), Typnummer (byte), Größe (short), Ladung (byte[])]
-        /// </summary>
-        FactionFirst = 61,
+            /// <summary>
+            /// Typ registrierung [Index (byte), Assembly (string), Name (string)]
+            /// </summary>
+            FactionTypeRegistration = 51,
 
-        /// <summary>
-        /// Update Faction State [Index (byte), Größe (short), Ladung (byte[])]
-        /// </summary>
-        FactionUpdate = 62,
+            /// <summary>
+            /// Erster Faction State [Index (byte), Typnummer (byte), Größe (short), Ladung (byte[])]
+            /// </summary>
+            FactionFirst = 61,
 
-        /// <summary>
-        /// Lost Item, [ID (int)]
-        /// </summary>
-        FactionLost = 63,
+            /// <summary>
+            /// Update Faction State [Index (byte), Größe (short), Ladung (byte[])]
+            /// </summary>
+            FactionUpdate = 62,
 
-        /// <summary>
-        /// Letzter Block im Frame
-        /// </summary>
-        FrameEnd = 101,
+            /// <summary>
+            /// Lost Item, [ID (int)]
+            /// </summary>
+            FactionLost = 63,
+
+            /// <summary>
+            /// Letzter Block im Frame
+            /// </summary>
+            FrameEnd = 101,
+        }
     }
 }

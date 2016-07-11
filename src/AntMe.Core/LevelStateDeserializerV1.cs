@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
+using static AntMe.LevelStateSerializerV1;
+
 namespace AntMe
 {
-    /// <summary>
-    /// Klasse zur Deserialisierung von Simulationsstates
-    /// </summary>
-    public sealed class StateDeserializer : IDisposable
+    internal sealed class LevelStateDeserializerV1 : ILevelStateDeserializer
     {
         private readonly MemoryStream _stream;
         private readonly BinaryReader _reader;
@@ -30,7 +29,7 @@ namespace AntMe
         /// <summary>
         /// Neue Instanz eines State Deserializers.
         /// </summary>
-        public StateDeserializer()
+        public LevelStateDeserializerV1()
         {
             _stream = new MemoryStream();
             _reader = new BinaryReader(_stream, Encoding.UTF8);

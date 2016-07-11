@@ -70,6 +70,8 @@
     <Compile Include="FactoryInterop.cs" />
     <Compile Include="FactoryInteropProperty.cs" />
     <Compile Include="IExtensionPack.cs" />
+    <Compile Include="ILevelStateDeserializer.cs" />
+    <Compile Include="ILevelStateSerializer.cs" />
     <Compile Include="InfoProperty.cs" />
     <Compile Include="Interop.cs" />
     <Compile Include="InteropProperty.cs" />
@@ -88,7 +90,10 @@
     <Compile Include="LevelProperty.cs" />
     <Compile Include="LevelSlot.cs" />
     <Compile Include="LevelState.cs" />
+    <Compile Include="LevelStateDeserializerV1.cs" />
     <Compile Include="LevelStateProperty.cs" />
+    <Compile Include="LevelStateSerializerV1.cs" />
+    <Compile Include="LevelStateSerializerV2.cs" />
     <Compile Include="MapMaterial.cs" />
     <Compile Include="MapProperty.cs" />
     <Compile Include="MapState.cs" />
@@ -118,9 +123,8 @@
     <Compile Include="ReadOnlyDictionary.cs" />
     <Compile Include="KeyValueStore.cs" />
     <Compile Include="SimulationContext.cs" />
-    <Compile Include="StateDeserializer.cs" />
     <Compile Include="StateProperty.cs" />
-    <Compile Include="StateSerializer.cs" />
+    <Compile Include="LevelStateSerializer.cs" />
     <Compile Include="Tracer.cs" />
     <Compile Include="UnitAttribute.cs" />
     <Compile Include="UnitAttributeCollection.cs" />

@@ -12,7 +12,7 @@ namespace AntMe.Runtime
     {
         private AppDomain _appDomain;
         private SecureHost _host;
-        private StateDeserializer _deserializer;
+        private LevelStateSerializer _deserializer;
         private LevelState _lastState;
         private string[] extensionPaths;
 
@@ -65,7 +65,7 @@ namespace AntMe.Runtime
                 throw;
             }
 
-            _deserializer = new StateDeserializer();
+            _deserializer = new LevelStateSerializer();
         }
 
         public LevelState NextState()
