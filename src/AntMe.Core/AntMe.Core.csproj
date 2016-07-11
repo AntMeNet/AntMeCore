@@ -136,6 +136,8 @@
     <None Include="PropertyStructure.cd" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AntVideoStructureV1.txt" />
+    <Content Include="AntVideoStructureV2.txt" />
     <Content Include="MapFileStructureV1.txt" />
     <Content Include="MapFileStructureV2.txt" />
   </ItemGroup>

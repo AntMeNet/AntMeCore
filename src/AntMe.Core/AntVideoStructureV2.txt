@@ -1,0 +1,42 @@
+﻿[Intro]
+- Hello Message Length (byte)
+- "AntMe! Map" (char[])
+- Version Number (byte)
+
+[Level]
+* ByteCount (short)
+* PropertyLoad (byte[])
+
+[LevelProperties]
+- PropertyType Count (byte)
+- For Count
+	* PropertyName (string) [FullName]
+	* ByteCount (short)
+	* PropertyLoad (byte[])
+
+[Map]
+* ByteCount (short)
+* PropertyLoad (byte[])
+
+[MapProperties]
+- PropertyType Count (byte)
+- For Count
+	* PropertyName (string) [FullName]
+	* ByteCount (short)
+	* PropertyLoad (byte[])
+
+foreach Frame
+
+	[Level]
+	[LevelProperties]
+
+	[Map]
+	[MapProperties]
+
+	foreach Faction
+		[Faction]
+		[FactionProperties]
+
+	foreach Item
+		[Item]
+		[ItemProperties]
