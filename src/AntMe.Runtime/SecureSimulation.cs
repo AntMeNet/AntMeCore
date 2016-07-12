@@ -65,7 +65,8 @@ namespace AntMe.Runtime
                 throw;
             }
 
-            _deserializer = new LevelStateByteSerializer();
+            SimulationContext context = ExtensionLoader.CreateSimulationContext();
+            _deserializer = new LevelStateByteSerializer(context);
         }
 
         public LevelState NextState()

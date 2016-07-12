@@ -9,6 +9,7 @@ namespace AntMe
     /// <summary>
     /// Common Exception for invalid Map Parameter.
     /// </summary>
+    [Serializable]
     public sealed class InvalidMapException : Exception
     {
         public InvalidMapException() { }

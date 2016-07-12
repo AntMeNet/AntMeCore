@@ -1126,7 +1126,8 @@ namespace AntMe.Runtime.Communication
                         // Create Serializer on Simulation Startup
                         if (state != SimulationState.Stopped && receiver.Serializer == null)
                         {
-                            receiver.Serializer = new LevelStateByteSerializer();
+                            SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                            receiver.Serializer = new LevelStateByteSerializer(context);
                         }
 
                         // Dispose Serializer on Simulation Shutdown
@@ -1149,7 +1150,10 @@ namespace AntMe.Runtime.Communication
                 {
                     // Create a new Serializer
                     if (receiver.Serializer == null)
-                        receiver.Serializer = new LevelStateByteSerializer();
+                    {
+                        SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                        receiver.Serializer = new LevelStateByteSerializer(context);
+                    }
 
                     // Serialize
                     byte[] buffer =  receiver.Serializer.Serialize(state);

@@ -231,7 +231,7 @@ namespace AntMe
         public static Map Deserialize(SimulationContext context, Stream stream)
         {
             // Intro Text
-            byte[] intro = Encoding.ASCII.GetBytes("AntMe! Map");
+            byte[] intro = Encoding.ASCII.GetBytes(STREAM_HELLOMESSAGE);
             if (intro.Length != stream.ReadByte())
                 throw new Exception("This is not a AntMe! Map");
             for (int i = 0; i < intro.Length; i++)

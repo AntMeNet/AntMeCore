@@ -653,7 +653,10 @@ namespace AntMe.Runtime.Communication
         {
             // Skip, as long there is no Deserializer
             if (_deserializer == null)
-                _deserializer = new LevelStateByteSerializer();
+            {
+                SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                _deserializer = new LevelStateByteSerializer(context);
+            }
 
             // Set latest Main State
             _currentState = _deserializer.Deserialize(parameter);

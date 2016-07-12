@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 
 namespace AntMe
@@ -9,11 +10,15 @@ namespace AntMe
     /// </summary>
     public sealed class LevelStateSerializer
     {
+        private const string STREAM_HELLOMESSAGE = "AntMe! Replay";
+
         private Stream stream;
+
+        private BinaryReader reader;
 
         private BinaryWriter writer;
 
-        private BinaryReader reader;
+        private SimulationContext context;
 
         private ILevelStateSerializer serializer;
 
@@ -28,13 +33,19 @@ namespace AntMe
         /// Default Constructor.
         /// </summary>
         /// <param name="stream">Input- or Output-Stream</param>
-        public LevelStateSerializer(Stream stream)
+        /// <param name="context">Simulation Context</param>
+        public LevelStateSerializer(Stream stream, SimulationContext context)
         {
             // Stream must be available
             if (stream == null)
                 throw new ArgumentNullException("stream");
 
+            // Context must be set
+            if (context == null)
+                throw new ArgumentNullException("context");
+
             this.stream = stream;
+            this.context = context;
         }
 
         /// <summary>
@@ -86,20 +97,40 @@ namespace AntMe
 
                 switch (version.Value)
                 {
-                    case 2: serializer = new LevelStateSerializerV2(); break;
+                    case 2: serializer = new LevelStateSerializerV2(context); break;
                     default:
                         throw new ArgumentException("Not supported Stream Version");
                 }
                 Version = version.Value;
 
-                // Generate Writer
+                // Write Intro
+                int count = STREAM_HELLOMESSAGE.Length;
+                stream.WriteByte((byte)count);
+                stream.Write(Encoding.ASCII.GetBytes(STREAM_HELLOMESSAGE), 0, count);
+
+                // Write Version
+                stream.WriteByte(Version.Value);
+
                 writer = new BinaryWriter(stream);
             }
 
             if (version.HasValue && Version != version.Value)
                 throw new NotSupportedException("Version does not match the initial Version");
 
-            serializer.Serialize(writer, state);
+            using (MemoryStream mem = new MemoryStream())
+            {
+                using (GZipStream zip = new GZipStream(mem, CompressionMode.Compress))
+                {
+                    using (BinaryWriter localWriter = new BinaryWriter(zip))
+                    {
+                        serializer.Serialize(localWriter, state);
+                    }
+                }
+
+                byte[] buffer = mem.GetBuffer();
+                writer.Write((short)mem.Position);
+                writer.Write(buffer, 0, (int)mem.Position);
+            }
         }
 
         /// <summary>
@@ -132,15 +163,28 @@ namespace AntMe
                 byte version = (byte)stream.ReadByte();
                 switch (version)
                 {
-                    case 2: deserializer = new LevelStateDeserializerV2(); break;
+                    case 2: deserializer = new LevelStateDeserializerV2(context); break;
                     default:
                         throw new NotSupportedException("Invalid Version Number");
                 }
 
+                // Reader
                 reader = new BinaryReader(stream);
             }
 
-            return deserializer.Deserialize(reader);
+            byte[] buffer = new byte[reader.ReadInt16()];
+            reader.Read(buffer, 0, buffer.Length);
+
+            using (MemoryStream mem = new MemoryStream(buffer))
+            {
+                using (GZipStream zip = new GZipStream(mem, CompressionMode.Decompress))
+                {
+                    using (BinaryReader localReader = new BinaryReader(zip))
+                    {
+                        return deserializer.Deserialize(localReader);
+                    }
+                }
+            }
         }
 
         /// <summary>

@@ -3,13 +3,20 @@
 - "AntMe! Replay" (char[])
 - Version Number (byte)
 
-[Header]
-* Map Width (byte)
-* Map Height (byte) 
-
 foreach Frame
+	
+	* FrameLength in Bytes (short)
 
-	if frame == 0
+	=== ZIPPED WITH GZIP | BEGIN ===
+
+	* Is Keyframe (bool)
+
+	if Keyframe
+
+		[Header]
+		* Map Width (byte)
+		* Map Height (byte) 
+
 		[Level]
 		* ByteCount (short)
 		* LevelFirstLoad (byte[])
@@ -82,3 +89,5 @@ foreach Frame
 	foreach Item
 		[Item]
 		[ItemProperties]
+
+	=== ZIPPED WITH GZIP | END ===

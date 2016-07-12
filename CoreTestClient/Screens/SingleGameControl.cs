@@ -43,7 +43,7 @@ namespace CoreTestClient.Screens
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
             };
 
-            ISimulationClient result = SimulationClient.CreateUnsecure(extensionPaths, ExtensionLoader.DefaultTypeResolver);
+            ISimulationClient result = SimulationClient.CreateSecure(extensionPaths, ExtensionLoader.DefaultTypeResolver);
             result.AquireMaster();
             result.UploadLevel(level.Type);
             for (byte i = 0; i < 8; i++)

@@ -15,9 +15,10 @@ namespace AntMe
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public LevelStateByteSerializer()
+        public LevelStateByteSerializer(SimulationContext context)
         {
-            serializer = new LevelStateSerializer(stream);
+            stream = new MemoryStream();
+            serializer = new LevelStateSerializer(stream, context);
         }
 
         /// <summary>

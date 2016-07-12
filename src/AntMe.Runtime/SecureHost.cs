@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace AntMe.Runtime
 {
     internal sealed class SecureHost : MarshalByRefObject
     {
-        private readonly LevelStateByteSerializer _serializer;
+        private SimulationContext _context;
+        private LevelStateByteSerializer _serializer;
         private Level _level;
-
-        public SecureHost()
-        {
-            _serializer = new LevelStateByteSerializer();
-        }
 
         public void Setup(string[] extensionPaths, Setup settings)
         {
@@ -45,6 +40,10 @@ namespace AntMe.Runtime
             // Load Default Assemblies
             ExtensionLoader.LoadExtensions(extensionPaths, null, false);
 
+            // Create Serializer
+            _context = ExtensionLoader.CreateSimulationContext();
+            _serializer = new LevelStateByteSerializer(_context);
+
             // TODO: this is for debug
             AppDomain.CurrentDomain.AssemblyLoad += (x, y) => { };
             AppDomain.CurrentDomain.AssemblyResolve += (x, y) => null;
@@ -54,7 +53,7 @@ namespace AntMe.Runtime
             // Level erzeugen
             Assembly levelAssembly = Assembly.Load(settings.Level.AssemblyFile);
             Type levelType = levelAssembly.GetType(settings.Level.TypeName, true);
-            Level lvl = Activator.CreateInstance(levelType, ExtensionLoader.DefaultTypeResolver) as Level;
+            Level lvl = Activator.CreateInstance(levelType, _context) as Level;
             _level = lvl;
 
             // Player erzeugen
@@ -69,7 +68,7 @@ namespace AntMe.Runtime
                 Type factoryType = playerAssembly.GetType(settings.Player[i].TypeName);
 
                 // Identify Name
-                object[] playerAttributes = factoryType.GetCustomAttributes(typeof (FactoryAttribute), true);
+                object[] playerAttributes = factoryType.GetCustomAttributes(typeof(FactoryAttribute), true);
                 if (playerAttributes.Length != 1)
                     throw new Exception("Player does not have the right number of Player Attributes");
 
@@ -77,7 +76,7 @@ namespace AntMe.Runtime
 
                 // Find the right Mapping
                 object[] mappingAttributes = playerAttribute.GetType().
-                    GetCustomAttributes(typeof (FactoryAttributeMappingAttribute), false);
+                    GetCustomAttributes(typeof(FactoryAttributeMappingAttribute), false);
                 if (mappingAttributes.Length != 1)
                     throw new Exception("Player Attribute has no valid Property Mapping Attribute");
 

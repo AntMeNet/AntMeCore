@@ -6,6 +6,7 @@ namespace AntMe
     /// <summary>
     /// Exception for Cell/MapTile specific Validation Exceptions.
     /// </summary>
+    [Serializable]
     public sealed class InvalidMapTileException : Exception
     {
         /// <summary>
