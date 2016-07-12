@@ -7,12 +7,12 @@ namespace AntMe.Runtime
 {
     internal sealed class SecureHost : MarshalByRefObject
     {
-        private readonly LevelStateSerializer _serializer;
+        private readonly LevelStateByteSerializer _serializer;
         private Level _level;
 
         public SecureHost()
         {
-            _serializer = new LevelStateSerializer();
+            _serializer = new LevelStateByteSerializer();
         }
 
         public void Setup(string[] extensionPaths, Setup settings)

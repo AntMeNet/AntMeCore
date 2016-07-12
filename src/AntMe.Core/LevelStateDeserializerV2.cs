@@ -3,9 +3,9 @@ using System.IO;
 
 namespace AntMe
 {
-    internal sealed class LevelStateSerializerV2 : ILevelStateSerializer
+    internal sealed class LevelStateDeserializerV2 : ILevelStateDeserializer
     {
-        public void Serialize(BinaryWriter writer, LevelState state)
+        public LevelState Deserialize(BinaryReader reader)
         {
             throw new NotImplementedException();
         }

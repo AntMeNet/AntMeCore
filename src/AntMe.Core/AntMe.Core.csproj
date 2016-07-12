@@ -90,7 +90,9 @@
     <Compile Include="LevelProperty.cs" />
     <Compile Include="LevelSlot.cs" />
     <Compile Include="LevelState.cs" />
+    <Compile Include="LevelStateByteSerializer.cs" />
     <Compile Include="LevelStateDeserializerV1.cs" />
+    <Compile Include="LevelStateDeserializerV2.cs" />
     <Compile Include="LevelStateProperty.cs" />
     <Compile Include="LevelStateSerializerV1.cs" />
     <Compile Include="LevelStateSerializerV2.cs" />

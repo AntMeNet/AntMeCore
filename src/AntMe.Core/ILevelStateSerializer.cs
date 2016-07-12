@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace AntMe
 {
@@ -10,8 +11,8 @@ namespace AntMe
         /// <summary>
         /// Serializes the next State.
         /// </summary>
+        /// <param name="writer">Output Stream</param>
         /// <param name="state">State</param>
-        /// <returns>Frame Data</returns>
-        byte[] Serialize(LevelState state);
+        void Serialize(BinaryWriter writer, LevelState state);
     }
 }

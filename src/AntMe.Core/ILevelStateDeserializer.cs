@@ -1,15 +1,18 @@
-﻿namespace AntMe
+﻿using System;
+using System.IO;
+
+namespace AntMe
 {
     /// <summary>
     /// Interface for all Versions of a LevelState Deserializer.
     /// </summary>
-    internal interface ILevelStateDeserializer
+    internal interface ILevelStateDeserializer : IDisposable
     {
         /// <summary>
         /// Deserializes the next Frame of the Stream.
         /// </summary>
-        /// <param name="data">Frame Data</param>
+        /// <param name="reader">Input Stream</param>
         /// <returns>Deserialized State</returns>
-        LevelState Deserialize(byte[] data);
+        LevelState Deserialize(BinaryReader reader);
     }
 }

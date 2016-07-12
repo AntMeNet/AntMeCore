@@ -88,7 +88,18 @@ namespace AntMe
         /// <returns>Is in List</returns>
         public bool ContainsProperty<V>() where V : T
         {
-            return properties.ContainsKey(typeof(V));
+            return ContainsProperty(typeof(V));
+        }
+
+        /// <summary>
+        /// Checks if the Property is part of the List.
+        /// </summary>
+        /// <param name="type">Property Type to check</param>
+        /// <returns>Is in List</returns>
+        public bool ContainsProperty(Type type)
+        {
+            if (type == null) return false;
+            return properties.ContainsKey(type);
         }
 
         /// <summary>
@@ -98,8 +109,18 @@ namespace AntMe
         /// <returns>Instance of this Type or null</returns>
         public V GetProperty<V>() where V : T
         {
-            if (properties.ContainsKey(typeof(V)))
-                return properties[typeof(V)] as V;
+            return GetProperty(typeof(V)) as V;
+        }
+
+        /// <summary>
+        /// Gets the Property with the requested Type.
+        /// </summary>
+        /// <param name="type">Property Type</param>
+        /// <returns>Instance of this Type or null</returns>
+        public T GetProperty(Type type)
+        {
+            if (type != null && properties.ContainsKey(type))
+                return properties[type];
             return null;
         }
     }

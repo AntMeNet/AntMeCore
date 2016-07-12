@@ -6,6 +6,7 @@ using System.Text;
 
 namespace AntMe
 {
+    [Obsolete]
     internal sealed class LevelStateSerializerV1 : ILevelStateSerializer
     {
         private readonly MemoryStream _stream;
@@ -37,9 +38,10 @@ namespace AntMe
         /// <summary>
         /// Serialisiert einen einzelnen State auf Basis der vorherigen States.
         /// </summary>
+        /// <param name="output">Output Stream</param>
         /// <param name="state">Zu serialisierender State</param>
         /// <returns>Resultierender Byte Array</returns>
-        public byte[] Serialize(LevelState state)
+        public void Serialize(Stream output, LevelState state)
         {
             lock (_lockItem)
             {
@@ -54,11 +56,10 @@ namespace AntMe
 
                 // Copy to buffer
                 int length = (int)_stream.Position;
-                byte[] output = new byte[length];
+                byte[] buffer = new byte[length];
                 _stream.Position = 0;
-                _stream.Read(output, 0, length);
-
-                return output;
+                _stream.Read(buffer, 0, length);
+                output.Write(buffer, 0, length);
             }
         }
 
@@ -270,6 +271,11 @@ namespace AntMe
                 _items.Clear();
                 _factions.Clear();
             }
+        }
+
+        public void Serialize(BinaryWriter writer, LevelState state)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

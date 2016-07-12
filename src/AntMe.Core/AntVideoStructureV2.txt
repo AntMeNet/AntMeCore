@@ -1,37 +1,79 @@
 ﻿[Intro]
 - Hello Message Length (byte)
-- "AntMe! Map" (char[])
+- "AntMe! Replay" (char[])
 - Version Number (byte)
 
-[Level]
-* ByteCount (short)
-* PropertyLoad (byte[])
-
-[LevelProperties]
-- PropertyType Count (byte)
-- For Count
-	* PropertyName (string) [FullName]
-	* ByteCount (short)
-	* PropertyLoad (byte[])
-
-[Map]
-* ByteCount (short)
-* PropertyLoad (byte[])
-
-[MapProperties]
-- PropertyType Count (byte)
-- For Count
-	* PropertyName (string) [FullName]
-	* ByteCount (short)
-	* PropertyLoad (byte[])
+[Header]
+* Map Width (byte)
+* Map Height (byte) 
 
 foreach Frame
 
-	[Level]
-	[LevelProperties]
+	if frame == 0
+		[Level]
+		* ByteCount (short)
+		* LevelFirstLoad (byte[])
 
-	[Map]
-	[MapProperties]
+		[LevelProperties]
+		- PropertyType Count (byte)
+		- For Count
+			* PropertyName (string) [FullName]
+			* ByteCount (short)
+			* PropertyFirstLoad (byte[])
+
+		[Map]
+		* ByteCount (short)
+		* MapFirstLoad (byte[])
+
+		[MapProperties]
+		- PropertyType Count (byte)
+		- For Count
+			* PropertyName (string) [FullName]
+			* ByteCount (short)
+			* PropertyFirstLoad (byte[])
+
+		- for y
+			- for x
+
+				[Tiles]
+				* MapTile Type Index
+				if unknown tile type
+					* MapTile Type Name [fullname]
+				* ByteCount (short)
+				* TileFirstLoad (byte[])
+			
+				[TileProperties]
+				// TODO
+	else
+		[Level]
+		* ByteCount (short)
+		* LevelUpdateLoad (byte[])
+
+		[LevelProperties]
+		- For Count
+			* ByteCount (short)
+			* PropertyUpdateLoad (byte[])
+
+		[Map]
+		* ByteCount (short)
+		* MapUpdateLoad (byte[])
+
+		[MapProperties]
+		- For Count
+			* ByteCount (short)
+			* PropertyUpdateLoad (byte[])
+
+		- for y
+			- for x
+
+				[Tiles]
+				* ByteCount (short)
+				* TileUpdateLoad (byte[])
+				// TODO: Ersetzbare Tiles?
+			
+				[TileProperties]
+				// TODO
+	
 
 	foreach Faction
 		[Faction]

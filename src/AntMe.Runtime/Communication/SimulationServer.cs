@@ -201,7 +201,7 @@ namespace AntMe.Runtime.Communication
         {
             public ISimulationService ServiceInterface { get; set; }
 
-            public LevelStateSerializer Serializer { get; set; }
+            public LevelStateByteSerializer Serializer { get; set; }
 
             public ISimulationCallback CallbackInterface { get; set; }
 
@@ -1126,7 +1126,7 @@ namespace AntMe.Runtime.Communication
                         // Create Serializer on Simulation Startup
                         if (state != SimulationState.Stopped && receiver.Serializer == null)
                         {
-                            receiver.Serializer = new LevelStateSerializer();
+                            receiver.Serializer = new LevelStateByteSerializer();
                         }
 
                         // Dispose Serializer on Simulation Shutdown
@@ -1149,7 +1149,7 @@ namespace AntMe.Runtime.Communication
                 {
                     // Create a new Serializer
                     if (receiver.Serializer == null)
-                        receiver.Serializer = new LevelStateSerializer();
+                        receiver.Serializer = new LevelStateByteSerializer();
 
                     // Serialize
                     byte[] buffer =  receiver.Serializer.Serialize(state);
