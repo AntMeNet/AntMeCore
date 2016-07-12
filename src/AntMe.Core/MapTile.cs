@@ -28,6 +28,7 @@ namespace AntMe
         /// <summary>
         /// List and Data of all unknown Property from Deserialization.
         /// </summary>
+        [Browsable(false)]
         public Dictionary<string, byte[]> UnknownProperties { get; private set; }
 
         /// <summary>
@@ -80,8 +81,7 @@ namespace AntMe
         /// <summary>
         /// Gets or sets the Material.
         /// </summary>
-        [DisplayName("Material")]
-        [Description("Gets or sets the Material.")]
+        [Browsable(false)]
         public MapMaterial Material
         {
             get { return material; }

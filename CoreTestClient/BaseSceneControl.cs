@@ -29,6 +29,7 @@ namespace CoreTestClient
         private Vector2 cameraPosition = Vector2.Zero;
         private Vector2? hoveredPosition = null;
         private Index2? hoveredCell = null;
+        private Brush emptyBrush;
 
         /// <summary>
         /// Gets the minimum Scale Level.
@@ -140,15 +141,18 @@ namespace CoreTestClient
             get { return hoveredCell; }
             private set
             {
-                hoveredCell = value;
-                if (OnHoveredCellChanged != null)
+                if (hoveredCell != value && OnHoveredCellChanged != null)
+                {
+                    hoveredCell = value;
                     OnHoveredCellChanged(value);
+                }
             }
         }
 
         public BaseSceneControl()
         {
             DoubleBuffered = true;
+            emptyBrush = new SolidBrush(Color.LightGray);
         }
 
         #region Scaling and Navigation
@@ -293,13 +297,20 @@ namespace CoreTestClient
                             for (int x = 0; x < mapSize.X; x++)
                             {
                                 MapTileOrientation orientation;
-                                TileRenderer renderer = OnRenderMaterial(x, y, out orientation);
-                                if (renderer != null)
-                                    renderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
+                                TileRenderer materialRenderer = OnRenderMaterial(x, y, out orientation);
+                                if (materialRenderer != null)
+                                    materialRenderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
+                                else
+                                {
+                                    // Fallback on empty Cells
+                                    g.FillRectangle(emptyBrush, new RectangleF(x * TILEWIDTH, y * TILEWIDTH, TILEWIDTH, TILEWIDTH));
+                                }
 
-                                renderer = OnRenderTile(x, y, out orientation);
-                                if (renderer != null)
-                                    renderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
+                                TileRenderer tileRenderer = OnRenderTile(x, y, out orientation);
+                                if (tileRenderer != null)
+                                    tileRenderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
+
+                                
                             }
                         }
 

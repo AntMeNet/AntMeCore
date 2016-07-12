@@ -68,7 +68,7 @@ namespace CoreTestClient.Tools
             if (selected != null)
             {
                 ITypeMapperEntry material = selected.Tag as ITypeMapperEntry;
-                if (tile.Material.GetType() != material.Type)
+                if (tile.Material == null || tile.Material.GetType() != material.Type)
                     map[cell.Value.X, cell.Value.Y].Material = Activator.CreateInstance(material.Type, Context) as MapMaterial;
             }
             else

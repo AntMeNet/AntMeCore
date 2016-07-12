@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Linq;
 using System.Text;
 using System.IO.Compression;
+using System.ComponentModel;
 
 namespace AntMe
 {
@@ -86,16 +87,21 @@ namespace AntMe
         /// <summary>
         /// Gets or sets the border behavior of this Map.
         /// </summary>
+        [DisplayName("Block Border")]
+        [Description("Gets or sets the border behavior of this Map.")]
         public bool BlockBorder { get; set; }
 
         /// <summary>
         /// Gets or sets the base Height Level for this Map.
         /// </summary>
+        [DisplayName("Base Height Level")]
+        [Description("Gets or sets the base Height Level for this Map.")]
         public byte BaseLevel { get; set; }
 
         /// <summary>
         /// Dictionary of missing Properties during Deserialization.
         /// </summary>
+        [Browsable(false)]
         public Dictionary<string, byte[]> UnknownProperties { get; private set; }
 
         /// <summary>
@@ -113,6 +119,7 @@ namespace AntMe
         /// <summary>
         /// List of Start Point for the available Player Slots.
         /// </summary>
+        [Browsable(false)]
         public Index2[] StartPoints { get; set; }
 
         /// <summary>
@@ -522,7 +529,19 @@ namespace AntMe
                     for (int x = 0; x < cells.X; x++)
                     {
                         MapTile tile = tiles[x, y];
-                        if (tile == null) continue;
+
+                        // Check if Map Tile exists
+                        if (tile == null)
+                        {
+                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Map Tile is missing"));
+                            continue;
+                        }
+
+                        // Check if Material exists
+                        if (tile.Material == null)
+                        {
+                            exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Material is missing"));
+                        }
 
                         // Collect neighbors
                         MapTile northTile = (y <= 0 ? null : tiles[x, y - 1]);
@@ -587,21 +606,21 @@ namespace AntMe
                         if (!tile.ValidateTileToTheSouth(southTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the South", ex));
                         }
 
                         result.Clear();
                         if (!tile.ValidateTileToTheWest(westTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the West", ex));
                         }
 
                         result.Clear();
                         if (!tile.ValidateTileToTheEast(eastTile, result))
                         {
                             foreach (var ex in result)
-                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the North", ex));
+                                exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Invalid Neighbor Map Tile to the East", ex));
                         }
                     }
                 }

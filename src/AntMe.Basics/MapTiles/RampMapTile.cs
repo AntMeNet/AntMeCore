@@ -43,9 +43,9 @@ namespace AntMe.Basics.MapTiles
 
         protected override bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions)
         {
-            if (!(tile is RampMapTile) && !(tile is LeftRampToCliffMapTile))
+            if (!(tile is RampMapTile) && !(tile is RightRampToCliffMapTile))
             {
-                exceptions.Add(new NotSupportedException("Map Tile must be a Ramp or Left Cliff Tile"));
+                exceptions.Add(new NotSupportedException("Map Tile must be a Ramp or Right Cliff Tile"));
                 return false;
             }
             return true;
