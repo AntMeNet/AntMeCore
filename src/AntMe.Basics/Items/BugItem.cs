@@ -15,8 +15,8 @@ namespace AntMe.Basics.Items
         private const bool BUG_HEAL_BY_APPLE = false;
         private const bool BUG_HEAL_BY_ANT = false;
         private const int BUG_ROTATIONSPEED = 25;
-        private const int BUG_ZICKZACKANGLE = 10;
-        private const int BUG_ZICKZACKRANGE = 30;
+        private const int BUG_ZIGZAGANGLE = 10;
+        private const int BUG_ZIGZAGRANGE = 30;
 
         private readonly BugFaction faction;
 
