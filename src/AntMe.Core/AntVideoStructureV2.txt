@@ -5,7 +5,7 @@
 
 foreach Frame
 	
-	* FrameLength in Bytes (short)
+	* FrameLength in Bytes (ushort)
 
 	=== ZIPPED WITH GZIP | BEGIN ===
 
@@ -13,19 +13,15 @@ foreach Frame
 
 	if Keyframe
 
-		[Header]
-		* Map Width (byte)
-		* Map Height (byte) 
-
 		[Level]
-		* ByteCount (short)
+		* ByteCount (ushort)
 		* LevelFirstLoad (byte[])
 
 		[LevelProperties]
 		- PropertyType Count (byte)
 		- For Count
 			* PropertyName (string) [FullName]
-			* ByteCount (short)
+			* ByteCount (ushort)
 			* PropertyFirstLoad (byte[])
 
 		[Map]

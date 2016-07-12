@@ -46,7 +46,7 @@ namespace AntMe
         public LevelState Deserialize(byte[] data)
         {
             stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(data, 0, data.Length);
+            stream.Write(data, 0, data.Length);
             stream.Seek(0, SeekOrigin.Begin);
 
             return serializer.Deserialize();

@@ -71,7 +71,14 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void SerializeFirst(BinaryWriter stream, byte version)
         {
-            throw new NotImplementedException();
+            if (version != 2)
+                throw new NotSupportedException("Stream Version not supported");
+
+            // Serialize basics
+            Index2 cells = GetCellCount();
+            stream.Write(BlockBorder);
+            stream.Write((byte)cells.X);
+            stream.Write((byte)cells.Y);
         }
 
         /// <summary>
@@ -81,7 +88,6 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void SerializeUpdate(BinaryWriter stream, byte version)
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -91,7 +97,13 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void DeserializeFirst(BinaryReader stream, byte version)
         {
-            throw new NotImplementedException();
+            if (version != 2)
+                throw new NotSupportedException("Stream Version not supported");
+
+            BlockBorder = stream.ReadBoolean();
+            Tiles = new MapTileState[
+                stream.ReadByte(), 
+                stream.ReadByte()];
         }
 
         /// <summary>
@@ -101,7 +113,6 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void DeserializeUpdate(BinaryReader stream, byte version)
         {
-            throw new NotImplementedException();
         }
     }
 }

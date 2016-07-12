@@ -75,7 +75,7 @@ namespace AntMe
         /// <param name="state">State</param>
         /// <param name="version">Target Stream Version</param>
         /// <returns>Frame Data</returns>
-        public void Serialize(LevelState state, byte? version)
+        private void Serialize(LevelState state, byte? version)
         {
             // Serializer is already in Deserialize Mode
             if (deserializer != null)
@@ -119,7 +119,7 @@ namespace AntMe
 
             using (MemoryStream mem = new MemoryStream())
             {
-                using (GZipStream zip = new GZipStream(mem, CompressionMode.Compress))
+                using (GZipStream zip = new GZipStream(mem, CompressionMode.Compress, true))
                 {
                     using (BinaryWriter localWriter = new BinaryWriter(zip))
                     {
@@ -128,8 +128,11 @@ namespace AntMe
                 }
 
                 byte[] buffer = mem.GetBuffer();
-                writer.Write((short)mem.Position);
-                writer.Write(buffer, 0, (int)mem.Position);
+                if (mem.Position > ushort.MaxValue)
+                    throw new NotSupportedException("Frame is too big");
+
+                writer.Write((ushort)mem.Position);
+                writer.Write(buffer, 0, (ushort)mem.Position);
             }
         }
 
@@ -151,7 +154,7 @@ namespace AntMe
                 // Intro Text
                 byte[] intro = Encoding.ASCII.GetBytes("AntMe! Replay");
                 if (intro.Length != stream.ReadByte())
-                    throw new Exception("This is not a AntMe! Map");
+                    throw new Exception("This is not a AntMe! Replay");
                 for (int i = 0; i < intro.Length; i++)
                 {
                     byte c = (byte)stream.ReadByte();
@@ -172,9 +175,7 @@ namespace AntMe
                 reader = new BinaryReader(stream);
             }
 
-            byte[] buffer = new byte[reader.ReadInt16()];
-            reader.Read(buffer, 0, buffer.Length);
-
+            byte[] buffer = reader.ReadBytes(reader.ReadUInt16());
             using (MemoryStream mem = new MemoryStream(buffer))
             {
                 using (GZipStream zip = new GZipStream(mem, CompressionMode.Decompress))
