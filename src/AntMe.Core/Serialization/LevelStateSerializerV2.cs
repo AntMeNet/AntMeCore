@@ -24,7 +24,7 @@ namespace AntMe.Serialization
         private List<Type> itemPropertyTypes = new List<Type>();
 
         private List<byte> knownFactions = new List<byte>();
-        private List<int> knownItems = new List<int>();
+        private List<ItemState> knownItems = new List<ItemState>();
 
         public LevelStateSerializerV2(SimulationContext context)
         {
@@ -142,6 +142,42 @@ namespace AntMe.Serialization
                 }
             }
 
+            // Enumerate Items
+            foreach (var item in state.Items)
+            {
+                if (!knownItems.Contains(item))
+                {
+                    // Insert Item
+                    if (item is FactionItemState)
+                        DoFactionItemInsert(writer, item as FactionItemState);
+                    else DoItemInsert(writer, item);
+
+                    // Insert Item Properties
+                    foreach (var property in item.Properties)
+                        DoItemPropertyInsert(writer, item.Id, property);
+
+                    knownItems.Add(item);
+                }
+                else
+                {
+                    // Update Item
+                    DoItemUpdate(writer, item);
+
+                    // Update Item Properties
+                    foreach (var property in item.Properties)
+                        DoItemPropertyUpdate(writer, item.Id, property);
+                }
+            }
+
+            var deleted = knownItems.Except(state.Items).ToArray();
+            foreach (var item in deleted)
+            {
+                // Delete Item
+                DoItemDelete(writer, item.Id);
+
+                knownItems.Remove(item);
+            }
+
             // Finalize Stream
             writer.Write((byte)LevelStateSerializerPackageV2.FrameEnd);
         }
@@ -165,6 +201,8 @@ namespace AntMe.Serialization
         /// <summary>
         /// Sends Faction Item Insert into Stream.
         /// * Package Key [0x97] (byte)
+        /// * Id (int)
+        /// * Type Index (ushort)
         /// * ByteCount (ushort)
         /// * Payload (byte[])
         /// </summary>
@@ -172,38 +210,85 @@ namespace AntMe.Serialization
         /// <param name="item">Current Item</param>
         private void DoFactionItemInsert(BinaryWriter writer, FactionItemState item)
         {
+            ushort typeIndex = GetIndex(
+                itemTypes,
+                item.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.ItemTypeInsert);
+
             writer.Write((byte)LevelStateSerializerPackageV2.FactionItemInsert);
+            writer.Write(item.Id);
+            writer.Write(typeIndex);
             SerializeFirst(writer, item);
         }
 
-        private void DoItemPropertyTypeInsert(BinaryWriter writer)
+        /// <summary>
+        /// Sends Item Property Update into Stream.
+        /// * Package Key [0xE6] (byte)
+        /// * Id (int)
+        /// * Type Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="id">Item Id</param>
+        /// <param name="property">Property</param>
+        private void DoItemPropertyUpdate(BinaryWriter writer, int id, ItemStateProperty property)
         {
-            throw new NotImplementedException();
+            ushort typeIndex = GetIndex(
+                itemPropertyTypes,
+                property.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.ItemPropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.ItemPropertyUpdate);
+            writer.Write(id);
+            writer.Write(typeIndex);
+            SerializeUpdate(writer, property);
         }
 
-        private void DoItemPropertyUpdate(BinaryWriter writer)
+        /// <summary>
+        /// Sends Item Property Insert into Stream.
+        /// * Package Key [0xD6] (byte)
+        /// * Id (int)
+        /// * Type Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="id">Item Id</param>
+        /// <param name="property">Property</param>
+        private void DoItemPropertyInsert(BinaryWriter writer, int id, ItemStateProperty property)
         {
-            throw new NotImplementedException();
+            ushort typeIndex = GetIndex(
+                itemPropertyTypes, 
+                property.GetType(), 
+                writer, 
+                LevelStateSerializerPackageV2.ItemPropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.ItemPropertyInsert);
+            writer.Write(id);
+            writer.Write(typeIndex);
+            SerializeFirst(writer, property);
         }
 
-        private void DoItemPropertyInsert(BinaryWriter writer)
+        /// <summary>
+        /// Sends Item Delete into Stream.
+        /// * Package Key [0xB6] (byte)
+        /// * Id (int)
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="id">Id</param>
+        private void DoItemDelete(BinaryWriter writer, int id)
         {
-            throw new NotImplementedException();
-        }
-
-        private void DoItemTypeInsert(BinaryWriter writer)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void DoItemDelete(BinaryWriter writer)
-        {
-            throw new NotImplementedException();
+            writer.Write((byte)LevelStateSerializerPackageV2.ItemDelete);
+            writer.Write(id);
         }
 
         /// <summary>
         /// Sends Item Update into Stream.
         /// * Package Key [0xA6] (byte)
+        /// * Id (int)
         /// * ByteCount (ushort)
         /// * Payload (byte[])
         /// </summary>
@@ -212,12 +297,15 @@ namespace AntMe.Serialization
         private void DoItemUpdate(BinaryWriter writer, ItemState item)
         {
             writer.Write((byte)LevelStateSerializerPackageV2.ItemUpdate);
+            writer.Write(item.Id);
             SerializeUpdate(writer, item);
         }
 
         /// <summary>
         /// Sends Item Insert into Stream.
         /// * Package Key [0x96] (byte)
+        /// * Id (int)
+        /// * ItemType Index (ushort)
         /// * ByteCount (ushort)
         /// * Payload (byte[])
         /// </summary>
@@ -225,7 +313,15 @@ namespace AntMe.Serialization
         /// <param name="item">Current Item</param>
         private void DoItemInsert(BinaryWriter writer, ItemState item)
         {
+            ushort typeIndex = GetIndex(
+                itemTypes,
+                item.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.ItemTypeInsert);
+
             writer.Write((byte)LevelStateSerializerPackageV2.ItemInsert);
+            writer.Write(item.Id);
+            writer.Write(typeIndex);
             SerializeFirst(writer, item);
         }
 
@@ -240,15 +336,15 @@ namespace AntMe.Serialization
             writer.Write((byte)LevelStateSerializerPackageV2.FactionPropertyUpdate);
             writer.Write(slotIndex);
             writer.Write(typeIndex);
-            SerializeFirst(writer, property);
+            SerializeUpdate(writer, property);
         }
 
         private void DoFactionPropertyInsert(BinaryWriter writer, byte slotIndex, FactionStateProperty property)
         {
             ushort typeIndex = GetIndex(
-                factionPropertyTypes, 
-                property.GetType(), 
-                writer, 
+                factionPropertyTypes,
+                property.GetType(),
+                writer,
                 LevelStateSerializerPackageV2.FactionPropertyTypeInsert);
 
             writer.Write((byte)LevelStateSerializerPackageV2.FactionPropertyInsert);
@@ -286,9 +382,9 @@ namespace AntMe.Serialization
         private void DoFactionInsert(BinaryWriter writer, FactionState faction)
         {
             ushort typeIndex = GetIndex(
-                factionTypes, 
-                faction.GetType(), 
-                writer, 
+                factionTypes,
+                faction.GetType(),
+                writer,
                 LevelStateSerializerPackageV2.FactionTypeInsert);
 
             writer.Write((byte)LevelStateSerializerPackageV2.FactionInsert);

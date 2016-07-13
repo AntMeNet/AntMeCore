@@ -100,7 +100,17 @@ namespace AntMe.Serialization
 
         private void DoFactionItemInsert(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            int id = reader.ReadInt32();
+            ushort typeIndex = reader.ReadUInt16();
+            Type type = itemTypes[typeIndex];
+
+            FactionItemState item;
+            if (type != null) item = Activator.CreateInstance(type) as FactionItemState;
+            else item = new UnknownFactionItemState();
+
+            item.Id = id;
+            DeserializeFirst(reader, item);
+            latest.Items.Add(item);
         }
 
         private void DoItemPropertyTypeInsert(BinaryReader reader)
@@ -124,22 +134,44 @@ namespace AntMe.Serialization
 
         private void DoItemPropertyUpdate(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            int id = reader.ReadInt32();
+            ushort typeIndex = reader.ReadUInt16();
+            Type type = itemPropertyTypes[typeIndex];
+
+            ItemStateProperty property = null;
+            if (type != null)
+            {
+                ItemState item = latest.Items.Single(i => i.Id == id);
+                if (item != null && item.ContainsProperty(type))
+                    property = item.GetProperty(type);
+            }
+
+            if (property != null) DeserializeUpdate(reader, property);
+            else DeserializeUnknown(reader);
         }
 
         private void DoItemPropertyInsert(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            int id = reader.ReadInt32();
+            ushort typeIndex = reader.ReadUInt16();
+            Type type = itemPropertyTypes[typeIndex];
+
+            ItemStateProperty property = null;
+            if (type != null)
+            {
+                var item = latest.Items.Single(i => i.Id == id);
+                property = Activator.CreateInstance(type) as ItemStateProperty;
+                item.AddProperty(property);
+            }
+
+            if (property != null) DeserializeFirst(reader, property);
+            else DeserializeUnknown(reader);
         }
 
         private void DoItemTypeInsert(BinaryReader reader)
         {
             ushort index = reader.ReadUInt16();
             string name = reader.ReadString();
-
-            // Make sure its the next index in line
-            if (index != itemTypes.Count)
-                throw new NotSupportedException("New Type Index does not match the current List");
 
             // Identify Type
             var map = context.Mapper.Items.
@@ -153,27 +185,37 @@ namespace AntMe.Serialization
 
         private void DoItemDelete(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            int id = reader.ReadInt32();
+            ItemState item = latest.Items.Single(i => i.Id == id);
+            latest.Items.Remove(item);
         }
 
         private void DoItemUpdate(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            int id = reader.ReadInt32();
+            ItemState item = latest.Items.Single(i => i.Id == id);
+            DeserializeUpdate(reader, item);
         }
 
         private void DoItemInsert(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            int id = reader.ReadInt32();
+            ushort typeIndex = reader.ReadUInt16();
+            Type type = itemTypes[typeIndex];
+
+            ItemState item;
+            if (type != null) item = Activator.CreateInstance(type) as ItemState;
+            else item = new UnknownItemState();
+
+            item.Id = id;
+            DeserializeFirst(reader, item);
+            latest.Items.Add(item);
         }
 
         private void DoFactionPropertyTypeInsert(BinaryReader reader)
         {
             ushort index = reader.ReadUInt16();
             string name = reader.ReadString();
-
-            // Make sure its the next index in line
-            if (index != factionPropertyTypes.Count)
-                throw new NotSupportedException("New Type Index does not match the current List");
 
             // Identify Type
             var map = context.Mapper.FactionProperties.
@@ -187,20 +229,23 @@ namespace AntMe.Serialization
 
         private void DoFactionPropertyUpdate(BinaryReader reader)
         {
+            // Read Stuff
             byte slotIndex = reader.ReadByte();
             ushort typeIndex = reader.ReadUInt16();
             Type type = factionPropertyTypes[typeIndex];
 
+            // Get Property
+            FactionStateProperty property = null;
             if (type != null)
             {
-                FactionState faction = latest.Factions.First(f => f.SlotIndex == slotIndex);
-                var property = Activator.CreateInstance(type) as FactionStateProperty;
-                DeserializeUpdate(reader, property);
+                FactionState faction = latest.Factions.Single(f => f.SlotIndex == slotIndex);
+                if (faction != null && faction.ContainsProperty(type))
+                    property = faction.GetProperty(type);
             }
-            else
-            {
-                DeserializeUnknown(reader);
-            }
+
+            // Deserialize
+            if (property != null) DeserializeUpdate(reader, property);
+            else DeserializeUnknown(reader);
         }
 
         private void DoFactionPropertyInsert(BinaryReader reader)
@@ -224,10 +269,6 @@ namespace AntMe.Serialization
         {
             ushort index = reader.ReadUInt16();
             string name = reader.ReadString();
-
-            // Make sure its the next index in line
-            if (index != factionTypes.Count)
-                throw new NotSupportedException("New Type Index does not match the current List");
 
             // Identify Type
             var map = context.Mapper.Factions.
@@ -305,10 +346,6 @@ namespace AntMe.Serialization
             ushort index = reader.ReadUInt16();
             string name = reader.ReadString();
 
-            // Make sure its the next index in line
-            if (index != mapTilePropertyTypes.Count)
-                throw new NotSupportedException("New Type Index does not match the current List");
-
             // Identify Type
             var map = context.Mapper.MapTileProperties.
                 Where(m => m.StateType != null).
@@ -356,10 +393,6 @@ namespace AntMe.Serialization
         {
             ushort index = reader.ReadUInt16();
             string name = reader.ReadString();
-
-            // Make sure its the next index in line
-            if (index != mapTileTypes.Count)
-                throw new NotSupportedException("New Type Index does not match the current List");
 
             // Identify Type
             var map = context.Mapper.MapTiles.

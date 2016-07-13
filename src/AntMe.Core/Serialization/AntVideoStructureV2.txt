@@ -91,8 +91,8 @@ foreach Frame
         * Payload (byte[])
 		
 		[MapTilePropertyTypeInsert = 0x53]
-		* MaterialType Index (ushort)
-		* MaterialType Full Name (string)
+		* MapTilePropertyType Index (ushort)
+		* MapTilePropertyType Full Name (string)
 
 		[MaterialInsert = 0x94]
 		* Position X (byte)
@@ -123,8 +123,8 @@ foreach Frame
 		* Payload (byte[])
 
 		[FactionTypeInsert = 0x15]
-		* MaterialType Index (ushort)
-		* MaterialType Full Name (string)
+		* FactionType Index (ushort)
+		* FactionType Full Name (string)
 
 		[FactionPropertyInsert = 0xD5]
 		* Slot Index (byte)
@@ -139,7 +139,48 @@ foreach Frame
 		* Payload (byte[])
 
 		[FactionPropertyTypeInsert = 0x55]
-		* MaterialType Index (ushort)
-		* MaterialType Full Name (string)
+		* FactionPropertyType Index (ushort)
+		* FactionPropertyType Full Name (string)
+
+		[ItemInsert = 0x96]
+		* Id (int)
+		* ItemType Index (ushort)
+		* ByteCount (ushort)
+		* Payload (byte[])
+
+		[ItemUpdate = 0xA6]
+		* Id (int)
+		* ByteCount (ushort)
+		* Payload (byte[])
+		
+		[ItemDelete = 0xB6]
+		* Id (int)
+		
+		[ItemTypeInsert = 0x16]
+		* ItemType Index (ushort)
+		* ItemType Full Name (string)
+		
+		[ItemPropertyInsert = 0xD6]
+		* Id (int)
+		* ItemPropertyType Index (ushort)
+		* ByteCount (ushort)
+		* Payload (byte[])
+		
+		[ItemPropertyUpdate = 0xE6]
+		* Id (int)
+		* ItemPropertyType Index (ushort)
+		* ByteCount (ushort)
+		* Payload (byte[])
+		
+		[ItemPropertyTypeInsert = 0x56]
+		* ItemPropertyType Index (ushort)
+		* ItemPropertyType Full Name (string)
+		
+		[FactionItemInsert = 0x97]
+		* Id (int)
+        * Type Index (ushort)
+		* ByteCount (ushort)
+		* Payload (byte[])
+
 
 	=== ZIPPED WITH GZIP | END ===

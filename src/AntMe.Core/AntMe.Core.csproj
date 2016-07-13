@@ -140,7 +140,9 @@
     <Compile Include="UnitGroupAttribute.cs" />
     <Compile Include="UnitInterop.cs" />
     <Compile Include="UnitInteropProperty.cs" />
+    <Compile Include="UnknownFactionItemState.cs" />
     <Compile Include="UnknownFactionState.cs" />
+    <Compile Include="UnknownItemState.cs" />
     <Compile Include="UnknownMapTile.cs" />
     <Compile Include="UnknownMapTileState.cs" />
     <Compile Include="UnknownMaterial.cs" />
