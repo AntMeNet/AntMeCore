@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace AntMe
+namespace AntMe.Serialization
 {
     /// <summary>
     /// Interface for all Versions of a LevelState Serializer.

@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
-namespace AntMe
+namespace AntMe.Serialization
 {
     /// <summary>
     /// Default Serializer for the AntVideo Format.

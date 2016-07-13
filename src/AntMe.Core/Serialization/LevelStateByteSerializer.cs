@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace AntMe
+namespace AntMe.Serialization
 {
     /// <summary>
     /// Specialized Level State Serializer to handle Frames as Byte[].

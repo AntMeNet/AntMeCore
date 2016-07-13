@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
-namespace AntMe
+namespace AntMe.Serialization
 {
     internal sealed class LevelStateSerializerV2 : ILevelStateSerializer
     {
@@ -10,6 +12,9 @@ namespace AntMe
         private SimulationContext context;
 
         private bool keyframeSent = false;
+
+        private List<Type> levelProperties = new List<Type>();
+        private List<Type> mapProperties = new List<Type>();
 
         public LevelStateSerializerV2(SimulationContext context)
         {
@@ -23,14 +28,38 @@ namespace AntMe
 
             if (!keyframeSent)
             {
+                // Cleanup Caches
+                levelProperties.Clear();
+                mapProperties.Clear();
+
                 // First Frame
                 keyframeSent = true;
 
                 // Base Level
                 SerializeFirst(writer, state);
 
+                // Level Properties
+                writer.Write((byte)state.Properties.Count());
+                foreach (var property in state.Properties)
+                {
+                    Type propertyType = property.GetType();
+                    levelProperties.Add(propertyType);
+                    writer.Write(propertyType.FullName);
+                    SerializeFirst(writer, property);
+                }
+
                 // Base Map
                 SerializeFirst(writer, state.Map);
+
+                // Map Properties
+                writer.Write((byte)state.Map.Properties.Count());
+                foreach (var property in state.Map.Properties)
+                {
+                    Type propertyType = property.GetType();
+                    mapProperties.Add(propertyType);
+                    writer.Write(propertyType.FullName);
+                    SerializeFirst(writer, property);
+                }
             }
             else
             {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace AntMe
+namespace AntMe.Serialization
 {
     [Obsolete]
     internal sealed class LevelStateSerializerV1 : ILevelStateSerializer

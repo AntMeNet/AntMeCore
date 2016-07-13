@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-using static AntMe.LevelStateSerializerV1;
+using static AntMe.Serialization.LevelStateSerializerV1;
 
-namespace AntMe
+namespace AntMe.Serialization
 {
     [Obsolete]
     internal sealed class LevelStateDeserializerV1 : ILevelStateDeserializer

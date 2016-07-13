@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AntMe.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -813,7 +814,7 @@ namespace AntMe.Runtime.Communication
                     };
 
                     SimulationContext context = ExtensionLoader.CreateSimulationContext();
-                    Map map = Map.Deserialize(context, levelInfo.Map);
+                    Map map = MapSerializer.Deserialize(context, levelInfo.Map);
 
                     int count = 0;
                     for (int i = 0; i < Level.MAX_SLOTS; i++)

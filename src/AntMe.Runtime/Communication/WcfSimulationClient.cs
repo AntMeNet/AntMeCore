@@ -1,4 +1,5 @@
 ﻿using AntMe.Runtime.EventLog;
+using AntMe.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -9,7 +9,7 @@ foreach Frame
 
 	=== ZIPPED WITH GZIP | BEGIN ===
 
-	* Is Keyframe (bool)
+	* Is Keyframe (bool) -> Delete Cache
 
 	if Keyframe
 
@@ -32,7 +32,7 @@ foreach Frame
 		- PropertyType Count (byte)
 		- For Count
 			* PropertyName (string) [FullName]
-			* ByteCount (short)
+			* ByteCount (ushort)
 			* PropertyFirstLoad (byte[])
 
 		- for y

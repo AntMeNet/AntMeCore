@@ -70,8 +70,8 @@
     <Compile Include="FactoryInterop.cs" />
     <Compile Include="FactoryInteropProperty.cs" />
     <Compile Include="IExtensionPack.cs" />
-    <Compile Include="ILevelStateDeserializer.cs" />
-    <Compile Include="ILevelStateSerializer.cs" />
+    <Compile Include="Serialization\ILevelStateDeserializer.cs" />
+    <Compile Include="Serialization\ILevelStateSerializer.cs" />
     <Compile Include="InfoProperty.cs" />
     <Compile Include="Interop.cs" />
     <Compile Include="InteropProperty.cs" />
@@ -90,12 +90,13 @@
     <Compile Include="LevelProperty.cs" />
     <Compile Include="LevelSlot.cs" />
     <Compile Include="LevelState.cs" />
-    <Compile Include="LevelStateByteSerializer.cs" />
-    <Compile Include="LevelStateDeserializerV1.cs" />
-    <Compile Include="LevelStateDeserializerV2.cs" />
+    <Compile Include="Serialization\LevelStateByteSerializer.cs" />
+    <Compile Include="Serialization\LevelStateDeserializerV1.cs" />
+    <Compile Include="Serialization\LevelStateDeserializerV2.cs" />
     <Compile Include="LevelStateProperty.cs" />
-    <Compile Include="LevelStateSerializerV1.cs" />
-    <Compile Include="LevelStateSerializerV2.cs" />
+    <Compile Include="Serialization\LevelStateSerializerPackageV2.cs" />
+    <Compile Include="Serialization\LevelStateSerializerV1.cs" />
+    <Compile Include="Serialization\LevelStateSerializerV2.cs" />
     <Compile Include="MapMaterial.cs" />
     <Compile Include="MapProperty.cs" />
     <Compile Include="MapState.cs" />
@@ -124,9 +125,10 @@
     <Compile Include="PropertyList.cs" />
     <Compile Include="ReadOnlyDictionary.cs" />
     <Compile Include="KeyValueStore.cs" />
+    <Compile Include="Serialization\MapSerializer.cs" />
     <Compile Include="SimulationContext.cs" />
     <Compile Include="StateProperty.cs" />
-    <Compile Include="LevelStateSerializer.cs" />
+    <Compile Include="Serialization\LevelStateSerializer.cs" />
     <Compile Include="Tracer.cs" />
     <Compile Include="UnitAttribute.cs" />
     <Compile Include="UnitAttributeCollection.cs" />
@@ -142,10 +144,10 @@
     <None Include="PropertyStructure.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AntVideoStructureV1.txt" />
-    <Content Include="AntVideoStructureV2.txt" />
-    <Content Include="MapFileStructureV1.txt" />
-    <Content Include="MapFileStructureV2.txt" />
+    <Content Include="Serialization\AntVideoStructureV1.txt" />
+    <Content Include="Serialization\AntVideoStructureV2.txt" />
+    <Content Include="Serialization\MapFileStructureV1.txt" />
+    <Content Include="Serialization\MapFileStructureV2.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
