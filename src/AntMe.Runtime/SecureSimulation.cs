@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AntMe.Serialization;
+using System;
 using System.Security.Policy;
 
 namespace AntMe.Runtime
@@ -12,7 +13,7 @@ namespace AntMe.Runtime
     {
         private AppDomain _appDomain;
         private SecureHost _host;
-        private StateDeserializer _deserializer;
+        private LevelStateByteSerializer _deserializer;
         private LevelState _lastState;
         private string[] extensionPaths;
 
@@ -65,7 +66,8 @@ namespace AntMe.Runtime
                 throw;
             }
 
-            _deserializer = new StateDeserializer();
+            SimulationContext context = ExtensionLoader.CreateSimulationContext();
+            _deserializer = new LevelStateByteSerializer(context);
         }
 
         public LevelState NextState()

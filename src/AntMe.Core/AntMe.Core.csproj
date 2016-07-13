@@ -70,6 +70,8 @@
     <Compile Include="FactoryInterop.cs" />
     <Compile Include="FactoryInteropProperty.cs" />
     <Compile Include="IExtensionPack.cs" />
+    <Compile Include="Serialization\ILevelStateDeserializer.cs" />
+    <Compile Include="Serialization\ILevelStateSerializer.cs" />
     <Compile Include="InfoProperty.cs" />
     <Compile Include="Interop.cs" />
     <Compile Include="InteropProperty.cs" />
@@ -88,7 +90,15 @@
     <Compile Include="LevelProperty.cs" />
     <Compile Include="LevelSlot.cs" />
     <Compile Include="LevelState.cs" />
+    <Compile Include="Serialization\IMapDeserializer.cs" />
+    <Compile Include="Serialization\IMapSerializer.cs" />
+    <Compile Include="Serialization\LevelStateByteSerializer.cs" />
+    <Compile Include="Serialization\LevelStateDeserializerV1.cs" />
+    <Compile Include="Serialization\LevelStateDeserializerV2.cs" />
     <Compile Include="LevelStateProperty.cs" />
+    <Compile Include="Serialization\LevelStateSerializerPackageV2.cs" />
+    <Compile Include="Serialization\LevelStateSerializerV1.cs" />
+    <Compile Include="Serialization\LevelStateSerializerV2.cs" />
     <Compile Include="MapMaterial.cs" />
     <Compile Include="MapProperty.cs" />
     <Compile Include="MapState.cs" />
@@ -117,17 +127,24 @@
     <Compile Include="PropertyList.cs" />
     <Compile Include="ReadOnlyDictionary.cs" />
     <Compile Include="KeyValueStore.cs" />
+    <Compile Include="Serialization\MapDeserializerV1.cs" />
+    <Compile Include="Serialization\MapDeserializerV2.cs" />
+    <Compile Include="Serialization\MapSerializer.cs" />
+    <Compile Include="Serialization\MapSerializerV2.cs" />
     <Compile Include="SimulationContext.cs" />
-    <Compile Include="StateDeserializer.cs" />
     <Compile Include="StateProperty.cs" />
-    <Compile Include="StateSerializer.cs" />
+    <Compile Include="Serialization\LevelStateSerializer.cs" />
     <Compile Include="Tracer.cs" />
     <Compile Include="UnitAttribute.cs" />
     <Compile Include="UnitAttributeCollection.cs" />
     <Compile Include="UnitGroupAttribute.cs" />
     <Compile Include="UnitInterop.cs" />
     <Compile Include="UnitInteropProperty.cs" />
+    <Compile Include="UnknownFactionItemState.cs" />
+    <Compile Include="UnknownFactionState.cs" />
+    <Compile Include="UnknownItemState.cs" />
     <Compile Include="UnknownMapTile.cs" />
+    <Compile Include="UnknownMapTileState.cs" />
     <Compile Include="UnknownMaterial.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Vector3.cs" />
@@ -136,8 +153,10 @@
     <None Include="PropertyStructure.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="MapFileStructureV1.txt" />
-    <Content Include="MapFileStructureV2.txt" />
+    <Content Include="Serialization\AntVideoStructureV1.txt" />
+    <Content Include="Serialization\AntVideoStructureV2.txt" />
+    <Content Include="Serialization\MapFileStructureV1.txt" />
+    <Content Include="Serialization\MapFileStructureV2.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

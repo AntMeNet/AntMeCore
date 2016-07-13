@@ -1,4 +1,5 @@
 ﻿using AntMe.Runtime.EventLog;
+using AntMe.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +16,7 @@ namespace AntMe.Runtime.Communication
         private int masterId = -1;
         private List<UserProfile> users = new List<UserProfile>();
         private List<Slot> slots = new List<Slot>(AntMe.Level.MAX_SLOTS);
-        private StateDeserializer _deserializer;
+        private LevelStateByteSerializer _deserializer;
         private SimulationState _serverState = SimulationState.Stopped;
         private LevelState _currentState;
         private LevelInfo _level;
@@ -653,7 +654,10 @@ namespace AntMe.Runtime.Communication
         {
             // Skip, as long there is no Deserializer
             if (_deserializer == null)
-                _deserializer = new StateDeserializer();
+            {
+                SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                _deserializer = new LevelStateByteSerializer(context);
+            }
 
             // Set latest Main State
             _currentState = _deserializer.Deserialize(parameter);
