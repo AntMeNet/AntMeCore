@@ -19,9 +19,15 @@
         /// Default Constructor for the Deserializer.
         /// </summary>
         /// <param name="context">Simulation Context</param>
+        internal UnknownMaterial(SimulationContext context) : this(context, string.Empty, null) { }
+
+        /// <summary>
+        /// Default Constructor for the Deserializer.
+        /// </summary>
+        /// <param name="context">Simulation Context</param>
         /// <param name="materialType">Material Type</param>
         /// <param name="payload">Payload</param>
-        public UnknownMaterial(SimulationContext context, string materialType, byte[] payload) : base(context)
+        internal UnknownMaterial(SimulationContext context, string materialType, byte[] payload) : base(context)
         {
             MaterialType = materialType;
             Payload = payload;

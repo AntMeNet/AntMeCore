@@ -13,8 +13,18 @@ namespace AntMe.Serialization
 
         private bool keyframeSent = false;
 
-        private List<Type> levelProperties = new List<Type>();
-        private List<Type> mapProperties = new List<Type>();
+        private List<Type> levelPropertyTypes = new List<Type>();
+        private List<Type> mapPropertyTypes = new List<Type>();
+        private List<Type> mapTileTypes = new List<Type>();
+        private List<Type> mapTilePropertyTypes = new List<Type>();
+        private List<Type> materialTypes = new List<Type>();
+        private List<Type> factionTypes = new List<Type>();
+        private List<Type> factionPropertyTypes = new List<Type>();
+        private List<Type> itemTypes = new List<Type>();
+        private List<Type> itemPropertyTypes = new List<Type>();
+
+        private List<byte> knownFactions = new List<byte>();
+        private List<int> knownItems = new List<int>();
 
         public LevelStateSerializerV2(SimulationContext context)
         {
@@ -28,51 +38,568 @@ namespace AntMe.Serialization
 
             if (!keyframeSent)
             {
-                // Cleanup Caches
-                levelProperties.Clear();
-                mapProperties.Clear();
+                DoKeyframe();
 
                 // First Frame
                 keyframeSent = true;
 
-                // Base Level
-                SerializeFirst(writer, state);
+                // Insert Level
+                DoLevelInsert(writer, state);
 
-                // Level Properties
-                writer.Write((byte)state.Properties.Count());
+                // Insert Level Properties (Includes Registration)
                 foreach (var property in state.Properties)
-                {
-                    Type propertyType = property.GetType();
-                    levelProperties.Add(propertyType);
-                    writer.Write(propertyType.FullName);
-                    SerializeFirst(writer, property);
-                }
+                    DoLevelPropertyInsert(writer, property);
 
-                // Base Map
-                SerializeFirst(writer, state.Map);
+                // Insert Map
+                DoMapInsert(writer, state.Map);
 
-                // Map Properties
-                writer.Write((byte)state.Map.Properties.Count());
+                // Insert Map Properties (Includes Registration)
                 foreach (var property in state.Map.Properties)
+                    DoMapPropertyInsert(writer, property);
+
+                // Map Tiles & Materials
+                Index2 size = state.Map.GetCellCount();
+                for (byte y = 0; y < size.Y; y++)
                 {
-                    Type propertyType = property.GetType();
-                    mapProperties.Add(propertyType);
-                    writer.Write(propertyType.FullName);
-                    SerializeFirst(writer, property);
+                    for (byte x = 0; x < size.X; x++)
+                    {
+                        MapTileState mapTile = state.Map.Tiles[x, y];
+
+                        // Insert Tiles
+                        DoMapTileInsert(writer, mapTile, x, y);
+
+                        // Insert Tiles Properties
+                        foreach (var property in mapTile.Properties)
+                            DoMapTilePropertyInsert(writer, property, x, y);
+
+                        // Insert Materials
+                        DoMaterialInsert(writer, mapTile.Material, x, y);
+                    }
                 }
             }
             else
             {
                 // Following Frames
 
-                // Base Level
-                SerializeUpdate(writer, state);
+                // Update Level
+                DoLevelUpdate(writer, state);
 
-                // Base Map
-                SerializeUpdate(writer, state.Map);
+                // Update Level Properties
+                foreach (var property in state.Properties)
+                    DoLevelPropertyUpdate(writer, property);
+
+                // Update Map
+                DoMapUpdate(writer, state.Map);
+
+                // Update Map Properties
+                foreach (var property in state.Map.Properties)
+                    DoMapPropertyUpdate(writer, property);
+
+                // Map Tiles & Materials
+                // TODO: Recognize Material- and Tile-Switches
+                Index2 size = state.Map.GetCellCount();
+                for (byte y = 0; y < size.Y; y++)
+                {
+                    for (byte x = 0; x < size.X; x++)
+                    {
+                        MapTileState mapTile = state.Map.Tiles[x, y];
+
+                        // Update Map Tile
+                        DoMapTileUpdate(writer, mapTile, x, y);
+
+                        // Update Properties
+                        foreach (var property in mapTile.Properties)
+                            DoMapTilePropertyUpdate(writer, property, x, y);
+
+                        // Update Material
+                        DoMaterialUpdate(writer, mapTile.Material, x, y);
+                    }
+                }
             }
+
+            // Enumerate Factions
+            foreach (var faction in state.Factions)
+            {
+                if (!knownFactions.Contains(faction.SlotIndex))
+                {
+                    // Insert Faction
+                    DoFactionInsert(writer, faction);
+
+                    // Insert faction Properties
+                    foreach (var property in faction.Properties)
+                        DoFactionPropertyInsert(writer, property);
+
+                    knownFactions.Add(faction.SlotIndex);
+                }
+                else
+                {
+                    // Update Faction
+                    DoFactionUpdate(writer, faction);
+
+                    // Update Faction Properties
+                    foreach (var property in faction.Properties)
+                        DoFactionPropertyUpdate(writer, property);
+                }
+            }
+
+            // Finalize Stream
+            writer.Write((byte)LevelStateSerializerPackageV2.FrameEnd);
         }
 
+        private void DoKeyframe()
+        {
+            levelPropertyTypes.Clear();
+            mapPropertyTypes.Clear();
+            mapTileTypes.Clear();
+            mapTilePropertyTypes.Clear();
+            materialTypes.Clear();
+            factionTypes.Clear();
+            factionPropertyTypes.Clear();
+            itemTypes.Clear();
+            itemPropertyTypes.Clear();
+
+            knownFactions.Clear();
+            knownItems.Clear();
+        }
+
+        /// <summary>
+        /// Sends Faction Item Insert into Stream.
+        /// * Package Key [0x97] (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="item">Current Item</param>
+        private void DoFactionItemInsert(BinaryWriter writer, FactionItemState item)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.FactionItemInsert);
+            SerializeFirst(writer, item);
+        }
+
+        private void DoItemPropertyTypeInsert(BinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoItemPropertyUpdate(BinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoItemPropertyInsert(BinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoItemTypeInsert(BinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoItemDelete(BinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Sends Item Update into Stream.
+        /// * Package Key [0xA6] (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="item">Current Item</param>
+        private void DoItemUpdate(BinaryWriter writer, ItemState item)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.ItemUpdate);
+            SerializeUpdate(writer, item);
+        }
+
+        /// <summary>
+        /// Sends Item Insert into Stream.
+        /// * Package Key [0x96] (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="item">Current Item</param>
+        private void DoItemInsert(BinaryWriter writer, ItemState item)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.ItemInsert);
+            SerializeFirst(writer, item);
+        }
+
+        private void DoFactionPropertyUpdate(BinaryWriter writer, FactionStateProperty property)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoFactionPropertyInsert(BinaryWriter writer, FactionStateProperty property)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Sends Material Update into Stream.
+        /// * Package Key [0xA5] (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="faction">Current Faction</param>
+        private void DoFactionUpdate(BinaryWriter writer, FactionState faction)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.FactionUpdate);
+            SerializeUpdate(writer, faction);
+        }
+
+        /// <summary>
+        /// Sends Material Update into Stream.
+        /// * Package Key [0x95] (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="faction">Current Faction</param>
+        private void DoFactionInsert(BinaryWriter writer, FactionState faction)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.FactionInsert);
+            SerializeFirst(writer, faction);
+        }
+
+        /// <summary>
+        /// Sends Material Update into Stream.
+        /// * Package Key [0xA4] (byte)
+        /// * Position X (byte)
+        /// * Position Y (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="material">Current Material</param>
+        /// <param name="x">Position X</param>
+        /// <param name="y">Position Y</param>
+        private void DoMaterialUpdate(BinaryWriter writer, MapMaterial material, byte x, byte y)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.MaterialUpdate);
+            writer.Write(x);
+            writer.Write(y);
+            SerializeUpdate(writer, material);
+        }
+
+        /// <summary>
+        /// Sends Material Insert into Stream.
+        /// * Package Key [0x94] (byte)
+        /// * Position X (byte)
+        /// * Position Y (byte)
+        /// * MaterialType Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="material">Current Material</param>
+        /// <param name="x">Position X</param>
+        /// <param name="y">Position Y</param>
+        private void DoMaterialInsert(BinaryWriter writer, MapMaterial material, byte x, byte y)
+        {
+            ushort typeIndex = GetIndex(
+                materialTypes,
+                material.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.MaterialTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.MaterialInsert);
+            writer.Write(x);
+            writer.Write(y);
+            writer.Write(typeIndex);
+            SerializeFirst(writer, material);
+        }
+
+        /// <summary>
+        /// Sends Map Tile Property Insert to the Stream.
+        /// * Package Key [0xE3] (byte)
+        /// * Position X (byte)
+        /// * Position Y (byte)
+        /// * Type Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="property">Property</param>
+        /// <param name="x">Position X</param>
+        /// <param name="y">Position Y</param>
+        private void DoMapTilePropertyUpdate(BinaryWriter writer, MapTileStateProperty property, byte x, byte y)
+        {
+            ushort typeIndex = GetIndex(
+                mapTilePropertyTypes,
+                property.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.MapTilePropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.MapTilePropertyUpdate);
+            writer.Write(x);
+            writer.Write(y);
+            writer.Write(typeIndex);
+            SerializeUpdate(writer, property);
+        }
+
+        /// <summary>
+        /// Sends Map Tile Property Insert to the Stream.
+        /// * Package Key [0xD3] (byte)
+        /// * Position X (byte)
+        /// * Position Y (byte)
+        /// * Type Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="property">Property</param>
+        /// <param name="x">Position X</param>
+        /// <param name="y">Position Y</param>
+        private void DoMapTilePropertyInsert(BinaryWriter writer, MapTileStateProperty property, byte x, byte y)
+        {
+            ushort typeIndex = GetIndex(
+                mapTilePropertyTypes,
+                property.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.MapTilePropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.MapTilePropertyInsert);
+            writer.Write(x);
+            writer.Write(y);
+            writer.Write(typeIndex);
+            SerializeFirst(writer, property);
+        }
+
+        /// <summary>
+        /// Sends Map Update into Stream.
+        /// * Package Key [0xA3] (byte)
+        /// * Position X (byte)
+        /// * Position Y (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="mapTile">Current MapTile</param>
+        /// <param name="x">Position X</param>
+        /// <param name="y">Position Y</param>
+        private void DoMapTileUpdate(BinaryWriter writer, MapTileState mapTile, byte x, byte y)
+        {
+            ushort typeIndex = GetIndex(
+                mapTileTypes,
+                mapTile.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.MapTileTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.MapTileUpdate);
+            writer.Write(x);
+            writer.Write(y);
+            SerializeUpdate(writer, mapTile);
+        }
+
+        /// <summary>
+        /// Sends Map Update into Stream.
+        /// * Package Key [0x93] (byte)
+        /// * Position X (byte)
+        /// * Position Y (byte)
+        /// * MapTileType Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="mapTile">Current MapTile</param>
+        /// <param name="x">Position X</param>
+        /// <param name="y">Position Y</param>
+        private void DoMapTileInsert(BinaryWriter writer, MapTileState mapTile, byte x, byte y)
+        {
+            ushort typeIndex = GetIndex(
+                mapTileTypes,
+                mapTile.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.MapTileTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.MapTileInsert);
+            writer.Write(x);
+            writer.Write(y);
+            writer.Write(typeIndex);
+            SerializeFirst(writer, mapTile);
+        }
+
+        /// <summary>
+        /// Sends Map Property Update to the Stream.
+        /// * Package Key [0xE2] (byte)
+        /// * Type Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="property">Property</param>
+        private void DoMapPropertyUpdate(BinaryWriter writer, MapStateProperty property)
+        {
+            ushort typeIndex = GetIndex(
+                mapPropertyTypes,
+                property.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.MapPropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.MapPropertyUpdate);
+            writer.Write(typeIndex);
+            SerializeUpdate(writer, property);
+        }
+
+        /// <summary>
+        /// Sends Map Property Insert to the Stream.
+        /// * Package Key [0xD2] (byte)
+        /// * Type Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="property">Property</param>
+        private void DoMapPropertyInsert(BinaryWriter writer, MapStateProperty property)
+        {
+            ushort typeIndex = GetIndex(
+                mapPropertyTypes,
+                property.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.MapPropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.MapPropertyInsert);
+            writer.Write(typeIndex);
+            SerializeFirst(writer, property);
+        }
+
+        /// <summary>
+        /// Sends Map Update into Stream.
+        /// * Package Key [0xA2] (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="map">Current Map</param>
+        private void DoMapUpdate(BinaryWriter writer, MapState map)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.MapUpdate);
+            SerializeUpdate(writer, map);
+        }
+
+        /// <summary>
+        /// Sends Map Insert into Stream.
+        /// * Package Key [0x92] (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="map">Current Map</param>
+        private void DoMapInsert(BinaryWriter writer, MapState map)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.MapInsert);
+            SerializeFirst(writer, map);
+        }
+
+        /// <summary>
+        /// Sends a Level Property Update into the Stream
+        /// * Package Key [0xE1] (byte)
+        /// * Type Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="property">Property</param>
+        private void DoLevelPropertyUpdate(BinaryWriter writer, LevelStateProperty property)
+        {
+            ushort typeIndex = GetIndex(
+                levelPropertyTypes,
+                property.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.LevelPropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.LevelPropertyUpdate);
+            writer.Write(typeIndex);
+            SerializeUpdate(writer, property);
+        }
+
+        /// <summary>
+        /// Sends a Level Property Insert into the Stream
+        /// * Package Key [0xD1] (byte)
+        /// * Type Index (ushort)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="property">Property</param>
+        private void DoLevelPropertyInsert(BinaryWriter writer, LevelStateProperty property)
+        {
+            ushort typeIndex = GetIndex(
+                levelPropertyTypes,
+                property.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.LevelPropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.LevelPropertyInsert);
+            writer.Write(typeIndex);
+            SerializeFirst(writer, property);
+        }
+
+        /// <summary>
+        /// Sends Level Update into Stream.
+        /// * Package Key [0xA1] (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="state">Current State</param>
+        private void DoLevelUpdate(BinaryWriter writer, LevelState state)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.LevelUpdate);
+            SerializeUpdate(writer, state);
+        }
+
+        /// <summary>
+        /// Sends Level Insert into Stream.
+        /// * Package Key [0x91] (byte)
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="state">Current State</param>
+        private void DoLevelInsert(BinaryWriter writer, LevelState state)
+        {
+            writer.Write((byte)LevelStateSerializerPackageV2.LevelInsert);
+            SerializeFirst(writer, state);
+        }
+
+        /// <summary>
+        /// Gets the Index of the given Type and registers if not available.
+        /// * Package Key (insertCommand) (byte)
+        /// * Type Index (ushort)
+        /// * Type FullName (string)
+        /// </summary>
+        /// <param name="list">Type List</param>
+        /// <param name="type">Type</param>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="insertCommand">Insert Command</param>
+        /// <returns>Index of Type in List</returns>
+        private ushort GetIndex(List<Type> list, Type type, BinaryWriter writer, LevelStateSerializerPackageV2 insertCommand)
+        {
+            if (!list.Contains(type))
+            {
+                list.Add(type);
+                writer.Write((byte)insertCommand);
+                writer.Write((ushort)list.IndexOf(type));
+                writer.Write(type.FullName);
+            }
+
+            return (ushort)list.IndexOf(type);
+        }
+
+        /// <summary>
+        /// Serializes the Content of the First Frame into the Stream.
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="state">State</param>
         private void SerializeFirst(BinaryWriter writer, ISerializableState state)
         {
             using (MemoryStream mem = new MemoryStream())
@@ -93,6 +620,13 @@ namespace AntMe.Serialization
             }
         }
 
+        /// <summary>
+        /// Serializes the Content of an Update Frame into the Stream.
+        /// * ByteCount (ushort)
+        /// * Payload (byte[])
+        /// </summary>
+        /// <param name="writer">Output Stream</param>
+        /// <param name="state">State</param>
         private void SerializeUpdate(BinaryWriter writer, ISerializableState state)
         {
             using (MemoryStream mem = new MemoryStream())

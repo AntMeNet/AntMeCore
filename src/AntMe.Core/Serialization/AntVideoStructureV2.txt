@@ -11,79 +11,104 @@ foreach Frame
 
 	* Is Keyframe (bool) -> Delete Cache
 
-	if Keyframe
+	while next != FrameEnd
 
-		[Level]
+		PackageType (byte)
+
+		[LevelInsert = 0x91]
 		* ByteCount (ushort)
 		* LevelFirstLoad (byte[])
 
-		[LevelProperties]
-		- PropertyType Count (byte)
-		- For Count
-			* PropertyName (string) [FullName]
-			* ByteCount (ushort)
-			* PropertyFirstLoad (byte[])
-
-		[Map]
-		* ByteCount (short)
-		* MapFirstLoad (byte[])
-
-		[MapProperties]
-		- PropertyType Count (byte)
-		- For Count
-			* PropertyName (string) [FullName]
-			* ByteCount (ushort)
-			* PropertyFirstLoad (byte[])
-
-		- for y
-			- for x
-
-				[Tiles]
-				* MapTile Type Index
-				if unknown tile type
-					* MapTile Type Name [fullname]
-				* ByteCount (short)
-				* TileFirstLoad (byte[])
-			
-				[TileProperties]
-				// TODO
-	else
-		[Level]
-		* ByteCount (short)
+		[LevelUpdate = 0xA1]
+		* ByteCount (ushort)
 		* LevelUpdateLoad (byte[])
 
-		[LevelProperties]
-		- For Count
-			* ByteCount (short)
-			* PropertyUpdateLoad (byte[])
+		[LevelPropertyInsert = 0xD1]
+		* LevelPropertyType Index (ushort)
+		* ByteCount (ushort)
+		* LevelFirstLoad (byte[])
 
-		[Map]
-		* ByteCount (short)
-		* MapUpdateLoad (byte[])
+		[LevelPropertyUpdate = 0xE1]
+		* LevelPropertyType Index (ushort)
+		* ByteCount (ushort)
+		* LevelUpdateLoad (byte[])
 
-		[MapProperties]
-		- For Count
-			* ByteCount (short)
-			* PropertyUpdateLoad (byte[])
+		[LevelPropertyTypeInsert = 0x51]
+		* LevelPropertyType Index (ushort)
+		* LevelPropertyType Full Name (string)
 
-		- for y
-			- for x
+		[MapInsert = 0x92]
+		* ByteCount (ushort)
+		* LevelFirstLoad (byte[])
 
-				[Tiles]
-				* ByteCount (short)
-				* TileUpdateLoad (byte[])
-				// TODO: Ersetzbare Tiles?
-			
-				[TileProperties]
-				// TODO
-	
+        [MapUpdate = 0xA2]
+		* ByteCount (ushort)
+		* LevelUpdateLoad (byte[])
 
-	foreach Faction
-		[Faction]
-		[FactionProperties]
+		[MapPropertyInsert = 0xD2]
+		* MapPropertyType Index (ushort)
+		* ByteCount (ushort)
+		* LevelFirstLoad (byte[])
 
-	foreach Item
-		[Item]
-		[ItemProperties]
+		[MapPropertyUpdate = 0xE2]
+		* MapPropertyType Index (ushort)
+		* ByteCount (ushort)
+		* LevelUpdateLoad (byte[])
+
+		[MapPropertyTypeInsert = 0x52]
+		* LevelPropertyType Index (ushort)
+		* LevelPropertyType Full Name (string)
+
+		[MapTileInsert = 0x93]
+		* Position X (byte)
+		* Position Y (byte)
+		* MapTileType Index (ushort)
+		* ByteCount (ushort)
+		* MapTileFirstLoad (byte[])
+
+		[MapTileUpdate = 0xA3]
+		* Position X (byte)
+		* Position Y (byte)
+		* ByteCount (ushort)
+		* MapTileFirstLoad (byte[])
+
+		[MapTileTypeInsert = 0x13]
+		* MapTileType Index (ushort)
+		* MapTileType Full Name (string)
+
+		[MapTilePropertyInsert = 0xD3]
+		* Position X (byte)
+        * Position Y (byte)
+        * Type Index (ushort)
+        * ByteCount (ushort)
+        * Payload (byte[])
+
+		[MapTilePropertyUpdate = 0xE3]
+		* Position X (byte)
+        * Position Y (byte)
+        * Type Index (ushort)
+        * ByteCount (ushort)
+        * Payload (byte[])
+		
+		[MapTilePropertyTypeInsert = 0x53]
+		* MaterialType Index (ushort)
+		* MaterialType Full Name (string)
+
+		[MaterialInsert = 0x94]
+		* Position X (byte)
+		* Position Y (byte)
+		* MapTileType Index (ushort)
+		* ByteCount (ushort)
+		* MapTileFirstLoad (byte[])
+		
+		[MaterialUpdate = 0xA4]
+		* Position X (byte)
+		* Position Y (byte)
+		* ByteCount (ushort)
+		* MapTileFirstLoad (byte[])
+
+		[MaterialTypeInsert = 0x14]
+		* MaterialType Index (ushort)
+		* MaterialType Full Name (string)
 
 	=== ZIPPED WITH GZIP | END ===

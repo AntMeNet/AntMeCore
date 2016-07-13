@@ -141,6 +141,7 @@
     <Compile Include="UnitInterop.cs" />
     <Compile Include="UnitInteropProperty.cs" />
     <Compile Include="UnknownMapTile.cs" />
+    <Compile Include="UnknownMapTileState.cs" />
     <Compile Include="UnknownMaterial.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Vector3.cs" />

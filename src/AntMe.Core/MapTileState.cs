@@ -53,22 +53,22 @@ namespace AntMe
 
         public void DeserializeFirst(BinaryReader stream, byte version)
         {
-            throw new NotImplementedException();
+            HeightLevel = stream.ReadInt32();
+            Orientation = (MapTileOrientation)stream.ReadUInt16();
         }
 
         public void DeserializeUpdate(BinaryReader stream, byte version)
         {
-            throw new NotImplementedException();
         }
 
         public void SerializeFirst(BinaryWriter stream, byte version)
         {
-            throw new NotImplementedException();
+            stream.Write(HeightLevel);
+            stream.Write((ushort)Orientation);
         }
 
         public void SerializeUpdate(BinaryWriter stream, byte version)
         {
-            throw new NotImplementedException();
         }
     }
 }
