@@ -187,12 +187,37 @@ namespace AntMe.Serialization
 
         private void DoFactionPropertyUpdate(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            byte slotIndex = reader.ReadByte();
+            ushort typeIndex = reader.ReadUInt16();
+            Type type = factionPropertyTypes[typeIndex];
+
+            if (type != null)
+            {
+                FactionState faction = latest.Factions.First(f => f.SlotIndex == slotIndex);
+                var property = Activator.CreateInstance(type) as FactionStateProperty;
+                DeserializeUpdate(reader, property);
+            }
+            else
+            {
+                DeserializeUnknown(reader);
+            }
         }
 
         private void DoFactionPropertyInsert(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            byte slotIndex = reader.ReadByte();
+            ushort typeIndex = reader.ReadUInt16();
+            Type type = factionPropertyTypes[typeIndex];
+
+            FactionStateProperty property = null;
+            if (type != null)
+            {
+                FactionState faction = latest.Factions.First(f => f.SlotIndex == slotIndex);
+                property = Activator.CreateInstance(type) as FactionStateProperty;
+                faction.AddProperty(property);
+            }
+
+            DeserializeFirst(reader, property);            
         }
 
         private void DoFactionTypeInsert(BinaryReader reader)
@@ -216,12 +241,24 @@ namespace AntMe.Serialization
 
         private void DoFactionUpdate(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            byte slotIndex = reader.ReadByte();
+            FactionState faction = latest.Factions.First(f => f.SlotIndex == slotIndex);
+            DeserializeUpdate(reader, faction);
         }
 
         private void DoFactionInsert(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            byte slotIndex = reader.ReadByte();
+            ushort typeIndex = reader.ReadUInt16();
+            Type type = factionTypes[typeIndex];
+
+            FactionState faction;
+            if (type != null) faction = Activator.CreateInstance(type) as FactionState;
+            else faction = new UnknownFactionState();
+            faction.SlotIndex = slotIndex;
+
+            DeserializeFirst(reader, faction);
+            latest.Factions.Add(faction);
         }
 
         private void DoMaterialTypeInsert(BinaryReader reader)

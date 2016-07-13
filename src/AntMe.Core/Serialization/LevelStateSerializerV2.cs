@@ -127,7 +127,7 @@ namespace AntMe.Serialization
 
                     // Insert faction Properties
                     foreach (var property in faction.Properties)
-                        DoFactionPropertyInsert(writer, property);
+                        DoFactionPropertyInsert(writer, faction.SlotIndex, property);
 
                     knownFactions.Add(faction.SlotIndex);
                 }
@@ -138,7 +138,7 @@ namespace AntMe.Serialization
 
                     // Update Faction Properties
                     foreach (var property in faction.Properties)
-                        DoFactionPropertyUpdate(writer, property);
+                        DoFactionPropertyUpdate(writer, faction.SlotIndex, property);
                 }
             }
 
@@ -229,19 +229,38 @@ namespace AntMe.Serialization
             SerializeFirst(writer, item);
         }
 
-        private void DoFactionPropertyUpdate(BinaryWriter writer, FactionStateProperty property)
+        private void DoFactionPropertyUpdate(BinaryWriter writer, byte slotIndex, FactionStateProperty property)
         {
-            throw new NotImplementedException();
+            ushort typeIndex = GetIndex(
+                factionPropertyTypes,
+                property.GetType(),
+                writer,
+                LevelStateSerializerPackageV2.FactionPropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.FactionPropertyUpdate);
+            writer.Write(slotIndex);
+            writer.Write(typeIndex);
+            SerializeFirst(writer, property);
         }
 
-        private void DoFactionPropertyInsert(BinaryWriter writer, FactionStateProperty property)
+        private void DoFactionPropertyInsert(BinaryWriter writer, byte slotIndex, FactionStateProperty property)
         {
-            throw new NotImplementedException();
+            ushort typeIndex = GetIndex(
+                factionPropertyTypes, 
+                property.GetType(), 
+                writer, 
+                LevelStateSerializerPackageV2.FactionPropertyTypeInsert);
+
+            writer.Write((byte)LevelStateSerializerPackageV2.FactionPropertyInsert);
+            writer.Write(slotIndex);
+            writer.Write(typeIndex);
+            SerializeFirst(writer, property);
         }
 
         /// <summary>
         /// Sends Material Update into Stream.
         /// * Package Key [0xA5] (byte)
+        /// * Slot Index (byte)
         /// * ByteCount (ushort)
         /// * Payload (byte[])
         /// </summary>
@@ -250,12 +269,15 @@ namespace AntMe.Serialization
         private void DoFactionUpdate(BinaryWriter writer, FactionState faction)
         {
             writer.Write((byte)LevelStateSerializerPackageV2.FactionUpdate);
+            writer.Write(faction.SlotIndex);
             SerializeUpdate(writer, faction);
         }
 
         /// <summary>
         /// Sends Material Update into Stream.
         /// * Package Key [0x95] (byte)
+        /// * Slot Index (byte)
+        /// * FactionType Index (ushort)
         /// * ByteCount (ushort)
         /// * Payload (byte[])
         /// </summary>
@@ -263,7 +285,15 @@ namespace AntMe.Serialization
         /// <param name="faction">Current Faction</param>
         private void DoFactionInsert(BinaryWriter writer, FactionState faction)
         {
+            ushort typeIndex = GetIndex(
+                factionTypes, 
+                faction.GetType(), 
+                writer, 
+                LevelStateSerializerPackageV2.FactionTypeInsert);
+
             writer.Write((byte)LevelStateSerializerPackageV2.FactionInsert);
+            writer.Write(faction.SlotIndex);
+            writer.Write(typeIndex);
             SerializeFirst(writer, faction);
         }
 

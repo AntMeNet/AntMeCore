@@ -111,4 +111,35 @@ foreach Frame
 		* MaterialType Index (ushort)
 		* MaterialType Full Name (string)
 
+		[FactionInsert = 0x95]
+		* Slot Index (byte)
+		* FactionType Index (ushort)
+		* ByteCount (ushort)
+		* Payload (byte[])
+
+		[FactionUpdate = 0xA5]
+		* Slot Index (byte)
+		* ByteCount (ushort)
+		* Payload (byte[])
+
+		[FactionTypeInsert = 0x15]
+		* MaterialType Index (ushort)
+		* MaterialType Full Name (string)
+
+		[FactionPropertyInsert = 0xD5]
+		* Slot Index (byte)
+		* FactionPropertyType Index (ushort)
+		* ByteCount (ushort)
+		* Payload (byte[])
+
+		[FactionPropertyUpdate = 0xE5]
+		* Slot Index (byte)
+		* FactionPropertyType Index (ushort)
+		* ByteCount (ushort)
+		* Payload (byte[])
+
+		[FactionPropertyTypeInsert = 0x55]
+		* MaterialType Index (ushort)
+		* MaterialType Full Name (string)
+
 	=== ZIPPED WITH GZIP | END ===
