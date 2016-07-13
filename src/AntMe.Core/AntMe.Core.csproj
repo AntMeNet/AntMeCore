@@ -90,6 +90,8 @@
     <Compile Include="LevelProperty.cs" />
     <Compile Include="LevelSlot.cs" />
     <Compile Include="LevelState.cs" />
+    <Compile Include="Serialization\IMapDeserializer.cs" />
+    <Compile Include="Serialization\IMapSerializer.cs" />
     <Compile Include="Serialization\LevelStateByteSerializer.cs" />
     <Compile Include="Serialization\LevelStateDeserializerV1.cs" />
     <Compile Include="Serialization\LevelStateDeserializerV2.cs" />
@@ -125,7 +127,10 @@
     <Compile Include="PropertyList.cs" />
     <Compile Include="ReadOnlyDictionary.cs" />
     <Compile Include="KeyValueStore.cs" />
+    <Compile Include="Serialization\MapDeserializerV1.cs" />
+    <Compile Include="Serialization\MapDeserializerV2.cs" />
     <Compile Include="Serialization\MapSerializer.cs" />
+    <Compile Include="Serialization\MapSerializerV2.cs" />
     <Compile Include="SimulationContext.cs" />
     <Compile Include="StateProperty.cs" />
     <Compile Include="Serialization\LevelStateSerializer.cs" />
