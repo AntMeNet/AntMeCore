@@ -34,3 +34,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.0.0.747")]
 [assembly: AssemblyFileVersion("2.0.0.747")]
+
+[assembly: AntMe.AntMeExtension()]
