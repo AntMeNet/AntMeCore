@@ -88,8 +88,7 @@ namespace AntMe
             set
             {
                 material = value;
-                if (OnMaterialChanged != null)
-                    OnMaterialChanged(value);
+                OnMaterialChanged?.Invoke(value);
             }
         }
 
@@ -104,8 +103,7 @@ namespace AntMe
             set
             {
                 orientation = value;
-                if (OnOrientationChanged != null)
-                    OnOrientationChanged(value);
+                OnOrientationChanged?.Invoke(value);
             }
         }
 
@@ -120,8 +118,7 @@ namespace AntMe
             set
             {
                 heightLevel = value;
-                if (OnHeightLevelChanged != null)
-                    OnHeightLevelChanged(value);
+                OnHeightLevelChanged?.Invoke(value);
             }
         }
 

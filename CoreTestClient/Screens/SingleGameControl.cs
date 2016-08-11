@@ -88,8 +88,8 @@ namespace CoreTestClient.Screens
 
         private void UpdateView()
         {
-            int min = level != null ? level.LevelDescription.MinPlayerCount : 0;
-            int max = level != null ? level.LevelDescription.MaxPlayerCount : 0;
+            int min = level?.LevelDescription.MinPlayerCount ?? 0;
+            int max = level?.LevelDescription.MaxPlayerCount ?? 0;
 
             for (int i = 1; i <= 8; i++)
             {

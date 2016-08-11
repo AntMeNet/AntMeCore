@@ -12,9 +12,7 @@ namespace AntMe.Basics.Factions.Bugs
 
         internal Type RequestCreateMember()
         {
-            if (OnCreateMember != null)
-                return OnCreateMember();
-            return null;
+            return OnCreateMember?.Invoke();
         }
 
         public event CreateMember OnCreateMember;

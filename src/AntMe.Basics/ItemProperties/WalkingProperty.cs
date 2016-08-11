@@ -32,8 +32,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 direction = value;
-                if (OnMoveDirectionChanged != null)
-                    OnMoveDirectionChanged(Item, direction);
+                OnMoveDirectionChanged?.Invoke(Item, direction);
             }
         }
 
@@ -46,8 +45,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 speed = Math.Max(value, 0f);
-                if (OnMoveSpeedChanged != null)
-                    OnMoveSpeedChanged(Item, speed);
+                OnMoveSpeedChanged?.Invoke(Item, speed);
             }
         }
 
@@ -60,8 +58,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 maxSpeed = Math.Max(value, 0f);
-                if (OnMaximumMoveSpeedChanged != null)
-                    OnMaximumMoveSpeedChanged(Item, maxSpeed);
+                OnMaximumMoveSpeedChanged?.Invoke(Item, maxSpeed);
             }
         }
 
@@ -81,8 +78,7 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="direction">Direction</param>
         internal void HitWall(Compass direction)
         {
-            if (OnHitWall != null)
-                OnHitWall(Item, direction);
+            OnHitWall?.Invoke(Item, direction);
         }
 
         /// <summary>
@@ -91,8 +87,7 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="direction">Direction</param>
         internal void HitBorder(Compass direction)
         {
-            if (OnHitBorder != null)
-                OnHitBorder(Item, direction);
+            OnHitBorder?.Invoke(Item, direction);
         }
 
         #endregion

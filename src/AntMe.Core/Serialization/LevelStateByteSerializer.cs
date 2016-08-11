@@ -57,17 +57,11 @@ namespace AntMe.Serialization
         /// </summary>
         public void Dispose()
         {
-            if (serializer != null)
-            {
-                serializer.Dispose();
-                serializer = null;
-            }
+            serializer?.Dispose();
+            serializer = null;
 
-            if (stream != null)
-            {
-                stream.Dispose();
-                stream = null;
-            }
+            stream?.Dispose();
+            stream = null;
         }
     }
 }

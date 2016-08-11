@@ -24,8 +24,7 @@ namespace AntMe.Basics.ItemProperties
                 if (Amount > capacity)
                     Amount = Math.Min(capacity, Amount);
 
-                if (OnCapacityChanged != null)
-                    OnCapacityChanged(Item, capacity);
+                OnCapacityChanged?.Invoke(Item, capacity);
             }
         }
 
@@ -39,8 +38,7 @@ namespace AntMe.Basics.ItemProperties
             {
                 // Cap to Capacity.
                 amount = Math.Min(Capacity, Math.Max(0, value));
-                if (OnAmountChanged != null)
-                    OnAmountChanged(Item, amount);
+                OnAmountChanged?.Invoke(Item, amount);
             }
         }
 

@@ -94,9 +94,7 @@ namespace AntMe.Runtime
         public string LookupFactionName(Type playerType)
         {
             var faction = factions.FirstOrDefault(f => playerType.IsSubclassOf(f.FactoryType));
-            if (faction != null)
-                return faction.Type.FullName;
-            return null;
+            return faction?.Type.FullName;
         }
 
         #endregion

@@ -31,8 +31,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 visibilityRadius = Math.Max(0f, value);
-                if (OnVisibilityRadiusChanged != null)
-                    OnVisibilityRadiusChanged(Item, visibilityRadius);
+                OnVisibilityRadiusChanged?.Invoke(Item, visibilityRadius);
             }
         }
 
@@ -57,8 +56,7 @@ namespace AntMe.Basics.ItemProperties
             {
                 sightingItems.Add(item);
 
-                if (OnNewSightingItem != null)
-                    OnNewSightingItem(item);
+                OnNewSightingItem?.Invoke(item);
             }
         }
 
@@ -73,8 +71,7 @@ namespace AntMe.Basics.ItemProperties
             {
                 sightingItems.Remove(item);
 
-                if (OnLostSightingItem != null)
-                    OnLostSightingItem(item);
+                OnLostSightingItem?.Invoke(item);
             }
         }
 

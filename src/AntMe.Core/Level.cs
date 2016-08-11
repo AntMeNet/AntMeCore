@@ -406,10 +406,7 @@ namespace AntMe
             // Updates der Factions
             for (int i = 0; i < MAX_SLOTS; i++)
             {
-                if (Factions[i] != null)
-                {
-                    Factions[i].Update(engine.Round);
-                }
+                Factions[i]?.Update(engine.Round);
             }
 
             try

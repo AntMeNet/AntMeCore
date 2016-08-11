@@ -56,9 +56,7 @@ namespace CoreTestClient.Tools
                 return;
 
             MapTile tile = map[cell.Value.X, cell.Value.Y];
-            MapMaterial material = null;
-            if (tile != null)
-                material = tile.Material;
+            MapMaterial material = tile?.Material;
 
             if (selected == null)
                 throw new NotSupportedException("No Map Tile selected");

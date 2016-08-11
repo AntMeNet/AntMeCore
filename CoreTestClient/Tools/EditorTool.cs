@@ -43,8 +43,7 @@ namespace CoreTestClient.Tools
 
         protected void Select()
         {
-            if (OnSelect != null)
-                OnSelect(this, new EventArgs());
+            OnSelect?.Invoke(this, new EventArgs());
         }
 
         public event EventHandler OnSelect;

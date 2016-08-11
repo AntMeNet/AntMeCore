@@ -127,8 +127,7 @@ namespace AntMe.Runtime.Communication
         /// <param name="ex"></param>
         public void CloseByError(Exception ex)
         {
-            if (OnError != null)
-                OnError(this, ex.Message);
+            OnError?.Invoke(this, ex.Message);
 
             Close();
         }
@@ -141,13 +140,11 @@ namespace AntMe.Runtime.Communication
             // Try to call the last "Goodbye"
             try
             {
-                if (channel != null)
-                    channel.Goodbye();
+                channel?.Goodbye();
             }
             catch (Exception) { }
 
-            if (OnClose != null)
-                OnClose(this);
+            OnClose?.Invoke(this);
         }
 
         /// <summary>
@@ -600,8 +597,7 @@ namespace AntMe.Runtime.Communication
                 }
             }
 
-            if (OnUsernameChanged != null)
-                OnUsernameChanged(this, user);
+            OnUsernameChanged?.Invoke(this, user);
         }
 
         private void callback_OnUserlistChanged(UserProfile[] parameter)
@@ -612,8 +608,7 @@ namespace AntMe.Runtime.Communication
                 this.users.AddRange(parameter);
             }
 
-            if (OnUserlistChanged != null)
-                OnUserlistChanged(this);
+            OnUserlistChanged?.Invoke(this);
         }
 
         private void callback_OnUserDropped(int id)
@@ -629,8 +624,8 @@ namespace AntMe.Runtime.Communication
                 }
             }
 
-            if (OnUserDropped != null && hit)
-                OnUserDropped(this, id);
+            if (hit)
+                OnUserDropped?.Invoke(this, id);
         }
 
         private void callback_OnUserAdded(UserProfile user)
@@ -646,8 +641,8 @@ namespace AntMe.Runtime.Communication
                 }
             }
 
-            if (OnUserAdded != null && hit)
-                OnUserAdded(this, user);
+            if (hit)
+                OnUserAdded?.Invoke(this, user);
         }
 
         private void callback_OnSimulationState(byte[] parameter)
@@ -662,8 +657,7 @@ namespace AntMe.Runtime.Communication
             // Set latest Main State
             _currentState = _deserializer.Deserialize(parameter);
 
-            if (OnSimulationState != null)
-                OnSimulationState(this, _currentState);
+            OnSimulationState?.Invoke(this, _currentState);
         }
 
         private void callback_OnSimulationChanged(SimulationState state, byte framerate)
@@ -672,11 +666,8 @@ namespace AntMe.Runtime.Communication
             if (_serverState != SimulationState.Stopped && state == SimulationState.Stopped)
             {
                 // Trash Deserializer
-                if (_deserializer != null)
-                {
-                    _deserializer.Dispose();
-                    _deserializer = null;
-                }
+                _deserializer?.Dispose();
+                _deserializer = null;
                 
                 // Remove last State
                 _currentState = null;
@@ -696,8 +687,7 @@ namespace AntMe.Runtime.Communication
             _rate = framerate;
 
             // Drop Event
-            if (OnSimulationChanged != null)
-                OnSimulationChanged(this, state, framerate);
+            OnSimulationChanged?.Invoke(this, state, framerate);
         }
 
         private void callback_OnPlayerReset(Slot[] parameter)
@@ -714,8 +704,7 @@ namespace AntMe.Runtime.Communication
                 slots[slot.Id].Team = slot.Team;
             }
 
-            if (OnPlayerReset != null)
-                OnPlayerReset(this);
+            OnPlayerReset?.Invoke(this);
         }
 
         private void callback_OnPlayerChanged(Slot slot)
@@ -729,23 +718,20 @@ namespace AntMe.Runtime.Communication
                 hit.ReadyState = slot.ReadyState;
                 hit.Team = slot.Team;
 
-                if (OnPlayerChanged != null)
-                    OnPlayerChanged(this, hit.Id);
+                OnPlayerChanged?.Invoke(this, hit.Id);
             }
         }
 
         private void callback_OnMessageReceived(UserProfile sender, string message)
         {
-            if (OnMessageReceived != null)
-                OnMessageReceived(this, sender, message);
+            OnMessageReceived?.Invoke(this, sender, message);
         }
 
         private void callback_OnMasterChanged(int id)
         {
             masterId = id;
 
-            if (OnMasterChanged != null)
-                OnMasterChanged(this, Master);
+            OnMasterChanged?.Invoke(this, Master);
         }
 
         private void callback_OnLevelChanged(TypeInfo level)
@@ -756,8 +742,7 @@ namespace AntMe.Runtime.Communication
 
             _level = levelInfo;
 
-            if (OnLevelChanged != null)
-                OnLevelChanged(this, levelInfo);
+            OnLevelChanged?.Invoke(this, levelInfo);
         }
 
         #endregion

@@ -23,22 +23,21 @@ namespace AntMe.Runtime.EventLog
                     {
                         // Faction-Item
                         var fi = item as FactionItemState;
-                        if (OnNewEvent != null)
-                            OnNewEvent(new AddFactionItemEntry() { 
-                                Round = state.Round, 
-                                Id = fi.Id, 
-                                SlotIndex = fi.SlotIndex 
-                            });
+                        OnNewEvent?.Invoke(new AddFactionItemEntry()
+                        {
+                            Round = state.Round,
+                            Id = fi.Id,
+                            SlotIndex = fi.SlotIndex
+                        });
                     }
                     else
                     {
                         // Factionloses Item
-                        if (OnNewEvent != null)
-                            OnNewEvent(new AddItemEntry()
-                            {
-                                Round = state.Round,
-                                Id = item.Id
-                            });
+                        OnNewEvent?.Invoke(new AddItemEntry()
+                        {
+                            Round = state.Round,
+                            Id = item.Id
+                        });
                     }
 
                     ids.Add(item.Id);
@@ -53,12 +52,11 @@ namespace AntMe.Runtime.EventLog
                 if (!updated.Contains(id))
                 {
                     // Item nicht mehr vorhanden
-                    if (OnNewEvent != null)
-                        OnNewEvent(new RemoveItemEntry()
-                        {
-                            Round = state.Round,
-                            Id = id
-                        });
+                    OnNewEvent?.Invoke(new RemoveItemEntry()
+                    {
+                        Round = state.Round,
+                        Id = id
+                    });
                 }
             }
         }

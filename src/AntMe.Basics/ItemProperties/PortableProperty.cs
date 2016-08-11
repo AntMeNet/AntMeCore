@@ -40,8 +40,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 portableRadius = Math.Max(value, 0f);
-                if (OnPortableRadiusChanged != null)
-                    OnPortableRadiusChanged(Item, portableRadius);
+                OnPortableRadiusChanged?.Invoke(Item, portableRadius);
             }
         }
 
@@ -54,8 +53,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 portableWeight = Math.Max(value, 0f);
-                if (OnPortableWeightChanged != null)
-                    OnPortableWeightChanged(Item, portableWeight);
+                OnPortableWeightChanged?.Invoke(Item, portableWeight);
             }
         }
 
@@ -71,8 +69,7 @@ namespace AntMe.Basics.ItemProperties
                 return;
 
             carrierItems.Add(carrier);
-            if (OnNewCarrierItem != null)
-                OnNewCarrierItem(carrier);
+            OnNewCarrierItem?.Invoke(carrier);
         }
 
         /// <summary>
@@ -85,8 +82,7 @@ namespace AntMe.Basics.ItemProperties
                 return;
 
             carrierItems.Remove(carrier);
-            if (OnLostCarrierItem != null)
-                OnLostCarrierItem(carrier);
+            OnLostCarrierItem?.Invoke(carrier);
         }
 
         #endregion

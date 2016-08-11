@@ -24,8 +24,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 collectorRange = Math.Max(value, 0f);
-                if (OnCollectorRangeChanged != null)
-                    OnCollectorRangeChanged(Item, collectorRange);
+                OnCollectorRangeChanged?.Invoke(Item, collectorRange);
             }
         }
 

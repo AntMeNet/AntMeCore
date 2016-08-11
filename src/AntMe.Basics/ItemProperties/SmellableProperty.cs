@@ -40,8 +40,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 smellableRadius = Math.Max(0f, value);
-                if (OnSmellableRadiusChanged != null)
-                    OnSmellableRadiusChanged(Item, smellableRadius);
+                OnSmellableRadiusChanged?.Invoke(Item, smellableRadius);
             }
         }
 
@@ -59,8 +58,7 @@ namespace AntMe.Basics.ItemProperties
             {
                 snifferItems.Add(item);
 
-                if (OnNewSnifferItem != null)
-                    OnNewSnifferItem(item);
+                OnNewSnifferItem?.Invoke(item);
             }
         }
 
@@ -72,8 +70,7 @@ namespace AntMe.Basics.ItemProperties
         {
             if (snifferItems.Remove(item))
             {
-                if (OnLostSnifferItem != null)
-                    OnLostSnifferItem(item);
+                OnLostSnifferItem?.Invoke(item);
             }
         }
 

@@ -108,8 +108,7 @@ namespace AntMe.Basics.LevelProperties
                     item.Position.Y <= LowerRight.Y)
                 {
                     hit = true;
-                    if (OnItemTrapped != null)
-                        OnItemTrapped(this, item);
+                    OnItemTrapped?.Invoke(this, item);
                 }
             }
             return hit;
