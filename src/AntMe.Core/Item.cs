@@ -124,8 +124,7 @@ namespace AntMe
                 if (cell != value)
                 {
                     cell = value;
-                    if (CellChanged != null)
-                        CellChanged(this, value);
+                    CellChanged?.Invoke(this, value);
                 }
             }
         }
@@ -139,8 +138,7 @@ namespace AntMe
             set
             {
                 orientation = value;
-                if (OrientationChanged != null)
-                    OrientationChanged(this, value);
+                OrientationChanged?.Invoke(this, value);
             }
         }
 
@@ -156,8 +154,7 @@ namespace AntMe
             set
             {
                 radius = value;
-                if (RadiusChanged != null)
-                    RadiusChanged(this, value);
+                RadiusChanged?.Invoke(this, value);
             }
         }
 
@@ -178,8 +175,7 @@ namespace AntMe
                         Cell = Engine.Map.GetCellIndex(value);
 
                     //InvalidateDistances();
-                    if (PositionChanged != null)
-                        PositionChanged(this, value);
+                    PositionChanged?.Invoke(this, value);
                 }
             }
         }
@@ -282,8 +278,7 @@ namespace AntMe
             this.id = id;
 
             OnInsert();
-            if (Inserted != null)
-                Inserted(this);
+            Inserted?.Invoke(this);
         }
 
         /// <summary>
@@ -292,8 +287,7 @@ namespace AntMe
         internal void InternalRemoveEngine()
         {
             OnRemoved();
-            if (Removed != null)
-                Removed(this);
+            Removed?.Invoke(this);
 
             engine = null;
             id = 0;

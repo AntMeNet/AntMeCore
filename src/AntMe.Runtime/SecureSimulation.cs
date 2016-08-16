@@ -116,11 +116,8 @@ namespace AntMe.Runtime
                 AppDomain.Unload(_appDomain);
                 _appDomain = null;
 
-                if (_deserializer != null)
-                {
-                    _deserializer.Dispose();
-                    _deserializer = null;
-                }
+                _deserializer?.Dispose();
+                _deserializer = null;
             }
         }
 

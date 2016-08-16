@@ -115,9 +115,7 @@ namespace AntMe.Runtime
 
         public Exception GetLastException()
         {
-            if (_level != null)
-                return _level.LastException;
-            return null;
+            return _level?.LastException;
         }
     }
 }

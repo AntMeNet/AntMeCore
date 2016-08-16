@@ -52,7 +52,7 @@ namespace CoreTestClient.Tools
             if (!cell.HasValue)
                 return false;
 
-            return (map != null && map[cell.Value.X, cell.Value.Y] != null);
+            return (map?[cell.Value.X, cell.Value.Y] != null);
         }
 
         protected override void OnApply(Map map, Index2? cell, Vector2? position)

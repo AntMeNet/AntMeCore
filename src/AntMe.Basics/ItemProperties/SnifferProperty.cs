@@ -36,8 +36,7 @@ namespace AntMe.Basics.ItemProperties
             {
                 smellableItems.Add(item);
 
-                if (OnNewSmellableItem != null)
-                    OnNewSmellableItem(item);
+                OnNewSmellableItem?.Invoke(item);
             }
         }
 
@@ -49,8 +48,7 @@ namespace AntMe.Basics.ItemProperties
         {
             if (smellableItems.Remove(item))
             {
-                if (OnLostSmellableItem != null)
-                    OnLostSmellableItem(item);
+                OnLostSmellableItem?.Invoke(item);
             }
         }
 
@@ -60,8 +58,7 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="item">Sniffed Item</param>
         internal void NoteSmellableItem(SmellableProperty item)
         {
-            if (OnSmellableItem != null)
-                OnSmellableItem(item);
+            OnSmellableItem?.Invoke(item);
         }
 
         #endregion

@@ -42,8 +42,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 collisionRadius = Math.Max(value, 0f);
-                if (OnCollisionRadiusChanged != null)
-                    OnCollisionRadiusChanged(Item, collisionRadius);
+                OnCollisionRadiusChanged?.Invoke(Item, collisionRadius);
             }
         }
 
@@ -56,8 +55,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 collisionMass = Math.Max(value, 0f);
-                if (OnCollisionMassChanged != null)
-                    OnCollisionMassChanged(Item, collisionMass);
+                OnCollisionMassChanged?.Invoke(Item, collisionMass);
             }
         }
 
@@ -70,8 +68,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 collisionFixed = value;
-                if (OnCollisionFixedChanged != null)
-                    OnCollisionFixedChanged(Item, value);
+                OnCollisionFixedChanged?.Invoke(Item, value);
             }
         }
 
@@ -83,8 +80,7 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="item">Colliding Item</param>
         internal void CollideItem(Item item)
         {
-            if (OnCollision != null)
-                OnCollision(Item, item);
+            OnCollision?.Invoke(Item, item);
         }
 
         #endregion

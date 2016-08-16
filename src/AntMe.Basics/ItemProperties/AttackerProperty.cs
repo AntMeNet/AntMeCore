@@ -49,8 +49,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 attackRange = Math.Max(value, 0f);
-                if (OnAttackRangeChanged != null)
-                    OnAttackRangeChanged(Item, attackRange);
+                OnAttackRangeChanged?.Invoke(Item, attackRange);
             }
         }
 
@@ -63,8 +62,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 attackRecoveryTime = Math.Max(value, 0);
-                if (OnAttackRecoveryTimeChanged != null)
-                    OnAttackRecoveryTimeChanged(Item, attackRecoveryTime);
+                OnAttackRecoveryTimeChanged?.Invoke(Item, attackRecoveryTime);
             }
         }
 
@@ -77,8 +75,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 attackStrength = Math.Max(value, 0);
-                if (OnAttackStrengthChanged != null)
-                    OnAttackStrengthChanged(Item, attackStrength);
+                OnAttackStrengthChanged?.Invoke(Item, attackStrength);
             }
         }
 
@@ -91,8 +88,7 @@ namespace AntMe.Basics.ItemProperties
             private set
             {
                 attackTarget = value;
-                if (OnAttackTargetChanged != null)
-                    OnAttackTargetChanged(Item, value);
+                OnAttackTargetChanged?.Invoke(Item, value);
             }
         }
 
@@ -105,8 +101,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 damageCounter = value;
-                if (OnDamageCounterChanged != null)
-                    OnDamageCounterChanged(Item, value);
+                OnDamageCounterChanged?.Invoke(Item, value);
             }
         }
 
@@ -119,8 +114,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 killCounter = value;
-                if (OnKillCounterChanged != null)
-                    OnKillCounterChanged(Item, value);
+                OnKillCounterChanged?.Invoke(Item, value);
             }
         }
 
@@ -133,8 +127,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 points = value;
-                if (OnPointsChanged != null)
-                    OnPointsChanged(this, value);
+                OnPointsChanged?.Invoke(this, value);
             }
         }
 
@@ -147,8 +140,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 enablePoints = value;
-                if (OnEnablePointsChanged != null)
-                    OnEnablePointsChanged(this, value);
+                OnEnablePointsChanged?.Invoke(this, value);
             }
         }
 
@@ -178,8 +170,7 @@ namespace AntMe.Basics.ItemProperties
             // TODO: Create Settings
             Points = AttackDamageCounter + (100 * AttackKillCounter);
 
-            if (OnAttackHit != null)
-                OnAttackHit(item.Item, hitpoints);
+            OnAttackHit?.Invoke(item.Item, hitpoints);
         }
 
         #endregion

@@ -33,8 +33,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 attackableHealth = Math.Max(0, value);
-                if (OnAttackableHealthChanged != null)
-                    OnAttackableHealthChanged(Item, attackableHealth);
+                OnAttackableHealthChanged?.Invoke(Item, attackableHealth);
             }
         }
 
@@ -47,8 +46,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 attackableMaximumHealth = Math.Max(0, value);
-                if (OnAttackableMaximumHealthChanged != null)
-                    OnAttackableMaximumHealthChanged(Item, attackableMaximumHealth);
+                OnAttackableMaximumHealthChanged?.Invoke(Item, attackableMaximumHealth);
             }
         }
 
@@ -69,8 +67,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 attackableRadius = Math.Max(value, 0f);
-                if (OnAttackableRadiusChanged != null)
-                    OnAttackableRadiusChanged(Item, attackableRadius);
+                OnAttackableRadiusChanged?.Invoke(Item, attackableRadius);
             }
         }
 
@@ -85,8 +82,7 @@ namespace AntMe.Basics.ItemProperties
             if (!attackerItems.Contains(item))
             {
                 attackerItems.Add(item);
-                if (OnNewAttackerItem != null)
-                    OnNewAttackerItem(item);
+                OnNewAttackerItem?.Invoke(item);
             }
         }
 
@@ -98,8 +94,7 @@ namespace AntMe.Basics.ItemProperties
         {
             if (attackerItems.Remove(item))
             {
-                if (OnLostAttackerItem != null)
-                    OnLostAttackerItem(item);
+                OnLostAttackerItem?.Invoke(item);
             }
         }
 
@@ -109,8 +104,7 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="item">Attacker</param>
         internal void NoteAttackerItem(AttackerProperty item)
         {
-            if (OnAttackerItem != null)
-                OnAttackerItem(item);
+            OnAttackerItem?.Invoke(item);
         }
 
         /// <summary>
@@ -120,8 +114,7 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="hitpoints">Hitpoints</param>
         internal void AttackerHit(AttackerProperty item, int hitpoints)
         {
-            if (OnAttackerHit != null)
-                OnAttackerHit(item.Item, hitpoints);
+            OnAttackerHit?.Invoke(item.Item, hitpoints);
         }
 
         /// <summary>
@@ -129,8 +122,7 @@ namespace AntMe.Basics.ItemProperties
         /// </summary>
         internal void Kill()
         {
-            if (OnKill != null)
-                OnKill(Item);
+            OnKill?.Invoke(Item);
         }
 
         #endregion

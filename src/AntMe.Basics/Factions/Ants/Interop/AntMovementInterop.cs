@@ -91,8 +91,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 {
                     // Alles anhalten und Reach melden
                     Stop();
-                    if (OnTargetReched != null)
-                        OnTargetReched(i.GetItemInfo(Item));
+                    OnTargetReched?.Invoke(i.GetItemInfo(Item));
                 }
             };
         }
@@ -107,14 +106,14 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 else
                     item.Orientation = item.Orientation.InvertX();
             }
-            if (OnHitWall != null) OnHitWall(direction);
+            OnHitWall?.Invoke(direction);
         }
 
         protected override void Update(int round)
         {
             // Sollten Kollisionen passiert sein, Event werfen
-            if (OnCollision != null && collidedItems.Count > 0)
-                OnCollision();
+            if (collidedItems.Count > 0)
+                OnCollision?.Invoke();
 
             collidedItems.Clear();
 
@@ -174,7 +173,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             else
             {
                 // Kein Ziel
-                if (OnWaits != null) OnWaits();
+                OnWaits?.Invoke();
             }
         }
 

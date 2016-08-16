@@ -116,8 +116,7 @@ namespace AntMe.Basics.Factions
             set
             {
                 enabled = value;
-                if (OnEnablePointsChanged != null)
-                    OnEnablePointsChanged(this, value);
+                OnEnablePointsChanged?.Invoke(this, value);
             }
         }
 
@@ -135,8 +134,7 @@ namespace AntMe.Basics.Factions
             private set
             {
                 points = value;
-                if (OnPointsChanged != null)
-                    OnPointsChanged(this, value);
+                OnPointsChanged?.Invoke(this, value);
             }
         }
 
@@ -149,8 +147,7 @@ namespace AntMe.Basics.Factions
             set
             {
                 removedItemsCount = value;
-                if (OnRemovedItemCountChanged != null)
-                    OnRemovedItemCountChanged(value);
+                OnRemovedItemCountChanged?.Invoke(value);
             }
         }
 
@@ -163,8 +160,7 @@ namespace AntMe.Basics.Factions
             set
             {
                 killedItemsCount = value;
-                if (OnKilledItemCountChanged != null)
-                    OnKilledItemCountChanged(value);
+                OnKilledItemCountChanged?.Invoke(value);
             }
         }
 
@@ -177,8 +173,7 @@ namespace AntMe.Basics.Factions
             set
             {
                 damageCount = value;
-                if (OnKilledItemCountChanged != null)
-                    OnDamageCountChanged(value);
+                OnDamageCountChanged?.Invoke(value);
             }
         }
 

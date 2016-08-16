@@ -27,8 +27,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 collectableRadius = Math.Max(value, 0f);
-                if (OnCollectableRadiusChanged != null)
-                    OnCollectableRadiusChanged(Item, collectableRadius);
+                OnCollectableRadiusChanged?.Invoke(Item, collectableRadius);
             }
         }
 
@@ -46,8 +45,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 enabled = value;
-                if (OnEnablePointsChanged != null)
-                    OnEnablePointsChanged(this, enabled);
+                OnEnablePointsChanged?.Invoke(this, enabled);
             }
         }
 
@@ -65,8 +63,7 @@ namespace AntMe.Basics.ItemProperties
             protected set
             {
                 points = value;
-                if (OnPointsChanged != null)
-                    OnPointsChanged(this, points);
+                OnPointsChanged?.Invoke(this, points);
             }
         }
 

@@ -51,8 +51,7 @@ namespace AntMe.Runtime.EventLog
         {
             entries.Add(entry);
 
-            if (OnLogEvent != null)
-                OnLogEvent(entry);
+            OnLogEvent?.Invoke(entry);
         }
 
         /// <summary>

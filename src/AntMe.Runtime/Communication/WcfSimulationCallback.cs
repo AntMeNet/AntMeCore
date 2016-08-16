@@ -10,68 +10,57 @@ namespace AntMe.Runtime.Communication
     {
         public void MasterChanged(int id)
         {
-            if (OnMasterChanged != null)
-                OnMasterChanged(id);
+            OnMasterChanged?.Invoke(id);
         }
 
         public void UserlistChanged(UserProfile[] users)
         {
-            if (OnUserlistChanged != null)
-                OnUserlistChanged(users);
+            OnUserlistChanged?.Invoke(users);
         }
 
         public void UserAdded(UserProfile user)
         {
-            if (OnUserAdded != null)
-                OnUserAdded(user);
+            OnUserAdded?.Invoke(user);
         }
 
         public void UserDropped(int id)
         {
-            if (OnUserDropped != null)
-                OnUserDropped(id);
+            OnUserDropped?.Invoke(id);
         }
 
         public void UsernameChanged(UserProfile user)
         {
-            if (OnUsernameChanged != null)
-                OnUsernameChanged(user);
+            OnUsernameChanged?.Invoke(user);
         }
 
         public void MessageReceived(UserProfile sender, string message)
         {
-            if (OnMessageReceived != null)
-                OnMessageReceived(sender, message);
+            OnMessageReceived?.Invoke(sender, message);
         }
 
         public void LevelChanged(TypeInfo level)
         {
-            if (OnLevelChanged != null)
-                OnLevelChanged(level);
+            OnLevelChanged?.Invoke(level);
         }
 
         public void PlayerReset(Slot[] slots)
         {
-            if (OnPlayerReset != null)
-                OnPlayerReset(slots);
+            OnPlayerReset?.Invoke(slots);
         }
 
         public void PlayerChanged(Slot slot)
         {
-            if (OnPlayerChanged != null)
-                OnPlayerChanged(slot);
+            OnPlayerChanged?.Invoke(slot);
         }
 
         public void SimulationChanged(SimulationState state, byte framerate)
         {
-            if (OnSimulationChanged != null)
-                OnSimulationChanged(state, framerate);
+            OnSimulationChanged?.Invoke(state, framerate);
         }
 
         public void SimulationState(byte[] state)
         {
-            if (OnSimulationState != null)
-                OnSimulationState(state);
+            OnSimulationState?.Invoke(state);
         }
 
         public event CallbackDelegate<int> OnMasterChanged;

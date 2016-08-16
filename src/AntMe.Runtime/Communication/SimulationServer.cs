@@ -991,11 +991,8 @@ namespace AntMe.Runtime.Communication
             }
 
             // Dispose Simulation
-            if (simulation != null)
-            {
-                simulation.Dispose();
-                simulation = null;
-            }
+            simulation?.Dispose();
+            simulation = null;
 
             // Inform everybody
             SendSimulationChanged(this.frames);
@@ -1132,9 +1129,9 @@ namespace AntMe.Runtime.Communication
                         }
 
                         // Dispose Serializer on Simulation Shutdown
-                        if (state == SimulationState.Stopped && receiver.Serializer != null)
+                        if (state == SimulationState.Stopped)
                         {
-                            receiver.Serializer.Dispose();
+                            receiver.Serializer?.Dispose();
                             receiver.Serializer = null;
                         }
 

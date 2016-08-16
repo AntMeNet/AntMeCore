@@ -193,31 +193,17 @@ namespace AntMe.Serialization
         /// </summary>
         public void Dispose()
         {
-            if (writer != null)
-            {
-                writer.Dispose();
-                writer = null;
-            }
+            writer?.Dispose();
+            writer = null;
 
-            if (reader != null)
-            {
-                reader.Dispose();
-                reader = null;
-            }
+            reader?.Dispose();
+            reader = null;
 
-            if (serializer != null)
-            {
-                serializer.Dispose();
-                serializer = null;
-            }
+            serializer?.Dispose();
+            serializer = null;
 
-            if (deserializer != null)
-            {
-                deserializer.Dispose();
-                deserializer = null;
-            }
+            deserializer?.Dispose();
+            deserializer = null;
         }
-
-        
     }
 }

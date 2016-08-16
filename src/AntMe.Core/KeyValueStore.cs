@@ -704,7 +704,7 @@ namespace AntMe
                         description = string.Empty;
                     else
                         description += VDE.Description;
-                    sw.WriteLine("{0}={1}{2}", key.ToString().PadRight(keyLength), (VDE.Value != null ? VDE.Value.ToString(CultureInfo.InvariantCulture) : "").PadRight(valueLength), description);
+                    sw.WriteLine("{0}={1}{2}", key.ToString().PadRight(keyLength), (VDE.Value?.ToString(CultureInfo.InvariantCulture) ?? "").PadRight(valueLength), description);
                 }
                 sw.WriteLine();
 

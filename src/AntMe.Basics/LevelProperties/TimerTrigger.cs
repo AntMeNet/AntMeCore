@@ -43,8 +43,7 @@
         {
             if (Enabled && level.Engine.Round == TargetTime)
             {
-                if (OnTimeReached != null)
-                    OnTimeReached(this);
+                OnTimeReached?.Invoke(this);
                 return true;
             }
             return false;

@@ -157,8 +157,7 @@ namespace AntMe.Basics.FactionProperties
                 Where(p => p.EnablePoints && p.PointsCategory.Equals(category)).
                 Sum(p => p.Points);
             pointsPerCategory[category] = value;
-            if (OnCategoryPointsChanged != null)
-                OnCategoryPointsChanged(category, value);
+            OnCategoryPointsChanged?.Invoke(category, value);
         }
 
         /// <summary>
@@ -175,8 +174,7 @@ namespace AntMe.Basics.FactionProperties
             private set
             {
                 points = value;
-                if (OnPointsChanged != null)
-                    OnPointsChanged(value);
+                OnPointsChanged?.Invoke(value);
             }
         }
 
