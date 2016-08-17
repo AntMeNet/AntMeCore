@@ -33,12 +33,12 @@ namespace CoreTestClient
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
                 };
 
-                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
-                var result = ExtensionLoader.SecureAnalyseExtension(extensionPaths, file, true, false);
+                string filename = openFileDialog.FileName;
+                var result = ExtensionLoader.SecureAnalyseExtension(extensionPaths, filename, true, false);
 
                 foreach (var level in result.Levels)
                 {
-                    level.Type.AssemblyFile = file;
+                    level.Type = TypeInfoByFilename.FromTypeInfo(level.Type, filename);
                     var item = levelList.Items.Add(level.LevelDescription.Name);
                     item.Tag = level;
                     item.ToolTipText = level.LevelDescription.Description;

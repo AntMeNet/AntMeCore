@@ -423,7 +423,8 @@ namespace AntMe.Runtime.Communication
         internal void UploadLevel(ISimulationService service, TypeInfo levelType)
         {
             // Check File Size
-            if (levelType != null && levelType.AssemblyFile.Length > SimulationServer.MAXLEVELSIZE)
+            byte[] dump = levelType.GetAssemblyDump();
+            if (levelType != null && dump.Length > SimulationServer.MAXLEVELSIZE)
                 throw new ArgumentException("File is too large");
 
             ClientInfo client;
@@ -432,7 +433,7 @@ namespace AntMe.Runtime.Communication
                 // Analyse Level
                 LevelInfo levelInfo = null;
                 if (levelType != null)
-                    levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, levelType.AssemblyFile, levelType.TypeName);
+                    levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, levelType);
 
                 lock (simulationLock)
                 {
@@ -491,7 +492,8 @@ namespace AntMe.Runtime.Communication
         internal void UploadPlayer(ISimulationService service, TypeInfo playerType)
         {
             // Check File Size
-            if (playerType != null && playerType.AssemblyFile.Length > MAXPLAYERSIZE)
+            byte[] dump = playerType.GetAssemblyDump();
+            if (playerType != null && dump.Length > MAXPLAYERSIZE)
                 throw new ArgumentException("File is too large");
 
             ClientInfo client;
@@ -500,7 +502,7 @@ namespace AntMe.Runtime.Communication
                 // Analyse File
                 PlayerInfo playerInfo = null;
                 if (playerType != null)
-                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
+                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType);
 
                 // Save Player Infos
                 if (playerInfo == null)
@@ -566,7 +568,8 @@ namespace AntMe.Runtime.Communication
                 throw new ArgumentOutOfRangeException("Slot must be between 0 and 7");
 
             // Check File Size
-            if (playerType != null && playerType.AssemblyFile.Length > SimulationServer.MAXPLAYERSIZE)
+            byte[] dump = playerType.GetAssemblyDump();
+            if (playerType != null && dump.Length > SimulationServer.MAXPLAYERSIZE)
                 throw new ArgumentException("File is too large");
 
             // Check for an existing Level
@@ -578,7 +581,7 @@ namespace AntMe.Runtime.Communication
             {
                 PlayerInfo playerInfo = null;
                 if (playerType != null)
-                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
+                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType);
 
                 lock (simulationLock)
                 {

@@ -52,8 +52,7 @@ namespace AntMe.Runtime
             AppDomain.CurrentDomain.TypeResolve += (x, y) => null;
 
             // Level erzeugen
-            Assembly levelAssembly = Assembly.Load(settings.Level.AssemblyFile);
-            Type levelType = levelAssembly.GetType(settings.Level.TypeName, true);
+            Type levelType = settings.Level.GetFrameworkType();
             Level lvl = Activator.CreateInstance(levelType, _context) as Level;
             _level = lvl;
 
@@ -65,8 +64,7 @@ namespace AntMe.Runtime
                 if (settings.Player[i] == null)
                     continue;
 
-                Assembly playerAssembly = Assembly.Load(settings.Player[i].AssemblyFile);
-                Type factoryType = playerAssembly.GetType(settings.Player[i].TypeName);
+                Type factoryType = settings.Player[i].GetFrameworkType();
 
                 // Identify Name
                 object[] playerAttributes = factoryType.GetCustomAttributes(typeof(FactoryAttribute), true);

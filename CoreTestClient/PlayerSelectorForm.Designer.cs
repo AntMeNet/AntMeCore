@@ -38,6 +38,7 @@
             this.authorColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.playerPreview = new CoreTestClient.PlayerPreview();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.filedumpCheckbox = new System.Windows.Forms.CheckBox();
             this.panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -47,6 +48,7 @@
             // 
             // panel
             // 
+            this.panel.Controls.Add(this.filedumpCheckbox);
             this.panel.Controls.Add(this.loadButton);
             this.panel.Controls.Add(this.cancelButton);
             this.panel.Controls.Add(this.okButton);
@@ -145,6 +147,16 @@
             // 
             this.openFileDialog.DefaultExt = "dll";
             // 
+            // filedumpCheckbox
+            // 
+            this.filedumpCheckbox.AutoSize = true;
+            this.filedumpCheckbox.Location = new System.Drawing.Point(553, 10);
+            this.filedumpCheckbox.Name = "filedumpCheckbox";
+            this.filedumpCheckbox.Size = new System.Drawing.Size(114, 17);
+            this.filedumpCheckbox.TabIndex = 3;
+            this.filedumpCheckbox.Text = "Import as Filedump";
+            this.filedumpCheckbox.UseVisualStyleBackColor = true;
+            // 
             // PlayerSelectorForm
             // 
             this.AcceptButton = this.okButton;
@@ -160,6 +172,7 @@
             this.ShowInTaskbar = false;
             this.Text = "Select a Player";
             this.panel.ResumeLayout(false);
+            this.panel.PerformLayout();
             this.splitContainer.Panel1.ResumeLayout(false);
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
@@ -180,5 +193,6 @@
         private System.Windows.Forms.ColumnHeader authorColumn;
         private PlayerPreview playerPreview;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.CheckBox filedumpCheckbox;
     }
 }

@@ -50,12 +50,16 @@ namespace CoreTestClient
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
                 };
 
-                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
-                var result = ExtensionLoader.SecureAnalyseExtension(extensionPaths, file, false, true);
+                string filename = openFileDialog.FileName;
+                byte[] file = File.ReadAllBytes(filename);
+                var result = ExtensionLoader.SecureAnalyseExtension(extensionPaths, filename, false, true);
 
                 foreach (var player in result.Players)
                 {
-                    player.Type.AssemblyFile = file;
+                    if (filedumpCheckbox.Checked)
+                        player.Type = TypeInfoByDump.FromTypeInfo(player.Type, file);
+                    else
+                        player.Type = TypeInfoByFilename.FromTypeInfo(player.Type, filename);
                     var item = playerList.Items.Add(player.Name);
                     item.Tag = player;
                     item.SubItems.Add(player.Author);

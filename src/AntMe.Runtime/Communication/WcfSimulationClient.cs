@@ -738,7 +738,7 @@ namespace AntMe.Runtime.Communication
         {
             LevelInfo levelInfo = null;
             if (level != null)
-                levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, level.AssemblyFile, level.TypeName);
+                levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, level);
 
             _level = levelInfo;
 

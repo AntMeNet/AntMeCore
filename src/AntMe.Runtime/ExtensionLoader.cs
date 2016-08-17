@@ -60,6 +60,7 @@ namespace AntMe.Runtime
             List<string> locaFiles = new List<string>();
             List<Exception> errors = new List<Exception>();
             List<Assembly> assemblies = new List<Assembly>();
+            Dictionary<Assembly, string> assemblyFilenames = new Dictionary<Assembly, string>();
 
             foreach (var path in extensionPaths)
             {
@@ -93,7 +94,10 @@ namespace AntMe.Runtime
                     {
                         var extensionAttribute = attributes.FirstOrDefault() as AntMeExtensionAttribute;
                         if (extensionAttribute != null)
+                        {
                             assemblies.Add(assembly);
+                            assemblyFilenames.Add(assembly, file);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -221,16 +225,13 @@ namespace AntMe.Runtime
                         loader.Levels.Count > 0 ||
                         loader.Players.Count > 0)
                     {
-                        // File dump
-                        Stream stream = assembly.GetFiles()[0];
-                        byte[] file = new byte[stream.Length];
-                        stream.Read(file, 0, file.Length);
+                        string filename = assemblyFilenames[assembly];
 
                         // Campaigns laden
                         foreach (var campaign in loader.Campaigns)
                         {
                             foreach (var level in campaign.Levels)
-                                level.Type.AssemblyFile = file;
+                                level.Type = TypeInfoByFilename.FromTypeInfo(level.Type, filename);
 
                             campaigns.Add(campaign);
                         }
@@ -238,14 +239,14 @@ namespace AntMe.Runtime
                         // Levels laden
                         foreach (var level in loader.Levels)
                         {
-                            level.Type.AssemblyFile = file;
+                            level.Type = TypeInfoByFilename.FromTypeInfo(level.Type, filename);
                             levels.Add(level);
                         }
 
                         // Player laden
                         foreach (var player in loader.Players)
                         {
-                            player.Type.AssemblyFile = file;
+                            player.Type = TypeInfoByFilename.FromTypeInfo(player.Type, filename);
                             player.Source = PlayerSource.Native;
                             players.Add(player);
                         }
@@ -590,7 +591,7 @@ namespace AntMe.Runtime
                     type.Assembly.FullName));
 
             LevelInfo levelInfo = new LevelInfo();
-            levelInfo.Type = TypeInfo.FromType(type);
+            levelInfo.Type = TypeInfoByReference.FromType(type);
             levelInfo.LevelDescription = descriptionAttributes[0];
             levelInfo.FactionFilter = new LevelFilterInfo[filterAttributes.Length];
             for (int i = 0; i < filterAttributes.Length; i++)
@@ -599,11 +600,7 @@ namespace AntMe.Runtime
                 {
                     SlotIndex = filterAttributes[i].SlotIndex,
                     Comment = filterAttributes[i].Comment,
-                    Type = new TypeInfo()
-                    {
-                        AssemblyName = filterAttributes[i].FactionType.Assembly.FullName,
-                        TypeName = filterAttributes[i].FactionType.FullName
-                    }
+                    Type = TypeInfoByReference.FromType(filterAttributes[i].FactionType),
                 };
             }
 
@@ -651,7 +648,7 @@ namespace AntMe.Runtime
             campaignInfo.Name = campaign.Name;
             campaignInfo.Description = campaign.Description;
             campaignInfo.Picture = campaign.Picture;
-            campaignInfo.Type = TypeInfo.FromType(type);
+            campaignInfo.Type = TypeInfoByReference.FromType(type);
             campaignInfo.DescriptionAttribute = descriptionAttributes[0];
 
             // List all unlocked Levels
@@ -728,7 +725,7 @@ namespace AntMe.Runtime
             PlayerInfo playerInfo = new PlayerInfo()
             {
                 Guid = type.GUID,
-                Type = TypeInfo.FromType(type),
+                Type = TypeInfoByReference.FromType(type),
                 Name = name,
                 Author = author
             };
@@ -805,40 +802,32 @@ namespace AntMe.Runtime
         /// Searches in the given Assembly for the requested Level Type within a closed AppDomain.
         /// </summary>
         /// <param name="extensionPaths">List of pathes to search for Extensions</param>
-        /// <param name="file">Filedump of the Assembly</param>
-        /// <param name="typeName">Name of the Type</param>
+        /// <param name="levelType">Type Info of the requested Type</param>
         /// <returns>LevelInfo of the fitting Level or null in case of no result</returns>
-        public static LevelInfo SecureFindLevel(string[] extensionPaths, byte[] file, string typeName)
+        public static LevelInfo SecureFindLevel(string[] extensionPaths, TypeInfo levelType)
         {
-            LoaderInfo info = SecureAnalyseExtension(extensionPaths, file, true, false);
-            foreach (var level in info.Levels)
-            {
-                if (level.Type.TypeName.Equals(typeName))
-                {
-                    return level;
-                }
-            }
-            return null;
+            byte[] dump = levelType.GetAssemblyDump();
+            LoaderInfo info = SecureAnalyseExtension(extensionPaths, dump, true, false);
+            LevelInfo level = info.Levels.FirstOrDefault(l => l.Type.TypeName.Equals(levelType.TypeName));
+            if (level != null)
+                level.Type = levelType;
+            return level;
         }
 
         /// <summary>
         /// Searches in the given Assembly for the requested Player Type within a closed AppDomain.
         /// </summary>
         /// <param name="extensionPaths">List of pathes to search for Extensions</param>
-        /// <param name="file">Filedump of the Assembly</param>
-        /// <param name="typeName">Name of the Type</param>
+        /// <param name="typeType">Typeinfo</param>
         /// <returns>PlayerInfo of the fitting Player or null in case of no result</returns>
-        public static PlayerInfo SecureFindPlayer(string[] extensionPaths, byte[] file, string typeName)
+        public static PlayerInfo SecureFindPlayer(string[] extensionPaths, TypeInfo typeType)
         {
-            LoaderInfo info = SecureAnalyseExtension(extensionPaths, file, false, true);
-            foreach (var player in info.Players)
-            {
-                if (player.Type.TypeName.Equals(typeName))
-                {
-                    return player;
-                }
-            }
-            return null;
+            byte[] dump = typeType.GetAssemblyDump();
+            LoaderInfo info = SecureAnalyseExtension(extensionPaths, dump, false, true);
+            PlayerInfo player = info.Players.FirstOrDefault(p => p.Type.TypeName.Equals(typeType.TypeName));
+            if (player != null)
+                player.Type = typeType;
+            return player;
         }
 
         #endregion

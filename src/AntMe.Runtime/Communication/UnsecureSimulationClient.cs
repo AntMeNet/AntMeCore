@@ -14,8 +14,7 @@ namespace AntMe.Runtime.Communication
 
         protected override void InitSimulation(int seed, LevelInfo level, PlayerInfo[] players, Slot[] slots)
         {
-            Assembly levelAssembly = Assembly.Load(level.Type.AssemblyFile);
-            Type levelType = levelAssembly.GetType(level.Type.TypeName);
+            Type levelType = level.Type.GetFrameworkType();
 
             SimulationContext context = ExtensionLoader.CreateSimulationContext();
 
@@ -29,8 +28,7 @@ namespace AntMe.Runtime.Communication
                 if (players[i] == null)
                     continue;
 
-                Assembly playerAssembly = Assembly.Load(players[i].Type.AssemblyFile);
-                Type factoryType = playerAssembly.GetType(players[i].Type.TypeName);
+                Type factoryType = players[i].Type.GetFrameworkType();
 
                 // Identify Name
                 var playerAttributes = factoryType.GetCustomAttributes(typeof(FactoryAttribute), true);

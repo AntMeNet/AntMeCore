@@ -252,7 +252,6 @@ namespace AntMe.Runtime.Communication
         /// Legt das Level für diese Simulation fest. Darf nur im gestoppten Modus genutzt werden.
         /// </summary>
         /// <param name="level">Level Infos mit AssemblyFile und TypeName</param>
-        /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
         public bool UploadLevel(TypeInfo level)
         {
@@ -275,12 +274,6 @@ namespace AntMe.Runtime.Communication
             }
             else
             {
-                // Prüfen, ob eine Datei angehängt wurde
-                if (level.AssemblyFile == null)
-                {
-                    throw new Exception("There is no Assembly File");
-                }
-
                 // Prüfen, ob ein Typ angegeben wurde
                 if (string.IsNullOrEmpty(level.TypeName))
                 {
@@ -288,10 +281,9 @@ namespace AntMe.Runtime.Communication
                 }
 
                 // Level analysieren
-                LevelInfo info = ExtensionLoader.SecureFindLevel(extensionPaths, level.AssemblyFile, level.TypeName);
+                LevelInfo info = ExtensionLoader.SecureFindLevel(extensionPaths, level);
                 if (info != null)
                 {
-                    info.Type.AssemblyFile = level.AssemblyFile;
                     this.level = info;
                     ResetSlots();
                 }
@@ -307,7 +299,6 @@ namespace AntMe.Runtime.Communication
         /// Legt die zu verwendende KI für Slot 0 fest.
         /// </summary>
         /// <param name="player">KI</param>
-        /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
         public bool UploadPlayer(TypeInfo player)
         {
@@ -319,7 +310,6 @@ namespace AntMe.Runtime.Communication
         /// </summary>
         /// <param name="slot">Slot (0...7)</param>
         /// <param name="player">KI</param>
-        /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
         public bool UploadMaster(byte slot, TypeInfo player)
         {
@@ -353,12 +343,6 @@ namespace AntMe.Runtime.Communication
             }
             else
             {
-                // Prüfen, ob eine Datei angehängt wurde
-                if (player.AssemblyFile == null)
-                {
-                    throw new Exception("There is no Assembly File");
-                }
-
                 // Prüfen, ob ein Typ angegeben wurde
                 if (string.IsNullOrEmpty(player.TypeName))
                 {
@@ -366,10 +350,9 @@ namespace AntMe.Runtime.Communication
                 }
 
                 // Level analysieren
-                PlayerInfo info = ExtensionLoader.SecureFindPlayer(extensionPaths, player.AssemblyFile, player.TypeName);
+                PlayerInfo info = ExtensionLoader.SecureFindPlayer(extensionPaths, player);
                 if (info != null)
                 {
-                    info.Type.AssemblyFile = player.AssemblyFile;
                     players[slot] = info;
                 }
 
@@ -385,8 +368,8 @@ namespace AntMe.Runtime.Communication
         /// </summary>
         /// <param name="slot">Slot-Nummer</param>
         /// <param name="color">neue Farbe</param>
+        /// <param name="team">Team Id</param>
         /// <param name="ready">gibt an, ob der Slot vollständig ist</param>
-        /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
         public bool SetPlayerState(byte slot, PlayerColor color, byte team, bool ready)
         {
@@ -404,7 +387,6 @@ namespace AntMe.Runtime.Communication
         /// <param name="slot">Slot-Nummer</param>
         /// <param name="color">neue Farbe</param>
         /// <param name="ready">gibt an, ob der Slot vollständig ist</param>
-        /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
         public bool SetMasterState(byte slot, PlayerColor color, byte team, bool ready)
         {
