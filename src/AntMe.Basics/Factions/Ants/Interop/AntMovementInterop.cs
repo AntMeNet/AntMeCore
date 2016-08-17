@@ -131,7 +131,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 int rot = angleToGo > 0 ? Math.Min(angleToGo, rotationSpeed) : Math.Max(angleToGo, -rotationSpeed);
 
                 walking.Speed = 0f;
-                walking.Direction = Item.Orientation.AddDegree(rot);
+                Item.Orientation = Item.Orientation.AddDegree(rot);
                 angleToGo -= rot;
             }
             else if (distanceToGo > 0)
