@@ -91,6 +91,8 @@ namespace CoreTestClient
 
             // Update Tree
             UpdateTree();
+
+            propertyGrid.Refresh();
         }
 
         private Index2 _mapCells;
