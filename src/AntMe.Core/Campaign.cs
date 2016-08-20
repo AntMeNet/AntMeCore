@@ -6,27 +6,27 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace AntMe
 {
     /// <summary>
-    /// Basisklasse einer Kampagne. 
+    /// Basis Class of a campaign.
     /// </summary>
     public abstract class Campaign
     {
         /// <summary>
-        /// Liefert eine eindeutige GUID für diese Kampagne zurück.
+        /// Returns an unique GUID for this campaign.
         /// </summary>
         public abstract Guid Guid { get; }
 
         /// <summary>
-        /// Liefert den Namen der Kampagne zurück.
+        /// Returns the name of the campaign.
         /// </summary>
         public abstract string Name { get; }
 
         /// <summary>
-        /// Liefert eine Beschreibung der Kampagne.
+        /// Returns a description of the campaign.
         /// </summary>
         public abstract string Description { get; }
 
         /// <summary>
-        /// Liefert das Kampagnen-Bild im PNG Format, 200x250px oder null, falls der Platzhalter verwendet werden soll.
+        /// Returns the campaign picture in PNG format, 200x250px or null, if the place holer is used.
         /// </summary>
         public abstract byte[] Picture { get; }
 
@@ -35,7 +35,7 @@ namespace AntMe
         private int counter = 0;
 
         /// <summary>
-        /// Konstruktor der Kampagne.
+        /// Constructor of the campaign.
         /// </summary>
         public Campaign()
         {
@@ -43,25 +43,25 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Aufruf bei Initialisierung der Kampagne. Hier sollten alle 
-        /// existierenden Levels registriert werden. In dieser Methode sollte 
-        /// auch das Einstiegslevel freigeschaltet werden.
+        /// Request with initialization of the campaign. All existing levels
+        /// should be registered here. In this method the start level should 
+        /// be unlocked.
         /// </summary>
         protected abstract void OnInit();
 
         /// <summary>
-        /// Wird vom System aufgerufen, wenn eines der Kampagnen-Levels vom 
-        /// Spieler beendet wurde. Auf Basis dieser Methode sollten weitere 
-        /// Levels freigeschaltet werden.
+        /// Called from the system if one of the campaign levels will be
+        /// finished by the player. Based on this method more levels 
+        /// will be released.
         /// </summary>
-        /// <param name="level">Type des Levels</param>
-        /// <param name="lastState">Letzter Zustand der Simulation</param>
+        /// <param name="level">Type of the level</param>
+        /// <param name="lastState">Last state of the simulation</param>
         protected abstract void OnFinishLevel(Type level, LevelState lastState);
 
         /// <summary>
-        /// Registriert ein Level als Teil der Kampagne.
+        /// Registers a level as a part of the campaign.
         /// </summary>
-        /// <param name="level">Betroffenes Level</param>
+        /// <param name="level">Affected level</param>
         protected void RegisterLevel(Type level)
         {
             _registeredLevels.Add(level);
@@ -69,9 +69,9 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Schaltet das angegebene Level für den Spieler frei.
+        /// Unlocks the selected level for the player.
         /// </summary>
-        /// <param name="level">Freizuschaltendes Level</param>
+        /// <param name="level">Unlocked level</param>
         protected void UnlockLevel(Type level)
         {
             for (int i = 0; i < _registeredLevels.Count; i++)
@@ -80,9 +80,9 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Sperrt das angegebene Level wieder für den Spieler.
+        /// Locks the selected level again for the player.
         /// </summary>
-        /// <param name="level">Zu sperrendes Level</param>
+        /// <param name="level">Locked level</param>
         protected void LockLevel(Type level)
         {
             for (int i = 0; i < _registeredLevels.Count; i++)
@@ -91,7 +91,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Liefert alle freigeschalteten Levels
+        /// Get all unlocked levels.
         /// </summary>
         /// <returns></returns>
         public List<Type> GetUnlockedLevels()
@@ -106,7 +106,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gibt die Kampagnen-Settings als Byte-Array zurück oder legt diese fest.
+        /// Returns the campaign settings in a byte array or sets it.
         /// </summary>
         public byte[] Settings
         {

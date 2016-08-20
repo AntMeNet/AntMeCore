@@ -1,8 +1,8 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Statische Liste der 8 Haupt-Himmelsrichtungen. Direkter Cast nach
-    /// <see cref="System.Int32" /> liefert eine Winkelangabe.
+    /// Static List of the eight main compass points.
+    /// Direct cast to <see cref="System.Int32" /> returns an angle value.
     /// <code>
     /// int degree = (int)Compass.West;
     /// </code>
@@ -10,42 +10,42 @@
     public enum Compass
     {
         /// <summary>
-        /// Osten mit dem <seealso cref="Angle" /> von 0.
+        /// East with <seealso cref="Angle" /> 0 degreees.
         /// </summary>
         East = 0,
 
         /// <summary>
-        /// Südosten mit dem <seealso cref="Angle" /> von 45.
+        /// Southeast with <seealso cref="Angle" /> 45 degrees.
         /// </summary>
         SouthEast = 45,
 
         /// <summary>
-        /// Süden mit dem <seealso cref="Angle" /> von 90.
+        /// South with <seealso cref="Angle" /> 90 degrees.
         /// </summary>
         South = 90,
 
         /// <summary>
-        /// Südwesten mit dem <seealso cref="Angle" /> von 135.
+        /// Southwest with <seealso cref="Angle" /> 135 degrees.
         /// </summary>
         SouthWest = 135,
 
         /// <summary>
-        /// West mit dem <seealso cref="Angle" /> von 180.
+        /// West with <seealso cref="Angle" /> 180 degrees.
         /// </summary>
         West = 180,
 
         /// <summary>
-        /// Nordwesten mit dem <seealso cref="Angle" /> von 225.
+        /// Northwest with <seealso cref="Angle" /> 225 degrees.
         /// </summary>
         NorthWest = 225,
 
         /// <summary>
-        /// Norden mit dem <seealso cref="Angle" /> von 270.
+        /// North with <seealso cref="Angle" /> 270 degrees.
         /// </summary>
         North = 270,
 
         /// <summary>
-        /// Nordosten mit dem <seealso cref="Angle" /> von 315.
+        /// Northeast with <seealso cref="Angle" /> 315 degrees.
         /// </summary>
         NorthEast = 315
     }
