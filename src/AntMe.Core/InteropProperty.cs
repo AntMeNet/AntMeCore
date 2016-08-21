@@ -6,17 +6,9 @@
     public abstract class InteropProperty : Property
     {
         /// <summary>
-        /// Interner Update-Call
-        /// </summary>
-        internal void InternalUpdate(int round)
-        {
-            Update(round);
-        }
-
-        /// <summary>
         /// Virtueller Update-Call, der von der Implementierung genutzt werden kann.
         /// </summary>
-        protected virtual void Update(int round) { }
+        public virtual void OnUpdate() { }
 
         /// <summary>
         /// Basis-Delegat für diverse parameterlose Interop Events.

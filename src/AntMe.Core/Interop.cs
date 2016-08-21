@@ -1,20 +1,20 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Basisklasse für jegliche Interop-Klasse.
+    /// Base Class for all Interop Classes.
     /// </summary>
     public abstract class Interop : PropertyList<InteropProperty>
     {
-        internal void InternalUpdate(int round)
+        internal void InternalUpdate()
         {
-            Update(round);
+            OnUpdate();
             foreach (var property in Properties)
-                property.InternalUpdate(round);
+                property.OnUpdate();
         }
 
         /// <summary>
-        /// Geschützter Update-Call.
+        /// Update
         /// </summary>
-        protected virtual void Update(int round) { }
+        protected virtual void OnUpdate() { }
     }
 }

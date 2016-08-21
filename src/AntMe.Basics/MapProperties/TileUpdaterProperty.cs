@@ -20,7 +20,7 @@ namespace AntMe.Basics.MapProperties
         {
         }
 
-        public override void Update(int round)
+        public override void OnUpdate(int round)
         {
         }
     }

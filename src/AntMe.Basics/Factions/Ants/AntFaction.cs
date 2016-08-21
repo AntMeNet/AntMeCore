@@ -77,7 +77,7 @@ namespace AntMe.Basics.Factions.Ants
                 Units.Remove(item);
         }
 
-        protected override void OnUpdate(int round)
+        protected override void OnUpdate()
         {
             // Generate new Ants
             // - check for Repawn Delay
@@ -90,8 +90,6 @@ namespace AntMe.Basics.Factions.Ants
                 CreateAnt(primaryHill);
             }
         }
-
-        protected override void OnUpdated(int round) { }
 
         /// <summary>
         /// Generates a new Anthill.

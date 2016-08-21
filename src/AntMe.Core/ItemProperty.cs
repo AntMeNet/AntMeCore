@@ -1,4 +1,6 @@
-﻿namespace AntMe
+﻿using System;
+
+namespace AntMe
 {
     /// <summary>
     /// Base Class for all Item Properties.
@@ -20,5 +22,20 @@
         /// Reference to the related Item.
         /// </summary>
         public Item Item { get { return item; } }
+
+        /// <summary>
+        /// Gets a Call before the Update Process.
+        /// </summary>
+        public virtual void OnBeforeUpdate() { }
+
+        /// <summary>
+        /// Gets a Call during Update Process.
+        /// </summary>
+        public virtual void OnUpdate() { }
+
+        /// <summary>
+        /// Gets a Call after Update Process.
+        /// </summary>
+        public virtual void OnAfterUpdate() { }
     }
 }

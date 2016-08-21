@@ -109,7 +109,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             OnHitWall?.Invoke(direction);
         }
 
-        protected override void Update(int round)
+        public override void OnUpdate()
         {
             // Sollten Kollisionen passiert sein, Event werfen
             if (collidedItems.Count > 0)

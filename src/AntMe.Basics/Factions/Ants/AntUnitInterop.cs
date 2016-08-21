@@ -38,7 +38,7 @@ namespace AntMe.Basics.Factions.Ants
         /// <summary>
         /// Gets called by the Engine on Round Update.
         /// </summary>
-        protected override void Update(int round)
+        protected override void OnUpdate()
         {
             // Update Marker Delay
             markerDelay = Math.Max(0, markerDelay - 1);

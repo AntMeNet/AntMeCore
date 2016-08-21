@@ -190,32 +190,57 @@ namespace AntMe
         protected abstract void OnInit();
 
         /// <summary>
+        /// Internal Call before the Update Process.
+        /// </summary>
+        internal void InternalBeforeUpdate()
+        {
+            OnBeforeUpdate();
+            foreach (var property in Properties)
+                property.OnBeforeUpdate();
+        }
+
+        /// <summary>
         /// Updates the Faction and all the including Properties.
         /// </summary>
-        public void Update(int round)
+        internal void InternalUpdate()
         {
             // Faction Update
-            OnUpdate(round);
-
-            // Faction Interop Update
-            Factory.Interop.InternalUpdate(round);
-
-            // Unit Interop Updates
-            foreach (var unit in Units.Values)
-                unit.Interop.InternalUpdate(round);
+            OnUpdate();
+            foreach (var property in Properties)
+                property.OnUpdate();
         }
+
+        /// <summary>
+        /// Internal Call before the Update Process.
+        /// </summary>
+        internal void InternalAfterUpdate()
+        {
+            OnAfterUpdate();
+            foreach (var property in Properties)
+                property.OnAfterUpdate();
+        }
+
+        internal void InternalInterop()
+        {
+            Factory.Interop.InternalUpdate();
+            foreach (var unit in Units.Values)
+                unit.Interop.InternalUpdate();
+        }
+
+        /// <summary>
+        /// Gets a call before the Update process starts.
+        /// </summary>
+        protected virtual void OnBeforeUpdate() { }
 
         /// <summary>
         /// Gets a call before the Faction updates itself.
         /// </summary>
-        /// <param name="round">Current Round</param>
-        protected abstract void OnUpdate(int round);
+        protected virtual void OnUpdate() { }
 
         /// <summary>
-        /// Gets a call after Faction Update.
+        /// Gets a call after the Update.
         /// </summary>
-        /// <param name="round">Current Round</param>
-        protected abstract void OnUpdated(int round);
+        protected virtual void OnAfterUpdate() { }
 
         /// <summary>
         /// Generates Faction Info.

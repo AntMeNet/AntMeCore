@@ -35,9 +35,19 @@
         public virtual void OnInit() { }
 
         /// <summary>
+        /// Gets a call before the Level updates everything.
+        /// </summary>
+        public virtual void OnBeforeUpdate() { }
+
+        /// <summary>
         /// Gets called every Round to regulate the Situation.
         /// </summary>
         public virtual void OnUpdate() { }
+
+        /// <summary>
+        /// Gets a call after everything was updated.
+        /// </summary>
+        public virtual void OnAfterUpdate() { }
 
         /// <summary>
         /// Gets called when new Items came to the Level.

@@ -28,10 +28,22 @@ namespace AntMe
         }
 
         /// <summary>
+        /// Gets the chance to prepare for the Update.
+        /// </summary>
+        /// <param name="round">Current Round</param>
+        public virtual void OnBeforeUpdate(int round) { }
+
+        /// <summary>
         /// Updates the current Map Property.
         /// </summary>
         /// <param name="round">Current Round</param>
-        public abstract void Update(int round);
+        public virtual void OnUpdate(int round) { }
+
+        /// <summary>
+        /// Gets a call after all Updates for cleanups.
+        /// </summary>
+        /// <param name="round">Current Round</param>
+        public virtual void OnAfterUpdate(int round) { }
 
         /// <summary>
         /// Serializes the Map Property.

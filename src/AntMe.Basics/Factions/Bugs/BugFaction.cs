@@ -18,16 +18,6 @@ namespace AntMe.Basics.Factions.Bugs
             throw new NotImplementedException();
         }
 
-        protected override void OnUpdate(int round)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnUpdated(int round)
-        {
-            throw new NotImplementedException();
-        }
-
         //    public override void Init()
         //    {
         //        Level.RemovedItem += Level_RemovedItem;

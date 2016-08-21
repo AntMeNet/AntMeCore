@@ -285,17 +285,32 @@ namespace AntMe
         /// <summary>
         /// Internal Call before the Item gets Updated.
         /// </summary>
-        internal virtual void BeforeUpdate()
+        internal virtual void InternalBeforeUpdate()
+        {
+            OnBeforeUpdate();
+            foreach (var property in Properties)
+                property.OnBeforeUpdate();
+        }
+
+        /// <summary>
+        /// Internal Call during Update.
+        /// </summary>
+        internal virtual void InternalUpdate()
         {
             OnUpdate();
+            foreach (var property in Properties)
+                property.OnUpdate();
         }
 
         /// <summary>
         /// Internal Call after the Item gets updated.
         /// </summary>
-        internal virtual void AfterUpdate()
+        internal virtual void InternalAfterUpdate()
         {
-            OnUpdated();
+            OnAfterUpdate();
+            foreach (var property in Properties)
+                property.OnAfterUpdate();
+
         }
 
         #endregion
@@ -332,14 +347,19 @@ namespace AntMe
         protected virtual void OnBeforeState(ItemState state) { }
 
         /// <summary>
-        /// Gets Called before the Item gets updated.
+        /// Gets Called before the Update Process.
+        /// </summary>
+        protected virtual void OnBeforeUpdate() { }
+
+        /// <summary>
+        /// Gets Called during the Item gets updated.
         /// </summary>
         protected virtual void OnUpdate() { }
 
         /// <summary>
         /// Gets called after the Item gets updated.
         /// </summary>
-        protected virtual void OnUpdated() { }
+        protected virtual void OnAfterUpdate() { }
 
         /// <summary>
         /// Gets called before the Item will be removed from the Engine.

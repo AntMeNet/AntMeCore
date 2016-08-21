@@ -73,7 +73,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             };
         }
 
-        protected override void Update(int round)
+        public override void OnUpdate()
         {
             // Visible prüfen
             if (visibleItems.Count > 0)

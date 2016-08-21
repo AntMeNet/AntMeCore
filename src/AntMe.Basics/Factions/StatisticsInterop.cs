@@ -159,7 +159,7 @@ namespace AntMe.Basics.Factions
             //RecentItems = new ReadOnlyDictionary<T, int>(recentItems);
         }
 
-        protected override void Update(int round)
+        public override void OnUpdate()
         {
             //// ColonyInterop Stats updaten
             //int century = Faction.Level.Engine.Round / 100;

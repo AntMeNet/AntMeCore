@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AntMe
 {
@@ -189,7 +191,7 @@ namespace AntMe
             if (slots.Length > MAX_SLOTS)
             {
                 var exception = new ArgumentOutOfRangeException("There are too many Slots");
-                SetMode(SimulationState.InitFailed, exception);
+                SetState(SimulationState.InitFailed, exception);
                 throw exception;
             }
 
@@ -198,7 +200,7 @@ namespace AntMe
             if (map == null)
             {
                 var exception = new NotSupportedException("No Map was created");
-                SetMode(SimulationState.InitFailed, exception);
+                SetState(SimulationState.InitFailed, exception);
                 throw exception;
             }
             map.ValidateMap();
@@ -225,7 +227,7 @@ namespace AntMe
                     if (colors.Contains(slot.Color))
                     {
                         var exception = new NotSupportedException("There are two Players with the same color");
-                        SetMode(SimulationState.InitFailed, exception);
+                        SetState(SimulationState.InitFailed, exception);
                         throw exception;
                     }
                     colors.Add(slot.Color);
@@ -262,21 +264,21 @@ namespace AntMe
             if (playerCount < minPlayer)
             {
                 var exception = new NotSupportedException(string.Format("Not enought player. Requires {0} Player", minPlayer));
-                SetMode(SimulationState.InitFailed, exception);
+                SetState(SimulationState.InitFailed, exception);
                 throw exception;
             }
 
             if (playerCount > maxPlayer)
             {
                 var exception = new NotSupportedException(string.Format("Too many player. Requires a Maximum of {0} Player", maxPlayer));
-                SetMode(SimulationState.InitFailed, exception);
+                SetState(SimulationState.InitFailed, exception);
                 throw exception;
             }
 
             if (highestSlot > map.GetPlayerCount())
             {
                 var exception = new NotSupportedException(string.Format("Too many Slots used. Map has only {0} Slots", map.GetPlayerCount()));
-                SetMode(SimulationState.InitFailed, exception);
+                SetState(SimulationState.InitFailed, exception);
                 throw exception;
             }
 
@@ -296,7 +298,7 @@ namespace AntMe
                 }
                 catch (Exception ex)
                 {
-                    SetMode(SimulationState.InitFailed, ex);
+                    SetState(SimulationState.InitFailed, ex);
                     throw;
                 }
 
@@ -304,7 +306,7 @@ namespace AntMe
                 if (Factions[i] == null)
                 {
                     var exception = new Exception(string.Format("Cound not identify Faction for player {0}.", slots[i].Name));
-                    SetMode(SimulationState.InitFailed, exception);
+                    SetState(SimulationState.InitFailed, exception);
                     throw exception;
                 }
             }
@@ -320,13 +322,24 @@ namespace AntMe
             // Fraktionen ins Spiel einbetten
             for (byte i = 0; i < Factions.Length; i++)
             {
+                if (Factions[i] == null)
+                    continue;
+
                 try
                 {
-                    InitFaction(i, slots[i], Factions[i]);
+                    Factions[i].Init(
+                        i,
+                        slots[i].Team,
+                        slots[i].Name,
+                        slots[i].Color,
+                        new Random(RandomSeed + i + 1),
+                        new Vector2(
+                        (Map.StartPoints[i].X + 0.5f) * Map.CELLSIZE,
+                        (Map.StartPoints[i].Y + 0.5f) * Map.CELLSIZE));
                 }
                 catch (Exception ex)
                 {
-                    SetMode(SimulationState.PlayerException, ex, i);
+                    SetState(SimulationState.PlayerException, ex, i);
                     Factions = null;
                     throw;
                 }
@@ -339,34 +352,12 @@ namespace AntMe
             }
             catch (Exception ex)
             {
-                SetMode(SimulationState.InitFailed, ex);
+                SetState(SimulationState.InitFailed, ex);
                 Factions = null;
                 throw;
             }
 
-            SetMode(SimulationState.Running);
-        }
-
-        /// <summary>
-        ///     Initialisiert die systemeigenen Fraktionstypen (Ameisen, Wanzen, Viren)
-        /// </summary>
-        /// <param name="slotIndex"></param>
-        /// <param name="slot"></param>
-        /// <param name="faction"></param>
-        private void InitFaction(byte slotIndex, LevelSlot slot, Faction faction)
-        {
-            if (faction == null)
-                return;
-
-            faction.Init(
-                slotIndex,
-                slot.Team,
-                slot.Name,
-                slot.Color,
-                new Random(RandomSeed + slotIndex + 1),
-                new Vector2(
-                (Map.StartPoints[slotIndex].X + 0.5f) * Map.CELLSIZE,
-                (Map.StartPoints[slotIndex].Y + 0.5f) * Map.CELLSIZE));
+            SetState(SimulationState.Running);
         }
 
         #endregion
@@ -389,9 +380,19 @@ namespace AntMe
         protected virtual void OnInit() { }
 
         /// <summary>
+        /// This Method will be called before the Simulation updates everything.
+        /// </summary>
+        protected virtual void OnBeforeUpdate() { }
+
+        /// <summary>
         /// This Method will be called after every Simulation Update.
         /// </summary>
         protected virtual void OnUpdate() { }
+
+        /// <summary>
+        /// This Method will be called after the Simulation updated everything.
+        /// </summary>
+        protected virtual void OnAfterUpdate() { }
 
         /// <summary>
         /// This Method will be called for every added Item in the Simulation.
@@ -417,121 +418,203 @@ namespace AntMe
             if (State != SimulationState.Running)
                 throw new NotSupportedException("Level is not running");
 
-            // TODO: try/catch für Programmierfehler
-            // TODO: Watchdog für Laufzeit-Überschreitung
-
+            // Count up Rounds
             Round++;
 
-            // Pre Update Call for every Item
-            foreach (Item item in items)
-                item.BeforeUpdate();
-
-
-            // Post Update Call for all Items
-            foreach (Item item in items)
-                item.AfterUpdate();
-
-            // Add new Items
-            while (insertQueue.Count > 0)
-                PrivateInsertItem(insertQueue.Dequeue());
-
-            // Remove new Items
-            while (removeQueue.Count > 0)
-                PrivateRemoveItem(removeQueue.Dequeue());
-
-            // Inform about another Round
-            OnNextRound?.Invoke(Round);
-
-            // Updates der Factions
-            for (int i = 0; i < MAX_SLOTS; i++)
+            try
             {
-                Factions[i]?.Update(Round);
+                #region System Update (Before)
+
+                // Level & Properties
+                OnBeforeUpdate();
+                foreach (var property in Properties)
+                    property.OnBeforeUpdate();
+
+                // Map & Properties + MapTiles
+                Map.BeforeUpdate(Round);
+
+                // Factions & Properties
+                for (int i = 0; i < MAX_SLOTS; i++)
+                    Factions[i]?.InternalBeforeUpdate();
+
+                // Items
+                foreach (var item in Items)
+                    item.InternalBeforeUpdate();
+
+                #endregion
+
+                #region System Update
+
+                // Level & Properties
+                OnUpdate();
+                foreach (var property in Properties)
+                    property.OnUpdate();
+
+                // Map & MapTiles & Properties
+                Map.Update(Round);
+
+                // Fations & Properties
+                for (int i = 0; i < MAX_SLOTS; i++)
+                    Factions[i]?.InternalUpdate();
+
+                // Items & Properties
+                foreach (var item in Items)
+                    item.InternalUpdate();
+
+                #endregion
+
+                #region Add & Remove
+
+                // Add new Items
+                while (insertQueue.Count > 0)
+                    PrivateInsertItem(insertQueue.Dequeue());
+
+                // Remove new Items
+                while (removeQueue.Count > 0)
+                    PrivateRemoveItem(removeQueue.Dequeue());
+
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                // Handle System Error.
+                SetState(SimulationState.SystemException, ex);
+            }
+
+            CancellationTokenSource ts = new CancellationTokenSource();
+            Task t = Task.Factory.StartNew(() =>
+            {
+                using (ts.Token.Register(Thread.CurrentThread.Abort))
+                {
+                    for (int i = 0; i < MAX_SLOTS; i++)
+                    {
+                        Faction faction = Factions[i];
+                        if (faction == null) continue;
+
+                        try
+                        {
+                            // TODO: Track Time and Stuff
+                            faction.InternalInterop();
+                        }
+                        catch (Exception ex)
+                        {
+                            // TODO: Player fault
+                        }
+                    }
+                }
+            }, ts.Token);
+            if (!t.Wait(1000))
+            {
+                ts.Cancel();
+
+                // -> Round Timeout
+                // Cleanup
             }
 
             try
             {
-                // Update Level Properties
+                #region System Update (After)
+
+                // Level & Properties
+                OnAfterUpdate();
                 foreach (var property in Properties)
-                    property.OnUpdate();
+                    property.OnAfterUpdate();
 
-                OnUpdate();
+                // Map & Properties + MapTiles
+                Map.AfterUpdate(Round);
 
+                // Factions & Properties
+                for (int i = 0; i < MAX_SLOTS; i++)
+                    Factions[i]?.InternalAfterUpdate();
+
+                // Items
+                foreach (var item in Items)
+                    item.InternalAfterUpdate();
+
+                #endregion
+
+                #region Create State
+
+                // Create a new Instance of State
+                if (LatestFrame == null)
+                {
+                    // Base State
+                    LatestFrame = Context.Resolver.CreateLevelState(this);
+
+                    // Map State
+                    LatestFrame.Map = Map.GetState();
+
+                    // Collect Faction States
+                    for (int i = 0; i < MAX_SLOTS; i++)
+                        if (Factions[i] != null)
+                            LatestFrame.Factions.Add(Factions[i].GetFactionState());
+                }
+
+                LatestFrame.Round = Round;
+                LatestFrame.Mode = State;
+
+                // Remove old Items
+                foreach (var item in LatestFrame.Items.ToArray())
+                {
+                    if (!items.Any(i => i.Id == item.Id))
+                        LatestFrame.Items.Remove(item);
+                }
+
+                // Insert new Items
+                foreach (Item item in items)
+                {
+                    ItemState itemState = item.GetState();
+                    if (!LatestFrame.Items.Contains(itemState))
+                        LatestFrame.Items.Add(itemState);
+                }
+
+                #endregion
+
+                // Inform about another Round
+                OnNextRound?.Invoke(Round);
             }
             catch (Exception ex)
             {
-                SetMode(SimulationState.SystemException, ex);
-            }
-
-
-            // Create a new Instance of State
-            if (LatestFrame == null)
-            {
-                // Base State
-                LatestFrame = Context.Resolver.CreateLevelState(this);
-
-                // Map State
-                LatestFrame.Map = Map.GetState();
-
-                // Collect Faction States
-                for (int i = 0; i < MAX_SLOTS; i++)
-                    if (Factions[i] != null)
-                        LatestFrame.Factions.Add(Factions[i].GetFactionState());
-            }
-
-            LatestFrame.Round = Round;
-            LatestFrame.Mode = State;
-
-            // Remove old Items
-            foreach (var item in LatestFrame.Items.ToArray())
-            {
-                if (!items.Any(i => i.Id == item.Id))
-                    LatestFrame.Items.Remove(item);
-            }
-
-            // Insert new Items
-            foreach (Item item in items)
-            {
-                ItemState itemState = item.GetState();
-                if (!LatestFrame.Items.Contains(itemState))
-                    LatestFrame.Items.Add(itemState);
+                // Handle System Error
+                SetState(SimulationState.SystemException, ex);
             }
 
             return LatestFrame;
         }
 
         /// <summary>
-        /// Switches Game Mode and attaches the additional Information.
+        /// Switches Level State and attaches the additional Information.
         /// </summary>
-        /// <param name="mode">New Level Mode</param>
-        private void SetMode(SimulationState mode) { SetMode(mode, null, null); }
+        /// <param name="state">New Level Mode</param>
+        private void SetState(SimulationState state) { SetState(state, null, null); }
 
         /// <summary>
-        /// Switches Game Mode and attaches the additional Information.
+        /// Switches Level State and attaches the additional Information.
         /// </summary>
-        /// <param name="mode">New Level Mode</param>
+        /// <param name="state">New Level Mode</param>
         /// <param name="exception">Optional Exception for <see cref="LastException"/></param>
-        private void SetMode(SimulationState mode, Exception exception) { SetMode(mode, exception, null); }
+        private void SetState(SimulationState state, Exception exception) { SetState(state, exception, null); }
 
         /// <summary>
-        /// Switches Game Mode and attaches the additional Information.
+        /// Switches Level State and attaches the additional Information.
         /// </summary>
-        /// <param name="mode">New Level Mode</param>
+        /// <param name="state">New Level Mode</param>
         /// <param name="slots">Optional Slot Marker for <see cref="LevelModeSlots"/></param>
-        private void SetMode(SimulationState mode, params byte[] slots) { SetMode(mode, null, slots); }
+        private void SetState(SimulationState state, params byte[] slots) { SetState(state, null, slots); }
 
         /// <summary>
-        /// Switches Game Mode and attaches the additional Information.
+        /// Switches Level State and attaches the additional Information.
         /// </summary>
-        /// <param name="mode">New Level Mode</param>
+        /// <param name="state">New Level Mode</param>
         /// <param name="exception">Optional Exception for <see cref="LastException"/></param>
         /// <param name="slots">Optional Slot Marker for <see cref="LevelModeSlots"/></param>
-        private void SetMode(SimulationState mode, Exception exception, params byte[] slots)
+        private void SetState(SimulationState state, Exception exception, params byte[] slots)
         {
             // Replace null with empty Array.
             if (slots == null)
                 slots = new byte[0];
 
-            State = mode;
+            State = state;
             LastException = exception;
             LevelModeSlots = slots;
         }
@@ -563,7 +646,7 @@ namespace AntMe
                     throw new ArgumentException("Slot has no valid Faction");
             }
 
-            SetMode(SimulationState.Finished, slots);
+            SetState(SimulationState.Finished, slots);
         }
 
         /// <summary>
@@ -600,7 +683,7 @@ namespace AntMe
                     throw new ArgumentException("Slot has no valid Faction");
             }
 
-            SetMode(SimulationState.Failed, slots);
+            SetState(SimulationState.Failed, slots);
         }
 
         /// <summary>
@@ -621,7 +704,7 @@ namespace AntMe
             if (State != SimulationState.Running)
                 throw new NotSupportedException("Level is not running");
 
-            SetMode(SimulationState.Draw);
+            SetState(SimulationState.Draw);
         }
 
         #endregion

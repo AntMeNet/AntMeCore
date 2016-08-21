@@ -183,13 +183,33 @@ namespace AntMe
         }
 
         /// <summary>
+        /// Gets the chance to prepare stuff for the Update process.
+        /// </summary>
+        /// <param name="round">Current Round</param>
+        public void BeforeUpdate(int round)
+        {
+            foreach (var property in Properties)
+                property.OnBeforeUpdate(round);
+        }
+
+        /// <summary>
         /// Updates the Map and its Properties.
         /// </summary>
         /// <param name="round">Current Round</param>
         public void Update(int round)
         {
             foreach (var property in Properties)
-                property.Update(round);
+                property.OnUpdate(round);
+        }
+
+        /// <summary>
+        /// Gets a call after all Updates.
+        /// </summary>
+        /// <param name="round">Current Round</param>
+        public void AfterUpdate(int round)
+        {
+            foreach (var property in Properties)
+                property.OnAfterUpdate(round);
         }
 
         /// <summary>

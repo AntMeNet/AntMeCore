@@ -23,5 +23,20 @@
         /// Gets called by the Engine during Faction Initialization.
         /// </summary>
         public virtual void Init() { }
+
+        /// <summary>
+        /// Gets a call before the Update Process.
+        /// </summary>
+        public virtual void OnBeforeUpdate() { }
+
+        /// <summary>
+        /// Gets a call during the Update Process.
+        /// </summary>
+        public virtual void OnUpdate() { }
+
+        /// <summary>
+        /// Gets a call after the Update Process.
+        /// </summary>
+        public virtual void OnAfterUpdate() { }
     }
 }

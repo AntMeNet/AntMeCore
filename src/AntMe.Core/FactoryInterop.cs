@@ -25,7 +25,6 @@ namespace AntMe
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="context">Reference to the Simulation Context</param>
         /// <param name="faction">Instance of the related Faction</param>
         public FactoryInterop(Faction faction)
         {
@@ -42,13 +41,11 @@ namespace AntMe
         /// <summary>
         /// Updates the current Interop.
         /// </summary>
-        /// <param name="round">Current Simulation Round</param>
-        protected override void Update(int round)
+        protected override void OnUpdate()
         {
-            Round = round;
-            GameTime = TimeSpan.FromSeconds((double)round / Level.FRAMES_PER_SECOND);
-
-            base.Update(round);
+            Round = Faction.Level.Round;
+            GameTime = TimeSpan.FromSeconds((double)Round / Level.FRAMES_PER_SECOND);
+            base.OnUpdate();
         }
     }
 }
