@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AntMe.Serialization
 {
-    internal sealed class LevelStateSerializerV2 : ILevelStateSerializer
+    internal sealed class FrameSerializerV2 : IFrameSerializer
     {
         private const byte VERSION = 2;
 
@@ -26,7 +26,7 @@ namespace AntMe.Serialization
         private List<byte> knownFactions = new List<byte>();
         private List<ItemState> knownItems = new List<ItemState>();
 
-        public LevelStateSerializerV2(SimulationContext context)
+        public FrameSerializerV2(SimulationContext context)
         {
             this.context = context;
         }
@@ -179,7 +179,7 @@ namespace AntMe.Serialization
             }
 
             // Finalize Stream
-            writer.Write((byte)LevelStateSerializerPackageV2.FrameEnd);
+            writer.Write((byte)FrameSerializerPackageV2.FrameEnd);
         }
 
         private void DoKeyframe()
@@ -214,9 +214,9 @@ namespace AntMe.Serialization
                 itemTypes,
                 item.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.ItemTypeInsert);
+                FrameSerializerPackageV2.ItemTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.FactionItemInsert);
+            writer.Write((byte)FrameSerializerPackageV2.FactionItemInsert);
             writer.Write(item.Id);
             writer.Write(typeIndex);
             SerializeFirst(writer, item);
@@ -239,9 +239,9 @@ namespace AntMe.Serialization
                 itemPropertyTypes,
                 property.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.ItemPropertyTypeInsert);
+                FrameSerializerPackageV2.ItemPropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.ItemPropertyUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.ItemPropertyUpdate);
             writer.Write(id);
             writer.Write(typeIndex);
             SerializeUpdate(writer, property);
@@ -264,9 +264,9 @@ namespace AntMe.Serialization
                 itemPropertyTypes, 
                 property.GetType(), 
                 writer, 
-                LevelStateSerializerPackageV2.ItemPropertyTypeInsert);
+                FrameSerializerPackageV2.ItemPropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.ItemPropertyInsert);
+            writer.Write((byte)FrameSerializerPackageV2.ItemPropertyInsert);
             writer.Write(id);
             writer.Write(typeIndex);
             SerializeFirst(writer, property);
@@ -281,7 +281,7 @@ namespace AntMe.Serialization
         /// <param name="id">Id</param>
         private void DoItemDelete(BinaryWriter writer, int id)
         {
-            writer.Write((byte)LevelStateSerializerPackageV2.ItemDelete);
+            writer.Write((byte)FrameSerializerPackageV2.ItemDelete);
             writer.Write(id);
         }
 
@@ -296,7 +296,7 @@ namespace AntMe.Serialization
         /// <param name="item">Current Item</param>
         private void DoItemUpdate(BinaryWriter writer, ItemState item)
         {
-            writer.Write((byte)LevelStateSerializerPackageV2.ItemUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.ItemUpdate);
             writer.Write(item.Id);
             SerializeUpdate(writer, item);
         }
@@ -317,9 +317,9 @@ namespace AntMe.Serialization
                 itemTypes,
                 item.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.ItemTypeInsert);
+                FrameSerializerPackageV2.ItemTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.ItemInsert);
+            writer.Write((byte)FrameSerializerPackageV2.ItemInsert);
             writer.Write(item.Id);
             writer.Write(typeIndex);
             SerializeFirst(writer, item);
@@ -331,9 +331,9 @@ namespace AntMe.Serialization
                 factionPropertyTypes,
                 property.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.FactionPropertyTypeInsert);
+                FrameSerializerPackageV2.FactionPropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.FactionPropertyUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.FactionPropertyUpdate);
             writer.Write(slotIndex);
             writer.Write(typeIndex);
             SerializeUpdate(writer, property);
@@ -345,9 +345,9 @@ namespace AntMe.Serialization
                 factionPropertyTypes,
                 property.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.FactionPropertyTypeInsert);
+                FrameSerializerPackageV2.FactionPropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.FactionPropertyInsert);
+            writer.Write((byte)FrameSerializerPackageV2.FactionPropertyInsert);
             writer.Write(slotIndex);
             writer.Write(typeIndex);
             SerializeFirst(writer, property);
@@ -364,7 +364,7 @@ namespace AntMe.Serialization
         /// <param name="faction">Current Faction</param>
         private void DoFactionUpdate(BinaryWriter writer, FactionState faction)
         {
-            writer.Write((byte)LevelStateSerializerPackageV2.FactionUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.FactionUpdate);
             writer.Write(faction.SlotIndex);
             SerializeUpdate(writer, faction);
         }
@@ -385,9 +385,9 @@ namespace AntMe.Serialization
                 factionTypes,
                 faction.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.FactionTypeInsert);
+                FrameSerializerPackageV2.FactionTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.FactionInsert);
+            writer.Write((byte)FrameSerializerPackageV2.FactionInsert);
             writer.Write(faction.SlotIndex);
             writer.Write(typeIndex);
             SerializeFirst(writer, faction);
@@ -407,7 +407,7 @@ namespace AntMe.Serialization
         /// <param name="y">Position Y</param>
         private void DoMaterialUpdate(BinaryWriter writer, MapMaterial material, byte x, byte y)
         {
-            writer.Write((byte)LevelStateSerializerPackageV2.MaterialUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.MaterialUpdate);
             writer.Write(x);
             writer.Write(y);
             SerializeUpdate(writer, material);
@@ -432,9 +432,9 @@ namespace AntMe.Serialization
                 materialTypes,
                 material.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.MaterialTypeInsert);
+                FrameSerializerPackageV2.MaterialTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.MaterialInsert);
+            writer.Write((byte)FrameSerializerPackageV2.MaterialInsert);
             writer.Write(x);
             writer.Write(y);
             writer.Write(typeIndex);
@@ -460,9 +460,9 @@ namespace AntMe.Serialization
                 mapTilePropertyTypes,
                 property.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.MapTilePropertyTypeInsert);
+                FrameSerializerPackageV2.MapTilePropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.MapTilePropertyUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.MapTilePropertyUpdate);
             writer.Write(x);
             writer.Write(y);
             writer.Write(typeIndex);
@@ -488,9 +488,9 @@ namespace AntMe.Serialization
                 mapTilePropertyTypes,
                 property.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.MapTilePropertyTypeInsert);
+                FrameSerializerPackageV2.MapTilePropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.MapTilePropertyInsert);
+            writer.Write((byte)FrameSerializerPackageV2.MapTilePropertyInsert);
             writer.Write(x);
             writer.Write(y);
             writer.Write(typeIndex);
@@ -515,9 +515,9 @@ namespace AntMe.Serialization
                 mapTileTypes,
                 mapTile.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.MapTileTypeInsert);
+                FrameSerializerPackageV2.MapTileTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.MapTileUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.MapTileUpdate);
             writer.Write(x);
             writer.Write(y);
             SerializeUpdate(writer, mapTile);
@@ -542,9 +542,9 @@ namespace AntMe.Serialization
                 mapTileTypes,
                 mapTile.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.MapTileTypeInsert);
+                FrameSerializerPackageV2.MapTileTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.MapTileInsert);
+            writer.Write((byte)FrameSerializerPackageV2.MapTileInsert);
             writer.Write(x);
             writer.Write(y);
             writer.Write(typeIndex);
@@ -566,9 +566,9 @@ namespace AntMe.Serialization
                 mapPropertyTypes,
                 property.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.MapPropertyTypeInsert);
+                FrameSerializerPackageV2.MapPropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.MapPropertyUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.MapPropertyUpdate);
             writer.Write(typeIndex);
             SerializeUpdate(writer, property);
         }
@@ -588,9 +588,9 @@ namespace AntMe.Serialization
                 mapPropertyTypes,
                 property.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.MapPropertyTypeInsert);
+                FrameSerializerPackageV2.MapPropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.MapPropertyInsert);
+            writer.Write((byte)FrameSerializerPackageV2.MapPropertyInsert);
             writer.Write(typeIndex);
             SerializeFirst(writer, property);
         }
@@ -605,7 +605,7 @@ namespace AntMe.Serialization
         /// <param name="map">Current Map</param>
         private void DoMapUpdate(BinaryWriter writer, MapState map)
         {
-            writer.Write((byte)LevelStateSerializerPackageV2.MapUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.MapUpdate);
             SerializeUpdate(writer, map);
         }
 
@@ -619,7 +619,7 @@ namespace AntMe.Serialization
         /// <param name="map">Current Map</param>
         private void DoMapInsert(BinaryWriter writer, MapState map)
         {
-            writer.Write((byte)LevelStateSerializerPackageV2.MapInsert);
+            writer.Write((byte)FrameSerializerPackageV2.MapInsert);
             SerializeFirst(writer, map);
         }
 
@@ -638,9 +638,9 @@ namespace AntMe.Serialization
                 levelPropertyTypes,
                 property.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.LevelPropertyTypeInsert);
+                FrameSerializerPackageV2.LevelPropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.LevelPropertyUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.LevelPropertyUpdate);
             writer.Write(typeIndex);
             SerializeUpdate(writer, property);
         }
@@ -660,9 +660,9 @@ namespace AntMe.Serialization
                 levelPropertyTypes,
                 property.GetType(),
                 writer,
-                LevelStateSerializerPackageV2.LevelPropertyTypeInsert);
+                FrameSerializerPackageV2.LevelPropertyTypeInsert);
 
-            writer.Write((byte)LevelStateSerializerPackageV2.LevelPropertyInsert);
+            writer.Write((byte)FrameSerializerPackageV2.LevelPropertyInsert);
             writer.Write(typeIndex);
             SerializeFirst(writer, property);
         }
@@ -677,7 +677,7 @@ namespace AntMe.Serialization
         /// <param name="state">Current State</param>
         private void DoLevelUpdate(BinaryWriter writer, Frame state)
         {
-            writer.Write((byte)LevelStateSerializerPackageV2.LevelUpdate);
+            writer.Write((byte)FrameSerializerPackageV2.LevelUpdate);
             SerializeUpdate(writer, state);
         }
 
@@ -691,7 +691,7 @@ namespace AntMe.Serialization
         /// <param name="state">Current State</param>
         private void DoLevelInsert(BinaryWriter writer, Frame state)
         {
-            writer.Write((byte)LevelStateSerializerPackageV2.LevelInsert);
+            writer.Write((byte)FrameSerializerPackageV2.LevelInsert);
             SerializeFirst(writer, state);
         }
 
@@ -706,7 +706,7 @@ namespace AntMe.Serialization
         /// <param name="writer">Output Stream</param>
         /// <param name="insertCommand">Insert Command</param>
         /// <returns>Index of Type in List</returns>
-        private ushort GetIndex(List<Type> list, Type type, BinaryWriter writer, LevelStateSerializerPackageV2 insertCommand)
+        private ushort GetIndex(List<Type> list, Type type, BinaryWriter writer, FrameSerializerPackageV2 insertCommand)
         {
             if (!list.Contains(type))
             {

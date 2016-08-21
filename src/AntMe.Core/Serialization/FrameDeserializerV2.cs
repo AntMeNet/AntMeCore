@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AntMe.Serialization
 {
-    internal sealed class LevelStateDeserializerV2 : ILevelStateDeserializer
+    internal sealed class FrameDeserializerV2 : IFrameDeserializer
     {
         private const byte VERSION = 2;
 
@@ -23,7 +23,7 @@ namespace AntMe.Serialization
         private List<Type> itemTypes = new List<Type>();
         private List<Type> itemPropertyTypes = new List<Type>();
 
-        public LevelStateDeserializerV2(SimulationContext context)
+        public FrameDeserializerV2(SimulationContext context)
         {
             this.context = context;
         }
@@ -35,48 +35,48 @@ namespace AntMe.Serialization
             // In case of a Keyframe Delete known Stuff
             if (keyframe) DoKeyframe();
 
-            LevelStateSerializerPackageV2 next = (LevelStateSerializerPackageV2)reader.ReadByte();
-            while (next != LevelStateSerializerPackageV2.FrameEnd)
+            FrameSerializerPackageV2 next = (FrameSerializerPackageV2)reader.ReadByte();
+            while (next != FrameSerializerPackageV2.FrameEnd)
             {
                 switch (next)
                 {
-                    case LevelStateSerializerPackageV2.LevelInsert: DoLevelInsert(reader); break;
-                    case LevelStateSerializerPackageV2.LevelUpdate: DoLevelUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.LevelPropertyInsert: DoLevelPropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.LevelPropertyUpdate: DoLevelPropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.LevelPropertyTypeInsert: DoLevelPropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapInsert: DoMapInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapUpdate: DoMapUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MapPropertyInsert: DoMapPropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapPropertyUpdate: DoMapPropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MapPropertyTypeInsert: DoMapPropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapTileInsert: DoMapTileInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapTileUpdate: DoMapTileUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MapTileTypeInsert: DoMapTileTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapTilePropertyInsert: DoMapTilePropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapTilePropertyUpdate: DoMapTilePropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MapTilePropertyTypeInsert: DoMapTilePropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MaterialInsert: DoMaterialInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MaterialUpdate: DoMaterialUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MaterialTypeInsert: DoMaterialTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionInsert: DoFactionInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionUpdate: DoFactionUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.FactionTypeInsert: DoFactionTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionPropertyInsert: DoFactionPropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionPropertyUpdate: DoFactionPropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.FactionPropertyTypeInsert: DoFactionPropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.ItemInsert: DoItemInsert(reader); break;
-                    case LevelStateSerializerPackageV2.ItemUpdate: DoItemUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.ItemDelete: DoItemDelete(reader); break;
-                    case LevelStateSerializerPackageV2.ItemTypeInsert: DoItemTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.ItemPropertyInsert: DoItemPropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.ItemPropertyUpdate: DoItemPropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.ItemPropertyTypeInsert: DoItemPropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionItemInsert: DoFactionItemInsert(reader); break;
+                    case FrameSerializerPackageV2.LevelInsert: DoLevelInsert(reader); break;
+                    case FrameSerializerPackageV2.LevelUpdate: DoLevelUpdate(reader); break;
+                    case FrameSerializerPackageV2.LevelPropertyInsert: DoLevelPropertyInsert(reader); break;
+                    case FrameSerializerPackageV2.LevelPropertyUpdate: DoLevelPropertyUpdate(reader); break;
+                    case FrameSerializerPackageV2.LevelPropertyTypeInsert: DoLevelPropertyTypeInsert(reader); break;
+                    case FrameSerializerPackageV2.MapInsert: DoMapInsert(reader); break;
+                    case FrameSerializerPackageV2.MapUpdate: DoMapUpdate(reader); break;
+                    case FrameSerializerPackageV2.MapPropertyInsert: DoMapPropertyInsert(reader); break;
+                    case FrameSerializerPackageV2.MapPropertyUpdate: DoMapPropertyUpdate(reader); break;
+                    case FrameSerializerPackageV2.MapPropertyTypeInsert: DoMapPropertyTypeInsert(reader); break;
+                    case FrameSerializerPackageV2.MapTileInsert: DoMapTileInsert(reader); break;
+                    case FrameSerializerPackageV2.MapTileUpdate: DoMapTileUpdate(reader); break;
+                    case FrameSerializerPackageV2.MapTileTypeInsert: DoMapTileTypeInsert(reader); break;
+                    case FrameSerializerPackageV2.MapTilePropertyInsert: DoMapTilePropertyInsert(reader); break;
+                    case FrameSerializerPackageV2.MapTilePropertyUpdate: DoMapTilePropertyUpdate(reader); break;
+                    case FrameSerializerPackageV2.MapTilePropertyTypeInsert: DoMapTilePropertyTypeInsert(reader); break;
+                    case FrameSerializerPackageV2.MaterialInsert: DoMaterialInsert(reader); break;
+                    case FrameSerializerPackageV2.MaterialUpdate: DoMaterialUpdate(reader); break;
+                    case FrameSerializerPackageV2.MaterialTypeInsert: DoMaterialTypeInsert(reader); break;
+                    case FrameSerializerPackageV2.FactionInsert: DoFactionInsert(reader); break;
+                    case FrameSerializerPackageV2.FactionUpdate: DoFactionUpdate(reader); break;
+                    case FrameSerializerPackageV2.FactionTypeInsert: DoFactionTypeInsert(reader); break;
+                    case FrameSerializerPackageV2.FactionPropertyInsert: DoFactionPropertyInsert(reader); break;
+                    case FrameSerializerPackageV2.FactionPropertyUpdate: DoFactionPropertyUpdate(reader); break;
+                    case FrameSerializerPackageV2.FactionPropertyTypeInsert: DoFactionPropertyTypeInsert(reader); break;
+                    case FrameSerializerPackageV2.ItemInsert: DoItemInsert(reader); break;
+                    case FrameSerializerPackageV2.ItemUpdate: DoItemUpdate(reader); break;
+                    case FrameSerializerPackageV2.ItemDelete: DoItemDelete(reader); break;
+                    case FrameSerializerPackageV2.ItemTypeInsert: DoItemTypeInsert(reader); break;
+                    case FrameSerializerPackageV2.ItemPropertyInsert: DoItemPropertyInsert(reader); break;
+                    case FrameSerializerPackageV2.ItemPropertyUpdate: DoItemPropertyUpdate(reader); break;
+                    case FrameSerializerPackageV2.ItemPropertyTypeInsert: DoItemPropertyTypeInsert(reader); break;
+                    case FrameSerializerPackageV2.FactionItemInsert: DoFactionItemInsert(reader); break;
                     default: throw new NotSupportedException("Invalid Package Type");
                 }
 
-                next = (LevelStateSerializerPackageV2)reader.ReadByte();
+                next = (FrameSerializerPackageV2)reader.ReadByte();
             }
 
             return latest;

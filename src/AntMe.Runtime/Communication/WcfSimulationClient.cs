@@ -16,7 +16,7 @@ namespace AntMe.Runtime.Communication
         private int masterId = -1;
         private List<UserProfile> users = new List<UserProfile>();
         private List<Slot> slots = new List<Slot>(AntMe.Level.MAX_SLOTS);
-        private LevelStateByteSerializer _deserializer;
+        private FrameToByteSerializer _deserializer;
         private SimulationState _serverState = SimulationState.Stopped;
         private Frame _currentState;
         private LevelInfo _level;
@@ -651,7 +651,7 @@ namespace AntMe.Runtime.Communication
             if (_deserializer == null)
             {
                 SimulationContext context = ExtensionLoader.CreateSimulationContext();
-                _deserializer = new LevelStateByteSerializer(context);
+                _deserializer = new FrameToByteSerializer(context);
             }
 
             // Set latest Main State

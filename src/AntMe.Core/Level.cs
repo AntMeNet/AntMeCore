@@ -349,6 +349,8 @@ namespace AntMe
             try
             {
                 OnInit();
+                foreach (var property in Properties)
+                    property.OnInit();
             }
             catch (Exception ex)
             {
@@ -479,14 +481,15 @@ namespace AntMe
             {
                 // Handle System Error.
                 SetState(SimulationState.SystemException, ex);
+                throw;
             }
 
             CancellationTokenSource ts = new CancellationTokenSource();
-            Task t = Task.Factory.StartNew(() =>
+            Task<bool> t = Task.Factory.StartNew<bool>(() =>
             {
                 using (ts.Token.Register(Thread.CurrentThread.Abort))
                 {
-                    for (int i = 0; i < MAX_SLOTS; i++)
+                    for (byte i = 0; i < MAX_SLOTS; i++)
                     {
                         Faction faction = Factions[i];
                         if (faction == null) continue;
@@ -499,8 +502,12 @@ namespace AntMe
                         catch (Exception ex)
                         {
                             // TODO: Player fault
+                            SetState(SimulationState.PlayerException, ex, i);
+                            return false;
                         }
                     }
+
+                    return true;
                 }
             }, ts.Token);
             if (!t.Wait(1000))
@@ -509,6 +516,14 @@ namespace AntMe
 
                 // -> Round Timeout
                 // Cleanup
+                SetState(SimulationState.PlayerException, new TimeoutException());
+                return null;
+            }
+
+            // Cleanup if there was an Exception during Interop.
+            if (!t.Result)
+            {
+                return null;
             }
 
             try
@@ -571,12 +586,13 @@ namespace AntMe
                 #endregion
 
                 // Inform about another Round
-                OnNextRound?.Invoke(Round);
+                RoundChanged?.Invoke(Round);
             }
             catch (Exception ex)
             {
                 // Handle System Error
                 SetState(SimulationState.SystemException, ex);
+                throw;
             }
 
             return LatestFrame;
@@ -728,9 +744,8 @@ namespace AntMe
             if (item == null)
                 throw new ArgumentNullException();
 
-            // Engine must be running
-            if (State != SimulationState.Running)
-                throw new NotSupportedException("Engine must be in ready- or update-mode");
+            if (State != SimulationState.Running && State != SimulationState.Uninit)
+                throw new NotSupportedException("Level is not ready to add Items");
 
             // Item can't be already Part of an Engine
             if (items.Contains(item) || insertQueue.Contains(item))
@@ -749,9 +764,8 @@ namespace AntMe
             if (item == null)
                 throw new ArgumentNullException();
 
-            // Engine must be running
-            if (State != SimulationState.Running)
-                throw new NotSupportedException("Engine is not in ready- or update-Mode");
+            if (State != SimulationState.Running && State != SimulationState.Uninit)
+                throw new NotSupportedException("Level is not ready to remove Items");
 
             // Item must be Part of the Simulation
             if (!items.Contains(item) && !removeQueue.Contains(item))
@@ -768,7 +782,7 @@ namespace AntMe
         /// <summary>
         /// Signal for another Round.
         /// </summary>
-        public event ValueUpdate<int> OnNextRound;
+        public event ValueUpdate<int> RoundChanged;
 
         #endregion
 

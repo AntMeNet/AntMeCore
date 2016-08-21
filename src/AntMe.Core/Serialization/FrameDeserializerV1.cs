@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-using static AntMe.Serialization.LevelStateSerializerV1;
+using static AntMe.Serialization.FrameSerializerV1;
 
 namespace AntMe.Serialization
 {
     [Obsolete]
-    internal sealed class LevelStateDeserializerV1 : ILevelStateDeserializer
+    internal sealed class FrameDeserializerV1 : IFrameDeserializer
     {
         private readonly MemoryStream _stream;
         private readonly BinaryReader _reader;
@@ -30,7 +30,7 @@ namespace AntMe.Serialization
         /// <summary>
         /// Neue Instanz eines State Deserializers.
         /// </summary>
-        public LevelStateDeserializerV1()
+        public FrameDeserializerV1()
         {
             _stream = new MemoryStream();
             _reader = new BinaryReader(_stream, Encoding.UTF8);

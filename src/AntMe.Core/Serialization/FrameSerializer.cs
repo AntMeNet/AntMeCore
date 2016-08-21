@@ -8,7 +8,7 @@ namespace AntMe.Serialization
     /// <summary>
     /// Default Serializer for the AntVideo Format.
     /// </summary>
-    public sealed class LevelStateSerializer
+    public sealed class FrameSerializer
     {
         private const string STREAM_HELLOMESSAGE = "AntMe! Replay";
 
@@ -20,9 +20,9 @@ namespace AntMe.Serialization
 
         private SimulationContext context;
 
-        private ILevelStateSerializer serializer;
+        private IFrameSerializer serializer;
 
-        private ILevelStateDeserializer deserializer;
+        private IFrameDeserializer deserializer;
 
         /// <summary>
         /// Returns the current Stream Version.
@@ -34,7 +34,7 @@ namespace AntMe.Serialization
         /// </summary>
         /// <param name="stream">Input- or Output-Stream</param>
         /// <param name="context">Simulation Context</param>
-        public LevelStateSerializer(Stream stream, SimulationContext context)
+        public FrameSerializer(Stream stream, SimulationContext context)
         {
             // Stream must be available
             if (stream == null)
@@ -97,7 +97,7 @@ namespace AntMe.Serialization
 
                 switch (version.Value)
                 {
-                    case 2: serializer = new LevelStateSerializerV2(context); break;
+                    case 2: serializer = new FrameSerializerV2(context); break;
                     default:
                         throw new ArgumentException("Not supported Stream Version");
                 }
@@ -166,7 +166,7 @@ namespace AntMe.Serialization
                 byte version = (byte)stream.ReadByte();
                 switch (version)
                 {
-                    case 2: deserializer = new LevelStateDeserializerV2(context); break;
+                    case 2: deserializer = new FrameDeserializerV2(context); break;
                     default:
                         throw new NotSupportedException("Invalid Version Number");
                 }

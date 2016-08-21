@@ -3,7 +3,7 @@
     /// <summary>
     /// List of Package Types within a Frame.
     /// </summary>
-    internal enum LevelStateSerializerPackageV2
+    internal enum FrameSerializerPackageV2
     {
         // 0   >  Type (0) or Instance (1)
         // 1   >  Base (0) or Property (1)

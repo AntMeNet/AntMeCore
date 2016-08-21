@@ -7,7 +7,7 @@ using System.Text;
 namespace AntMe.Serialization
 {
     [Obsolete]
-    internal sealed class LevelStateSerializerV1 : ILevelStateSerializer
+    internal sealed class FrameSerializerV1 : IFrameSerializer
     {
         private readonly MemoryStream _stream;
         private readonly BinaryWriter _writer;
@@ -29,7 +29,7 @@ namespace AntMe.Serialization
         /// <summary>
         /// neue Instanz eines State Serializers.
         /// </summary>
-        public LevelStateSerializerV1()
+        public FrameSerializerV1()
         {
             _stream = new MemoryStream();
             _writer = new BinaryWriter(_stream, Encoding.UTF8);

@@ -20,14 +20,6 @@
         }
 
         /// <summary>
-        /// Gets called before Level Initialization. Allows to set up final Stuff like
-        /// - modify Level Settings
-        /// - modify Faction/Slot Settings
-        /// - modify Engine Extensions
-        /// </summary>
-        public virtual void DoSettings() { }
-
-        /// <summary>
         /// Gets called during Level Initialization. Allows to set up Level Design.
         /// - adding Trigger
         /// - Generate Initial Items

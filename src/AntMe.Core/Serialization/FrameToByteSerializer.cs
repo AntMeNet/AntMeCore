@@ -6,19 +6,19 @@ namespace AntMe.Serialization
     /// <summary>
     /// Specialized Level State Serializer to handle Frames as Byte[].
     /// </summary>
-    public sealed class LevelStateByteSerializer : IDisposable
+    public sealed class FrameToByteSerializer : IDisposable
     {
         private MemoryStream stream;
 
-        private LevelStateSerializer serializer;
+        private FrameSerializer serializer;
 
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public LevelStateByteSerializer(SimulationContext context)
+        public FrameToByteSerializer(SimulationContext context)
         {
             stream = new MemoryStream();
-            serializer = new LevelStateSerializer(stream, context);
+            serializer = new FrameSerializer(stream, context);
         }
 
         /// <summary>

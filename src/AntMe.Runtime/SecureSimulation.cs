@@ -13,7 +13,7 @@ namespace AntMe.Runtime
     {
         private AppDomain _appDomain;
         private SecureHost _host;
-        private LevelStateByteSerializer _deserializer;
+        private FrameToByteSerializer _deserializer;
         private Frame _lastState;
         private string[] extensionPaths;
 
@@ -67,7 +67,7 @@ namespace AntMe.Runtime
             }
 
             SimulationContext context = ExtensionLoader.CreateSimulationContext();
-            _deserializer = new LevelStateByteSerializer(context);
+            _deserializer = new FrameToByteSerializer(context);
         }
 
         public Frame NextState()

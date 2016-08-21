@@ -8,7 +8,7 @@ namespace AntMe.Runtime
     internal sealed class SecureHost : MarshalByRefObject
     {
         private SimulationContext _context;
-        private LevelStateByteSerializer _serializer;
+        private FrameToByteSerializer _serializer;
         private Level _level;
 
         public void Setup(string[] extensionPaths, Setup settings)
@@ -43,7 +43,7 @@ namespace AntMe.Runtime
 
             // Create Serializer
             _context = ExtensionLoader.CreateSimulationContext();
-            _serializer = new LevelStateByteSerializer(_context);
+            _serializer = new FrameToByteSerializer(_context);
 
             // TODO: this is for debug
             AppDomain.CurrentDomain.AssemblyLoad += (x, y) => { };

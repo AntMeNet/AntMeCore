@@ -6,7 +6,7 @@ namespace AntMe.Serialization
     /// <summary>
     /// Interface for all Versions of a LevelState Deserializer.
     /// </summary>
-    internal interface ILevelStateDeserializer : IDisposable
+    internal interface IFrameDeserializer : IDisposable
     {
         /// <summary>
         /// Deserializes the next Frame of the Stream.

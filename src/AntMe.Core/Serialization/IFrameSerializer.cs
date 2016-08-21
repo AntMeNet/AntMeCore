@@ -6,7 +6,7 @@ namespace AntMe.Serialization
     /// <summary>
     /// Interface for all Versions of a LevelState Serializer.
     /// </summary>
-    internal interface ILevelStateSerializer : IDisposable
+    internal interface IFrameSerializer : IDisposable
     {
         /// <summary>
         /// Serializes the next State.
