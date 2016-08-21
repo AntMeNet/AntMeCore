@@ -14,7 +14,7 @@ namespace CoreTestClient
     internal sealed partial class RenderControl : UserControl
     {
         private ISimulationClient simulation;
-        private LevelState currentState;
+        private Frame currentState;
 
         public RenderControl()
         {
@@ -50,7 +50,7 @@ namespace CoreTestClient
             }
         }
 
-        private void Simulation_OnSimulationState(ISimulationClient client, LevelState levelState)
+        private void Simulation_OnSimulationState(ISimulationClient client, Frame levelState)
         {
             if (currentState == null)
             {
@@ -77,7 +77,7 @@ namespace CoreTestClient
             scene.Invalidate();
 
             // Update Infos
-            LevelState state = currentState;
+            Frame state = currentState;
             if (state != null)
             {
                 itemLabel.Text = "Items: " + state.Items.Count;
@@ -128,7 +128,7 @@ namespace CoreTestClient
 
         private void UpdateTree()
         {
-            LevelState state = currentState;
+            Frame state = currentState;
 
             if (state != null)
             {

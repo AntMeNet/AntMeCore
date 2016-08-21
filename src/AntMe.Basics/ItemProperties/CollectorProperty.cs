@@ -50,11 +50,11 @@ namespace AntMe.Basics.ItemProperties
                 throw new NotSupportedException("Not supported Collectable Property");
 
             // Ensure both Items are Part of the same Engine
-            if (Item.Engine == null)
+            if (Item.Level == null)
                 throw new NotSupportedException("Collector is not part of the Engine");
-            if (property.Item.Engine == null)
+            if (property.Item.Level == null)
                 throw new NotSupportedException("Collectable is not part of the Engine");
-            if (Item.Engine != property.Item.Engine)
+            if (Item.Level != property.Item.Level)
                 throw new NotSupportedException("Collector and Collectable are not part of the same Engine");
 
             // Check the right distance
@@ -86,11 +86,11 @@ namespace AntMe.Basics.ItemProperties
                 throw new NotSupportedException("Not supported Collectable Property");
 
             // Ensure both Items are Part of the same Engine
-            if (Item.Engine == null)
+            if (Item.Level == null)
                 throw new NotSupportedException("Collector is not part of the Engine");
-            if (property.Item.Engine == null)
+            if (property.Item.Level == null)
                 throw new NotSupportedException("Collectable is not part of the Engine");
-            if (Item.Engine != property.Item.Engine)
+            if (Item.Level != property.Item.Level)
                 throw new NotSupportedException("Collector and Collectable are not part of the same Engine");
 
             // Distanz überprüfen

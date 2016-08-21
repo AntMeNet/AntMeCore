@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AntMe.Basics.EngineProperties
+namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
     /// Groups Items from a Carrier/Portable-Connection.
@@ -40,7 +40,7 @@ namespace AntMe.Basics.EngineProperties
             carrier = item.GetProperty<CarrierProperty>();
             portable = item.GetProperty<PortableProperty>();
 
-            map = item.Engine.Map;
+            map = item.Level.Map;
 
             mapSize = map.GetSize();
 

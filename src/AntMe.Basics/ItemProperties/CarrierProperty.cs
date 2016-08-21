@@ -67,9 +67,9 @@ namespace AntMe.Basics.ItemProperties
             }
 
             // Check if the new load is part of the simulation
-            if (Item.Engine == null)
+            if (Item.Level == null)
                 throw new NotSupportedException("Carrier is not Part of the Simulation");
-            if (item.Item.Engine == null || item.Item.Engine != Item.Engine)
+            if (item.Item.Level == null || item.Item.Level != Item.Level)
                 throw new NotSupportedException("Portable is not Part of the same Simulation");
 
             // Check if the load is not the carrier

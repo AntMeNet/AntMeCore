@@ -58,7 +58,7 @@ namespace AntMe.Runtime.EventLog
         /// Führt ein Update des Logs durch.
         /// </summary>
         /// <param name="state"></param>
-        public void Update(LevelState state)
+        public void Update(Frame state)
         {
             foreach (var observer in observers)
                 observer.Update(state);

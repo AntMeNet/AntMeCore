@@ -9,7 +9,7 @@ namespace AntMe.Runtime.EventLog
     {
         private List<int> ids = new List<int>();
 
-        public void Update(LevelState state)
+        public void Update(Frame state)
         {
             List<int> updated = new List<int>();
 

@@ -23,7 +23,7 @@ namespace AntMe.Basics.Items
                 {
                     // Sollten die Hitpoints unter 0 kommen, ist der Ameisenhügel zerstört
                     if (value <= 0)
-                        Engine.RemoveItem(this);
+                        Level.Remove(this);
                 };
             }
         }

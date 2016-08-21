@@ -62,9 +62,9 @@ namespace AntMe.Runtime.Communication
             simulation.Init(seed, levelSlots);
         }
 
-        protected override LevelState UpdateSimulation()
+        protected override Frame UpdateSimulation()
         {
-            return simulation.NextState();
+            return simulation.NextFrame();
         }
 
         protected override void FinalizeSimulation()

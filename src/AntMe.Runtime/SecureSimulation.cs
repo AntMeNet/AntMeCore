@@ -14,7 +14,7 @@ namespace AntMe.Runtime
         private AppDomain _appDomain;
         private SecureHost _host;
         private LevelStateByteSerializer _deserializer;
-        private LevelState _lastState;
+        private Frame _lastState;
         private string[] extensionPaths;
 
 
@@ -70,7 +70,7 @@ namespace AntMe.Runtime
             _deserializer = new LevelStateByteSerializer(context);
         }
 
-        public LevelState NextState()
+        public Frame NextState()
         {
             // Check for right State
             if (State != SimulationState.Running)
@@ -79,7 +79,7 @@ namespace AntMe.Runtime
             try
             {
                 byte[] rawData = _host.NextFrame();
-                LevelState state = _deserializer.Deserialize(rawData);
+                Frame state = _deserializer.Deserialize(rawData);
 
                 Exception ex = _host.GetLastException();
                 if (ex != null)
@@ -91,7 +91,7 @@ namespace AntMe.Runtime
                 }
 
                 // Simulation regulär zu Ende
-                else if (state.Mode > LevelMode.Running) 
+                else if (state.Mode > AntMe.SimulationState.Running) 
                 {
                     State = SimulationState.Finished;
                     Stop();

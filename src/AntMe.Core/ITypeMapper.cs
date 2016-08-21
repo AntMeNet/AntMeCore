@@ -18,25 +18,6 @@ namespace AntMe
 
         #endregion
 
-        #region Engine Properties
-
-        /// <summary>
-        /// Registriert eine Engine Extension.
-        /// </summary>
-        /// <param name="extensionPack">Referenz Extension</param>
-        /// <param name="name">Name der Extension</param>
-        /// <param name="rank">Rang der Extension</param>
-        /// <param name="createExtensionDelegate">Delegat zum Erstellen einer neuen Instanz</param>
-        /// <typeparam name="T">Extension Type</typeparam>
-        void RegisterEngineProperty<T>(IExtensionPack extensionPack, string name, int rank, Func<Engine, T> createExtensionDelegate = null) where T : EngineProperty;
-
-        /// <summary>
-        /// Listet alle registrierten Extensions auf.
-        /// </summary>
-        IEnumerable<IRankedTypeMapperEntry> EngineProperties { get; }
-
-        #endregion
-
         #region Map Properties
 
         /// <summary>

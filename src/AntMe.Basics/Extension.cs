@@ -1,5 +1,4 @@
-﻿using AntMe.Basics.EngineProperties;
-using AntMe.Basics.FactionProperties;
+﻿using AntMe.Basics.FactionProperties;
 using AntMe.Basics.Factions;
 using AntMe.Basics.Factions.Ants;
 using AntMe.Basics.Factions.Ants.Interop;
@@ -48,16 +47,6 @@ namespace AntMe.Basics
         public void Load(ITypeMapper typeMapper, KeyValueStore settings, KeyValueStore dictionary)
         {
             dictionary.Set<ItemInfo>("ItemInfo", "Something", "Base Info Class for Items");
-
-            // ##########################
-            // Standard Engine Extensions
-            // ##########################
-            typeMapper.RegisterEngineProperty<InteractionProperty>(this, "Interaction Extension (Core)", 70);
-            typeMapper.RegisterEngineProperty<PhysicsProperty>(this, "Physics Extension (Core)", 100);
-
-            settings.Set<RecognitionProperty>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
-            settings.Set<RecognitionProperty>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
-            typeMapper.RegisterEngineProperty<RecognitionProperty>(this, "Recognition Extension (Core)", 150);
 
             // ##########################
             // Map Materials
@@ -186,6 +175,14 @@ namespace AntMe.Basics
             // ##############################
             // Level Properties registrieren
             // ##############################
+
+            typeMapper.RegisterLevelProperty<InteractionProperty>(this, "Item Interaction"); // Prio 70
+            typeMapper.RegisterLevelProperty<PhysicsProperty>(this, "Item Physics"); // Prio 100
+
+            settings.Set<RecognitionProperty>("SmellsAliance", false, "Can a Unit smell Smellable Stuff from Aliance Units");
+            settings.Set<RecognitionProperty>("SmellsForeign", false, "Can a Unit smell Smellable Stuff from Enemy Units");
+            typeMapper.RegisterLevelProperty<RecognitionProperty>(this, "Item Recognition"); // 150
+
 
             typeMapper.RegisterLevelProperty<TriggerLevelProperty>(this, "Level Trigger");
             typeMapper.RegisterLevelProperty<DialogHighlightsLevelProperty, DialogHighlightsStateProperty>(this, "Dialog Highlights");

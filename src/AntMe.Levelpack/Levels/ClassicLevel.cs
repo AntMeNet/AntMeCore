@@ -31,7 +31,7 @@ namespace AntMe.Levelpack.Levels
         protected override void OnUpdate()
         {
             // Gewinnbedingung
-            if (Engine.Round >= 4800 && Mode == LevelMode.Running)
+            if (Round >= 4800 && State == SimulationState.Running)
             {
                 Faction winner = null;
                 foreach (var faction in Factions)
@@ -51,7 +51,7 @@ namespace AntMe.Levelpack.Levels
                     Draw();
             }
 
-            Index2 cells = Engine.Map.GetCellCount();
+            Index2 cells = Map.GetCellCount();
 
             if (sugar == null)
             {
@@ -59,7 +59,7 @@ namespace AntMe.Levelpack.Levels
                     ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
                     ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
                 sugar = new SugarItem(Context, pos, 1000);
-                Engine.InsertItem(sugar);
+                Insert(sugar);
             }
 
             if (apple == null)
@@ -68,7 +68,7 @@ namespace AntMe.Levelpack.Levels
                     ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
                     ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
                 apple = new AppleItem(Context, pos, 250);
-                Engine.InsertItem(apple);
+                Insert(apple);
             }
 
             if (bugs.Count < 3)
@@ -79,7 +79,7 @@ namespace AntMe.Levelpack.Levels
                 Angle orientation = Angle.FromDegree(Random.Next(0, 359));
                 ClassicBugItem bug = new ClassicBugItem(Context, pos, orientation);
                 bugs.Add(bug);
-                Engine.InsertItem(bug);
+                Insert(bug);
             }
         }
 

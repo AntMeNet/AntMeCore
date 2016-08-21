@@ -13,6 +13,6 @@ namespace AntMe.Serialization
         /// </summary>
         /// <param name="reader">Input Stream</param>
         /// <returns>Deserialized State</returns>
-        LevelState Deserialize(BinaryReader reader);
+        Frame Deserialize(BinaryReader reader);
     }
 }

@@ -11,7 +11,7 @@ namespace AntMe.Serialization
 
         private SimulationContext context;
 
-        private LevelState latest;
+        private Frame latest;
 
         private List<Type> levelPropertyTypes = new List<Type>();
         private List<Type> mapPropertyTypes = new List<Type>();
@@ -28,7 +28,7 @@ namespace AntMe.Serialization
             this.context = context;
         }
 
-        public LevelState Deserialize(BinaryReader reader)
+        public Frame Deserialize(BinaryReader reader)
         {
             bool keyframe = reader.ReadBoolean();
 
@@ -541,7 +541,7 @@ namespace AntMe.Serialization
 
         private void DoLevelInsert(BinaryReader reader)
         {
-            latest = new LevelState();
+            latest = new Frame();
             DeserializeFirst(reader, latest);
         }
 

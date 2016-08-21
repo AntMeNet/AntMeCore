@@ -35,7 +35,7 @@
             simulation.Start(settings);
         }
 
-        protected override LevelState UpdateSimulation()
+        protected override Frame UpdateSimulation()
         {
             return simulation.NextState();
         }

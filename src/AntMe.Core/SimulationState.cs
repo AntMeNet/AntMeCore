@@ -3,7 +3,7 @@
     /// <summary>
     /// List of possible Level States.
     /// </summary>
-    public enum LevelMode
+    public enum SimulationState
     {
         /// <summary>
         /// Level is new generated and uninitialized.

@@ -44,7 +44,6 @@
     <Compile Include="CampaignDescriptionAttribute.cs" />
     <Compile Include="Compass.cs" />
     <Compile Include="Delegates.cs" />
-    <Compile Include="EngineState.cs" />
     <Compile Include="ExpandedObject.cs" />
     <Compile Include="Faction.cs" />
     <Compile Include="FactionFactory.cs" />
@@ -77,10 +76,10 @@
     <Compile Include="ITypeResolver.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="LevelDescriptionAttribute.cs" />
-    <Compile Include="LevelMode.cs" />
+    <Compile Include="SimulationState.cs" />
     <Compile Include="LevelProperty.cs" />
     <Compile Include="LevelSlot.cs" />
-    <Compile Include="LevelState.cs" />
+    <Compile Include="Frame.cs" />
     <Compile Include="Serialization\IMapDeserializer.cs" />
     <Compile Include="Serialization\IMapSerializer.cs" />
     <Compile Include="Serialization\LevelStateByteSerializer.cs" />
@@ -104,8 +103,6 @@
     <Compile Include="MapTileStateProperty.cs" />
     <Compile Include="MipMap.cs" />
     <Compile Include="MipMapLayer.cs" />
-    <Compile Include="Engine.cs" />
-    <Compile Include="EngineProperty.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemProperty.cs" />
     <Compile Include="Map.cs" />

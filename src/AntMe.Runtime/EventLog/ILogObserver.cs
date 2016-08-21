@@ -11,7 +11,7 @@ namespace AntMe.Runtime.EventLog
         /// Methode zur Übergabe des aktuellen Simulationsstands.
         /// </summary>
         /// <param name="state"></param>
-        void Update(LevelState state);
+        void Update(Frame state);
 
         /// <summary>
         /// Benachrichtigt das Log über neue Events.

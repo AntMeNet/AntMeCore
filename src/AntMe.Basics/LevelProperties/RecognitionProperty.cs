@@ -3,12 +3,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AntMe.Basics.EngineProperties
+namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
     /// Engine Extension to handle all Recognition Issues (Sighting, Smelling,...)
     /// </summary>
-    public sealed class RecognitionProperty : EngineProperty
+    public sealed class RecognitionProperty : LevelProperty
     {
         private readonly Dictionary<int, SmellableProperty> smellables;
         private readonly Dictionary<int, SnifferProperty> sniffers;
@@ -20,8 +20,8 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="engine">Reference to the Engine</param>
-        public RecognitionProperty(Engine engine) : base(engine)
+        /// <param name="level">Reference to the Level</param>
+        public RecognitionProperty(Level level) : base(level)
         {
             smellables = new Dictionary<int, SmellableProperty>();
             sniffers = new Dictionary<int, SnifferProperty>();
@@ -32,9 +32,9 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         /// Gets a call after Engine Initialization.
         /// </summary>
-        public override void Init()
+        public override void OnInit()
         {
-            Vector2 size = Engine.Map.GetSize();
+            Vector2 size = Level.Map.GetSize();
             float mapWidth = size.X;
             float mapHeight = size.Y;
             visiblesMap = new MipMap<VisibleProperty>(mapWidth, mapHeight);
@@ -45,7 +45,7 @@ namespace AntMe.Basics.EngineProperties
         /// Gets a call after adding a new Item to the Engine.
         /// </summary>
         /// <param name="item">New Item</param>
-        protected override void Insert(Item item)
+        public override void OnInsertItem(Item item)
         {
             // Track visible Items.
             if (item.ContainsProperty<VisibleProperty>() &&
@@ -85,7 +85,7 @@ namespace AntMe.Basics.EngineProperties
         /// Gets a call before removing an item from Engine.
         /// </summary>
         /// <param name="item">Removed Item</param>
-        protected override void Remove(Item item)
+        public override void OnRemoveItem(Item item)
         {
             // Remove visible Items
             if (item.ContainsProperty<VisibleProperty>() &&
@@ -152,7 +152,7 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         /// Gets a call after every Engine Update.
         /// </summary>
-        public override void Update()
+        public override void OnUpdate()
         {
             UpdateVisibles();
             UpdateSniffer();
@@ -215,7 +215,7 @@ namespace AntMe.Basics.EngineProperties
 
         private void item_CellChanged(Item item, Index2 newValue)
         {
-            viewers[item.Id].UpdateEnvironment(Engine.Map, item, newValue);
+            viewers[item.Id].UpdateEnvironment(Level.Map, item, newValue);
         }
 
         #endregion

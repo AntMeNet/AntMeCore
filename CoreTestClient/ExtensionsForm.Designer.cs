@@ -29,49 +29,48 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("ExtensionPacks");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Engine Properties");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Item Properties");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Item Attachment Properties");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Item Extender");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Items", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Item Properties");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Item Attachment Properties");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Item Extender");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Items", new System.Windows.Forms.TreeNode[] {
+            treeNode2,
             treeNode3,
-            treeNode4,
-            treeNode5});
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Faction Properties");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Faction Attachment Properties");
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Faction Extender");
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Factions", new System.Windows.Forms.TreeNode[] {
+            treeNode4});
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Faction Properties");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Faction Attachment Properties");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Faction Extender");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Factions", new System.Windows.Forms.TreeNode[] {
+            treeNode6,
             treeNode7,
-            treeNode8,
-            treeNode9});
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Factory Interop Attachment Properties");
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Factory Interop Extender");
-            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Factory Interop", new System.Windows.Forms.TreeNode[] {
-            treeNode11,
-            treeNode12});
-            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Unit Interop Attachment Properties");
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Unit Interop Extender");
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Unit Interop", new System.Windows.Forms.TreeNode[] {
-            treeNode14,
-            treeNode15});
-            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Level Properties");
-            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Level Extender");
-            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Level", new System.Windows.Forms.TreeNode[] {
-            treeNode17,
-            treeNode18});
-            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Map Properties");
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Map Extender");
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Map", new System.Windows.Forms.TreeNode[] {
-            treeNode20,
-            treeNode21});
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Materials");
-            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Map Tile Properties");
-            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Map Tile Attachment Properties");
-            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Map Tile Extender");
-            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Map Tiles", new System.Windows.Forms.TreeNode[] {
+            treeNode8});
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Factory Interop Attachment Properties");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Factory Interop Extender");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Factory Interop", new System.Windows.Forms.TreeNode[] {
+            treeNode10,
+            treeNode11});
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Unit Interop Attachment Properties");
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Unit Interop Extender");
+            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Unit Interop", new System.Windows.Forms.TreeNode[] {
+            treeNode13,
+            treeNode14});
+            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Level Properties");
+            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Level Extender");
+            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Level", new System.Windows.Forms.TreeNode[] {
+            treeNode16,
+            treeNode17});
+            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Map Properties");
+            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Map Extender");
+            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Map", new System.Windows.Forms.TreeNode[] {
+            treeNode19,
+            treeNode20});
+            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Materials");
+            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Map Tile Properties");
+            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Map Tile Attachment Properties");
+            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Map Tile Extender");
+            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Map Tiles", new System.Windows.Forms.TreeNode[] {
+            treeNode23,
             treeNode24,
-            treeNode25,
-            treeNode26});
+            treeNode25});
             this.splitter = new System.Windows.Forms.SplitContainer();
             this.treeView = new System.Windows.Forms.TreeView();
             this.listView = new System.Windows.Forms.ListView();
@@ -111,69 +110,66 @@
             this.treeView.Name = "treeView";
             treeNode1.Name = "extensionPacksNode";
             treeNode1.Text = "ExtensionPacks";
-            treeNode2.Name = "enginePropertiesNode";
-            treeNode2.Text = "Engine Properties";
-            treeNode3.Name = "itemPropertiesNode";
-            treeNode3.Text = "Item Properties";
-            treeNode4.Name = "itemAttachmentPropertiesNode";
-            treeNode4.Text = "Item Attachment Properties";
-            treeNode5.Name = "itemExtenderNode";
-            treeNode5.Text = "Item Extender";
-            treeNode6.Name = "itemsNode";
-            treeNode6.Text = "Items";
-            treeNode7.Name = "factionPropertiesNode";
-            treeNode7.Text = "Faction Properties";
-            treeNode8.Name = "factionAttachmentPropertiesNode";
-            treeNode8.Text = "Faction Attachment Properties";
-            treeNode9.Name = "factionExtenderNode";
-            treeNode9.Text = "Faction Extender";
-            treeNode10.Name = "factionsNode";
-            treeNode10.Text = "Factions";
-            treeNode11.Name = "factoryInteropAttachmentPropertiesNode";
-            treeNode11.Text = "Factory Interop Attachment Properties";
-            treeNode12.Name = "factoryInteropExtenderNode";
-            treeNode12.Text = "Factory Interop Extender";
-            treeNode13.Name = "factoryInteropNode";
-            treeNode13.Text = "Factory Interop";
-            treeNode14.Name = "unitInteropAttachmentPropertiesNode";
-            treeNode14.Text = "Unit Interop Attachment Properties";
-            treeNode15.Name = "unitInteropExtenderNode";
-            treeNode15.Text = "Unit Interop Extender";
-            treeNode16.Name = "unitInteropNode";
-            treeNode16.Text = "Unit Interop";
-            treeNode17.Name = "levelPropertiesNode";
-            treeNode17.Text = "Level Properties";
-            treeNode18.Name = "levelExtenderNode";
-            treeNode18.Text = "Level Extender";
-            treeNode19.Name = "levelNode";
-            treeNode19.Text = "Level";
-            treeNode20.Name = "mapPropertiesNode";
-            treeNode20.Text = "Map Properties";
-            treeNode21.Name = "mapExtenderNode";
-            treeNode21.Text = "Map Extender";
-            treeNode22.Name = "mapNode";
-            treeNode22.Text = "Map";
-            treeNode23.Name = "materialsNode";
-            treeNode23.Text = "Materials";
-            treeNode24.Name = "mapTilePropertiesNode";
-            treeNode24.Text = "Map Tile Properties";
-            treeNode25.Name = "mapTileAttachmentPropertiesNode";
-            treeNode25.Text = "Map Tile Attachment Properties";
-            treeNode26.Name = "mapTileExtenderNode";
-            treeNode26.Text = "Map Tile Extender";
-            treeNode27.Name = "mapTilesNode";
-            treeNode27.Text = "Map Tiles";
+            treeNode2.Name = "itemPropertiesNode";
+            treeNode2.Text = "Item Properties";
+            treeNode3.Name = "itemAttachmentPropertiesNode";
+            treeNode3.Text = "Item Attachment Properties";
+            treeNode4.Name = "itemExtenderNode";
+            treeNode4.Text = "Item Extender";
+            treeNode5.Name = "itemsNode";
+            treeNode5.Text = "Items";
+            treeNode6.Name = "factionPropertiesNode";
+            treeNode6.Text = "Faction Properties";
+            treeNode7.Name = "factionAttachmentPropertiesNode";
+            treeNode7.Text = "Faction Attachment Properties";
+            treeNode8.Name = "factionExtenderNode";
+            treeNode8.Text = "Faction Extender";
+            treeNode9.Name = "factionsNode";
+            treeNode9.Text = "Factions";
+            treeNode10.Name = "factoryInteropAttachmentPropertiesNode";
+            treeNode10.Text = "Factory Interop Attachment Properties";
+            treeNode11.Name = "factoryInteropExtenderNode";
+            treeNode11.Text = "Factory Interop Extender";
+            treeNode12.Name = "factoryInteropNode";
+            treeNode12.Text = "Factory Interop";
+            treeNode13.Name = "unitInteropAttachmentPropertiesNode";
+            treeNode13.Text = "Unit Interop Attachment Properties";
+            treeNode14.Name = "unitInteropExtenderNode";
+            treeNode14.Text = "Unit Interop Extender";
+            treeNode15.Name = "unitInteropNode";
+            treeNode15.Text = "Unit Interop";
+            treeNode16.Name = "levelPropertiesNode";
+            treeNode16.Text = "Level Properties";
+            treeNode17.Name = "levelExtenderNode";
+            treeNode17.Text = "Level Extender";
+            treeNode18.Name = "levelNode";
+            treeNode18.Text = "Level";
+            treeNode19.Name = "mapPropertiesNode";
+            treeNode19.Text = "Map Properties";
+            treeNode20.Name = "mapExtenderNode";
+            treeNode20.Text = "Map Extender";
+            treeNode21.Name = "mapNode";
+            treeNode21.Text = "Map";
+            treeNode22.Name = "materialsNode";
+            treeNode22.Text = "Materials";
+            treeNode23.Name = "mapTilePropertiesNode";
+            treeNode23.Text = "Map Tile Properties";
+            treeNode24.Name = "mapTileAttachmentPropertiesNode";
+            treeNode24.Text = "Map Tile Attachment Properties";
+            treeNode25.Name = "mapTileExtenderNode";
+            treeNode25.Text = "Map Tile Extender";
+            treeNode26.Name = "mapTilesNode";
+            treeNode26.Text = "Map Tiles";
             this.treeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
-            treeNode2,
-            treeNode6,
-            treeNode10,
-            treeNode13,
-            treeNode16,
-            treeNode19,
+            treeNode5,
+            treeNode9,
+            treeNode12,
+            treeNode15,
+            treeNode18,
+            treeNode21,
             treeNode22,
-            treeNode23,
-            treeNode27});
+            treeNode26});
             this.treeView.Size = new System.Drawing.Size(196, 331);
             this.treeView.TabIndex = 0;
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);

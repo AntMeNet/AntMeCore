@@ -50,8 +50,8 @@ namespace AntMe.Basics.Factions
         {
             FilterType = filterType;
 
-            faction.Level.Engine.OnInsertItem += Engine_OnInsertItem;
-            faction.Level.Engine.OnRemoveItem += Engine_OnRemoveItem;
+            faction.Level.InsertItem += Engine_OnInsertItem;
+            faction.Level.RemoveItem += Engine_OnRemoveItem;
         }
 
         private void Engine_OnInsertItem(Item item)

@@ -47,7 +47,6 @@ namespace CoreTestClient
 
             // Collecting Nodes
             extensionPacksNode = treeView.Nodes["extensionPacksNode"];
-            enginePropertiesNode = treeView.Nodes["enginePropertiesNode"];
 
             itemsNode = treeView.Nodes["itemsNode"];
             itemPropertiesNode = itemsNode.Nodes["itemPropertiesNode"];
@@ -95,15 +94,6 @@ namespace CoreTestClient
                         var node = listView.Items.Add(item.Name);
                         node.SubItems.Add("");
                         node.SubItems.Add(item.Name);
-                    }
-                }
-                else if (treeView.SelectedNode == enginePropertiesNode)
-                {
-                    foreach (var item in ExtensionLoader.DefaultTypeMapper.EngineProperties)
-                    {
-                        var node = listView.Items.Add(item.Name);
-                        node.SubItems.Add(item.Type.FullName);
-                        node.SubItems.Add(item.ExtensionPack.Name);
                     }
                 }
                 else if (treeView.SelectedNode == itemsNode)

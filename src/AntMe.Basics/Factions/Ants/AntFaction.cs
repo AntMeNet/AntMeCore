@@ -39,7 +39,7 @@ namespace AntMe.Basics.Factions.Ants
         /// </summary>
         protected override void OnInit()
         {
-            Level.Engine.OnRemoveItem += Level_RemovedItem;
+            Level.RemoveItem += Level_RemovedItem;
 
             // Generate the first group of Anthills (Initial Anthills)
             int hillCount = Settings.GetInt<AntFaction>("InitialAnthillCount").Value;
@@ -100,7 +100,7 @@ namespace AntMe.Basics.Factions.Ants
         private AnthillItem CreateAntHill(Vector2 position)
         {
             var hill = new AnthillItem(Context, this, position);
-            Level.Engine.InsertItem(hill);
+            Level.Insert(hill);
             antHills.Add(hill.Id, hill);
             return hill;
         }
@@ -139,7 +139,7 @@ namespace AntMe.Basics.Factions.Ants
 
             CreateUnit(antUnit, antItem);
 
-            Level.Engine.InsertItem(antItem);
+            Level.Insert(antItem);
             totalAntCount++;
 
             // TODO: Kosten

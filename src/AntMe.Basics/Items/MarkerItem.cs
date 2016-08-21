@@ -56,7 +56,7 @@ namespace AntMe.Basics.Items
 
             // Marker entfernen
             if (CurrentAge >= TotalAge)
-                Engine.RemoveItem(this);
+                Level.Remove(this);
         }
     }
 }

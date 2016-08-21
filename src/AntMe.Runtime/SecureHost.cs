@@ -102,12 +102,12 @@ namespace AntMe.Runtime
         {
             if (_level == null)
                 throw new NotSupportedException("Level not ready");
-            if (_level.Mode == LevelMode.Uninit)
+            if (_level.State == AntMe.SimulationState.Uninit)
                 throw new InvalidOperationException("Level is not initialized");
-            if (_level.Mode != LevelMode.Running)
+            if (_level.State != AntMe.SimulationState.Running)
                 throw new InvalidOperationException("Level is finished");
 
-            LevelState state = _level.NextState();
+            Frame state = _level.NextFrame();
             return _serializer.Serialize(state);
         }
 

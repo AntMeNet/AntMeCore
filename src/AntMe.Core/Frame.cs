@@ -8,7 +8,7 @@ namespace AntMe
     /// <summary>
     /// Root Element for the State Tree, the Level State.
     /// </summary>
-    public sealed class LevelState : PropertyList<LevelStateProperty>, ISerializableState
+    public sealed class Frame : PropertyList<LevelStateProperty>, ISerializableState
     {
         /// <summary>
         /// Original Create Date for this Frame.
@@ -44,7 +44,7 @@ namespace AntMe
         [Description("Game Mode for this State")]
         [ReadOnly(true)]
         [Category("Dynamic")]
-        public LevelMode Mode { get; set; }
+        public SimulationState Mode { get; set; }
 
         /// <summary>
         /// Current Round.
@@ -58,11 +58,11 @@ namespace AntMe
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public LevelState()
+        public Frame()
         {
             Round = 0;
             Map = null;
-            Mode = LevelMode.Uninit;
+            Mode = SimulationState.Uninit;
 
             Date = DateTimeOffset.Now;
             Factions = new HashSet<FactionState>();
@@ -110,7 +110,7 @@ namespace AntMe
                 throw new NotSupportedException("Stream Version not supported");
 
             Date = DateTimeOffset.Parse(stream.ReadString()).ToLocalTime();
-            Mode = (LevelMode)stream.ReadByte();
+            Mode = (SimulationState)stream.ReadByte();
             Round = stream.ReadInt32();
         }
 
@@ -125,7 +125,7 @@ namespace AntMe
                 throw new NotSupportedException("Stream Version not supported");
 
             Date = DateTimeOffset.Parse(stream.ReadString()).ToLocalTime();
-            Mode = (LevelMode)stream.ReadByte();
+            Mode = (SimulationState)stream.ReadByte();
             Round = stream.ReadInt32();
         }
     }

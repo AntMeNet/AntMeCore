@@ -20,7 +20,7 @@ namespace AntMe.Serialization
         private byte _version = 0;
         private bool _disposed = false;
 
-        private LevelState _currentState;
+        private Frame _currentState;
 
         private readonly Dictionary<byte, FactionState> _factions = new Dictionary<byte, FactionState>();
         private readonly Dictionary<int, ItemState> _items = new Dictionary<int, ItemState>();
@@ -41,7 +41,7 @@ namespace AntMe.Serialization
         /// </summary>
         /// <param name="input">Input Array</param>
         /// <returns>Aktuelle Instanz des Main States</returns>
-        public LevelState Deserialize(Stream input)
+        public Frame Deserialize(Stream input)
         {
             throw new NotSupportedException("Version 1 is not supported anymore");
 
@@ -59,7 +59,7 @@ namespace AntMe.Serialization
             }
         }
 
-        private LevelState InternalDeserialize()
+        private Frame InternalDeserialize()
         {
             while (ReadNext()) { }
             return _currentState;
@@ -171,7 +171,7 @@ namespace AntMe.Serialization
             if (!_frameOpen)
                 throw new NotSupportedException("No open Frame avaible");
 
-            _currentState = new LevelState();
+            _currentState = new Frame();
             ValidatedDeserialisation(_currentState.DeserializeFirst);
             return true;
         }
@@ -491,7 +491,7 @@ namespace AntMe.Serialization
             }
         }
 
-        public LevelState Deserialize(BinaryReader reader)
+        public Frame Deserialize(BinaryReader reader)
         {
             throw new NotImplementedException();
         }

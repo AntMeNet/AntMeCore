@@ -41,7 +41,7 @@ namespace AntMe.Serialization
         /// <param name="output">Output Stream</param>
         /// <param name="state">Zu serialisierender State</param>
         /// <returns>Resultierender Byte Array</returns>
-        public void Serialize(Stream output, LevelState state)
+        public void Serialize(Stream output, Frame state)
         {
             lock (_lockItem)
             {
@@ -86,7 +86,7 @@ namespace AntMe.Serialization
             }
         }
 
-        private void InternalSerialize(LevelState state)
+        private void InternalSerialize(Frame state)
         {
             if (state == null)
                 throw new ArgumentNullException("state Parameter is null");
@@ -273,7 +273,7 @@ namespace AntMe.Serialization
             }
         }
 
-        public void Serialize(BinaryWriter writer, LevelState state)
+        public void Serialize(BinaryWriter writer, Frame state)
         {
             throw new NotImplementedException();
         }

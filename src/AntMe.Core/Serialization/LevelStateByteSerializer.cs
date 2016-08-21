@@ -26,7 +26,7 @@ namespace AntMe.Serialization
         /// </summary>
         /// <param name="state">Level State</param>
         /// <returns>Raw Data</returns>
-        public byte[] Serialize(LevelState state)
+        public byte[] Serialize(Frame state)
         {
             stream.Seek(0, SeekOrigin.Begin);
             serializer.Serialize(state);
@@ -43,7 +43,7 @@ namespace AntMe.Serialization
         /// </summary>
         /// <param name="data">Raw Data</param>
         /// <returns>Level State</returns>
-        public LevelState Deserialize(byte[] data)
+        public Frame Deserialize(byte[] data)
         {
             stream.Seek(0, SeekOrigin.Begin);
             stream.Write(data, 0, data.Length);

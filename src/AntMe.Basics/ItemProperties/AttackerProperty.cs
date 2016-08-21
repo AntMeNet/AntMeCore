@@ -245,11 +245,11 @@ namespace AntMe.Basics.ItemProperties
             RecoveryCounter = 0;
 
             // Prüfen, ob Attacker Teil der Simulation ist
-            if (Item.Engine == null)
+            if (Item.Level == null)
                 throw new NotSupportedException("Attacker is not Part of the Simulation");
 
             // Prüfen, ob Attackable Teil der Simulation ist
-            if (item.Item.Engine == null || item.Item.Engine != Item.Engine)
+            if (item.Item.Level == null || item.Item.Level != Item.Level)
                 throw new NotSupportedException("Attackable is not Part of the same Simulation");
 
             // Prüfen, ob sich das Element gerade selbst angreifen will

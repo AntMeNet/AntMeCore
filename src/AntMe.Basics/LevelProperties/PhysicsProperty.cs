@@ -1,12 +1,12 @@
 ﻿using AntMe.Basics.ItemProperties;
 using System.Collections.Generic;
 
-namespace AntMe.Basics.EngineProperties
+namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
     /// Engine Property for handling all physical stuff like Movement, Collision and Grouping
     /// </summary>
-    public sealed class PhysicsProperty : EngineProperty
+    public sealed class PhysicsProperty : LevelProperty
     {
         private Dictionary<int, PhysicsGroup> groups;
         private HashSet<PhysicsGroup> collidables;
@@ -17,8 +17,8 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="engine">Engine Reference</param>
-        public PhysicsProperty(Engine engine) : base(engine)
+        /// <param name="level">Level Reference</param>
+        public PhysicsProperty(Level level) : base(level)
         {
             groups = new Dictionary<int, PhysicsGroup>();
             collidables = new HashSet<PhysicsGroup>();
@@ -27,9 +27,9 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         /// Gets a call after Engine Initialization.
         /// </summary>
-        public override void Init()
+        public override void OnInit()
         {
-            map = Engine.Map;
+            map = Level.Map;
 
             Vector2 size = map.GetSize();
             mipmap = new MipMap<PhysicsGroup>(size.X, size.Y);
@@ -39,7 +39,7 @@ namespace AntMe.Basics.EngineProperties
         /// Gets a call after adding a new Item to the Engine.
         /// </summary>
         /// <param name="item">New Item</param>
-        protected override void Insert(Item item)
+        public override void OnInsertItem(Item item)
         {
             // Filter for relevant Items.
             if ((item.ContainsProperty<WalkingProperty>() ||
@@ -61,7 +61,7 @@ namespace AntMe.Basics.EngineProperties
         /// Gets a call before removing an item from Engine.
         /// </summary>
         /// <param name="item">Removed Item</param>
-        protected override void Remove(Item item)
+        public override void OnRemoveItem(Item item)
         {
             if (groups.ContainsKey(item.Id))
             {
@@ -79,7 +79,7 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         /// Gets a call after every Engine Update.
         /// </summary>
-        public override void Update()
+        public override void OnUpdate()
         {
             // Update Position
             foreach (PhysicsGroup item in groups.Values)
@@ -117,7 +117,7 @@ namespace AntMe.Basics.EngineProperties
             }
 
             // Handle Map-Drops
-            Vector2 size = Engine.Map.GetSize();
+            Vector2 size = map.GetSize();
             foreach (PhysicsGroup item in collidables)
             {
                 if (item.Position.X < 0 ||
@@ -139,7 +139,7 @@ namespace AntMe.Basics.EngineProperties
         private void KillUnit(PhysicsGroup unit)
         {
             // Remove
-            Engine.RemoveItem(unit.Item);
+            Level.Remove(unit.Item);
         }
     }
 }

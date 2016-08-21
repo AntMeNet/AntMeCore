@@ -56,7 +56,7 @@ namespace AntMe
         /// </summary>
         /// <param name="level">Type des Levels</param>
         /// <param name="lastState">Letzter Zustand der Simulation</param>
-        protected abstract void OnFinishLevel(Type level, LevelState lastState);
+        protected abstract void OnFinishLevel(Type level, Frame lastState);
 
         /// <summary>
         /// Registriert ein Level als Teil der Kampagne.

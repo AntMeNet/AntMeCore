@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AntMe.Basics.EngineProperties
+namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
     /// Engine Extension to handle all Interactions
     /// </summary>
-    public sealed class InteractionProperty : EngineProperty
+    public sealed class InteractionProperty : LevelProperty
     {
         private readonly Dictionary<int, AttackableProperty> attackables;
         private readonly Dictionary<int, AttackerProperty> attackers;
@@ -15,26 +15,18 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         /// Default Constructor for Type Mapper.
         /// </summary>
-        /// <param name="engine">Reference to the Engine</param>
-        public InteractionProperty(Engine engine) : base(engine)
+        /// <param name="level">Reference to the Level</param>
+        public InteractionProperty(Level level) : base(level)
         {
             attackables = new Dictionary<int, AttackableProperty>();
             attackers = new Dictionary<int, AttackerProperty>();
         }
 
         /// <summary>
-        /// Gets a call after Engine Initialization.
-        /// </summary>
-        public override void Init()
-        {
-            // Nothing to init
-        }
-
-        /// <summary>
-        /// Gets a call after adding a new Item to the Engine.
+        /// Gets a call after adding a new Item.
         /// </summary>
         /// <param name="item">New Item</param>
-        protected override void Insert(Item item)
+        public override void OnInsertItem(Item item)
         {
             // Track attackable Items.
             if (item.ContainsProperty<AttackableProperty>() &&
@@ -53,10 +45,10 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call before removing an item from Engine.
+        /// Gets a call before removing an item.
         /// </summary>
         /// <param name="item">Removed Item</param>
-        protected override void Remove(Item item)
+        public override void OnRemoveItem(Item item)
         {
             // Remove attackable Items.
             if (item.ContainsProperty<AttackableProperty>() &&
@@ -84,9 +76,9 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call after every Engine Update.
+        /// Gets a call after every Update.
         /// </summary>
-        public override void Update()
+        public override void OnUpdate()
         {
             foreach (AttackerProperty attacker in attackers.Values)
             {
@@ -140,7 +132,7 @@ namespace AntMe.Basics.EngineProperties
                 if (attackable.AttackableHealth <= 0)
                 {
                     attackable.Kill();
-                    Engine.RemoveItem(attackable.Item);
+                    Level.Remove(attackable.Item);
                 }
             }
         }

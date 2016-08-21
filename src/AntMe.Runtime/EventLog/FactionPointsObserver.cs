@@ -10,7 +10,7 @@ namespace AntMe.Runtime.EventLog
         private bool init = false;
         private Dictionary<int, int> Points = new Dictionary<int, int>();
 
-        public void Update(LevelState state)
+        public void Update(Frame state)
         {
             if (!init)
             {

@@ -482,7 +482,7 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Gibt den letzten Stand zurück oder null, falls noch nichts existiert.
         /// </summary>
-        public LevelState CurrentState { get { return currentState; } }
+        public Frame CurrentState { get { return currentState; } }
 
         /// <summary>
         /// Startet die Simulation, sofern alle Daten vollständig sind.
@@ -623,7 +623,7 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Informiert über einen neuen Simulation State.
         /// </summary>
-        public event SimulationClientDelegate<LevelState> OnSimulationState;
+        public event SimulationClientDelegate<Frame> OnSimulationState;
 
         #endregion
 
@@ -631,7 +631,7 @@ namespace AntMe.Runtime.Communication
 
         private Thread thread;
         private SimulationState state = SimulationState.Stopped;
-        private LevelState currentState;
+        private Frame currentState;
 
         /// <summary>
         /// Initialisierung der Simulation.
@@ -643,7 +643,7 @@ namespace AntMe.Runtime.Communication
         /// Ermittlung des nächsten Simulations-States.
         /// </summary>
         /// <returns>Neuer Simulation State</returns>
-        protected abstract LevelState UpdateSimulation();
+        protected abstract Frame UpdateSimulation();
 
         /// <summary>
         /// Abschließende Arbeiten bei Beenden der Simulation.
@@ -683,7 +683,7 @@ namespace AntMe.Runtime.Communication
                 // Das EventLog füttern
                 log.Update(currentState);
 
-                if (currentState.Mode > LevelMode.Running)
+                if (currentState.Mode > AntMe.SimulationState.Running)
                 {
                     state = SimulationState.Stopped;
                     continue;

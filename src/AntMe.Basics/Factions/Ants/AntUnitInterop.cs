@@ -63,7 +63,7 @@ namespace AntMe.Basics.Factions.Ants
             var marker = new MarkerItem(Faction.Context, Faction,
                 Item.Position.ToVector2XY(), size, information);
 
-            Item.Engine.InsertItem(marker);
+            Item.Level.Insert(marker);
             markerDelay = Faction.Settings.GetInt<AntItem>("MarkerDelay").Value;
             return true;
         }

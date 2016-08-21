@@ -31,7 +31,7 @@ namespace AntMe.Serialization
             this.context = context;
         }
 
-        public void Serialize(BinaryWriter writer, LevelState state)
+        public void Serialize(BinaryWriter writer, Frame state)
         {
             // keyframe flag
             writer.Write(!keyframeSent);
@@ -675,7 +675,7 @@ namespace AntMe.Serialization
         /// </summary>
         /// <param name="writer">Output Stream</param>
         /// <param name="state">Current State</param>
-        private void DoLevelUpdate(BinaryWriter writer, LevelState state)
+        private void DoLevelUpdate(BinaryWriter writer, Frame state)
         {
             writer.Write((byte)LevelStateSerializerPackageV2.LevelUpdate);
             SerializeUpdate(writer, state);
@@ -689,7 +689,7 @@ namespace AntMe.Serialization
         /// </summary>
         /// <param name="writer">Output Stream</param>
         /// <param name="state">Current State</param>
-        private void DoLevelInsert(BinaryWriter writer, LevelState state)
+        private void DoLevelInsert(BinaryWriter writer, Frame state)
         {
             writer.Write((byte)LevelStateSerializerPackageV2.LevelInsert);
             SerializeFirst(writer, state);

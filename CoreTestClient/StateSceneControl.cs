@@ -12,7 +12,7 @@ namespace CoreTestClient
 {
     internal class StateSceneControl : BaseSceneControl
     {
-        private LevelState state;
+        private Frame state;
 
         private Dictionary<string, TileRenderer> materials;
 
@@ -55,7 +55,7 @@ namespace CoreTestClient
             }
         }
 
-        public void SetState(LevelState state)
+        public void SetState(Frame state)
         {
             if (this.state != state)
             {

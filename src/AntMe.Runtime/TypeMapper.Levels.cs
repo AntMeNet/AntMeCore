@@ -126,12 +126,12 @@ namespace AntMe.Runtime
         /// </summary>
         /// <param name="level">Level</param>
         /// <returns>New State</returns>
-        public LevelState CreateLevelState(Level level)
+        public Frame CreateLevelState(Level level)
         {
             if (level == null)
                 throw new ArgumentNullException("level");
 
-            LevelState state = new LevelState();
+            Frame state = new Frame();
 
             // State Properties auffüllen
             foreach (var property in level.Properties)

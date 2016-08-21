@@ -9,16 +9,6 @@ namespace AntMe
     public abstract class Item : PropertyList<ItemProperty>
     {
         /// <summary>
-        /// Reference to the Engine
-        /// </summary>
-        private Engine engine;
-
-        /// <summary>
-        /// Current ID or 0 if not added.
-        /// </summary>
-        private int id;
-
-        /// <summary>
         /// Cache for Info Items.
         /// </summary>
         private readonly Dictionary<Item, ItemInfo> _itemInfos = new Dictionary<Item, ItemInfo>();
@@ -55,7 +45,7 @@ namespace AntMe
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public Item(SimulationContext context, Vector2 position, float radius, Angle orientation) 
+        public Item(SimulationContext context, Vector2 position, float radius, Angle orientation)
             : this(context, null, position, radius, orientation)
         {
         }
@@ -81,9 +71,9 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Reference to the attached Engine.
+        /// Reference to the attached Level.
         /// </summary>
-        public Engine Engine { get { return engine; } }
+        public Level Level { get; private set; }
 
         /// <summary>
         /// Current Simulation Context
@@ -106,12 +96,9 @@ namespace AntMe
         public UnitAttributeCollection Attributes { get; private set; }
 
         /// <summary>
-        /// Id of this Game Item.
+        /// Id of this Game Item or 0 if it was not inserted yet.
         /// </summary>
-        public int Id
-        {
-            get { return id; }
-        }
+        public int Id { get; private set; }
 
         /// <summary>
         /// Current Map Cell.
@@ -171,8 +158,8 @@ namespace AntMe
                     position = value;
 
                     // Zelle updaten
-                    if (Engine != null)
-                        Cell = Engine.Map.GetCellIndex(value);
+                    if (Level != null)
+                        Cell = Level.Map.GetCellIndex(value);
 
                     //InvalidateDistances();
                     PositionChanged?.Invoke(this, value);
@@ -211,7 +198,7 @@ namespace AntMe
         public Item GetItemFromInfo(ItemInfo info)
         {
             // Check for Cheaters
-            if (Engine != info.GetItem().Engine)
+            if (Level != info.GetItem().Level)
                 throw new NotSupportedException("Invalid GetItemFromInfo call");
 
             return info.GetItem();
@@ -265,17 +252,17 @@ namespace AntMe
 
         #endregion
 
-        #region Engine Calls
+        #region Level Calls
 
         /// <summary>
-        /// Internal Call for adding this Item to an Engine. Get called by the Engine.
+        /// Internal Call for adding this Item to a Level. Get called by the Level.
         /// </summary>
-        /// <param name="engine">Engine</param>
+        /// <param name="level">Engine</param>
         /// <param name="id">New Id</param>
-        internal void InternalInsertEngine(Engine engine, int id)
+        internal void InternalInsertEngine(Level level, int id)
         {
-            this.engine = engine;
-            this.id = id;
+            Level = level;
+            Id = id;
 
             OnInsert();
             Inserted?.Invoke(this);
@@ -289,8 +276,8 @@ namespace AntMe
             OnRemoved();
             Removed?.Invoke(this);
 
-            engine = null;
-            id = 0;
+            Level = null;
+            Id = 0;
 
             // TODO: Cleanup Infos
         }
@@ -322,7 +309,7 @@ namespace AntMe
         /// <param name="property">New Property.</param>
         protected override void ValidateAddProperty(ItemProperty property)
         {
-            if (Engine != null)
+            if (Level != null)
                 throw new InvalidOperationException("Item is already in use");
 
             if (property.Item != this)

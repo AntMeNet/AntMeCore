@@ -98,7 +98,7 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Snapshot des aktuellen Simulationsstands oder null, falls die Simulation nicht läuft.
         /// </summary>
-        LevelState CurrentState { get; }
+        Frame CurrentState { get; }
 
         /// <summary>
         /// Gibt die Framerate (Frames pro Sekunde) an.
@@ -276,7 +276,7 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Signalisiert die Ankunft eines neuen Simulationsframes.
         /// </summary>
-        event SimulationClientDelegate<LevelState> OnSimulationState;
+        event SimulationClientDelegate<Frame> OnSimulationState;
     }
 
     public delegate void SimulationClientDelegate(ISimulationClient client);

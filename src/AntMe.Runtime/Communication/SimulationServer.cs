@@ -1143,7 +1143,7 @@ namespace AntMe.Runtime.Communication
             }
         }
 
-        private void SendSimulationState(LevelState state)
+        private void SendSimulationState(Frame state)
         {
             lock (clients)
             {

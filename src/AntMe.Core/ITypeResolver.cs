@@ -7,16 +7,6 @@ namespace AntMe
     /// </summary>
     public interface ITypeResolver
     {
-        #region Engine Resolver
-
-        /// <summary>
-        /// Ermittelt alle registrierten Extensions für die übergebene Engine.
-        /// </summary>
-        /// <param name="engine">Referenz auf die neue Engine</param>
-        void ResolveEngine(Engine engine);
-
-        #endregion
-
         #region Map Resolver
 
         /// <summary>
@@ -132,7 +122,7 @@ namespace AntMe
         /// </summary>
         /// <param name="level">Level</param>
         /// <returns>New State</returns>
-        LevelState CreateLevelState(Level level);
+        Frame CreateLevelState(Level level);
 
         #endregion
     }

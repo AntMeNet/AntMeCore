@@ -135,7 +135,7 @@ namespace CoreTestClient
             }
         }
 
-        private void CurrentClient_OnSimulationChanged(ISimulationClient client, SimulationState simulationState, byte frames)
+        private void CurrentClient_OnSimulationChanged(ISimulationClient client, AntMe.Runtime.SimulationState simulationState, byte frames)
         {
             framesToolButton.Text = string.Format("{0} fps", frames);
             // throw new NotImplementedException();

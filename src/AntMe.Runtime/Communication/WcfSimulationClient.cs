@@ -18,7 +18,7 @@ namespace AntMe.Runtime.Communication
         private List<Slot> slots = new List<Slot>(AntMe.Level.MAX_SLOTS);
         private LevelStateByteSerializer _deserializer;
         private SimulationState _serverState = SimulationState.Stopped;
-        private LevelState _currentState;
+        private Frame _currentState;
         private LevelInfo _level;
         private byte _rate = SimulationServer.INITFRAMERATE;
 
@@ -225,7 +225,7 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Latest Simulation State.
         /// </summary>
-        public LevelState CurrentState
+        public Frame CurrentState
         {
             get { return _currentState; }
         }
@@ -577,7 +577,7 @@ namespace AntMe.Runtime.Communication
 
         public event SimulationClientDelegate<SimulationState, byte> OnSimulationChanged;
 
-        public event SimulationClientDelegate<LevelState> OnSimulationState;
+        public event SimulationClientDelegate<Frame> OnSimulationState;
 
         public void Dispose()
         {

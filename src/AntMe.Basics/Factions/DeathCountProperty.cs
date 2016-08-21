@@ -34,8 +34,8 @@ namespace AntMe.Basics.Factions
         {
             base.Init();
 
-            Faction.Level.Engine.OnInsertItem += InsertItem;
-            Faction.Level.Engine.OnRemoveItem += RemoveItem;
+            Faction.Level.InsertItem += InsertItem;
+            Faction.Level.RemoveItem += RemoveItem;
         }
 
         private void RemoveItem(Item item)

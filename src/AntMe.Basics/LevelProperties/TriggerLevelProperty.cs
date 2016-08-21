@@ -28,7 +28,7 @@ namespace AntMe.Basics.LevelProperties
         public void RegisterTrigger(ITrigger trigger)
         {
             // This is only valid in running Mode.
-            if (Level.Mode != LevelMode.Running)
+            if (Level.State != SimulationState.Running)
                 throw new NotSupportedException("Level is not running");
 
             if (!triggers.Contains(trigger))
@@ -42,7 +42,7 @@ namespace AntMe.Basics.LevelProperties
         public void UnregisterTrigger(ITrigger trigger)
         {
             // This is only valid in running Mode.
-            if (Level.Mode != LevelMode.Running)
+            if (Level.State != SimulationState.Running)
                 throw new NotSupportedException("Level is not running");
 
             if (triggers.Contains(trigger))

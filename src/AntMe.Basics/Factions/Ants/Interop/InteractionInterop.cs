@@ -156,7 +156,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             int amount = sugar.Amount;
             if (Item.Settings.GetBool<AntItem>("DropSugar").Value)
             {
-                Item.Engine.InsertItem(new SugarItem(Item.Faction.Level.Context, Item.Position.ToVector2XY(), amount));
+                Item.Level.Insert(new SugarItem(Item.Faction.Level.Context, Item.Position.ToVector2XY(), amount));
             }
         }
 

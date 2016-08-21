@@ -41,7 +41,7 @@
         /// <returns>Triggered?</returns>
         public bool Update(Level level)
         {
-            if (Enabled && level.Engine.Round == TargetTime)
+            if (Enabled && level.Round == TargetTime)
             {
                 OnTimeReached?.Invoke(this);
                 return true;

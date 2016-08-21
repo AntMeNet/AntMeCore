@@ -27,7 +27,7 @@ namespace AntMe.Basics.LevelProperties
         protected void AddHighlight(T highlight)
         {
             // Only allowed in Running Mode
-            if (Level.Mode != LevelMode.Running)
+            if (Level.State != SimulationState.Running)
                 throw new NotSupportedException("Level is not running");
 
             highlights.Enqueue(highlight);

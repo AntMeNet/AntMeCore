@@ -72,7 +72,7 @@ namespace AntMe.Basics.LevelProperties
         public bool Update(Level level)
         {
             bool hit = false;
-            foreach (Item item in level.Engine.Items)
+            foreach (Item item in level.Items)
             {
                 // Apply Item Filter
                 if (ItemTypeFilter != null &&

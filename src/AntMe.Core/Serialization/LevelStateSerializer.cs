@@ -53,7 +53,7 @@ namespace AntMe.Serialization
         /// </summary>
         /// <param name="state">State</param>
         /// <returns>Frame Data</returns>
-        public void Serialize(LevelState state)
+        public void Serialize(Frame state)
         {
             Serialize(state, null);
         }
@@ -64,7 +64,7 @@ namespace AntMe.Serialization
         /// <param name="state">State</param>
         /// <param name="version">Target Stream Version</param>
         /// <returns>Frame Data</returns>
-        public void Serialize(LevelState state, byte version)
+        public void Serialize(Frame state, byte version)
         {
             Serialize(state, version);
         }
@@ -75,7 +75,7 @@ namespace AntMe.Serialization
         /// <param name="state">State</param>
         /// <param name="version">Target Stream Version</param>
         /// <returns>Frame Data</returns>
-        private void Serialize(LevelState state, byte? version)
+        private void Serialize(Frame state, byte? version)
         {
             // Serializer is already in Deserialize Mode
             if (deserializer != null)
@@ -140,7 +140,7 @@ namespace AntMe.Serialization
         /// Deserializes the next Frame of the Stream.
         /// </summary>
         /// <returns>Deserialized State</returns>
-        public LevelState Deserialize()
+        public Frame Deserialize()
         {
             if (serializer != null)
                 throw new NotSupportedException("Serializer is in Serialize Mode");

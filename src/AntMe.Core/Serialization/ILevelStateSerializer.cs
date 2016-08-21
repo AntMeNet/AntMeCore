@@ -13,6 +13,6 @@ namespace AntMe.Serialization
         /// </summary>
         /// <param name="writer">Output Stream</param>
         /// <param name="state">State</param>
-        void Serialize(BinaryWriter writer, LevelState state);
+        void Serialize(BinaryWriter writer, Frame state);
     }
 }
