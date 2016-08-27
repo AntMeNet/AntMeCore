@@ -3,7 +3,7 @@
 namespace AntMe
 {
     /// <summary>
-    /// Attribut zur Beschreibung von Kampagnen.
+    /// Attribute for description of campaigns.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     [Serializable]

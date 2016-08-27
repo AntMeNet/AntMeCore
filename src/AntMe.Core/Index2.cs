@@ -3,23 +3,23 @@
 namespace AntMe
 {
     /// <summary>
-    /// Datentyp zur Speicherung von Zell-Koordinaten mit X- und Y-Anteil.
+    /// Data type to store cell coordinates with X- and Y-Part.
     /// </summary>
     [Serializable]
     public struct Index2
     {
         /// <summary>
-        /// Index in X-Richtung.
+        /// Index X-Direction.
         /// </summary>
         public int X;
 
         /// <summary>
-        /// Index in Y-Richtung.
+        /// Index Y-Direction.
         /// </summary>
         public int Y;
 
         /// <summary>
-        /// Erstellt eine neue Index2-Instanz.
+        /// Creates a new Index2-Instance.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -29,10 +29,10 @@ namespace AntMe
             Y = y;
         }
 
-        #region Konstanten
+        #region Constants
 
         /// <summary>
-        ///     Null Index.
+        ///     Null Index
         /// </summary>
         public static Index2 Zero
         {
@@ -40,7 +40,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Index nach oben.
+        ///     Index Up
         /// </summary>
         public static Index2 Up
         {
@@ -49,7 +49,7 @@ namespace AntMe
 
 
         /// <summary>
-        ///     Index nach unten.
+        ///     Index Down
         /// </summary>
         public static Index2 Down
         {
@@ -57,7 +57,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Index nach left.
+        ///     Index Left
         /// </summary>
         public static Index2 Left
         {
@@ -65,7 +65,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Index nach rechts.
+        ///     Index Right
         /// </summary>
         public static Index2 Right
         {
@@ -73,7 +73,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Index nach oben links.
+        ///     Index Upper Left
         /// </summary>
         public static Index2 UpperLeft
         {
@@ -81,7 +81,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Index nach oben rechts.
+        ///     Index Upper Right
         /// </summary>
         public static Index2 UpperRight
         {
@@ -89,7 +89,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Index nach unten links.
+        ///     Index Lower Left
         /// </summary>
         public static Index2 LowerLeft
         {
@@ -97,7 +97,7 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Index nach unten rechts.
+        ///     Index Lower Right
         /// </summary>
         public static Index2 LowerRight
         {
@@ -106,35 +106,35 @@ namespace AntMe
 
         #endregion
 
-        #region Operator
+        #region Operators
 
         /// <summary>
-        /// Addiert zwei Index2.
+        /// Adds two Index2.
         /// </summary>
         /// <param name="a">Index a</param>
         /// <param name="b">Index b</param>
-        /// <returns>Addierter Wert</returns>
+        /// <returns>Added Value</returns>
         public static Index2 operator +(Index2 a, Index2 b)
         {
             return new Index2(a.X + b.X, a.Y + b.Y);
         }
 
         /// <summary>
-        /// Subtrahiert zwei Index2.
+        /// Subtract two Index2.
         /// </summary>
         /// <param name="a">Index a</param>
         /// <param name="b">Index b</param>
-        /// <returns>Subtrahierter Wert</returns>
+        /// <returns>Substracted Value </returns>
         public static Index2 operator -(Index2 a, Index2 b)
         {
             return new Index2(a.X - b.X, a.Y - b.Y);
         }
 
         /// <summary>
-        /// Multipliziert einen Index2 mit einem Skalierungsfaktor.
+        /// Multiplies an Index2 with a scaling factor.
         /// </summary>
         /// <param name="a">Index</param>
-        /// <param name="scale">Skalierungsfaktor</param>
+        /// <param name="scale">Scaling Factor</param>
         /// <returns>Skalierter Index2</returns>
         public static Index2 operator *(Index2 a, int scale)
         {
@@ -142,7 +142,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Dividiert einen Index2 mit einem Skalierungsdivisor.
+        /// Divides an Index2 with a scaling divisor.
         /// </summary>
         /// <param name="a">Index</param>
         /// <param name="scale">Divisor</param>
@@ -153,22 +153,22 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Vergleicht zwei Index2 auf Gleichheit.
+        /// Compares two Index2 of equality.
         /// </summary>
         /// <param name="a">Index a</param>
         /// <param name="b">Index b</param>
-        /// <returns>a gleich b?</returns>
+        /// <returns>a same like b?</returns>
         public static bool operator ==(Index2 a, Index2 b)
         {
             return (a.X == b.X && a.Y == b.Y);
         }
 
         /// <summary>
-        /// Vergleicht zwei Index auf Ungleichheit.
+        /// Compares two Index2 of disparity
         /// </summary>
         /// <param name="a">Index a</param>
         /// <param name="b">Index b</param>
-        /// <returns>a ungleich b?</returns>
+        /// <returns>a disparate b?</returns>
         public static bool operator !=(Index2 a, Index2 b)
         {
             return !(a == b);
@@ -177,16 +177,16 @@ namespace AntMe
         #endregion
 
         /// <summary>
-        /// Gibt den Wert des Index2 in Form von {x}/{y} zurück.
+        /// Returns the value of Index2 like {x}/{y}.
         /// </summary>
-        /// <returns>Wert als Zeichenhette</returns>
+        /// <returns>Value as String.</returns>
         public override string ToString()
         {
             return string.Format("{0}/{1}", X, Y);
         }
 
         /// <summary>
-        /// Ermittelt den Hashwert dieses Index2.
+        /// Returns the hash value of Index2.
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
@@ -195,7 +195,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Vergleicht die Werte zweiter Index2 auf Gleichheit.
+        /// Compares the value of two Index2 of equality.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>

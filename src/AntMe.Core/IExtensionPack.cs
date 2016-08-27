@@ -3,37 +3,37 @@
 namespace AntMe
 {
     /// <summary>
-    /// Basisinterface für alle Extension Packs.
+    /// Base Interface for all extension packs.
     /// </summary>
     public interface IExtensionPack
     {
         /// <summary>
-        /// Gibt den Namen der Extension zurück.
+        /// Returns the name of the extension.
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        /// Gibt die Beschreibung dieser Extension zurück.
+        /// Returns the description of this extension.
         /// </summary>
         string Description { get; }
 
         /// <summary>
-        /// Gibt die Versionsnummer dieser Extension zurück.
+        /// Returns the version number of this extension.
         /// </summary>
         Version Version { get; }
 
         /// <summary>
-        /// Gibt den Namen des Autors zurück.
+        /// Returns the name of the Author.
         /// </summary>
         string Author { get; }
 
         /// <summary>
-        /// Wird beim Laden der Extension aufgerufen. 
-        /// Hier sollten alle Fragmente im typeMapper registriert werden.
+        /// Called by first load of the extension.
+        /// All fragments should be registert in the TypeMapper.
         /// </summary>
-        /// <param name="typeMapper">Aktiver Type Mapper</param>
-        /// <param name="settings">Basis Settings</param>
-        /// <param name="dictionary">Basis Dictionary</param>
+        /// <param name="typeMapper">Active Type Mapper</param>
+        /// <param name="settings">Basic Settings</param>
+        /// <param name="dictionary">Basic Dictionary</param>
         void Load(ITypeMapper typeMapper, KeyValueStore settings, KeyValueStore dictionary);
     }
 }

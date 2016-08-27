@@ -6,27 +6,27 @@ using System.Text;
 namespace AntMe
 {
     /// <summary>
-    ///     Status der Simulation Engine.
+    ///     State of the simulation engine.
     /// </summary>
     public enum EngineState
     {
         /// <summary>
-        ///     Uninitialisierter Status. Rufe Init() auf, um das zu ändern.
+        ///     Not initialized state. Call Init() to change this.
         /// </summary>
         Uninitialized,
 
         /// <summary>
-        ///     Die Engine ist bereits für die nächste Simulationsrunde.
+        ///     Engine is still ready for the next round of simulation.
         /// </summary>
         Simulating,
 
         /// <summary>
-        /// Die Engine hatte einen Fehler und ist deshalb beendet.
+        /// Engine got an error and exit.
         /// </summary>
         Failed,
 
         /// <summary>
-        /// Die Simulation ist beendet.
+        /// Simulation is over.
         /// </summary>
         Finished,
     }

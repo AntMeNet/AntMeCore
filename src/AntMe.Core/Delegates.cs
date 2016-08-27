@@ -1,10 +1,10 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Standard Delegat für Property Change Events.
+    /// Default Delegate for property change events.
     /// </summary>
-    /// <typeparam name="T">Datentyp der Änderung</typeparam>
-    /// <param name="newValue">Neuer Wert der Eigenschaft</param>
+    /// <typeparam name="T">Type of change</typeparam>
+    /// <param name="newValue">New value of the property</param>
     public delegate void ValueUpdate<in T>(T newValue);
 
     /// <summary>
@@ -17,23 +17,23 @@
     public delegate void ValueUpdate<in I, in V>(I index, V value);
 
     /// <summary>
-    /// Standard Delegat für Property Changed Events.
+    /// Default Delegate for property changed events.
     /// </summary>
-    /// <typeparam name="T">Datentyp der Änderung</typeparam>
-    /// <param name="item">Betroffenes Item</param>
-    /// <param name="newValue">Finaler Wert der Eigenschaft</param>
+    /// <typeparam name="T">Type of change</typeparam>
+    /// <param name="item">Affected Item</param>
+    /// <param name="newValue">Final value of the property</param>
     public delegate void ValueChanged<in T>(Item item, T newValue);
 
     /// <summary>
-    /// Standard Delegat für Item Change Events.
+    /// Default Delegate for item change events.
     /// </summary>
-    /// <param name="item">Betroffenes Item</param>
+    /// <param name="item">Affected Item</param>
     public delegate void ChangeItem(Item item);
 
     /// <summary>
-    /// Standard Delegat für typisierte Item Events.
+    /// Default Delegate for type item events.
     /// </summary>
     /// <typeparam name="T">Item Type</typeparam>
-    /// <param name="item">Betroffenes Item</param>
+    /// <param name="item">Affected Item</param>
     public delegate void ChangeItem<in T>(T item);
 }
