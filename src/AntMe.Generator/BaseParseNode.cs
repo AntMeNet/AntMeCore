@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -110,8 +111,45 @@ namespace AntMe.Generator
             }
         }
 
+        protected static ArgumentSyntax GetLocaArgument(ParameterInfo parameterInfo)
+        {
+            if (isPrimitiveType(parameterInfo.ParameterType))
+                return SyntaxFactory.Argument(SyntaxFactory.IdentifierName("Loc" + parameterInfo.Name));
+            return SyntaxFactory.Argument(
+                SyntaxFactory.MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    SyntaxFactory.IdentifierName("Loc" + parameterInfo.Name),
+                    SyntaxFactory.IdentifierName("_" + parameterInfo.ParameterType.Name)));
+        }
 
+        protected static bool isPrimitiveType(Type type)
+        {
+            if (type == typeof(bool) ||
+               type == typeof(byte) ||
+               type == typeof(char) ||
+               type == typeof(decimal) ||
+               type == typeof(double) ||
+               type == typeof(float) ||
+               type == typeof(int) ||
+               type == typeof(Int16) ||
+               type == typeof(Int32) ||
+               type == typeof(Int64) ||
+               type == typeof(long) ||
+               type == typeof(object) ||
+               type == typeof(sbyte) ||
+               type == typeof(short) ||
+               type == typeof(Single) ||
+               type == typeof(string) ||
+               type == typeof(uint) ||
+               type == typeof(UInt16) ||
+               type == typeof(UInt32) ||
+               type == typeof(UInt64) ||
+               type == typeof(ulong) ||
+               type == typeof(ushort))
+                return true;
+            return false;
 
+        }
 
 
     }

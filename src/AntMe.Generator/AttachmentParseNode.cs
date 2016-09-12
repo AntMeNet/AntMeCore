@@ -57,7 +57,7 @@ namespace AntMe.Generator
                     //adding Methods
                     foreach (MethodInfo methodInfo in AttachmentType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
                     {
-                        if (methodInfo.IsSpecialName || CheckTypeBalckList(string.Format("{0}:{1}", methodInfo.ReflectedType.FullName, methodInfo.Name)))
+                        if (methodInfo.IsSpecialName || methodInfo.IsGenericMethod || CheckTypeBalckList(string.Format("{0}:{1}", methodInfo.ReflectedType.FullName, methodInfo.Name)))
                             continue;
 
                         MethodDeclarationSyntax method = SyntaxFactory.MethodDeclaration(
@@ -82,26 +82,101 @@ namespace AntMe.Generator
                         }
 
 
-                        method = method.AddBodyStatements(
-                            SyntaxFactory.Block(
-                                SyntaxFactory.IfStatement(
-                                    SyntaxFactory.BinaryExpression(
-                                        SyntaxKind.NotEqualsExpression,
-                                        SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
-                                        SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
-                                    SyntaxFactory.ReturnStatement(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
-                                                SyntaxFactory.IdentifierName(methodInfo.Name))).WithArgumentList(arguments))),
-                                SyntaxFactory.ReturnStatement(
-                                    SyntaxFactory.DefaultExpression(
-                                        SyntaxFactory.IdentifierName(methodInfo.ReturnType.FullName)))));
+                        if (methodInfo.ReturnType == typeof(void))
+                        {
+                            method = method.AddBodyStatements(
+                                        SyntaxFactory.Block(
+                                            SyntaxFactory.IfStatement(
+                                                SyntaxFactory.BinaryExpression(
+                                                    SyntaxKind.NotEqualsExpression,
+                                                    SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
+                                                    SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
+                                                SyntaxFactory.ExpressionStatement(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
+                                                            SyntaxFactory.IdentifierName(methodInfo.Name))).WithArgumentList(arguments)))));
+                        }
+                        else
+                        {
+                            method = method.AddBodyStatements(
+                                        SyntaxFactory.Block(
+                                            SyntaxFactory.IfStatement(
+                                                SyntaxFactory.BinaryExpression(
+                                                    SyntaxKind.NotEqualsExpression,
+                                                    SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
+                                                    SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
+                                                SyntaxFactory.ReturnStatement(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
+                                                            SyntaxFactory.IdentifierName(methodInfo.Name))).WithArgumentList(arguments))),
+                                            SyntaxFactory.ReturnStatement(
+                                                SyntaxFactory.DefaultExpression(
+                                                    SyntaxFactory.IdentifierName(methodInfo.ReturnType.FullName)))));
+                        }
 
                         result.Add(method);
                     }
 
+                    foreach (PropertyInfo propertyInfo in AttachmentType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                    {
+
+                        if (propertyInfo.IsSpecialName || propertyInfo.PropertyType.IsGenericType || CheckTypeBalckList(string.Format("{0}:{1}", propertyInfo.ReflectedType.FullName, propertyInfo.Name)))
+                            continue;
+
+                        PropertyDeclarationSyntax property = SyntaxFactory.PropertyDeclaration(
+                        GetTypeSyntax(propertyInfo.PropertyType.FullName), "Loc" + propertyInfo.Name).AddModifiers(
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+                        if (propertyInfo.CanRead && propertyInfo.GetMethod.IsPublic)
+                        {
+                            property = property.AddAccessorListAccessors(
+                                SyntaxFactory.AccessorDeclaration(
+                                    SyntaxKind.GetAccessorDeclaration,
+                                    SyntaxFactory.Block(
+                                        SyntaxFactory.IfStatement(
+                                            SyntaxFactory.BinaryExpression(
+                                                SyntaxKind.NotEqualsExpression,
+                                                SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
+                                                SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
+                                            SyntaxFactory.ReturnStatement(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
+                                                    SyntaxFactory.IdentifierName(propertyInfo.Name)))),
+                                        SyntaxFactory.ReturnStatement(
+                                            SyntaxFactory.DefaultExpression(
+                                                SyntaxFactory.IdentifierName(propertyInfo.PropertyType.FullName))))));
+
+
+                        }
+                        if (propertyInfo.CanWrite && propertyInfo.SetMethod.IsPublic)
+                        {
+
+                            property = property.AddAccessorListAccessors(
+                                SyntaxFactory.AccessorDeclaration(
+                                    SyntaxKind.SetAccessorDeclaration,
+                                    SyntaxFactory.Block(
+                                        SyntaxFactory.IfStatement(
+                                            SyntaxFactory.BinaryExpression(
+                                                SyntaxKind.NotEqualsExpression,
+                                                SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
+                                                SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
+                                            SyntaxFactory.ExpressionStatement(
+                                                SyntaxFactory.AssignmentExpression(
+                                                    SyntaxKind.SimpleAssignmentExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName("_" + AttachmentType.Name),
+                                                        SyntaxFactory.IdentifierName(propertyInfo.Name)),
+                                                    SyntaxFactory.IdentifierName("value")))))));
+
+                        }
+
+                        result.Add(property);
+                    }
 
 
                     return result.ToArray();

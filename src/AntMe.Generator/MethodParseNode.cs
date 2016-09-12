@@ -57,9 +57,7 @@ namespace AntMe.Generator
                                 GetTypeSyntax(parameterInfo.ParameterType.FullName)));
 
                         // adding Arguments to argumentslist, for later use.
-                        arguments = arguments.AddArguments(
-                            SyntaxFactory.Argument(
-                                SyntaxFactory.IdentifierName("Loc" + parameterInfo.Name)));
+                        arguments = arguments.AddArguments(GetLocaArgument(parameterInfo));
                     }
 
                     InvocationExpressionSyntax invocation =
@@ -78,9 +76,21 @@ namespace AntMe.Generator
                     }
                     else
                     {
-                        Method = Method.WithBody(
-                            SyntaxFactory.Block(
-                                SyntaxFactory.ReturnStatement(invocation)));
+                        if (isPrimitiveType(MethodInfo.ReturnType))
+                        {
+                            Method = Method.WithBody(
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.ReturnStatement(invocation)));
+                        }
+                        else
+                        {
+                            Method = Method.WithBody(
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.ReturnStatement(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName("Loc"+MethodInfo.ReturnType.Name)).AddArgumentListArguments(
+                                            SyntaxFactory.Argument(invocation)))));
+                        }
                     }
 
                     return new MemberDeclarationSyntax[] { Method };

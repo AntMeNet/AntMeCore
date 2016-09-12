@@ -26,6 +26,7 @@ namespace AntMe.Generator
                                         @"AntMe.Basics.ItemProperties(([.|+]\w*)*):Equals",
                                         @"AntMe.Basics.ItemProperties(([.|+]\w*)*):GetHashCode",
                                         @"AntMe.Basics.ItemProperties(([.|+]\w*)*):GetType",
+                                        @"AntMe.Basics.ItemProperties(([.|+]\w*)*):Item",
                                         @"AntMe.Basics.ItemInfo(([.|+]\w*)*):ToString",
                                         @"AntMe.Basics.ItemInfo(([.|+]\w*)*):Equals",
                                         @"AntMe.Basics.ItemInfo(([.|+]\w*)*):GetHashCode",};

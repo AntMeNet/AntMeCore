@@ -64,20 +64,20 @@ namespace CoreTestClient
         private void generateButton_Click(object sender, EventArgs e)
         {
             string outputFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions";
-            //try
-            //{
-            templateGenerator.Generate(nameTextBox.Text,
-                authorTextBox.Text,
-                factionCombo.SelectedItem.ToString(),
-                languageCombo.SelectedItem.ToString(),
-                programmingLanguageCombo.SelectedItem.ToString(),
-                environmentComboBox.SelectedItem.ToString(),
-                outputFolder);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
+            try
+            {
+                templateGenerator.Generate(nameTextBox.Text,
+                    authorTextBox.Text,
+                    factionCombo.SelectedItem.ToString(),
+                    languageCombo.SelectedItem.ToString(),
+                    programmingLanguageCombo.SelectedItem.ToString(),
+                    environmentComboBox.SelectedItem.ToString(),
+                    outputFolder);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }
