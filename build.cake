@@ -169,7 +169,7 @@ Task("upload-coverage")
         if(string.IsNullOrEmpty(repoToken))
             throw new Exception("Coveralls repo token missing. Set COVERALLS_REPO_TOKEN evironment variable");
 
-        CoverallsIo("./output/coverage.xml", new CoverallsIoSettings()
+        CoverallsNet("./output/coverage.xml", CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
         {
             RepoToken = repoToken
         });
