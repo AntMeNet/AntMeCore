@@ -2,8 +2,12 @@
 ///     Just a simple build script.
 /// </summary>
 
-#tool "xunit.runner.console"
-#tool "ReportUnit"
+#addin Cake.Coveralls
+
+#tool "nuget:?package=xunit.runner.console"
+#tool "nuget:?package=ReportUnit"
+#tool "nuget:?package=OpenCover"
+#tool "nuget:?package=coveralls.net"
 
 // *********************
 //      ARGUMENTS
@@ -67,7 +71,8 @@ Task("default")
     .IsDependentOn("clean")
     .IsDependentOn("restore")
     .IsDependentOn("build")
-    .IsDependentOn("test");
+    .IsDependentOn("test")
+    .IsDependentOn("upload-coverage");
 
 /// <summary>
 ///     Task to rebuild. Nothing else than a clean followed by build.
@@ -114,17 +119,61 @@ Task("test")
     
         var parallelOption = IsRunningOnWindows() ? ParallelismOption.All : ParallelismOption.None;
 
-        XUnit2(Tests, new XUnit2Settings
+        Action<ICakeContext> runXunit = tool => {
+            tool.XUnit2(Tests, new XUnit2Settings
+            {
+                OutputDirectory = "./output/xunit",
+                XmlReport = true,
+                ShadowCopy = false,
+                Parallelism = parallelOption,
+                NoAppDomain = ! IsRunningOnWindows()
+            });
+        };
+
+        if(IsRunningOnWindows())
         {
-            OutputDirectory = "./output/xunit",
-            XmlReport = true,
-            Parallelism = parallelOption,
-            NoAppDomain = ! IsRunningOnWindows()
-        });
-    }).Finally(() => 
+            OpenCover(runXunit,
+                File("./output/coverage.xml"),
+                new OpenCoverSettings()
+                    .WithFilter("+[AntMe.*]*")
+                    .WithFilter("-[AntMe.*.Tests]*"));
+        }
+        else
+            runXunit(Context);
+    })
+    .Finally(() =>
     {
         ReportUnit("./output/xunit");
     });
-    
+
+/// <summary>
+///     Task to upload test coverage result to coveralls.io. Only executed on AppVeyor CI.
+/// </summary>
+Task("upload-coverage")
+    .WithCriteria(() =>
+    {
+        var isMainRepo = AppVeyor.Environment.Repository.Name == "AntMeNet/AntMeCore";
+        var isPR = AppVeyor.Environment.PullRequest.IsPullRequest;
+
+        var canUpload = FileExists("./output/coverage.xml") && AppVeyor.IsRunningOnAppVeyor && isMainRepo && !isPR;
+
+        if(!canUpload)
+            Information("Upload coverage result skipped. To upload test coverage run on AppVeyor CI.");
+
+        return canUpload;
+    })
+    .Does(() =>
+    {
+        var repoToken = EnvironmentVariable("COVERALLS_REPO_TOKEN");
+
+        if(string.IsNullOrEmpty(repoToken))
+            throw new Exception("Coveralls repo token missing. Set COVERALLS_REPO_TOKEN evironment variable");
+
+        CoverallsNet("./output/coverage.xml", CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
+        {
+            RepoToken = repoToken
+        });
+    });
+
 // Execution
 RunTarget(Target);
