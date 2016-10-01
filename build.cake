@@ -2,9 +2,12 @@
 ///     Just a simple build script.
 /// </summary>
 
+#addin Cake.Coveralls
+
 #tool "nuget:?package=xunit.runner.console"
 #tool "nuget:?package=ReportUnit"
 #tool "nuget:?package=OpenCover"
+#tool "nuget:?package=coveralls.net"
 
 // *********************
 //      ARGUMENTS
@@ -68,7 +71,8 @@ Task("default")
     .IsDependentOn("clean")
     .IsDependentOn("restore")
     .IsDependentOn("build")
-    .IsDependentOn("test");
+    .IsDependentOn("test")
+    .IsDependentOn("upload-coverage");
 
 /// <summary>
 ///     Task to rebuild. Nothing else than a clean followed by build.
@@ -141,6 +145,35 @@ Task("test")
     {
         ReportUnit("./output/xunit");
     });
-    
+
+/// <summary>
+///     Task to upload test coverage result to coveralls.io. Only executed on AppVeyor CI.
+/// </summary>
+Task("upload-coverage")
+    .WithCriteria(() =>
+    {
+        var isMainRepo = AppVeyor.Environment.Repository.Name == "AntMeNet/AntMeCore";
+        var isPR = AppVeyor.Environment.PullRequest.IsPullRequest;
+
+        var canUpload = FileExists("./output/coverage.xml") && AppVeyor.IsRunningOnAppVeyor && isMainRepo && !isPR;
+
+        if(!canUpload)
+            Information("Upload coverage result skipped. To upload test coverage run on AppVeyor CI.");
+
+        return canUpload;
+    })
+    .Does(() =>
+    {
+        var repoToken = EnvironmentVariable("COVERALLS_REPO_TOKEN");
+
+        if(string.IsNullOrEmpty(repoToken))
+            throw new Exception("Coveralls repo token missing. Set COVERALLS_REPO_TOKEN evironment variable");
+
+        CoverallsIo("./output/coverage.xml", new CoverallsIoSettings()
+        {
+            RepoToken = repoToken
+        });
+    });
+
 // Execution
 RunTarget(Target);
