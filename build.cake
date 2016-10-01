@@ -112,11 +112,14 @@ Task("test")
     {
         CreateDirectory("./output/xunit");
     
+        var parallelOption = IsRunningOnWindows() ? ParallelismOption.All : ParallelismOption.None;
+
         XUnit2(Tests, new XUnit2Settings
         {
             OutputDirectory = "./output/xunit",
             XmlReport = true,
-            Parallelism = ParallelismOption.All
+            Parallelism = parallelOption,
+            NoAppDomain = ! IsRunningOnWindows()
         });
     }).Finally(() => 
     {
