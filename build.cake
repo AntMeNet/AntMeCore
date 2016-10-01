@@ -2,8 +2,9 @@
 ///     Just a simple build script.
 /// </summary>
 
-#tool "xunit.runner.console"
-#tool "ReportUnit"
+#tool "nuget:?package=xunit.runner.console"
+#tool "nuget:?package=ReportUnit"
+#tool "nuget:?package=OpenCover"
 
 // *********************
 //      ARGUMENTS
@@ -114,14 +115,29 @@ Task("test")
     
         var parallelOption = IsRunningOnWindows() ? ParallelismOption.All : ParallelismOption.None;
 
-        XUnit2(Tests, new XUnit2Settings
+        Action<ICakeContext> runXunit = tool => {
+            tool.XUnit2(Tests, new XUnit2Settings
+            {
+                OutputDirectory = "./output/xunit",
+                XmlReport = true,
+                ShadowCopy = false,
+                Parallelism = parallelOption,
+                NoAppDomain = ! IsRunningOnWindows()
+            });
+        };
+
+        if(IsRunningOnWindows())
         {
-            OutputDirectory = "./output/xunit",
-            XmlReport = true,
-            Parallelism = parallelOption,
-            NoAppDomain = ! IsRunningOnWindows()
-        });
-    }).Finally(() => 
+            OpenCover(runXunit,
+                File("./output/coverage.xml"),
+                new OpenCoverSettings()
+                    .WithFilter("+[AntMe.*]*")
+                    .WithFilter("-[AntMe.*.Tests]*"));
+        }
+        else
+            runXunit(Context);
+    })
+    .Finally(() =>
     {
         ReportUnit("./output/xunit");
     });
