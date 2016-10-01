@@ -118,7 +118,8 @@ Task("test")
         {
             OutputDirectory = "./output/xunit",
             XmlReport = true,
-            Parallelism = parallelOption
+            Parallelism = parallelOption,
+            NoAppDomain = ! IsRunningOnWindows()
         });
     }).Finally(() => 
     {
