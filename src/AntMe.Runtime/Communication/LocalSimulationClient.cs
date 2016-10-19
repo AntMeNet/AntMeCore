@@ -149,8 +149,7 @@ namespace AntMe.Runtime.Communication
         /// <param name="ex"></param>
         public void CloseByError(Exception ex)
         {
-            if (OnError != null)
-                OnError(this, ex.Message);
+            OnError?.Invoke(this, ex.Message);
         }
 
         /// <summary>
@@ -240,8 +239,7 @@ namespace AntMe.Runtime.Communication
         /// <param name="message">Nachricht</param>
         public void SendMessage(string message)
         {
-            if (OnMessageReceived != null)
-                OnMessageReceived(this, master, message);
+            OnMessageReceived?.Invoke(this, master, message);
         }
 
         public event SimulationClientDelegate<UserProfile, string> OnMessageReceived;
@@ -271,8 +269,7 @@ namespace AntMe.Runtime.Communication
                 ResetSlots();
 
                 // Event werfen
-                if (OnLevelChanged != null)
-                    OnLevelChanged(this, null);
+                OnLevelChanged?.Invoke(this, null);
 
                 return true;
             }
@@ -300,8 +297,7 @@ namespace AntMe.Runtime.Communication
                 }
 
                 // Event werfen
-                if (OnLevelChanged != null)
-                    OnLevelChanged(this, this.level);
+                OnLevelChanged?.Invoke(this, this.level);
 
                 return true;
             }
@@ -351,8 +347,7 @@ namespace AntMe.Runtime.Communication
                 players[slot] = null;
 
                 // Event werfen
-                if (OnPlayerChanged != null)
-                    OnPlayerChanged(this, slot);
+                OnPlayerChanged?.Invoke(this, slot);
 
                 return true;
             }
@@ -379,8 +374,7 @@ namespace AntMe.Runtime.Communication
                 }
 
                 // Event werfen
-                if (OnPlayerChanged != null)
-                    OnPlayerChanged(this, slot);
+                OnPlayerChanged?.Invoke(this, slot);
 
                 return true;
             }
@@ -444,8 +438,7 @@ namespace AntMe.Runtime.Communication
                     {
                         slots[i].ColorKey = oldColor;
 
-                        if (OnPlayerChanged != null)
-                            OnPlayerChanged(this, i);
+                        OnPlayerChanged?.Invoke(this, i);
 
                         break;
                     }
@@ -458,8 +451,7 @@ namespace AntMe.Runtime.Communication
             slots[slot].Team = team;
             slots[slot].ReadyState = ready;
 
-            if (OnPlayerChanged != null)
-                OnPlayerChanged(this, slot);
+            OnPlayerChanged?.Invoke(this, slot);
 
             return true;
         }
@@ -478,8 +470,7 @@ namespace AntMe.Runtime.Communication
             }
 
             // Event werfen
-            if (OnPlayerReset != null)
-                OnPlayerReset(this);
+            OnPlayerReset?.Invoke(this);
         }
 
         /// <summary>
@@ -576,8 +567,7 @@ namespace AntMe.Runtime.Communication
 
             // State ändern
             state = SimulationState.Running;
-            if (OnSimulationChanged != null)
-                OnSimulationChanged(this, state, rate);
+            OnSimulationChanged?.Invoke(this, state, rate);
 
             // Thread erzeugen
             thread = new Thread(SimulationLoop);
@@ -597,8 +587,7 @@ namespace AntMe.Runtime.Communication
             if (state == SimulationState.Running)
             {
                 state = SimulationState.Paused;
-                if (OnSimulationState != null)
-                    OnSimulationChanged(this, state, rate);
+                OnSimulationChanged?.Invoke(this, state, rate);
             }
         }
 
@@ -613,9 +602,7 @@ namespace AntMe.Runtime.Communication
 
             // state melden und setzen
             state = SimulationState.Running;
-            if (OnSimulationState != null)
-                OnSimulationChanged(this, state, rate);
-
+            OnSimulationChanged?.Invoke(this, state, rate);
         }
 
         /// <summary>
@@ -632,8 +619,7 @@ namespace AntMe.Runtime.Communication
             if (thread.Join(2000))
                 thread.Abort();
 
-            if (OnSimulationChanged != null)
-                OnSimulationChanged(this, state, rate);
+            OnSimulationChanged?.Invoke(this, state, rate);
         }
 
         /// <summary>
@@ -644,8 +630,7 @@ namespace AntMe.Runtime.Communication
         {
             rate = Math.Max((byte)1, frames);
 
-            if (OnSimulationChanged != null)
-                OnSimulationChanged(this, state, rate);
+            OnSimulationChanged?.Invoke(this, state, rate);
         }
 
         /// <summary>
@@ -692,8 +677,7 @@ namespace AntMe.Runtime.Communication
             catch (Exception ex)
             {
                 // Event werfen
-                if (OnError != null)
-                    OnError(this, ex.Message);
+                OnError?.Invoke(this, ex.Message);
 
                 // Simulation stoppen
                 StopSimulation();
@@ -723,8 +707,7 @@ namespace AntMe.Runtime.Communication
                     continue;
                 }
 
-                if (OnSimulationState != null)
-                    OnSimulationState(this, currentState);
+                OnSimulationState?.Invoke(this, currentState);
 
                 // Wartezeit zwischen Frames
                 while (state != SimulationState.Stopped &&

@@ -56,6 +56,7 @@
             this.frames80ToolButton = new System.Windows.Forms.ToolStripMenuItem();
             this.framesMaxToolButton = new System.Windows.Forms.ToolStripMenuItem();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.localizationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -66,7 +67,8 @@
             this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.programMenu,
             this.loaderMenu,
-            this.mapEditorMenu});
+            this.mapEditorMenu,
+            this.localizationEditorToolStripMenuItem});
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Size = new System.Drawing.Size(784, 24);
@@ -271,6 +273,13 @@
             this.timer.Enabled = true;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
+            // localizationEditorToolStripMenuItem
+            // 
+            this.localizationEditorToolStripMenuItem.Name = "localizationEditorToolStripMenuItem";
+            this.localizationEditorToolStripMenuItem.Size = new System.Drawing.Size(116, 20);
+            this.localizationEditorToolStripMenuItem.Text = "Localization Editor";
+            this.localizationEditorToolStripMenuItem.Click += new System.EventHandler(this.localizationEditorToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -326,6 +335,7 @@
         private System.Windows.Forms.ToolStripMenuItem framesMaxToolButton;
         private System.Windows.Forms.ToolStripMenuItem localizationMenu;
         private System.Windows.Forms.ToolStripMenuItem mapEditorMenu;
+        private System.Windows.Forms.ToolStripMenuItem localizationEditorToolStripMenuItem;
     }
 }
 

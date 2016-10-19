@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace AntMe
+using static AntMe.Serialization.LevelStateSerializerV1;
+
+namespace AntMe.Serialization
 {
-    /// <summary>
-    /// Klasse zur Deserialisierung von Simulationsstates
-    /// </summary>
-    public sealed class StateDeserializer : IDisposable
+    [Obsolete]
+    internal sealed class LevelStateDeserializerV1 : ILevelStateDeserializer
     {
         private readonly MemoryStream _stream;
         private readonly BinaryReader _reader;
@@ -30,7 +30,7 @@ namespace AntMe
         /// <summary>
         /// Neue Instanz eines State Deserializers.
         /// </summary>
-        public StateDeserializer()
+        public LevelStateDeserializerV1()
         {
             _stream = new MemoryStream();
             _reader = new BinaryReader(_stream, Encoding.UTF8);
@@ -39,21 +39,12 @@ namespace AntMe
         /// <summary>
         /// Deserialisiert den gegebenen Byte Array.
         /// </summary>
-        /// <param name="rawData">Input Array</param>
+        /// <param name="input">Input Array</param>
         /// <returns>Aktuelle Instanz des Main States</returns>
-        public LevelState Deserialize(byte[] rawData)
+        public LevelState Deserialize(Stream input)
         {
-            return Deserialize(rawData, 0);
-        }
+            throw new NotSupportedException("Version 1 is not supported anymore");
 
-        /// <summary>
-        /// Deserialisiert den gegebenen Byte Array.
-        /// </summary>
-        /// <param name="rawData">Input Array</param>
-        /// <param name="offset">Offset innerhalb des Arrays</param>
-        /// <returns>Aktuelle Instanz des Main States</returns>
-        public LevelState Deserialize(byte[] rawData, int offset)
-        {
             lock (_lockObject)
             {
                 // Deserializer ist bereits disposed.
@@ -61,7 +52,7 @@ namespace AntMe
                     throw new NotSupportedException("Deserializer already disposed");
 
                 _stream.Position = 0;
-                _stream.Write(rawData, offset, rawData.Length - offset);
+                // _stream.Write(rawData, offset, rawData.Length - offset);
                 _stream.Position = 0;
 
                 return InternalDeserialize();
@@ -498,6 +489,11 @@ namespace AntMe
                 _knownFactionTypes.Clear();
                 _knownItemTypes.Clear();
             }
+        }
+
+        public LevelState Deserialize(BinaryReader reader)
+        {
+            throw new NotImplementedException();
         }
     }
 }

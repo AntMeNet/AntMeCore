@@ -56,14 +56,12 @@ namespace AntMe.Basics.Factions.Ants.Interop
 
             attackable.OnKill += i =>
             {
-                if (OnKill != null)
-                    OnKill();
+                OnKill?.Invoke();
             };
 
             attackable.OnAttackerHit += (i, value) =>
             {
-                if (OnHit != null)
-                    OnHit(value);
+                OnHit?.Invoke(value);
             };
 
             attackable.OnNewAttackerItem += i =>
@@ -279,7 +277,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         {
             get
             {
-                return attacker.AttackTarget != null ? attacker.AttackTarget.Item.GetItemInfo(Item) : null;
+                return attacker.AttackTarget?.Item.GetItemInfo(Item);
             }
         }
 
@@ -315,8 +313,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         {
             get
             {
-                if (carrier.CarrierLoad == null) return null;
-                return carrier.CarrierLoad.Item.GetItemInfo(Item);
+                return carrier.CarrierLoad?.Item.GetItemInfo(Item);
             }
         }
 

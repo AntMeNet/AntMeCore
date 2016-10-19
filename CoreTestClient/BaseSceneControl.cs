@@ -129,8 +129,7 @@ namespace CoreTestClient
             private set
             {
                 hoveredPosition = value;
-                if (OnHoveredPositionChanged != null)
-                    OnHoveredPositionChanged(value);
+                OnHoveredPositionChanged?.Invoke(value);
             }
         }
 
@@ -141,11 +140,9 @@ namespace CoreTestClient
             get { return hoveredCell; }
             private set
             {
-                if (hoveredCell != value && OnHoveredCellChanged != null)
-                {
-                    hoveredCell = value;
-                    OnHoveredCellChanged(value);
-                }
+                hoveredCell = value;
+                if (hoveredCell != value)
+                    OnHoveredCellChanged?.Invoke(value);
             }
         }
 
@@ -307,10 +304,7 @@ namespace CoreTestClient
                                 }
 
                                 TileRenderer tileRenderer = OnRenderTile(x, y, out orientation);
-                                if (tileRenderer != null)
-                                    tileRenderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
-
-                                
+                                tileRenderer?.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
                             }
                         }
 
@@ -348,9 +342,9 @@ namespace CoreTestClient
         protected void SetMapSize(Index2 size)
         {
             // Dispose old Buffer (Size does not fit)
-            if (buffer != null && size != mapSize)
+            if (size != mapSize)
             {
-                buffer.Dispose();
+                buffer?.Dispose();
                 buffer = null;
             }
 
@@ -371,7 +365,6 @@ namespace CoreTestClient
             // Recreate a new Buffer
             if (buffer == null)
             {
-                mapSize = size;
                 buffer = new Bitmap(mapSize.X * TILEWIDTH, mapSize.Y * TILEWIDTH);
             }
 

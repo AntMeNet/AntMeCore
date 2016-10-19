@@ -17,8 +17,7 @@ namespace CoreTestClient.Tools
             set
             {
                 selectedCell = value;
-                if (OnSelectedCellChanged != null)
-                    OnSelectedCellChanged(value);
+                OnSelectedCellChanged?.Invoke(value);
             }
         }
 

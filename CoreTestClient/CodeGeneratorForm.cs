@@ -58,7 +58,7 @@ namespace CoreTestClient
             string outputFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions";
             new ModpackGenerator(languageCombo.SelectedItem.ToString(), ExtensionLoader.DefaultTypeMapper)
                 .GenerateLocaKeys(languageCombo.SelectedItem.ToString())
-                .Save(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions\\NewLocaTable.Language.lng");
+                .Save(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions\\NewLocaTable.en.language");
         }
 
         private void generateButton_Click(object sender, EventArgs e)

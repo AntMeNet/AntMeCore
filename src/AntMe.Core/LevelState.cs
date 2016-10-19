@@ -76,6 +76,9 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void SerializeFirst(BinaryWriter stream, byte version)
         {
+            if (version != 2)
+                throw new NotSupportedException("Stream Version not supported");
+
             stream.Write(Date.ToString("u"));
             stream.Write((byte)Mode);
             stream.Write(Round);
@@ -88,6 +91,9 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void SerializeUpdate(BinaryWriter stream, byte version)
         {
+            if (version != 2)
+                throw new NotSupportedException("Stream Version not supported");
+
             stream.Write(Date.ToString("u"));
             stream.Write((byte)Mode);
             stream.Write(Round);
@@ -100,6 +106,9 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void DeserializeFirst(BinaryReader stream, byte version)
         {
+            if (version != 2)
+                throw new NotSupportedException("Stream Version not supported");
+
             Date = DateTimeOffset.Parse(stream.ReadString()).ToLocalTime();
             Mode = (LevelMode)stream.ReadByte();
             Round = stream.ReadInt32();
@@ -112,6 +121,9 @@ namespace AntMe
         /// <param name="version">Protocol Version</param>
         public void DeserializeUpdate(BinaryReader stream, byte version)
         {
+            if (version != 2)
+                throw new NotSupportedException("Stream Version not supported");
+
             Date = DateTimeOffset.Parse(stream.ReadString()).ToLocalTime();
             Mode = (LevelMode)stream.ReadByte();
             Round = stream.ReadInt32();

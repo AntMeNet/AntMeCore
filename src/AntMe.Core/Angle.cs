@@ -225,7 +225,7 @@ namespace AntMe
         /// <summary>
         /// Converts Radian (float) to Angle.
         /// </summary>
-        /// <param name="angle">Bogenmaß</param>
+        /// <param name="angle">Radian Measure</param>
         public static implicit operator Angle(float angle)
         {
             return new Angle(angle);
@@ -247,77 +247,77 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Subtrahiert einen Winkel (Bogenmaß) vom Winkel.
+        /// Subtracts an Angle (radian measure) from this Angle.
         /// </summary>
-        /// <param name="angle">Basiswinkel</param>
-        /// <param name="diff">Abzuziehender Winkel</param>
-        /// <returns>Subtrahierter Winkel.</returns>
+        /// <param name="angle">Base Angle</param>
+        /// <param name="diff">Subtracting Angle</param>
+        /// <returns>Substracted Angle</returns>
         public static Angle operator -(Angle angle, float diff)
         {
             return angle.SubstractRadian(diff);
         }
 
         /// <summary>
-        /// Vergleicht zwei Winkel.
+        /// Compares two Angles.
         /// </summary>
-        /// <param name="a">Winkel a</param>
-        /// <param name="b">Winkel b</param>
-        /// <returns>Winkel gleich</returns>
+        /// <param name="a">Angle a</param>
+        /// <param name="b">Angle b</param>
+        /// <returns>Angle similar</returns>
         public static bool operator ==(Angle a, Angle b)
         {
             return (a.value == b.value);
         }
 
         /// <summary>
-        /// Vergleicht zwei Winkel auf Ungleichheit.
+        /// Compares two Angles of disparity.
         /// </summary>
-        /// <param name="a">Winkel a</param>
-        /// <param name="b">Winkel b</param>
-        /// <returns>Winkel ungleich</returns>
+        /// <param name="a">Angle a</param>
+        /// <param name="b">Angle b</param>
+        /// <returns>Angle dissimilar</returns>
         public static bool operator !=(Angle a, Angle b)
         {
             return !(a == b);
         }
 
         /// <summary>
-        /// Prüft, ob ein Winkel größer als ein anderer ist.
+        /// Check if an Angle is bigger than another one.
         /// </summary>
-        /// <param name="a">Winkel a</param>
-        /// <param name="b">Winkel b</param>
-        /// <returns>a größer b?</returns>
+        /// <param name="a">Angle a</param>
+        /// <param name="b">Angle b</param>
+        /// <returns>a bigger than b?</returns>
         public static bool operator >(Angle a, Angle b)
         {
             return Diff(a, b) > 0;
         }
 
         /// <summary>
-        /// Prüft, ob ein Winkel größer oder gleich einem anderen ist.
+        /// Check if an Angle is bigger or similar to another one.
         /// </summary>
-        /// <param name="a">Winkel a</param>
-        /// <param name="b">Winkel b</param>
-        /// <returns>a größer/gleich b?</returns>
+        /// <param name="a">Angle a</param>
+        /// <param name="b">Angle b</param>
+        /// <returns>a bigger than/similar to b?</returns>
         public static bool operator >=(Angle a, Angle b)
         {
             return Diff(a, b) >= 0;
         }
 
         /// <summary>
-        /// Prüft, ob ein Winkel kleiner als ein anderer ist.
+        /// Check if an Angle is smaller than another one.
         /// </summary>
-        /// <param name="a">Winkel a</param>
-        /// <param name="b">Winkel b</param>
-        /// <returns>a kleiner b?</returns>
+        /// <param name="a">Angle a</param>
+        /// <param name="b">Angle b</param>
+        /// <returns>a smaller than b?</returns>
         public static bool operator <(Angle a, Angle b)
         {
             return Diff(a, b) < 0;
         }
 
         /// <summary>
-        /// Prüft, ob ein Winkel kleiner oder gleich einem anderen ist.
+        /// Check if an Angle is smaller or similar to another one.
         /// </summary>
-        /// <param name="a">Winkel a</param>
-        /// <param name="b">Winkel b</param>
-        /// <returns>a kleiner/gleich b?</returns>
+        /// <param name="a">Angle a</param>
+        /// <param name="b">Angle b</param>
+        /// <returns>a smaller than/similar to b?</returns>
         public static bool operator <=(Angle a, Angle b)
         {
             return Diff(a, b) <= 0;
@@ -411,17 +411,17 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Erzeugt eine Instanz von Angle auf Basis einer Winkelangabe im Bogenmaß.
+        ///     Creates an Instance of Angle based on an angle declaration in radian measure.
         /// </summary>
-        /// <param name="radian">Winkelangabe im Bogenmaß</param>
-        /// <returns>Neue Instanz von Angle</returns>
+        /// <param name="radian">Angle declaration in radian measure</param>
+        /// <returns>New Instance of Angle</returns>
         public static Angle FromRadian(float radian)
         {
             return new Angle(radian);
         }
 
         /// <summary>
-        ///     Erzeugt eine Instanz von Angle auf Basis einer Kompass-Angabe.
+        ///     Creates an Instance of Angle based on a compass declaration.
         /// </summary>
         /// <param name="compass"></param>
         /// <returns></returns>
@@ -431,10 +431,10 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Calculates the 
+        /// Calculates the difference between to angle declarations in radian measure.
         /// </summary>
-        /// <param name="a">Winkel a</param>
-        /// <param name="b">Winkel b</param>
+        /// <param name="a">Angle a</param>
+        /// <param name="b">Angle b</param>
         /// <returns></returns>
         public static float Diff(Angle a, Angle b)
         {
@@ -447,11 +447,11 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Ermittelt die Differenz zwischen zwei Winkelangaben.
+        ///     Calculates the difference between two angle declarations.
         /// </summary>
-        /// <param name="a">Winkel a in Grad</param>
-        /// <param name="b">Winkel b in Grad</param>
-        /// <returns>Differenz in Grad</returns>
+        /// <param name="a">Angle a in degrees</param>
+        /// <param name="b">Angle b in degrees</param>
+        /// <returns>Difference in degrees</returns>
         public static int Diff(int a, int b)
         {
             Angle alpha = FromDegree(a);

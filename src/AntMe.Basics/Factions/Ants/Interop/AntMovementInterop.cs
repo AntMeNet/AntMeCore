@@ -91,8 +91,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 {
                     // Alles anhalten und Reach melden
                     Stop();
-                    if (OnTargetReched != null)
-                        OnTargetReched(i.GetItemInfo(Item));
+                    OnTargetReched?.Invoke(i.GetItemInfo(Item));
                 }
             };
         }
@@ -107,14 +106,14 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 else
                     item.Orientation = item.Orientation.InvertX();
             }
-            if (OnHitWall != null) OnHitWall(direction);
+            OnHitWall?.Invoke(direction);
         }
 
         protected override void Update(int round)
         {
             // Sollten Kollisionen passiert sein, Event werfen
-            if (OnCollision != null && collidedItems.Count > 0)
-                OnCollision();
+            if (collidedItems.Count > 0)
+                OnCollision?.Invoke();
 
             collidedItems.Clear();
 
@@ -157,7 +156,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 Angle direction = destination.Direction;
                 int angle = Angle.ConvertToDegree(Angle.Diff(Item.Orientation, direction));
 
-                if (distance < Faction.Settings.GetFloat<AntItem>("ZickZackRange").Value)
+                if (distance < Faction.Settings.GetFloat<AntItem>("ZigZagRange").Value)
                 {
                     // Genaue Route
                     angleToGo = angle;
@@ -165,16 +164,16 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 }
                 else
                 {
-                    // Zickzack
-                    int zzAngle = Faction.Settings.GetInt<AntItem>("ZickZackAngle").Value;
+                    // ZigZag
+                    int zzAngle = Faction.Settings.GetInt<AntItem>("ZigZagAngle").Value;
                     angleToGo = angle + Faction.Random.Next(-zzAngle, zzAngle);
-                    distanceToGo = Faction.Settings.GetFloat<AntItem>("ZickZackRange").Value;
+                    distanceToGo = Faction.Settings.GetFloat<AntItem>("ZigZagRange").Value;
                 }
             }
             else
             {
                 // Kein Ziel
-                if (OnWaits != null) OnWaits();
+                OnWaits?.Invoke();
             }
         }
 

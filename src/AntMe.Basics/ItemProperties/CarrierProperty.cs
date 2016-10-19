@@ -25,8 +25,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 carrierStrength = Math.Max(value, 0f);
-                if (OnCarrierStrengthChanged != null)
-                    OnCarrierStrengthChanged(Item, carrierStrength);
+                OnCarrierStrengthChanged?.Invoke(Item, carrierStrength);
             }
         }
 
@@ -39,8 +38,7 @@ namespace AntMe.Basics.ItemProperties
             private set
             {
                 carrierLoad = value;
-                if (OnCarrierLoadChanged != null)
-                    OnCarrierLoadChanged(Item, value);
+                OnCarrierLoadChanged?.Invoke(Item, value);
             }
         }
 
@@ -95,11 +93,8 @@ namespace AntMe.Basics.ItemProperties
         /// </summary>
         public void Drop()
         {
-            if (carrierLoad != null)
-            {
-                carrierLoad.RemoveCarrier(this);
-                CarrierLoad = null;
-            }
+            carrierLoad?.RemoveCarrier(this);
+            CarrierLoad = null;
         }
 
         /// <summary>

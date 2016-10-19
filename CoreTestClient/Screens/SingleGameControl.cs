@@ -43,7 +43,7 @@ namespace CoreTestClient.Screens
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
             };
 
-            ISimulationClient result = SimulationClient.CreateUnsecure(extensionPaths, ExtensionLoader.DefaultTypeResolver);
+            ISimulationClient result = SimulationClient.CreateSecure(extensionPaths, ExtensionLoader.DefaultTypeResolver);
             result.AquireMaster();
             result.UploadLevel(level.Type);
             for (byte i = 0; i < 8; i++)
@@ -88,8 +88,8 @@ namespace CoreTestClient.Screens
 
         private void UpdateView()
         {
-            int min = level != null ? level.LevelDescription.MinPlayerCount : 0;
-            int max = level != null ? level.LevelDescription.MaxPlayerCount : 0;
+            int min = level?.LevelDescription.MinPlayerCount ?? 0;
+            int max = level?.LevelDescription.MaxPlayerCount ?? 0;
 
             for (int i = 1; i <= 8; i++)
             {

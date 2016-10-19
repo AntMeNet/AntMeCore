@@ -43,8 +43,7 @@ namespace AntMe
             protected set
             {
                 speed = value;
-                if (OnSpeedChanged != null)
-                    OnSpeedChanged(value);
+                OnSpeedChanged?.Invoke(value);
             }
         }
 

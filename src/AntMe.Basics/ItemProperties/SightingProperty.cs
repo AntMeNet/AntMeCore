@@ -30,8 +30,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 viewrange = Math.Max(0f, value);
-                if (OnViewRangeChanged != null)
-                    OnViewRangeChanged(Item, viewrange);
+                OnViewRangeChanged?.Invoke(Item, viewrange);
             }
         }
 
@@ -44,8 +43,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 viewDirection = value;
-                if (OnViewDirectionChanged != null)
-                    OnViewDirectionChanged(Item, value);
+                OnViewDirectionChanged?.Invoke(Item, value);
             }
         }
 
@@ -61,8 +59,7 @@ namespace AntMe.Basics.ItemProperties
             set
             {
                 viewangle = Math.Max(0f, Math.Min(360, value));
-                if (OnViewAngleChanged != null)
-                    OnViewAngleChanged(Item, viewangle);
+                OnViewAngleChanged?.Invoke(Item, viewangle);
             }
         }
 
@@ -94,8 +91,7 @@ namespace AntMe.Basics.ItemProperties
             {
                 visibleItems.Add(item);
 
-                if (OnNewVisibleItem != null)
-                    OnNewVisibleItem(item);
+                OnNewVisibleItem?.Invoke(item);
             }
         }
 
@@ -109,8 +105,7 @@ namespace AntMe.Basics.ItemProperties
             {
                 visibleItems.Remove(item);
 
-                if (OnLostVisibleItem != null)
-                    OnLostVisibleItem(item);
+                OnLostVisibleItem?.Invoke(item);
             }
         }
 
@@ -120,8 +115,7 @@ namespace AntMe.Basics.ItemProperties
         /// <param name="item">Visible Item</param>
         internal void NoteVisibleItem(VisibleProperty item)
         {
-            if (OnVisibleItem != null)
-                OnVisibleItem(item);
+            OnVisibleItem?.Invoke(item);
         }
 
         /// <summary>
@@ -129,7 +123,7 @@ namespace AntMe.Basics.ItemProperties
         /// </summary>
         internal void UpdateEnvironment(Map map, Item item, Index2 newCell)
         {
-            // Run through neighbor cells
+            // Run through neighbour cells
             Index2 limit = map.GetCellCount();
 
             for (int x = -1; x <= 1; x++)
@@ -149,13 +143,12 @@ namespace AntMe.Basics.ItemProperties
                     {
                         // Get Cell Infos
                         MapTile tile = map[cell.X, cell.Y];
-                        Environment[offset.X, offset.Y] = tile != null ? tile.GetInfo(item) : null;
+                        Environment[offset.X, offset.Y] = tile?.GetInfo(item);
                     }
                 }
             }
 
-            if (OnEnvironmentChanged != null)
-                OnEnvironmentChanged(Item, Environment);
+            OnEnvironmentChanged?.Invoke(Item, Environment);
         }
 
         #endregion

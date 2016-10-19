@@ -212,5 +212,13 @@ namespace CoreTestClient
                 form.ShowDialog(this);
             }
         }
+
+        private void localizationEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (LocalizationEditor form = new LocalizationEditor())
+            {
+                form.ShowDialog(this);
+            }
+        }
     }
 }

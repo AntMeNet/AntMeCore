@@ -7,7 +7,7 @@ namespace AntMe
     /// <summary>
     /// Base Class for all Item States.
     /// </summary>
-    public class ItemState : PropertyList<StateProperty>, ISerializableState
+    public class ItemState : PropertyList<ItemStateProperty>, ISerializableState
     {
         /// <summary>
         /// Item Id.

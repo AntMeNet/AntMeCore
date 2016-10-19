@@ -40,8 +40,7 @@ namespace CoreTestClient
             if (this.map != map)
             {
                 this.map = map;
-                if (map != null) SetMapSize(map.GetCellCount());
-                else SetMapSize(Index2.Zero);
+                SetMapSize(map?.GetCellCount() ?? Index2.Zero);
             }
         }
 

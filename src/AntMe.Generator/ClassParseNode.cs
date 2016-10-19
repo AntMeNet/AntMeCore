@@ -29,7 +29,7 @@ namespace AntMe.Generator
             {
                 case WrapType.InfoWrap:
                     ClassDeclarationSyntax classSyntax =
-                        SyntaxFactory.ClassDeclaration("Loc" + Type.Name).WithModifiers(
+                        SyntaxFactory.ClassDeclaration(GetLocalization(Type)).WithModifiers(
                             SyntaxFactory.TokenList(
                                 SyntaxFactory.Token(SyntaxKind.PublicKeyword))).AddMembers(
                         ChildNodes.SelectMany(c => c.Generate()).ToArray()).AddMembers(
@@ -40,7 +40,7 @@ namespace AntMe.Generator
                                 SyntaxFactory.Token(SyntaxKind.InternalKeyword)));
 
 
-                    ConstructorDeclarationSyntax constructor = SyntaxFactory.ConstructorDeclaration("Loc" + Type.Name).AddModifiers(
+                    ConstructorDeclarationSyntax constructor = SyntaxFactory.ConstructorDeclaration(GetLocalization(Type)).AddModifiers(
                             SyntaxFactory.Token(SyntaxKind.PublicKeyword)).AddParameterListParameters(
                             SyntaxFactory.Parameter(SyntaxFactory.Identifier("info")).WithType(
                                  GetTypeSyntax(Type.FullName))).WithBody(
@@ -52,7 +52,7 @@ namespace AntMe.Generator
 
                     if (Type.BaseType != typeof(PropertyList<ItemInfoProperty>))
                     {
-                        classSyntax = classSyntax.AddBaseListTypes(SyntaxFactory.SimpleBaseType(SyntaxFactory.IdentifierName("Loc" + Type.BaseType.Name)));
+                        classSyntax = classSyntax.AddBaseListTypes(SyntaxFactory.SimpleBaseType(SyntaxFactory.IdentifierName(GetLocalization(Type.BaseType))));
                         constructor = constructor.WithInitializer(SyntaxFactory.ConstructorInitializer(
                             SyntaxKind.BaseConstructorInitializer,
                             SyntaxFactory.ArgumentList(
@@ -82,7 +82,7 @@ namespace AntMe.Generator
             switch (wrapType)
             {
                 case WrapType.InfoWrap:
-                    result.Set(Type, Type.Name, Type.Name);
+                    result.Set(Type, Type.Name, string.Format("TO_LOC_{0}", Type.Name));
                     break;
                 case WrapType.BaseTypeWrap:
                     break;

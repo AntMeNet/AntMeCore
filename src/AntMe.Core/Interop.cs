@@ -1,7 +1,7 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Basisklasse für jegliche Interop-Klasse.
+    /// Base class of every Interop-Class.
     /// </summary>
     public abstract class Interop : PropertyList<InteropProperty>
     {
@@ -13,7 +13,7 @@
         }
 
         /// <summary>
-        /// Geschützter Update-Call.
+        /// Protected Update-Call.
         /// </summary>
         protected virtual void Update(int round) { }
     }

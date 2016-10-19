@@ -69,20 +69,19 @@ namespace AntMe.Basics.Factions.Ants.Interop
             // Set new Environment on Cell Switch
             sighting.OnEnvironmentChanged += (i, value) =>
             {
-                if (OnEnvironmentChanged != null)
-                    OnEnvironmentChanged(value);
+                OnEnvironmentChanged?.Invoke(value);
             };
         }
 
         protected override void Update(int round)
         {
             // Visible prüfen
-            if (Spots != null && visibleItems.Count > 0)
-                Spots();
+            if (visibleItems.Count > 0)
+                Spots?.Invoke();
 
             // Smellable prüfen
-            if (Smells != null && smellableItems.Count > 0)
-                Smells();
+            if (smellableItems.Count > 0)
+                Smells?.Invoke();
         }
 
         #region Properties

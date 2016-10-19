@@ -565,7 +565,7 @@ namespace AntMe.Runtime
                 if (map == null)
                     throw new NotSupportedException("Property is not registered.");
 
-                StateProperty prop = null;
+                ItemStateProperty prop = null;
                 if (map.CreateStateDelegate != null)
                 {
                     // Option 1: Create Delegate
@@ -585,7 +585,7 @@ namespace AntMe.Runtime
                 else if (map.StateType != null)
                 {
                     // Option 2: Dynamische Erzeugung
-                    prop = Activator.CreateInstance(map.StateType, item, property) as StateProperty;
+                    prop = Activator.CreateInstance(map.StateType, item, property) as ItemStateProperty;
                     if (prop == null)
                     {
                         // TODO: Trace

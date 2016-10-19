@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis.Text;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace AntMe.Generator
 {
@@ -17,11 +18,10 @@ namespace AntMe.Generator
     /// </summary>
     public class ModpackGenerator
     {
-        private string culture;
+        private string cultureTwoLetterISOCode;
         private string outputPath;
         private ITypeMapper typeMapper;
         private List<BaseParseNode> _parseNodeTrees;
-
         private string[] BlackList = {  @"AntMe.Basics.ItemProperties(([.|+]\w*)*):ToString",
                                         @"AntMe.Basics.ItemProperties(([.|+]\w*)*):Equals",
                                         @"AntMe.Basics.ItemProperties(([.|+]\w*)*):GetHashCode",
@@ -29,27 +29,37 @@ namespace AntMe.Generator
                                         @"AntMe.Basics.ItemProperties(([.|+]\w*)*):Item",
                                         @"AntMe.Basics.ItemInfo(([.|+]\w*)*):ToString",
                                         @"AntMe.Basics.ItemInfo(([.|+]\w*)*):Equals",
-                                        @"AntMe.Basics.ItemInfo(([.|+]\w*)*):GetHashCode",};
-
+                                        @"AntMe.Basics.ItemInfo(([.|+]\w*)*):GetHashCode",
+                                        @"AntMe.ItemInfo(([.|+]\w*)*):ToString",
+                                        @"AntMe.ItemInfo(([.|+]\w*)*):Equals",
+                                        @"AntMe.ItemInfo(([.|+]\w*)*):GetHashCode",
+                                        @"AntMe.Basics.Items(([.|+]\w*)*):ToString",
+                                        @"AntMe.Basics.Items(([.|+]\w*)*):Equals",
+                                        @"AntMe.Basics.Items(([.|+]\w*)*):GetHashCode",};
         private List<BaseParseNode> parseNodeTrees
         {
             get
             {
                 if (_parseNodeTrees == null)
-                    _parseNodeTrees = GenerateParseNodeTrees(culture);
+                    _parseNodeTrees = GenerateParseNodeTrees(cultureTwoLetterISOCode);
                 return _parseNodeTrees;
             }
         }
 
-        public ModpackGenerator(string culture, ITypeMapper typeMapper)
+        public KeyValueStore Localization { get; private set; }
+        public KeyValueStore EnglishLocalization { get; private set; }
+ 
+        public ModpackGenerator(string cultureTwoLetterISOCode, ITypeMapper typeMapper)
         {
-            this.culture = culture;
+            this.cultureTwoLetterISOCode = cultureTwoLetterISOCode;
             this.typeMapper = typeMapper;
+            Localization = ExtensionLoader.GetDictionary(cultureTwoLetterISOCode);
+            EnglishLocalization = cultureTwoLetterISOCode == "en" ? Localization : ExtensionLoader.GetDictionary("en");
         }
 
-        public static string Generate(string culture, string outputpath, ITypeMapper typeMapper)
+        public static string Generate(string cultureTwoLetterISOCode, string outputpath, ITypeMapper typeMapper)
         {
-            return new ModpackGenerator(culture, typeMapper).Generate(outputpath);
+            return new ModpackGenerator(cultureTwoLetterISOCode, typeMapper).Generate(outputpath);
         }
 
         public string Generate(string outputPath)
@@ -96,24 +106,23 @@ namespace AntMe.Generator
 
         }
 
-        public KeyValueStore GenerateLocaKeys(string culture)
+        public KeyValueStore GenerateLocaKeys(string cultureTwoLetterISOCode)
         {
             KeyValueStore result = new KeyValueStore();
-            foreach (BaseParseNode node in GenerateParseNodeTrees(culture))
+            foreach (BaseParseNode node in GenerateParseNodeTrees(cultureTwoLetterISOCode))
             {
                 result.Merge(node.GetLocaKeys());
             }
             return result;
         }
 
-        private List<BaseParseNode> GenerateParseNodeTrees(string culture)
+        private List<BaseParseNode> GenerateParseNodeTrees(string cultureTwoLetterISOCode)
         {
             List<BaseParseNode> trees = new List<BaseParseNode>();
-            KeyValueStore Translations = ExtensionLoader.GetDictionary(culture);
-
+            
             #region Info-Wrapper
 
-            BaseParseNode root = new NamespaceParseNode("AntMe.Deutsch", WrapType.InfoWrap, this);
+            BaseParseNode root = new NamespaceParseNode(string.Format("AntMe.{0}", cultureTwoLetterISOCode), WrapType.InfoWrap, this);
             List<Type> wrapped = new List<Type>();
 
             // Collect all ItemInfos and link them to the Localized ItemInfos
@@ -168,7 +177,7 @@ namespace AntMe.Generator
             return trees;
         }
 
-        public bool CheckBlackList(string fullKey)
+               public bool CheckBlackList(string fullKey)
         {
             foreach (string pattern in BlackList)
             {
@@ -177,66 +186,6 @@ namespace AntMe.Generator
             }
             return false;
         }
-
-        //public static KeyValueStore GenerateLocaKeys()
-        //{
-        //    return new AssemblyGenerator()
-
-
-        //    Dictionary<Type, List<string>> dictionary = new Dictionary<Type, List<string>>();
-
-        //    // Collect all Item Infos
-        //    foreach (var item in ExtensionLoader.DefaultTypeMapper.Items)
-        //    {
-        //        if (item.InfoType == null) continue;
-        //        AnalyseType<ItemInfo>(item.InfoType, dictionary);
-        //    }
-
-        //    // Collect all Item Property Infos
-        //    foreach (var item in ExtensionLoader.DefaultTypeMapper.ItemProperties)
-        //    {
-        //        if (item.InfoType == null) continue;
-        //        AnalyseType<ItemInfoProperty>(item.InfoType, dictionary);
-        //    }
-
-        //    // Collection Faction Stuff
-        //    foreach (var item in ExtensionLoader.DefaultTypeMapper.Factions)
-        //    {
-        //        if (item.InfoType == null) continue;
-
-        //        AnalyseType<FactionInfo>(item.InfoType, dictionary);
-        //        AnalyseType<FactionFactory>(item.FactoryType, dictionary);
-
-        //        // TODO: Ingnoriere Vererbungsstack
-        //        AnalyseType<FactoryInterop>(item.FactoryInteropType, dictionary);
-
-        //        AnalyseType<FactionUnit>(item.UnitType, dictionary);
-
-        //        // TODO: Ingnoriere Vererbungsstack
-        //        AnalyseType<UnitInterop>(item.UnitInteropType, dictionary);
-        //    }
-
-        //    foreach (var item in ExtensionLoader.DefaultTypeMapper.FactoryInteropAttachments)
-        //    {
-        //        // TODO: Ingnoriere Vererbungsstack
-        //        AnalyseType<FactoryInteropProperty>(item.AttachmentType, dictionary);
-        //    }
-
-        //    foreach (var item in ExtensionLoader.DefaultTypeMapper.UnitInteropAttachments)
-        //    {
-        //        // TODO: Ingnoriere Vererbungsstack
-        //        AnalyseType<UnitInteropProperty>(item.AttachmentType, dictionary);
-        //    }
-
-
-        //    // Collect all Factory Interops
-        //    foreach (var item in ExtensionLoader.DefaultTypeMapper.FactionProperties)
-        //    {
-        //        if (item.InfoType == null) continue;
-        //        AnalyseType<FactionInfoProperty>(item.InfoType, dictionary);
-        //    }
-
-        //}
 
         //private static void AnalyseType<T>(Type type, Dictionary<Type, List<string>> dict)
         //{

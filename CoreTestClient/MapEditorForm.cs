@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Linq;
+using AntMe.Serialization;
 
 namespace CoreTestClient
 {
@@ -198,7 +199,7 @@ namespace CoreTestClient
                 {
                     using (Stream stream = File.Open(openFileDialog.FileName, FileMode.Open))
                     {
-                        Map = Map.Deserialize(context, stream);
+                        Map = MapSerializer.Deserialize(context, stream);
                         filename = openFileDialog.FileName;
                         mapChanged = false;
                     }
@@ -222,7 +223,7 @@ namespace CoreTestClient
                 {
                     using (Stream stream = File.Open(saveFileDialog.FileName, FileMode.Create))
                     {
-                        Map.Serialize(stream, map);
+                        MapSerializer.Serialize(stream, map);
                         filename = saveFileDialog.FileName;
                         mapChanged = false;
                     }
@@ -338,7 +339,7 @@ namespace CoreTestClient
                 {
                     using (Stream stream = File.Open(filename, FileMode.Create))
                     {
-                        Map.Serialize(stream, map);
+                        MapSerializer.Serialize(stream, map);
                         mapChanged = false;
                     }
                 }

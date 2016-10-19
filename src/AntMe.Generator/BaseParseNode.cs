@@ -68,6 +68,29 @@ namespace AntMe.Generator
             return false;
         }
 
+
+        protected string GetLocalization(Type type)
+        {
+            return GetLocalization(type, type.Name);
+        }
+
+        protected string GetLocalization(Type type, string key)
+        {
+            if (generator.Localization.Keys.Contains(string.Format("{0}:{1}", type.FullName, key)))
+            {
+                return generator.Localization.GetString(type, key);
+            }
+            else if (generator.EnglishLocalization.Keys.Contains(string.Format("{0}:{1}", type.FullName, key)))
+            {
+                return generator.EnglishLocalization.GetString(type, key);
+            }
+            else
+            {
+                //TODO: Throw Error or collect Errors!!!
+                return string.Format("_{0}", key);
+            }
+        }
+
         protected bool CheckTypeBalckList(string fullKey)
         {
             return generator.CheckBlackList(fullKey);
@@ -111,14 +134,14 @@ namespace AntMe.Generator
             }
         }
 
-        protected static ArgumentSyntax GetLocaArgument(ParameterInfo parameterInfo)
+        protected ArgumentSyntax GetLocaArgument(Type declaringType, ParameterInfo parameterInfo)
         {
             if (isPrimitiveType(parameterInfo.ParameterType))
-                return SyntaxFactory.Argument(SyntaxFactory.IdentifierName("Loc" + parameterInfo.Name));
+                return SyntaxFactory.Argument(SyntaxFactory.IdentifierName(GetLocalization(declaringType, parameterInfo.Name)));
             return SyntaxFactory.Argument(
                 SyntaxFactory.MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
-                    SyntaxFactory.IdentifierName("Loc" + parameterInfo.Name),
+                    SyntaxFactory.IdentifierName(GetLocalization(declaringType, parameterInfo.Name)),
                     SyntaxFactory.IdentifierName("_" + parameterInfo.ParameterType.Name)));
         }
 

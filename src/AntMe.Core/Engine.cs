@@ -147,8 +147,7 @@ namespace AntMe
                 PrivateRemoveItem(removeQueue.Dequeue());
 
             // Inform about another Round
-            if (OnNextRound != null)
-                OnNextRound(Round);
+            OnNextRound?.Invoke(Round);
         }
 
         /// <summary>
@@ -186,8 +185,7 @@ namespace AntMe
             NormalizeItemPosition(item);
 
             // Inform about a new Item
-            if (OnInsertItem != null)
-                OnInsertItem(item);
+            OnInsertItem?.Invoke(item);
         }
 
         /// <summary>
@@ -199,8 +197,7 @@ namespace AntMe
             if (items.Contains(item))
             {
                 // Inform about removed Item
-                if (OnRemoveItem != null)
-                    OnRemoveItem(item);
+                OnRemoveItem?.Invoke(item);
 
                 // Remove Item from internal Lists
                 items.Remove(item);

@@ -37,7 +37,7 @@ namespace AntMe.Generator
                     //Adding bool property for available requests
                     result.Add(SyntaxFactory.PropertyDeclaration(
                         SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
-                        SyntaxFactory.Identifier("IsLoc" + AttachmentType.Name)).AddModifiers(
+                        SyntaxFactory.Identifier("Is" + GetLocalization(AttachmentType))).AddModifiers(
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)).AddAccessorListAccessors(
                         SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration,
                         SyntaxFactory.Block(
@@ -62,7 +62,7 @@ namespace AntMe.Generator
 
                         MethodDeclarationSyntax method = SyntaxFactory.MethodDeclaration(
                             GetTypeSyntax(methodInfo.ReturnType.FullName),
-                            "Loc" + methodInfo.Name).AddModifiers(
+                            GetLocalization(methodInfo.DeclaringType, methodInfo.Name)).AddModifiers(
                             SyntaxFactory.Token(
                                 SyntaxKind.PublicKeyword));
 
@@ -72,13 +72,13 @@ namespace AntMe.Generator
                         {
                             method = method.AddParameterListParameters(
                                 SyntaxFactory.Parameter(
-                                    SyntaxFactory.Identifier("Loc" + parameterInfo.Name)).WithType(
+                                    SyntaxFactory.Identifier(GetLocalization(methodInfo.DeclaringType, parameterInfo.Name))).WithType(
                                     GetTypeSyntax(parameterInfo.ParameterType.FullName)));
 
                             //adding argument to argumentlist. for later use.
                             arguments = arguments.AddArguments(
                                 SyntaxFactory.Argument(
-                                    SyntaxFactory.IdentifierName("Loc" + parameterInfo.Name)));
+                                    SyntaxFactory.IdentifierName(GetLocalization(methodInfo.DeclaringType, parameterInfo.Name))));
                         }
 
 
@@ -128,7 +128,7 @@ namespace AntMe.Generator
                             continue;
 
                         PropertyDeclarationSyntax property = SyntaxFactory.PropertyDeclaration(
-                        GetTypeSyntax(propertyInfo.PropertyType.FullName), "Loc" + propertyInfo.Name).AddModifiers(
+                        GetTypeSyntax(propertyInfo.PropertyType.FullName), GetLocalization(propertyInfo.DeclaringType, propertyInfo.Name)).AddModifiers(
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                         if (propertyInfo.CanRead && propertyInfo.GetMethod.IsPublic)
                         {
@@ -198,6 +198,32 @@ namespace AntMe.Generator
             switch (wrapType)
             {
                 case WrapType.InfoWrap:
+                    result.Set(AttachmentType, AttachmentType.Name, string.Format("TO_LOC_{0}", AttachmentType.Name));
+
+                    foreach (MethodInfo methodInfo in AttachmentType.GetMethods(BindingFlags.Instance | BindingFlags.Public))
+                    {
+                        if (methodInfo.IsSpecialName || methodInfo.IsGenericMethod || CheckTypeBalckList(string.Format("{0}:{1}", methodInfo.ReflectedType.FullName, methodInfo.Name)))
+                            continue;
+                        result.Set(methodInfo.DeclaringType, methodInfo.Name, string.Format("TO_LOC_{0}", methodInfo.Name));
+
+                        foreach (ParameterInfo parameter in methodInfo.GetParameters())
+                        {
+                            result.Set(methodInfo.DeclaringType, parameter.Name, string.Format("TO_LOC_{0}", parameter.Name));
+                            if (CheckLocalizableType(parameter.ParameterType))
+                                result.Set(parameter.ParameterType, parameter.ParameterType.Name, string.Format("TO_LOC_{0}", parameter.ParameterType.Name));
+                        }
+                        if (CheckLocalizableType(methodInfo.ReturnType))
+                            result.Set(methodInfo.ReturnType, methodInfo.ReturnType.Name, string.Format("TO_LOC_{0}", methodInfo.ReturnType.Name));
+                    }
+
+                    foreach (PropertyInfo propertyInfo in AttachmentType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                    {
+
+                        if (propertyInfo.IsSpecialName || propertyInfo.PropertyType.IsGenericType || CheckTypeBalckList(string.Format("{0}:{1}", propertyInfo.ReflectedType.FullName, propertyInfo.Name)))
+                            continue;
+
+                        result.Set(propertyInfo.DeclaringType, propertyInfo.Name, string.Format("TO_LOC_{0}", propertyInfo.Name));
+                    }
                     break;
                 case WrapType.BaseTypeWrap:
                     break;

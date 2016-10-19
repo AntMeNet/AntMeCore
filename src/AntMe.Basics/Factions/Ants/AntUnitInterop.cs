@@ -44,8 +44,7 @@ namespace AntMe.Basics.Factions.Ants
             markerDelay = Math.Max(0, markerDelay - 1);
 
             // Tick ausführen
-            if (Tick != null)
-                Tick();
+            Tick?.Invoke();
         }
 
         /// <summary>
@@ -79,7 +78,7 @@ namespace AntMe.Basics.Factions.Ants
         /// <summary>
         /// Returns the Caste Name for this Item.
         /// </summary>
-        public string Caste { get { return Item.Attributes != null ? Item.Attributes.Name : string.Empty; } }
+        public string Caste { get { return Item.Attributes?.Name ?? string.Empty; } }
 
         #endregion
 

@@ -1,7 +1,7 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Basis-Klasse für Properties von Factory Interops.
+    /// Base Class for properties of Factoy Interops.
     /// </summary>
     public abstract class FactoryInteropProperty : InteropProperty
     {
@@ -21,10 +21,10 @@
         protected readonly FactoryInterop Interop;
 
         /// <summary>
-        /// Konstruktor des Factory Interop Properties.
+        /// Constructor of the Factory Interop Properties.
         /// </summary>
-        /// <param name="faction">Referenz auf die Faction.</param>
-        /// <param name="interop">Referenz auf das Interop.</param>
+        /// <param name="faction">Reference to Faction.</param>
+        /// <param name="interop">Reference to the Interop.</param>
         public FactoryInteropProperty(Faction faction, FactoryInterop interop)
         {
             Faction = faction;

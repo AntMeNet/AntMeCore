@@ -28,7 +28,7 @@ namespace AntMe.Generator
             {
                 case WrapType.InfoWrap:
                     PropertyDeclarationSyntax propertySyntax = SyntaxFactory.PropertyDeclaration(
-                        GetTypeSyntax(PropertyInfo.PropertyType.FullName), "Loc" + PropertyInfo.Name).AddModifiers(
+                        GetTypeSyntax(PropertyInfo.PropertyType.FullName), GetLocalization(PropertyInfo.DeclaringType, PropertyInfo.Name)).AddModifiers(
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                     if (PropertyInfo.CanRead && PropertyInfo.GetMethod.IsPublic)
                     {
@@ -77,7 +77,7 @@ namespace AntMe.Generator
             switch (wrapType)
             {
                 case WrapType.InfoWrap:
-                    result.Set(PropertyInfo.DeclaringType, PropertyInfo.Name, PropertyInfo.Name);
+                    result.Set(PropertyInfo.DeclaringType, PropertyInfo.Name, string.Format("TO_LOC_{0}", PropertyInfo.Name));
                     break;
                 case WrapType.BaseTypeWrap:
                     break;

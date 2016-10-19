@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AntMe.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -201,7 +202,7 @@ namespace AntMe.Runtime.Communication
         {
             public ISimulationService ServiceInterface { get; set; }
 
-            public StateSerializer Serializer { get; set; }
+            public LevelStateByteSerializer Serializer { get; set; }
 
             public ISimulationCallback CallbackInterface { get; set; }
 
@@ -813,7 +814,7 @@ namespace AntMe.Runtime.Communication
                     };
 
                     SimulationContext context = ExtensionLoader.CreateSimulationContext();
-                    Map map = Map.Deserialize(context, levelInfo.Map);
+                    Map map = MapSerializer.Deserialize(context, levelInfo.Map);
 
                     int count = 0;
                     for (int i = 0; i < Level.MAX_SLOTS; i++)
@@ -990,11 +991,8 @@ namespace AntMe.Runtime.Communication
             }
 
             // Dispose Simulation
-            if (simulation != null)
-            {
-                simulation.Dispose();
-                simulation = null;
-            }
+            simulation?.Dispose();
+            simulation = null;
 
             // Inform everybody
             SendSimulationChanged(this.frames);
@@ -1126,13 +1124,14 @@ namespace AntMe.Runtime.Communication
                         // Create Serializer on Simulation Startup
                         if (state != SimulationState.Stopped && receiver.Serializer == null)
                         {
-                            receiver.Serializer = new StateSerializer();
+                            SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                            receiver.Serializer = new LevelStateByteSerializer(context);
                         }
 
                         // Dispose Serializer on Simulation Shutdown
-                        if (state == SimulationState.Stopped && receiver.Serializer != null)
+                        if (state == SimulationState.Stopped)
                         {
-                            receiver.Serializer.Dispose();
+                            receiver.Serializer?.Dispose();
                             receiver.Serializer = null;
                         }
 
@@ -1149,7 +1148,10 @@ namespace AntMe.Runtime.Communication
                 {
                     // Create a new Serializer
                     if (receiver.Serializer == null)
-                        receiver.Serializer = new StateSerializer();
+                    {
+                        SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                        receiver.Serializer = new LevelStateByteSerializer(context);
+                    }
 
                     // Serialize
                     byte[] buffer =  receiver.Serializer.Serialize(state);

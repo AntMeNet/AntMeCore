@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AntMe.Serialization;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -168,7 +169,7 @@ namespace AntMe
             engine = new Engine(Context.Resolver);
 
             // Generate Map and validate.
-            Map map = Map.Deserialize(Context, GetMap());
+            Map map = MapSerializer.Deserialize(Context, GetMap());
             if (map == null)
             {
                 var exception = new NotSupportedException("No Map was created");
@@ -405,10 +406,7 @@ namespace AntMe
             // Updates der Factions
             for (int i = 0; i < MAX_SLOTS; i++)
             {
-                if (Factions[i] != null)
-                {
-                    Factions[i].Update(engine.Round);
-                }
+                Factions[i]?.Update(engine.Round);
             }
 
             try

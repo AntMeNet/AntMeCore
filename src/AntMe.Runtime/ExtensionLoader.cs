@@ -86,7 +86,15 @@ namespace AntMe.Runtime
                 try
                 {
                     // Try to load and add to list
-                    assemblies.Add(Assembly.LoadFile(file));
+                    var assembly = Assembly.LoadFile(file);
+                    var attributes = assembly.GetCustomAttributes(typeof(AntMeExtensionAttribute),true);
+                    
+                    if (attributes != null)
+                    {
+                        var extensionAttribute = attributes.FirstOrDefault() as AntMeExtensionAttribute;
+                        if (extensionAttribute != null)
+                            assemblies.Add(assembly);
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using AntMe.Runtime;
 using System;
+using AntMe.Serialization;
 
 namespace AntMe.Simulation.Debug
 {
@@ -27,7 +28,7 @@ namespace AntMe.Simulation.Debug
                     byte[] mapBuffer = level.Map;
                     if (mapBuffer == null) return;
 
-                    Map map = Map.Deserialize(ExtensionLoader.CreateSimulationContext(), level.Map);
+                    Map map = MapSerializer.Deserialize(ExtensionLoader.CreateSimulationContext(), level.Map);
                     mapPreview.SetMap(map);
                 }
                 catch (Exception) { }

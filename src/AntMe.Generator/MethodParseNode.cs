@@ -28,7 +28,7 @@ namespace AntMe.Generator
 
                     Method = SyntaxFactory.MethodDeclaration(
                         GetTypeSyntax(MethodInfo.ReturnType.FullName),
-                        "Loc" + MethodInfo.Name).AddModifiers(
+                        GetLocalization(MethodInfo.DeclaringType, MethodInfo.Name)).AddModifiers(
                         SyntaxFactory.Token(
                             SyntaxKind.PublicKeyword));
 
@@ -39,8 +39,8 @@ namespace AntMe.Generator
                         if (baseType is ItemInfo || !(baseType is PropertyList<ItemInfoProperty>))
                         {
                             Method = SyntaxFactory.MethodDeclaration(
-                                GetTypeSyntax(MethodInfo.ReturnType.FullName),
-                                MethodInfo.Name).AddModifiers(
+                                GetTypeSyntax(GetLocalization(MethodInfo.ReturnType)),
+                                GetLocalization(MethodInfo.DeclaringType, MethodInfo.Name)).AddModifiers(
                                 SyntaxFactory.Token(
                                     SyntaxKind.PublicKeyword)).AddModifiers(
                                         SyntaxFactory.Token(
@@ -53,11 +53,11 @@ namespace AntMe.Generator
                     {
                         Method = Method.AddParameterListParameters(
                             SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("Loc" + parameterInfo.Name)).WithType(
-                                GetTypeSyntax(parameterInfo.ParameterType.FullName)));
+                                SyntaxFactory.Identifier(GetLocalization(MethodInfo.DeclaringType, parameterInfo.Name))).WithType(
+                                GetTypeSyntax(GetLocalization(parameterInfo.ParameterType))));
 
                         // adding Arguments to argumentslist, for later use.
-                        arguments = arguments.AddArguments(GetLocaArgument(parameterInfo));
+                        arguments = arguments.AddArguments(GetLocaArgument(MethodInfo.DeclaringType, parameterInfo));
                     }
 
                     InvocationExpressionSyntax invocation =
@@ -88,7 +88,7 @@ namespace AntMe.Generator
                                 SyntaxFactory.Block(
                                     SyntaxFactory.ReturnStatement(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("Loc"+MethodInfo.ReturnType.Name)).AddArgumentListArguments(
+                                            SyntaxFactory.IdentifierName("Loc" + MethodInfo.ReturnType.Name)).AddArgumentListArguments(
                                             SyntaxFactory.Argument(invocation)))));
                         }
                     }
@@ -112,17 +112,17 @@ namespace AntMe.Generator
             switch (wrapType)
             {
                 case WrapType.InfoWrap:
-                    result.Set(MethodInfo.DeclaringType, MethodInfo.Name, MethodInfo.Name);
+                    result.Set(MethodInfo.DeclaringType, MethodInfo.Name, string.Format("TO_LOC_{0}", MethodInfo.Name));
 
                     foreach (ParameterInfo parameter in MethodInfo.GetParameters())
                     {
-                        result.Set(MethodInfo.DeclaringType, parameter.Name, parameter.Name);
+                        result.Set(MethodInfo.DeclaringType, parameter.Name, string.Format("TO_LOC_{0}", parameter.Name));
                         if (CheckLocalizableType(parameter.ParameterType))
-                            result.Set(parameter.ParameterType, parameter.ParameterType.Name, parameter.ParameterType.Name);
+                            result.Set(parameter.ParameterType, parameter.ParameterType.Name, string.Format("TO_LOC_{0}", parameter.ParameterType.Name));
                     }
 
                     if (CheckLocalizableType(MethodInfo.ReturnType))
-                        result.Set(MethodInfo.ReturnType, MethodInfo.ReturnType.Name, MethodInfo.ReturnType.Name);
+                        result.Set(MethodInfo.ReturnType, MethodInfo.ReturnType.Name, string.Format("TO_LOC_{0}", MethodInfo.ReturnType.Name));
                     break;
                 case WrapType.BaseTypeWrap:
                     break;

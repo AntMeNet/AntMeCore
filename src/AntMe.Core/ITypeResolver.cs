@@ -122,9 +122,9 @@ namespace AntMe
         #region Level Resolver
 
         /// <summary>
-        /// Methode zum Anwenden von Level Properties und Extender
+        /// Resolves all Extensions and Stuff for a new Level.
         /// </summary>
-        /// <param name="level"></param>
+        /// <param name="level">Level</param>
         void ResolveLevel(Level level);
 
         /// <summary>

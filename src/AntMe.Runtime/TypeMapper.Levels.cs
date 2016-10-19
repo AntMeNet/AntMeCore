@@ -90,6 +90,10 @@ namespace AntMe.Runtime
 
         #region Level Resolver
 
+        /// <summary>
+        /// Resolves all Extensions and Stuff for a new Level.
+        /// </summary>
+        /// <param name="level">Level</param>
         public void ResolveLevel(Level level)
         {
             // Level Properties

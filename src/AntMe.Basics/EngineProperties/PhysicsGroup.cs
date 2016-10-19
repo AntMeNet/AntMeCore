@@ -317,8 +317,7 @@ namespace AntMe.Basics.EngineProperties
             #endregion
 
             // Änderungen weiter geben
-            if (load != null)
-                load.Recalc();
+            load?.Recalc();
         }
 
         /// <summary>
@@ -415,10 +414,8 @@ namespace AntMe.Basics.EngineProperties
             }
 
             // Kollision melden
-            if (collidable != null)
-                collidable.CollideItem(cluster.Item);
-            if (cluster.collidable != null)
-                cluster.collidable.CollideItem(Item);
+            collidable?.CollideItem(cluster.Item);
+            cluster.collidable?.CollideItem(Item);
         }
 
         /// <summary>
@@ -689,9 +686,8 @@ namespace AntMe.Basics.EngineProperties
         /// <param name="direction"></param>
         private void TriggerBorderEvent(Compass direction)
         {
-            if (moving != null && map.BlockBorder)
-
-                moving.HitBorder(direction);
+            if (map.BlockBorder)
+                moving?.HitBorder(direction);
         }
 
         #endregion
@@ -804,8 +800,7 @@ namespace AntMe.Basics.EngineProperties
         /// <param name="direction"></param>
         private void TriggerCellEvent(Compass direction)
         {
-            if (moving != null)
-                moving.HitWall(direction);
+            moving?.HitWall(direction);
         }
 
         #endregion
@@ -833,7 +828,7 @@ namespace AntMe.Basics.EngineProperties
         /// </summary>
         public float Radius
         {
-            get { return (collidable != null ? collidable.CollisionRadius : 0); }
+            get { return collidable?.CollisionRadius ?? 0; }
         }
 
         /// <summary>
@@ -849,7 +844,7 @@ namespace AntMe.Basics.EngineProperties
         /// </summary>
         public bool IsFixed
         {
-            get { return (collidable != null ? collidable.CollisionFixed : false); }
+            get { return collidable?.CollisionFixed ?? false; }
         }
 
         /// <summary>
@@ -857,7 +852,7 @@ namespace AntMe.Basics.EngineProperties
         /// </summary>
         private float Weight
         {
-            get { return (portable != null ? portable.PortableWeight : 0f); }
+            get { return portable?.PortableWeight ?? 0f; }
         }
 
         /// <summary>
@@ -865,7 +860,7 @@ namespace AntMe.Basics.EngineProperties
         /// </summary>
         private float Strength
         {
-            get { return (carrier != null ? carrier.CarrierStrength : 0f); }
+            get { return carrier?.CarrierStrength ?? 0f; }
         }
 
         /// <summary>
@@ -875,9 +870,7 @@ namespace AntMe.Basics.EngineProperties
         {
             get
             {
-                if (load != null)
-                    return load.AppliedVelocity;
-                return clusterVelocity;
+                return load?.AppliedVelocity ?? clusterVelocity;
             }
         }
 
@@ -888,9 +881,7 @@ namespace AntMe.Basics.EngineProperties
         {
             get
             {
-                if (load != null)
-                    return load.AppliedMass;
-                return clusterMass;
+                return load?.AppliedMass ?? clusterMass;
             }
         }
 
