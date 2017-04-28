@@ -140,9 +140,11 @@ namespace CoreTestClient
             get { return hoveredCell; }
             private set
             {
-                hoveredCell = value;
                 if (hoveredCell != value)
+                {
+                    hoveredCell = value;
                     OnHoveredCellChanged?.Invoke(value);
+                }
             }
         }
 
