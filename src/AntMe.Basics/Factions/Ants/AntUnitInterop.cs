@@ -61,7 +61,7 @@ namespace AntMe.Basics.Factions.Ants
 
             // Marker erstellen
             var marker = new MarkerItem(Faction.Context, Faction,
-                Item.Position.ToVector2XY(), size, information);
+                Item.Position.ToVector2Xy(), size, information);
 
             Item.Engine.InsertItem(marker);
             markerDelay = Faction.Settings.GetInt<AntItem>("MarkerDelay").Value;

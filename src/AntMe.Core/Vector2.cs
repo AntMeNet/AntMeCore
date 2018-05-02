@@ -39,7 +39,7 @@ namespace AntMe
             Y = y;
         }
 
-        #region Konstanten
+        #region Constants
 
         /// <summary>
         /// Zero vector
@@ -88,7 +88,7 @@ namespace AntMe
 
         #endregion
 
-        #region Static Helper
+        #region Static factories
 
         /// <summary>
         /// Generates a normalized vector based on the given angle
@@ -113,6 +113,8 @@ namespace AntMe
         }
 
         #endregion
+
+        #region Converter
 
         /// <summary>
         /// inverts the value of the x-axis
@@ -181,6 +183,8 @@ namespace AntMe
             float scale = 1 / Length();
             return this * scale;
         }
+
+        #endregion
 
         /// <summary>
         /// Compares two vectors for equality

@@ -269,7 +269,7 @@ namespace AntMe.Basics.EngineProperties
             if (moving != null)
             {
                 float speed = Math.Min(moving.MaximumSpeed, moving.Speed);
-                ownVelocity = Vector3.FromAngleXY(moving.Direction)*speed*cellspeed;
+                ownVelocity = Vector3.FromAngleXy(moving.Direction) * speed * cellspeed;
             }
 
             ownMass = (collidable != null ? collidable.CollisionMass : 0f);
@@ -299,14 +299,14 @@ namespace AntMe.Basics.EngineProperties
                 // Trägerkraft berücksichtigen
                 // (Geschwindigkeit verhält sich antiproportional zur Summe der Stärken)
                 // Übersteigt die Summe der Stärken das Gewicht, ist die maximal mögliche Geschwindigkeit erreicht
-                float speedFactor = (Weight > 0f ? tempStrength/Weight : 1f);
+                float speedFactor = (Weight > 0f ? tempStrength / Weight : 1f);
                 speedFactor = Math.Min(1f, Math.Max(0f, speedFactor));
 
                 // Geschwindigkeit des Portables nur berüchsichtigen, wenn es ebenso Moving ist
                 itemCount -= (moving != null ? 0 : 1);
 
                 // Resultierende Geschwindigkeit berechnen
-                clusterVelocity = (itemCount > 0 ? (tempVelocity/itemCount)*speedFactor : Vector3.Zero);
+                clusterVelocity = (itemCount > 0 ? (tempVelocity / itemCount) * speedFactor : Vector3.Zero);
             }
             else
             {
@@ -362,12 +362,12 @@ namespace AntMe.Basics.EngineProperties
 
                 // Fallback 1, falls direction == [0,0]:
                 // vorherige Positionen zum Diff verwenden
-                if (direction.LengthSquared() < Vector3.EPS_MIN)
+                if (direction.LengthSquared() < Vector3.EpsMin)
                     direction = ((cluster.Position - cluster.AppliedVelocity) - (Position - AppliedVelocity));
 
                 // Fallback 2, falls direction == [0,0];
                 // fixe Achse
-                if (direction.LengthSquared() < Vector3.EPS_MIN)
+                if (direction.LengthSquared() < Vector3.EpsMin)
                     direction = new Vector3(1, 0, 0);
 
                 // Richtungsvektor Normalisieren
@@ -382,23 +382,23 @@ namespace AntMe.Basics.EngineProperties
                 {
                     // Nur Item2 bewegen
                     // Ignore Result, da eh nix zu retten ist
-                    cluster.SetPosition(cluster.Position + (direction*diff), ref bounce, true);
+                    cluster.SetPosition(cluster.Position + (direction * diff), ref bounce, true);
                 }
-                    // Item1 not fixed, item2 fixed
+                // Item1 not fixed, item2 fixed
                 else if (cluster.IsFixed)
                 {
                     // Nur Item1 bewegen
                     // Result unwichtig, da eh nichts zu retten ist
-                    SetPosition(Position + (direction.InvertXYZ()*diff), ref bounce, true);
+                    SetPosition(Position + (direction.InvertXyz() * diff), ref bounce, true);
                 }
                 else
                 {
                     // Über Masse auflösen
                     float totalmass = AppliedMass + cluster.AppliedMass;
-                    float spanItem1 = diff*(cluster.AppliedMass/totalmass);
-                    float spanItem2 = diff*(AppliedMass/totalmass);
-                    Vector3 diffItem1 = direction.InvertXYZ()*spanItem1;
-                    Vector3 diffItem2 = direction*spanItem2;
+                    float spanItem1 = diff * (cluster.AppliedMass / totalmass);
+                    float spanItem2 = diff * (AppliedMass / totalmass);
+                    Vector3 diffItem1 = direction.InvertXyz() * spanItem1;
+                    Vector3 diffItem2 = direction * spanItem2;
 
                     // Apply
                     // Im Falle eines Blocks wird der Bounce auf das andere Element übertragen.
@@ -437,46 +437,50 @@ namespace AntMe.Basics.EngineProperties
             bool dropped = false;
             bool blocked = false;
 
+            float x = position.X;
+            float y = position.Y;
+            float z = position.Z;
+
             var temp = PositionResult.Done;
-            Vector3 posTemp = position;
+            Vector3 posTemp = new Vector3(x, y, z);
 
             #region Rand
 
             // Randverhalten
             // X-Achse
-            if (position.X < Radius)
-                temp = HandleLeftBorder(ref position, forced);
-            else if (position.X >= mapSize.X - Radius)
-                temp = HandleRightBorder(ref position, forced);
+            if (x < Radius)
+                temp = HandleLeftBorder(ref x, forced);
+            else if (x >= mapSize.X - Radius)
+                temp = HandleRightBorder(ref x, forced);
             else temp = PositionResult.Done;
 
             if (temp == PositionResult.Blocked)
             {
-                bounce += (position - posTemp);
-                posTemp = position;
+                bounce += new Vector3(x, y, z) - posTemp;
+                posTemp = new Vector3(x, y, z);
             }
 
             dropped |= temp == PositionResult.Dropped;
             blocked |= temp == PositionResult.Blocked;
 
             // Y-Achse
-            if (position.Y < Radius)
-                temp = HandleTopBorder(ref position, forced);
-            else if (position.Y >= mapSize.Y - Radius)
-                temp = HandleBottomBorder(ref position, forced);
+            if (y < Radius)
+                temp = HandleTopBorder(ref y, forced);
+            else if (y >= mapSize.Y - Radius)
+                temp = HandleBottomBorder(ref y, forced);
             else temp = PositionResult.Done;
 
             if (temp == PositionResult.Blocked)
             {
-                bounce += (position - posTemp);
-                posTemp = position;
+                bounce += new Vector3(x, y, z) - posTemp;
+                posTemp = new Vector3(x, y, z);
             }
 
             dropped |= temp == PositionResult.Dropped;
             blocked |= temp == PositionResult.Blocked;
 
             // Z-Achse
-            position.Z = map.GetHeight(new Vector2(position.X, position.Y));
+            z = map.GetHeight(new Vector2(x, y));
 
             // TODO: Bei fliegenden Einheiten die freie Bewegbarkeit prüfen
             // Z-Achse
@@ -501,41 +505,41 @@ namespace AntMe.Basics.EngineProperties
             #region Zelle
 
             // Zellenrand
-            Vector3 diff = position - item.Position;
+            Vector3 diff = new Vector3(x, y, z) - item.Position;
 
             // X-Achse
             if (diff.X < 0)
-                temp = HandleLeftCell(ref position, forced);
+                temp = HandleLeftCell(ref x, forced);
             else if (diff.X > 0)
-                temp = HandleRightCell(ref position, forced);
+                temp = HandleRightCell(ref x, forced);
             else temp = PositionResult.Done;
 
             if (temp == PositionResult.Blocked)
             {
-                bounce += (position - posTemp);
-                posTemp = position;
+                bounce += new Vector3(x, y, z) - posTemp;
+                posTemp = new Vector3(x, y, z);
             }
 
             blocked |= temp == PositionResult.Blocked;
 
             // Y-Achse
             if (diff.Y < 0)
-                temp = HandleTopCell(ref position, forced);
+                temp = HandleTopCell(ref y, new Vector3(x, y, z), forced);
             else if (diff.Y > 0)
-                temp = HandleBottomCell(ref position, forced);
+                temp = HandleBottomCell(ref y, new Vector3(x, y, z), forced);
             else temp = PositionResult.Done;
 
             if (temp == PositionResult.Blocked)
             {
-                bounce += (position - posTemp);
-                posTemp = position;
+                bounce += new Vector3(x, y, z) - posTemp;
+                posTemp = new Vector3(x, y, z);
             }
 
             blocked |= temp == PositionResult.Blocked;
 
             #endregion
 
-            item.Position = position;
+            item.Position = new Vector3(x, y, z);
 
             // Falls das Element gedropped wurde
             if (dropped)
@@ -554,15 +558,15 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         ///     Verarbeitet die Kollision mit der linken Wand
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="positionX"></param>
         /// <param name="forced"></param>
         /// <returns></returns>
-        private PositionResult HandleLeftBorder(ref Vector3 position, bool forced)
+        private PositionResult HandleLeftBorder(ref float positionX, bool forced)
         {
             var result = PositionResult.Done;
             if (map.BlockBorder)
             {
-                position.X = Radius;
+                positionX = Radius;
                 result = PositionResult.Blocked;
             }
             else
@@ -580,15 +584,15 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         ///     Verarbeitet die Kollision mit der rechten Wand
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="positionX"></param>
         /// <param name="forced"></param>
         /// <returns></returns>
-        private PositionResult HandleRightBorder(ref Vector3 position, bool forced)
+        private PositionResult HandleRightBorder(ref float positionX, bool forced)
         {
             var result = PositionResult.Done;
             if (map.BlockBorder)
             {
-                position.X = mapSize.X - Radius - 0.0001f;
+                positionX = mapSize.X - Radius - Vector3.EpsMin;
                 result = PositionResult.Blocked;
             }
             else
@@ -606,15 +610,15 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         ///     Verarbeitet die Kollision mit der oberen Wand
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="positionY"></param>
         /// <param name="forced"></param>
         /// <returns></returns>
-        private PositionResult HandleTopBorder(ref Vector3 position, bool forced)
+        private PositionResult HandleTopBorder(ref float positionY, bool forced)
         {
             var result = PositionResult.Done;
             if (map.BlockBorder)
             {
-                position.Y = Radius;
+                positionY = Radius;
                 result = PositionResult.Blocked;
             }
             else
@@ -632,15 +636,15 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         ///     Verarbeitet die Kollision mit der unteren Wand
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="positionY"></param>
         /// <param name="forced"></param>
         /// <returns></returns>
-        private PositionResult HandleBottomBorder(ref Vector3 position, bool forced)
+        private PositionResult HandleBottomBorder(ref float positionY, bool forced)
         {
             var result = PositionResult.Done;
             if (map.BlockBorder)
             {
-                position.Y = mapSize.Y - Radius - 0.0001f;
+                positionY = mapSize.Y - Radius - Vector3.EpsMin;
                 result = PositionResult.Blocked;
             }
             else
@@ -658,25 +662,24 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         ///     Verarbeitet die Kollision mit der Decke
         /// </summary>
-        /// <param name="position"></param>
-        /// <param name="forced"></param>
+        /// <param name="positionZ"></param>
         /// <returns></returns>
-        private PositionResult HandleCeilingBorder(ref Vector3 position)
+        private PositionResult HandleCeilingBorder(ref float positionZ)
         {
-            position.Z = Map.MAX_Z - Radius - Vector3.EPS_MIN;
+            positionZ = Map.MAX_Z - Radius - Vector3.EpsMin;
             return PositionResult.Blocked;
         }
 
         /// <summary>
         ///     Verarbeitet die Kollision mit dem Boden.
         /// </summary>
-        /// <param name="position"></param>
-        /// <param name="forced"></param>
+        /// <param name="positionZ"></param>
+        /// <param name="height"></param>
         /// <returns></returns>
-        private PositionResult HandleFloorBorder(ref Vector3 position, float height)
+        private PositionResult HandleFloorBorder(ref float positionZ, float height)
         {
             // TODO: Cell-Höhe berücksichtigen
-            position.Z = Math.Max(Map.MIN_Z, height);
+            positionZ = Math.Max(Map.MIN_Z, height);
             return PositionResult.Blocked;
         }
 
@@ -697,20 +700,20 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         ///     Prüft den Höhenunterschied beim Zellenwechsel nach links.
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="positionX"></param>
         /// <param name="forced"></param>
         /// <returns></returns>
-        private PositionResult HandleLeftCell(ref Vector3 position, bool forced)
+        private PositionResult HandleLeftCell(ref float positionX, bool forced)
         {
             Index2 cell = map.GetCellIndex(new Vector3(
-                position.X - Radius, item.Position.Y, item.Position.Z));
+                positionX - Radius, item.Position.Y, item.Position.Z));
             if (cell != item.Cell)
             {
                 // Prüft, ob die neue Zelle begehbar ist.
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    position.X = ((cell.X + 1)*Map.CELLSIZE) + Radius;
+                    positionX = ((cell.X + 1) * Map.CELLSIZE) + Radius;
                     if (!forced) TriggerCellEvent(Compass.West);
                     return PositionResult.Blocked;
                 }
@@ -722,20 +725,20 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         ///     Prüft den Höhenunterschied beim Zellenwechsel nach rechts.
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="positionX"></param>
         /// <param name="forced"></param>
         /// <returns></returns>
-        private PositionResult HandleRightCell(ref Vector3 position, bool forced)
+        private PositionResult HandleRightCell(ref float positionX, bool forced)
         {
             Index2 cell = map.GetCellIndex(new Vector3(
-                position.X + Radius, item.Position.Y, item.Position.Z));
+                positionX + Radius, item.Position.Y, item.Position.Z));
             if (cell != item.Cell)
             {
                 // Prüft, ob die neue Zelle begehbar ist.
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    position.X = (cell.X*Map.CELLSIZE) - Radius;
+                    positionX = (cell.X * Map.CELLSIZE) - Radius;
                     if (!forced) TriggerCellEvent(Compass.East);
                     return PositionResult.Blocked;
                 }
@@ -747,10 +750,11 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         ///     Prüft den Höhenunterschied beim Zellenwechsel nach oben.
         /// </summary>
+        /// <param name="positionY"></param>
         /// <param name="position"></param>
         /// <param name="forced"></param>
         /// <returns></returns>
-        private PositionResult HandleTopCell(ref Vector3 position, bool forced)
+        private PositionResult HandleTopCell(ref float positionY, Vector3 position, bool forced)
         {
             Index2 cell = map.GetCellIndex(new Vector3(
                 item.Position.X, position.Y - Radius, position.Z));
@@ -760,7 +764,7 @@ namespace AntMe.Basics.EngineProperties
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    position.Y = ((cell.Y + 1)*Map.CELLSIZE) + Radius;
+                    positionY = ((cell.Y + 1) * Map.CELLSIZE) + Radius;
                     if (!forced) TriggerCellEvent(Compass.North);
                     return PositionResult.Blocked;
                 }
@@ -773,9 +777,10 @@ namespace AntMe.Basics.EngineProperties
         ///     Prüft den Höhenunterschied beim Zellenwechsel nach links.
         /// </summary>
         /// <param name="position"></param>
+        /// <param name="positionY"></param>
         /// <param name="forced"></param>
         /// <returns></returns>
-        private PositionResult HandleBottomCell(ref Vector3 position, bool forced)
+        private PositionResult HandleBottomCell(ref float positionY, Vector3 position, bool forced)
         {
             Index2 cell = map.GetCellIndex(new Vector3(
                 item.Position.X, position.Y + Radius, item.Position.Z));
@@ -785,7 +790,7 @@ namespace AntMe.Basics.EngineProperties
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    position.Y = (cell.Y*Map.CELLSIZE) - Radius;
+                    positionY = (cell.Y * Map.CELLSIZE) - Radius;
                     if (!forced) TriggerCellEvent(Compass.South);
                     return PositionResult.Blocked;
                 }

@@ -219,20 +219,20 @@ namespace AntMe
             if (item.Position.X < 0)
                 item.Position = new Vector3(0, item.Position.Y, item.Position.Z);
             if (item.Position.X > limit.X)
-                item.Position = new Vector3(limit.Y - Vector3.EPS_MIN, item.Position.Y, item.Position.Z);
+                item.Position = new Vector3(limit.Y - Vector3.EpsMin, item.Position.Y, item.Position.Z);
 
             // Y Axis
             if (item.Position.Y < 0)
                 item.Position = new Vector3(item.Position.X, 0, item.Position.Z);
             if (item.Position.Y > limit.Y)
-                item.Position = new Vector3(item.Position.X, limit.Y - Vector3.EPS_MIN, item.Position.Z);
+                item.Position = new Vector3(item.Position.X, limit.Y - Vector3.EpsMin, item.Position.Z);
 
             // Z Axis
             float height = Map.GetHeight(new Vector2(item.Position.X, item.Position.Y));
             if (item.Position.Z < Map.MIN_Z || item.Position.Z < height)
                 item.Position = new Vector3(item.Position.X, item.Position.Y, Math.Max(Map.MIN_Z, height));
             if (item.Position.Z > Map.MAX_Z)
-                item.Position = new Vector3(item.Position.X, item.Position.Y, Map.MAX_Z - Vector3.EPS_MIN);
+                item.Position = new Vector3(item.Position.X, item.Position.Y, Map.MAX_Z - Vector3.EpsMin);
 
             item.Cell = Map.GetCellIndex(item.Position);
         }

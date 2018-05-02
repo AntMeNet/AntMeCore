@@ -3,37 +3,37 @@
 namespace AntMe
 {
     /// <summary>
-    ///     Datentyp zur Speicherung von 3D-Koordinaten mit X-, Y- und Z-Komponente.
+    /// Represents a 3D Vector
     /// </summary>
     [Serializable]
     public struct Vector3
     {
         /// <summary>
-        /// Minimalste Abweichung bei Vergleichsprüfungen. Soll Rundungsfehlern entgegen wirken.
+        /// Minimum value between two values before it's handled as equal
         /// </summary>
-        public const float EPS_MIN = 0.001f;
+        public const float EpsMin = 0.001f;
 
         /// <summary>
-        /// X-Anteil der Koordinate.
+        /// X-Axis
         /// </summary>
-        public float X;
+        public float X { get; }
 
         /// <summary>
-        /// Y-Anteil der Koordinate.
+        /// Y-Axis
         /// </summary>
-        public float Y;
+        public float Y { get; }
 
         /// <summary>
-        /// Z-Anteil der Koordinate.
+        /// Z-Axis
         /// </summary>
-        public float Z;
+        public float Z { get; }
 
         /// <summary>
-        /// Parameterisierter Konstruktor der Vector3-Klasse.
+        /// Default constructor
         /// </summary>
-        /// <param name="x">X-Anteil</param>
-        /// <param name="y">Y-Anteil</param>
-        /// <param name="z">Z-Anteil</param>
+        /// <param name="x">X-Axis</param>
+        /// <param name="y">Y-Axis</param>
+        /// <param name="z">Z-Axis</param>
         public Vector3(float x, float y, float z)
         {
             X = x;
@@ -41,36 +41,33 @@ namespace AntMe
             Z = z;
         }
 
-        #region Konstanten
+        #region Constrants
 
         /// <summary>
-        ///     Null Vektor.
+        /// Null Vektor.
         /// </summary>
-        public static Vector3 Zero
-        {
-            get { return new Vector3(0, 0, 0); }
-        }
+        public static Vector3 Zero => new Vector3(0, 0, 0);
 
         #endregion
 
-        #region Static Helper
+        #region Static factories
 
         /// <summary>
-        ///     Erstellt einen Vector3 mit Einheitsmaß aus einem gegebenen Winkel.
+        /// Generates a normalized vector based on the given angle
         /// </summary>
-        /// <param name="angle">Winkel als Angle</param>
-        /// <returns>Neuer Einheitsvektor auf XY-Achse</returns>
-        public static Vector3 FromAngleXY(Angle angle)
+        /// <param name="angle">Angle</param>
+        /// <returns>Normalized vector</returns>
+        public static Vector3 FromAngleXy(Angle angle)
         {
-            return FromAngleXY(angle.Radian);
+            return FromAngleXy(angle.Radian);
         }
 
         /// <summary>
-        ///     Erstellt einen Vector3 mit Einheitsmaß aus einem gegebenen Winkel.
+        /// Generates a normalized vector based on the given angle
         /// </summary>
-        /// <param name="radian">Winkel als Bogenmaß</param>
-        /// <returns>Neuer Einheitsvektor auf XY-Achse</returns>
-        public static Vector3 FromAngleXY(float radian)
+        /// <param name="radian">Angle</param>
+        /// <returns>Normalized vector</returns>
+        public static Vector3 FromAngleXy(float radian)
         {
             return new Vector3(
                 (float)Math.Cos(radian),
@@ -80,147 +77,147 @@ namespace AntMe
         #endregion
 
         /// <summary>
-        /// Invertiert die X-Achse des Vektors.
+        /// Inverts vector on x-axis
         /// </summary>
-        /// <returns>Neuer Vektor</returns>
+        /// <returns>inverted vector</returns>
         public Vector3 InvertX()
         {
             return new Vector3(X * -1, Y, Z);
         }
 
         /// <summary>
-        /// Invertiert die Y-Achse des Vektors.
+        /// Inverts vector on y-axis
         /// </summary>
-        /// <returns>Neuer Vektor</returns>
+        /// <returns>inverted vector</returns>
         public Vector3 InvertY()
         {
             return new Vector3(X, Y * -1, Z);
         }
 
         /// <summary>
-        /// Invertiert die Z-Achse des Vektors.
+        /// Inverts vector on z-axis
         /// </summary>
-        /// <returns>Neuer Vektor</returns>
+        /// <returns>inverted vector</returns>
         public Vector3 InvertZ()
         {
             return new Vector3(X, Y, Z * -1);
         }
 
         /// <summary>
-        /// Invertiert die X- und Y-Achse des Vektors.
+        /// Inverts vector on x- and y-axis
         /// </summary>
-        /// <returns>Neuer Vektor</returns>
-        public Vector3 InvertXY()
+        /// <returns>inverted vector</returns>
+        public Vector3 InvertXy()
         {
             return new Vector3(X * -1, Y * -1, Z);
         }
 
         /// <summary>
-        /// Invertiert die X- und Z-Achse des Vektors.
+        /// Inverts vector on x- and z-axis
         /// </summary>
-        /// <returns>Neuer Vektor</returns>
-        public Vector3 InvertXZ()
+        /// <returns>inverted vector</returns>
+        public Vector3 InvertXz()
         {
             return new Vector3(X * -1, Y, Z * -1);
         }
 
         /// <summary>
-        /// Invertiert die Y- und Z-Achse des Vektors.
+        /// Inverts vector on y- and z-axis
         /// </summary>
-        /// <returns>Neuer Vektor</returns>
-        public Vector3 InvertYZ()
+        /// <returns>inverted vector</returns>
+        public Vector3 InvertYz()
         {
             return new Vector3(X, Y * -1, Z * -1);
         }
 
         /// <summary>
-        /// Invertiert die X-, Y- und Z-Achse des Vektors.
+        /// Inverts vector on x-, y- and z-axis
         /// </summary>
-        /// <returns>Neuer Vektor</returns>
-        public Vector3 InvertXYZ()
+        /// <returns>inverted vector</returns>
+        public Vector3 InvertXyz()
         {
             return new Vector3(X * -1, Y * -1, Z * -1);
         }
 
         /// <summary>
-        /// Berechnet das Quadrat der Länge des Vektors.
+        /// Calculates the square length of the vector
         /// </summary>
-        /// <returns>Quadrat der Länge des Vektors</returns>
+        /// <returns>Square length</returns>
         public float LengthSquared()
         {
-            return ((X * X) + (Y * Y) + (Z * Z));
+            return X * X + Y * Y + Z * Z;
         }
 
         /// <summary>
-        ///     Berechnet die Länge des Vektors.
+        /// Calculates the length of the vector
         /// </summary>
-        /// <returns>Länge des Vektors</returns>
+        /// <returns>Length</returns>
         public float Length()
         {
             return (float)Math.Sqrt(LengthSquared());
         }
 
         /// <summary>
-        ///     Ermittelt die Richtung des Vektors zwischen X und Y.
+        /// Returns the angle between x- and y-axis
         /// </summary>
-        /// <returns></returns>
-        public Angle ToAngleXY()
+        /// <returns>angle</returns>
+        public Angle ToAngleXy()
         {
             return new Angle((float)Math.Atan2(Y, X));
         }
 
         /// <summary>
-        ///     Ermittelt einen Vector2 aus der X- und Y-Koordinate.
+        /// Returns the x- and y-axis as a 2D vector
         /// </summary>
-        /// <returns></returns>
-        public Vector2 ToVector2XY()
+        /// <returns>vector</returns>
+        public Vector2 ToVector2Xy()
         {
             return new Vector2(X, Y);
         }
 
         /// <summary>
-        ///     Ermittelt einen Vector2 aus der Y- und Z-Koordinate.
+        /// Returns the y- and z-axis as a 2D vector
         /// </summary>
-        /// <returns></returns>
-        public Vector2 ToVector2YZ()
+        /// <returns>vector</returns>
+        public Vector2 ToVector2Yz()
         {
             return new Vector2(Y, Z);
         }
 
         /// <summary>
-        ///     Ermittelt einen Vector2 aus der X- und Z-Koordinate.
+        /// Returns the x- and z-axis as a 2D vector
         /// </summary>
-        /// <returns></returns>
-        public Vector2 ToVector2XZ()
+        /// <returns>vector</returns>
+        public Vector2 ToVector2Xz()
         {
             return new Vector2(X, Z);
         }
 
         /// <summary>
-        ///     Ermittelt die Richtung des Vektors zwischen X und Z.
+        /// Returns the angle between x- and z-axis
         /// </summary>
-        /// <returns></returns>
-        public Angle ToAngleXZ()
+        /// <returns>angle</returns>
+        public Angle ToAngleXz()
         {
             return new Angle((float)Math.Atan2(Z, X));
         }
 
         /// <summary>
-        ///     Ermittelt die Richtung des Vektors zwischen Y und Z.
+        /// Returns the angle between y- and z-axis
         /// </summary>
-        /// <returns></returns>
-        public Angle ToAngleYZ()
+        /// <returns>angle</returns>
+        public Angle ToAngleYz()
         {
             return new Angle((float)Math.Atan2(Z, Y));
         }
 
         /// <summary>
-        ///     Normalisiert den Vektor auf die Länge 1.
+        /// Normalizes the vector
         /// </summary>
         /// <returns></returns>
         public Vector3 Normalize()
         {
-            // Speziallfall Null-Vektor
+            // Special case Null vector (returns again null)
             if (this == Zero)
                 return Zero;
 
@@ -229,112 +226,128 @@ namespace AntMe
         }
 
         /// <summary>
-        ///     Vergleicht, ob zwei Vektoren identische Werte haben.
+        /// Compares for equality.
         /// </summary>
-        /// <param name="obj">Vergleichsvektor</param>
-        /// <returns>true, falls beide gleich sind</returns>
-        public override bool Equals(object obj)
+        /// <param name="other">other vector</param>
+        /// <returns>true in case of equalitry</returns>
+        public override bool Equals(object other)
         {
-            if (!(obj is Vector3))
+            if (!(other is Vector3))
                 return false;
 
-            var b = (Vector3)obj;
-            return (X == b.X && Y == b.Y && Z == b.Z);
+            var b = (Vector3)other;
+            return Math.Abs(X - b.X) < EpsMin 
+                    && Math.Abs(Y - b.Y) < EpsMin 
+                    && Math.Abs(Z - b.Z) < EpsMin;
         }
 
         /// <summary>
-        ///     Ermittelt einen Hashcode für den aktuellen Vektor.
+        /// Generates hash code
         /// </summary>
-        /// <returns>Hashcode</returns>
+        /// <returns>Hash code</returns>
         public override int GetHashCode()
         {
             return X.GetHashCode() + Y.GetHashCode() + Z.GetHashCode();
         }
 
         /// <summary>
-        ///     Gibt den Vektor in lesbarem Format "x/y/z" zurück.
+        /// returns the value of this vector as string in the X/Y/Z format.
         /// </summary>
-        /// <returns>Vektor als <see cref="string" /></returns>
+        /// <returns>Value as string</returns>
         public override string ToString()
         {
-            return string.Format("{0:0.0000}/{1:0.0000}/{2:0.0000}", X, Y, Z);
+            return $"{X:0.000}/{Y:0.000}/{Z:0.000}";
         }
 
-        #region Operatoren
+        #region Operators
 
         /// <summary>
-        /// Addition zweier Vector3.
+        /// Adds two vectors.
         /// </summary>
-        /// <param name="a">Vektor 1</param>
-        /// <param name="b">Vektor 2</param>
-        /// <returns>Addierte Vektoren</returns>
+        /// <param name="a">Vector a</param>
+        /// <param name="b">Vector b</param>
+        /// <returns>new vector</returns>
         public static Vector3 operator +(Vector3 a, Vector3 b)
         {
             return new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         }
 
         /// <summary>
-        /// Subjtraktion zweier Vektor3.
+        /// Substracts vector b from vector a.
         /// </summary>
-        /// <param name="a">Vektor 1</param>
-        /// <param name="b">Vektor 2</param>
-        /// <returns>Subtrahierter Vektor</returns>
+        /// <param name="a">Vector a</param>
+        /// <param name="b">Vector b</param>
+        /// <returns>new vector</returns>
         public static Vector3 operator -(Vector3 a, Vector3 b)
         {
             return new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
         /// <summary>
-        /// Skalierung eines Vektor3.
+        /// Scales the vector.
         /// </summary>
-        /// <param name="a">Vektor</param>
-        /// <param name="scale">Skalierungsfaktor</param>
-        /// <returns>Skalierter Vektor.</returns>
+        /// <param name="a">Vector</param>
+        /// <param name="scale">Scalar</param>
+        /// <returns>new vector</returns>
         public static Vector3 operator *(Vector3 a, float scale)
         {
             return new Vector3(a.X * scale, a.Y * scale, a.Z * scale);
         }
 
         /// <summary>
-        /// Skalierung eines Vektor3.
+        /// Scales the vector.
         /// </summary>
-        /// <param name="a">Vektor</param>
-        /// <param name="scale">Skalierungsfaktor</param>
-        /// <returns>Skalierter Vektor.</returns>
+        /// <param name="a">Vector</param>
+        /// <param name="scale">Scalar</param>
+        /// <returns>new vector</returns>
         public static Vector3 operator *(Vector3 a, double scale)
         {
             return a * (float)scale;
         }
 
 
+        /// <summary>
+        /// Divides a vector by a scalar
+        /// </summary>
+        /// <param name="a">Vector</param>
+        /// <param name="scale">Scalar</param>
+        /// <returns>new vector</returns>
         public static Vector3 operator /(Vector3 a, float scale)
         {
             return new Vector3(a.X / scale, a.Y / scale, a.Z / scale);
         }
 
+        /// <summary>
+        /// Divides a vector by a scalar
+        /// </summary>
+        /// <param name="a">Vector</param>
+        /// <param name="scale">Scalar</param>
+        /// <returns>new vector</returns>
         public static Vector3 operator /(Vector3 a, double scale)
         {
             return a / (float)scale;
         }
 
         /// <summary>
-        /// Wertevergleich zweier Vektoren.
+        /// Checks two vectors for equality
         /// </summary>
-        /// <param name="a">Vektor 1</param>
-        /// <param name="b">Vektor 2</param>
-        /// <returns>Sind die Vektoren identisch?</returns>
+        /// <param name="a">Vector a</param>
+        /// <param name="b">Vector b</param>
+        /// <returns>true if equal</returns>
         public static bool operator ==(Vector3 a, Vector3 b)
         {
-            // TODO: evtl. Epsilon berücksichtigen.
-            return (a.X == b.X && a.Y == b.Y && a.Z == b.Z);
+            return Math.Abs(a.X - b.X) < EpsMin 
+                    && Math.Abs(a.Y - b.Y) < EpsMin 
+                    && Math.Abs(a.Z - b.Z) < EpsMin;
         }
 
         /// <summary>
-        /// Wertevergleich zweier Vektoren.
+        /// Checks two vectors for inequality
         /// </summary>
-        /// <param name="a">Vektor 1</param>
-        /// <param name="b">Vektor 2</param>
-        /// <returns>Sind die Vektoren nicht identisch?</returns>
+        /// <param name="a">Vector a</param>
+        /// <param name="b">Vector b</param>
+        /// <returns>true if not equal</returns>
+
         public static bool operator !=(Vector3 a, Vector3 b)
         {
             return !(a == b);

@@ -382,7 +382,7 @@ namespace AntMe
         /// <returns>Direction from Item 1 to Item 2</returns>
         public static Angle GetDirection(Item item1, Item item2)
         {
-            return (item2.Position - item1.Position).ToAngleXY();
+            return (item2.Position - item1.Position).ToAngleXy();
         }
 
         #endregion

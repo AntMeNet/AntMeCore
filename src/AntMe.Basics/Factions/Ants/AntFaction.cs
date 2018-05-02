@@ -113,7 +113,7 @@ namespace AntMe.Basics.Factions.Ants
             // Find Direction
             Angle direction = Angle.FromDegree(Random.Next(0, 360));
             Vector2 rim = Vector2.FromAngle(direction) * (anthill.Radius + AntItem.AntRadius);
-            Vector2 position = anthill.Position.ToVector2XY() + rim;
+            Vector2 position = anthill.Position.ToVector2Xy() + rim;
 
             // Type anfragen
             Type antType = (Factory.Interop as AntFactoryInterop).RequestCreateMember();
