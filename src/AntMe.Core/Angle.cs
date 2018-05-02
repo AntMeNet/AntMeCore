@@ -8,6 +8,12 @@ namespace AntMe
     /// </summary>
     public struct Angle
     {
+        /// <summary>
+        /// Minimum value between two values before it's handled as equal
+        /// </summary>
+        public const float EpsMin = 0.001f;
+
+
         #region Static Values
 
         /// <summary>
@@ -72,44 +78,29 @@ namespace AntMe
 
         #endregion
 
-        private float _value;
-
         /// <summary>
         /// Creates a new Angle based on the given Radian.
         /// </summary>
         /// <param name="radian">Radian</param>
         public Angle(float radian)
         {
-            _value = 0;
-            Radian = radian;
+            Radian = NormalizeRadian(radian);
         }
 
         /// <summary>
         /// Gets or sets the Radian Angle [0;2Pi]
         /// </summary>
-        public float Radian
-        {
-            get { return _value; }
-            set { this._value = NormalizeRadian(value); }
-        }
+        public float Radian { get; }
 
         /// <summary>
         /// Gets or sets the Angle in Degrees [0;359]
         /// </summary>
-        public int Degree
-        {
-            get { return NormalizeDegree(ConvertToDegree(_value)); }
-            set { Radian = ConvertToRadian(NormalizeDegree(value)); }
-        }
+        public int Degree => NormalizeDegree(ConvertToDegree(Radian));
 
         /// <summary>
         /// Gets or sets the Angle as an <see cref="AntMe.Compass"/>
         /// </summary>
-        public Compass Compass
-        {
-            get { return ConvertToCompass(Degree); }
-            set { Degree = (int)value; }
-        }
+        public Compass Compass => ConvertToCompass(Degree);
 
         /// <summary>
         /// Inverts the X-Component of this Angle.
@@ -146,10 +137,7 @@ namespace AntMe
         /// <returns>New Angle</returns>
         public Angle AddDegree(int degree)
         {
-            return new Angle
-            {
-                Degree = Degree + degree
-            };
+            return FromDegree(Degree + degree);
         }
 
         /// <summary>
@@ -169,10 +157,7 @@ namespace AntMe
         /// <returns>New Angle</returns>
         public Angle SubstractDegree(int degree)
         {
-            return new Angle
-            {
-                Degree = Degree - degree
-            };
+            return FromDegree(Degree - degree);
         }
 
         /// <summary>
@@ -181,7 +166,7 @@ namespace AntMe
         /// <returns>Hashcode</returns>
         public override int GetHashCode()
         {
-            return _value.GetHashCode();
+            return Radian.GetHashCode();
         }
 
         /// <summary>
@@ -192,8 +177,8 @@ namespace AntMe
         public override bool Equals(object obj)
         {
             Angle other;
-            if (obj is Angle)
-                other = (Angle)obj;
+            if (obj is Angle angle)
+                other = angle;
             else if (obj is float)
                 other = new Angle((float)obj);
             else
@@ -208,7 +193,7 @@ namespace AntMe
         /// <returns>Radian</returns>
         public override string ToString()
         {
-            return _value.ToString(CultureInfo.InvariantCulture);
+            return Radian.ToString(CultureInfo.InvariantCulture);
         }
 
         #region Casting
@@ -265,7 +250,7 @@ namespace AntMe
         /// <returns>Angle similar</returns>
         public static bool operator ==(Angle a, Angle b)
         {
-            return (a._value == b._value);
+            return Math.Abs(a.Radian - b.Radian) < EpsMin;
         }
 
         /// <summary>
@@ -407,7 +392,7 @@ namespace AntMe
         /// <returns>New Angle</returns>
         public static Angle FromDegree(int degree)
         {
-            return new Angle { Degree = degree };
+            return new Angle(ConvertToRadian(NormalizeDegree(degree)));
         }
 
         /// <summary>
@@ -438,7 +423,7 @@ namespace AntMe
         /// <returns></returns>
         public static float Diff(Angle a, Angle b)
         {
-            float diff = b.Radian - a.Radian;
+            var diff = b.Radian - a.Radian;
             if (diff > Pi)
                 return diff - TwoPi;
             if (diff < -Pi)
@@ -454,9 +439,9 @@ namespace AntMe
         /// <returns>Difference in degrees</returns>
         public static int Diff(int a, int b)
         {
-            Angle alpha = FromDegree(a);
-            Angle beta = FromDegree(b);
-            float diff = Diff(alpha, beta);
+            var alpha = FromDegree(a);
+            var beta = FromDegree(b);
+            var diff = Diff(alpha, beta);
             return ConvertToDegree(diff);
         }
 

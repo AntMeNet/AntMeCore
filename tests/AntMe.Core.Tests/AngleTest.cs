@@ -330,64 +330,6 @@ namespace AntMe.Core
 
         #endregion
 
-        #region Property Setter
-
-        /// <summary>
-        /// Tests the Setter of the Radian Property.
-        /// </summary>
-        [Theory, MemberData("RadianValues")]
-        public void SetRadianByProperty(float radian, float normalizedRadian, int degrees, int normalizedDegrees, Compass compass)
-        {
-            // Arrange
-            Angle result = new Angle();
-
-            // Act
-            result.Radian = radian;
-
-            // Assert
-            Assert.Equal(normalizedRadian, result.Radian, 5);
-            Assert.Equal(normalizedDegrees, result.Degree);
-            Assert.Equal(compass, result.Compass);
-        }
-
-        /// <summary>
-        /// Tests the Setter of the Degree Property.
-        /// </summary>
-        [Theory, MemberData("DegreeValues")]
-        public void SetDegreeByProperty(int degrees, int normalizedDegrees, float radian, float normalizedRadian, Compass compass)
-        {
-            // Arrange
-            Angle result = new Angle();
-
-            // Act
-            result.Degree = degrees;
-
-            // Assert
-            Assert.Equal(normalizedRadian, result.Radian, 5);
-            Assert.Equal(normalizedDegrees, result.Degree);
-            Assert.Equal(compass, result.Compass);
-        }
-
-        /// <summary>
-        /// Tests the Setter of the Compass Property.
-        /// </summary>
-        [Theory, MemberData("CompassValues")]
-        public void SetCompassByProperty(Compass compass, int degrees, float radian)
-        {
-            // Arrange
-            Angle result = new Angle();
-
-            // Act
-            result.Compass = compass;
-
-            // Assert
-            Assert.Equal(radian, result.Radian, 5);
-            Assert.Equal(degrees, result.Degree);
-            Assert.Equal(compass, result.Compass);
-        }
-
-        #endregion
-
         #region Calculations
 
         /// <summary>
