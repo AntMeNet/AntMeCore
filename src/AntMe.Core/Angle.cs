@@ -72,7 +72,7 @@ namespace AntMe
 
         #endregion
 
-        private float value;
+        private float _value;
 
         /// <summary>
         /// Creates a new Angle based on the given Radian.
@@ -80,7 +80,7 @@ namespace AntMe
         /// <param name="radian">Radian</param>
         public Angle(float radian)
         {
-            value = 0;
+            _value = 0;
             Radian = radian;
         }
 
@@ -89,8 +89,8 @@ namespace AntMe
         /// </summary>
         public float Radian
         {
-            get { return value; }
-            set { this.value = NormalizeRadian(value); }
+            get { return _value; }
+            set { this._value = NormalizeRadian(value); }
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace AntMe
         /// </summary>
         public int Degree
         {
-            get { return NormalizeDegree(ConvertToDegree(value)); }
+            get { return NormalizeDegree(ConvertToDegree(_value)); }
             set { Radian = ConvertToRadian(NormalizeDegree(value)); }
         }
 
@@ -181,7 +181,7 @@ namespace AntMe
         /// <returns>Hashcode</returns>
         public override int GetHashCode()
         {
-            return value.GetHashCode();
+            return _value.GetHashCode();
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace AntMe
         /// <returns>Radian</returns>
         public override string ToString()
         {
-            return value.ToString(CultureInfo.InvariantCulture);
+            return _value.ToString(CultureInfo.InvariantCulture);
         }
 
         #region Casting
@@ -265,7 +265,7 @@ namespace AntMe
         /// <returns>Angle similar</returns>
         public static bool operator ==(Angle a, Angle b)
         {
-            return (a.value == b.value);
+            return (a._value == b._value);
         }
 
         /// <summary>
