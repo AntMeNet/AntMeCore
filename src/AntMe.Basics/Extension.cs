@@ -87,7 +87,7 @@ namespace AntMe.Basics
             // ##########################
             // Map Tile Properties
             // ##########################
-            typeMapper.RegisterMapTilePropertySI<WalkableTileProperty, WalkableTileStateProperty, WalkableTileInfoProperty>(this, "Walkable Map Tiles");
+            typeMapper.RegisterMapTilePropertySi<WalkableTileProperty, WalkableTileStateProperty, WalkableTileInfoProperty>(this, "Walkable Map Tiles");
 
             // ##########################
             // Attach Tile Properties
@@ -98,10 +98,10 @@ namespace AntMe.Basics
             // ##########################
             // Standard Item Properties
             // ##########################
-            typeMapper.RegisterItemPropertySI<AttackableProperty, AttackableState, AttackableInfo>(this, "Attackable");
-            typeMapper.RegisterItemPropertySI<AttackerProperty, AttackerState, AttackerInfo>(this, "Attacker");
+            typeMapper.RegisterItemPropertySi<AttackableProperty, AttackableState, AttackableInfo>(this, "Attackable");
+            typeMapper.RegisterItemPropertySi<AttackerProperty, AttackerState, AttackerInfo>(this, "Attacker");
             typeMapper.RegisterItemPropertyS<CarrierProperty, CarrierState>(this, "Carrier");
-            typeMapper.RegisterItemPropertySI<CollidableProperty, CollidableState, CollidableInfo>(this, "Collidable");
+            typeMapper.RegisterItemPropertySi<CollidableProperty, CollidableState, CollidableInfo>(this, "Collidable");
             typeMapper.RegisterItemPropertyS<PortableProperty, PortableState>(this, "Portable");
             typeMapper.RegisterItemPropertyS<SightingProperty, SightingState>(this, "Sighting"); // keine Info
             typeMapper.RegisterItemPropertyS<SmellableProperty, SmellableState>(this, "Smellable"); // keine Info

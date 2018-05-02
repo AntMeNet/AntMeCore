@@ -34,37 +34,37 @@ namespace AntMe
         /// <summary>
         ///     The radius above which this layer rejects objects because they are too big for the cells.
         /// </summary>
-        public float MaxRadius { get; private set; }
+        public float MaxRadius { get; }
 
         /// <summary>
         ///     Height of the layer.
         /// </summary>
-        public float Height { get; private set; }
+        public float Height { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int HeightCells { get; private set; }
 
         /// <summary>
         ///     Width of the layer.
         /// </summary>
-        public float Width { get; private set; }
+        public float Width { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int WidthCells { get; private set; }
 
         /// <summary>
         ///     Width of one cell in this layer.
         /// </summary>
-        public float CellWidth
-        {
-            get { return Width / WidthCells; }
-        }
+        public float CellWidth => Width / WidthCells;
 
         /// <summary>
         ///     Height of one cell in this layer.
         /// </summary>
-        public float CellHeight
-        {
-            get { return Height / HeightCells; }
-        }
+        public float CellHeight => Height / HeightCells;
 
         /// <summary>
         ///     Checks the dimensions of the layer and throws an ArgumentException if they are not positive.
@@ -157,14 +157,14 @@ namespace AntMe
                     foreach (var item in (List<ExpandedObject<T>>)_grid.GetValue(runrow, runcol))
                     {
                         // Check the intersection with every object in this cell
-                        float radiuses = radius + item.radius;
-                        float x = item.pos.X - pos.X;
-                        float y = item.pos.Y - pos.Y;
-                        float z = item.pos.Z - pos.Z;
+                        float radiuses = radius + item.Radius;
+                        float x = item.Pos.X - pos.X;
+                        float y = item.Pos.Y - pos.Y;
+                        float z = item.Pos.Z - pos.Z;
                         float distance = (x * x) + (y * y) + (z * z);
                         if (distance <= radiuses * radiuses)
                         {
-                            result.Add(item.obj);
+                            result.Add(item.Obj);
                         }
                     }
                 }
@@ -211,7 +211,7 @@ namespace AntMe
                     {
                         if (ValidCellIndex(runrow, runcol))
                         {*/
-            _grid[row, col].RemoveAll(expobj => expobj.obj.Equals(obj));
+            _grid[row, col].RemoveAll(expobj => expobj.Obj.Equals(obj));
             /*             }
                     }
                 }

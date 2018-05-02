@@ -11,17 +11,17 @@ namespace AntMe
         /// <summary>
         /// Type of the Players Factory Class.
         /// </summary>
-        private Type factoryType;
+        private readonly Type _factoryType;
 
         /// <summary>
         /// Local Faction Info Cache.
         /// </summary>
-        private readonly Dictionary<Item, FactionInfo> factionInfos = new Dictionary<Item, FactionInfo>();
+        private readonly Dictionary<Item, FactionInfo> _factionInfos = new Dictionary<Item, FactionInfo>();
 
         /// <summary>
         /// Local Instance of the Faction State.
         /// </summary>
-        private FactionState state;
+        private FactionState _state;
 
         /// <summary>
         /// Default Constructor for Type Mapper.
@@ -34,7 +34,7 @@ namespace AntMe
             Context = context;
             Units = new Dictionary<Item, UnitGroup>();
             Level = level;
-            this.factoryType = factoryType;
+            _factoryType = factoryType;
 
             Context.Resolver.ResolveFaction(this);
         }
@@ -62,7 +62,7 @@ namespace AntMe
         /// <summary>
         /// Reference to the Level.
         /// </summary>
-        public Level Level { get; private set; }
+        public Level Level { get; }
 
         /// <summary>
         /// Gets the default Start Point.
@@ -72,7 +72,7 @@ namespace AntMe
         /// <summary>
         /// Factory-specific Settings.
         /// </summary>
-        public KeyValueStore Settings { get { return Context.Settings; } }
+        public KeyValueStore Settings => Context.Settings;
 
         /// <summary>
         /// Current Simulation Context for this Faction.
@@ -82,7 +82,7 @@ namespace AntMe
         /// <summary>
         /// Gets the Randomizer for this Faction.
         /// </summary>
-        public Random Random { get { return Context.Random; } }
+        public Random Random => Context.Random;
 
         /// <summary>
         /// Group of Factory Interop-Instances.
@@ -92,7 +92,7 @@ namespace AntMe
         /// <summary>
         /// List of all Groups for Unit Interop-Instances.
         /// </summary>
-        public Dictionary<Item, UnitGroup> Units { get; private set; }
+        public Dictionary<Item, UnitGroup> Units { get; }
 
         /// <summary>
         /// Initializes the Faction.
@@ -115,7 +115,7 @@ namespace AntMe
             // Factory für Ameisen erzeugen
             Factory = new FactoryGroup()
             {
-                Factory = (FactionFactory)Activator.CreateInstance(factoryType),
+                Factory = (FactionFactory)Activator.CreateInstance(_factoryType),
                 Interop = Context.Resolver.CreateFactoryInterop(this)
             };
             Factory.Factory.Init(Factory.Interop);
@@ -136,7 +136,7 @@ namespace AntMe
             string categoryName = string.Empty;
             var unitCategoryNames = unitType.GetCustomAttributes(typeof(UnitGroupAttribute), true);
             if (unitCategoryNames.Length > 0)
-                categoryName = (unitCategoryNames[0] as UnitGroupAttribute).Name;
+                categoryName = (unitCategoryNames[0] as UnitGroupAttribute)?.Name;
 
             // Collect Attributes
             Dictionary<string, sbyte> attributesValues = new Dictionary<string, sbyte>();
@@ -144,13 +144,16 @@ namespace AntMe
             {
                 // Check for Attributes with the same Key
                 if (attributesValues.ContainsKey(unitAttribute.Key))
-                    throw new NotSupportedException(string.Format("Attribute Key {0} from {1} is already in the list.", unitAttribute.Key, unitType.FullName));
+                    throw new NotSupportedException(
+                        $"Attribute Key {unitAttribute.Key} from {unitType.FullName} is already in the list.");
 
                 // Check Min-Max-Values
                 if (unitAttribute.Value < unitAttribute.MinValue)
-                    throw new NotSupportedException(string.Format("Attribute {0} from {1} has a Value smaller than MinValue", unitAttribute.Key, unitType.FullName));
+                    throw new NotSupportedException(
+                        $"Attribute {unitAttribute.Key} from {unitType.FullName} has a Value smaller than MinValue");
                 if (unitAttribute.Value > unitAttribute.MaxValue)
-                    throw new NotSupportedException(string.Format("Attribute {0} from {1} has a Value greater than MaxValue", unitAttribute.Key, unitType.FullName));
+                    throw new NotSupportedException(
+                        $"Attribute {unitAttribute.Key} from {unitType.FullName} has a Value greater than MaxValue");
 
                 // Add
                 attributesValues.Add(unitAttribute.Key, unitAttribute.Value);
@@ -169,7 +172,7 @@ namespace AntMe
         {
             // TODO: Check valid Types
 
-            UnitInterop unitInterop = Context.Resolver.CreateUnitInterop(this, item) as UnitInterop;
+            var unitInterop = Context.Resolver.CreateUnitInterop(this, item);
             unit.Init(unitInterop);
 
             var group = new UnitGroup()
@@ -224,8 +227,7 @@ namespace AntMe
         /// <returns></returns>
         public FactionInfo GetFactionInfo(Item observer)
         {
-            FactionInfo result;
-            if (!factionInfos.TryGetValue(observer, out result))
+            if (!_factionInfos.TryGetValue(observer, out var result))
                 result = Context.Resolver.CreateFactionInfo(this, observer);
             return result;
         }
@@ -236,9 +238,7 @@ namespace AntMe
         /// <returns>Updated Faction State</returns>
         public FactionState GetFactionState()
         {
-            if (state == null)
-                state = Context.Resolver.CreateFactionState(this);
-            return state;
+            return _state ?? (_state = Context.Resolver.CreateFactionState(this));
         }
 
         /// <summary>

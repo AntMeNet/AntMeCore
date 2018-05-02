@@ -2,15 +2,15 @@
 {
     internal class ExpandedObject<T>
     {
-        public readonly T obj;
-        public readonly Vector3 pos;
-        public readonly float radius;
+        public readonly T Obj;
+        public readonly Vector3 Pos;
+        public readonly float Radius;
 
         public ExpandedObject(T obj, Vector3 pos, float radius)
         {
-            this.obj = obj;
-            this.pos = pos;
-            this.radius = radius;
+            Obj = obj;
+            Pos = pos;
+            Radius = radius;
         }
     }
 }

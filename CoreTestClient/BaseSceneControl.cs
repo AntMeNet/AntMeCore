@@ -16,7 +16,7 @@ namespace CoreTestClient
         /// <summary>
         /// Gets the Scale Factor for the Buffer.
         /// </summary>
-        private const float BUFFER_SCALE = Map.CELLSIZE / TILEWIDTH;
+        private const float BUFFER_SCALE = Map.Cellsize / TILEWIDTH;
 
         /// <summary>
         /// Amount of Pixel between Control Border and Map Border.
@@ -82,10 +82,10 @@ namespace CoreTestClient
 
                 // Check against Borders
                 float width = ((ClientRectangle.Width - BORDER) / 2) / CameraScale;
-                if (width * 2 >= mapSize.X * Map.CELLSIZE)
+                if (width * 2 >= mapSize.X * Map.Cellsize)
                 {
                     // Map smaller than the Screen
-                    x = mapSize.X * Map.CELLSIZE / 2;
+                    x = mapSize.X * Map.Cellsize / 2;
                 }
                 else
                 {
@@ -94,15 +94,15 @@ namespace CoreTestClient
                         x = width;
 
                     // Too far right
-                    if (x > (mapSize.X * Map.CELLSIZE) - width)
-                        x = (mapSize.X * Map.CELLSIZE) - width;
+                    if (x > (mapSize.X * Map.Cellsize) - width)
+                        x = (mapSize.X * Map.Cellsize) - width;
                 }
 
                 float height = ((ClientRectangle.Height - BORDER) / 2) / CameraScale;
-                if (height * 2 >= mapSize.Y * Map.CELLSIZE)
+                if (height * 2 >= mapSize.Y * Map.Cellsize)
                 {
                     // Map smaller than the Screen
-                    y = mapSize.Y * Map.CELLSIZE / 2;
+                    y = mapSize.Y * Map.Cellsize / 2;
                 }
                 else
                 {
@@ -111,8 +111,8 @@ namespace CoreTestClient
                         y = height;
 
                     // Too far down
-                    if (y > (mapSize.Y * Map.CELLSIZE) - height)
-                        y = (mapSize.Y * Map.CELLSIZE) - height;
+                    if (y > (mapSize.Y * Map.Cellsize) - height)
+                        y = (mapSize.Y * Map.Cellsize) - height;
                 }
 
                 cameraPosition = new Vector2(x, y);
@@ -222,8 +222,8 @@ namespace CoreTestClient
         {
             if (mapSize != Index2.Zero)
             {
-                float scaleX = (ClientSize.Width - BORDER) / (mapSize.X * Map.CELLSIZE);
-                float scaleY = (ClientSize.Height - BORDER) / (mapSize.Y * Map.CELLSIZE);
+                float scaleX = (ClientSize.Width - BORDER) / (mapSize.X * Map.Cellsize);
+                float scaleY = (ClientSize.Height - BORDER) / (mapSize.Y * Map.Cellsize);
                 MinCameraScale = Math.Min(scaleX, scaleY);
                 CameraPosition = CameraPosition;
             }
@@ -262,8 +262,8 @@ namespace CoreTestClient
             mousePosition = new Vector2(x, y);
             worldPosition = ViewToWorld(mousePosition);
 
-            if (worldPosition.X < 0f || worldPosition.X >= mapSize.X * Map.CELLSIZE ||
-                worldPosition.Y < 0f || worldPosition.Y >= mapSize.Y * Map.CELLSIZE)
+            if (worldPosition.X < 0f || worldPosition.X >= mapSize.X * Map.Cellsize ||
+                worldPosition.Y < 0f || worldPosition.Y >= mapSize.Y * Map.Cellsize)
             {
                 HoveredPosition = null;
                 HoveredCell = null;
@@ -272,8 +272,8 @@ namespace CoreTestClient
             {
                 HoveredPosition = worldPosition;
                 HoveredCell = new Index2(
-                    (int)(worldPosition.X / Map.CELLSIZE),
-                    (int)(worldPosition.Y / Map.CELLSIZE));
+                    (int)(worldPosition.X / Map.Cellsize),
+                    (int)(worldPosition.Y / Map.Cellsize));
             }
         }
 
@@ -361,8 +361,8 @@ namespace CoreTestClient
             }
 
             // Check for valid Map Size
-            if (size.X < Map.MIN_WIDTH || size.X > Map.MAX_WIDTH ||
-                size.Y < Map.MIN_HEIGHT || size.Y > Map.MAX_HEIGHT)
+            if (size.X < Map.MinWidth || size.X > Map.MaxWidth ||
+                size.Y < Map.MinHeight || size.Y > Map.MaxHeight)
                 throw new ArgumentOutOfRangeException("size");
 
             // Recreate a new Buffer
@@ -375,7 +375,7 @@ namespace CoreTestClient
             InvalidateMap();
 
             // Reset Camera
-            CameraPosition = new Vector2(size.X, size.Y) * Map.CELLSIZE * 0.5f;
+            CameraPosition = new Vector2(size.X, size.Y) * Map.Cellsize * 0.5f;
             RecalcMinCameraScale();
             CameraScale = MinCameraScale;
         }

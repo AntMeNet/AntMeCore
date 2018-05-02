@@ -29,9 +29,9 @@ namespace AntMe.Serialization
                 map.BlockBorder = blockBorder;
                 map.BaseLevel = 2;
 
-                if (playercount < Map.MIN_STARTPOINTS)
+                if (playercount < Map.MinStartpoints)
                     throw new Exception("Too less Player in this Map");
-                if (playercount > Map.MAX_STARTPOINTS)
+                if (playercount > Map.MaxStartpoints)
                     throw new Exception("Too many Player in this Map");
 
                 // Startpunkte einlesen
@@ -43,12 +43,12 @@ namespace AntMe.Serialization
                         reader.ReadInt32());
                 }
 
-                if (width < Map.MIN_WIDTH || width > Map.MAX_WIDTH)
-                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", Map.MIN_WIDTH,
-                        Map.MAX_WIDTH));
-                if (height < Map.MIN_HEIGHT || height > Map.MAX_HEIGHT)
-                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", Map.MIN_HEIGHT,
-                        Map.MAX_HEIGHT));
+                if (width < Map.MinWidth || width > Map.MaxWidth)
+                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", Map.MinWidth,
+                        Map.MaxWidth));
+                if (height < Map.MinHeight || height > Map.MaxHeight)
+                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", Map.MinHeight,
+                        Map.MaxHeight));
 
                 // Zellen einlesen
                 // map.Tiles = new MapTile[width, height];

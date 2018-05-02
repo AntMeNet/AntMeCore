@@ -43,16 +43,16 @@
         /// <summary>
         /// Is Faction own Faction?
         /// </summary>
-        public bool IsOwnFaction { get; private set; }
+        public bool IsOwnFaction { get; }
 
         /// <summary>
         /// Is Faction in the same Team?
         /// </summary>
-        public bool IsFriendlyFaction { get; private set; }
+        public bool IsFriendlyFaction { get; }
 
         /// <summary>
         /// Is Faction an Enemy?
         /// </summary>
-        public bool IsEnemyFaction { get; private set; }
+        public bool IsEnemyFaction { get; }
     }
 }

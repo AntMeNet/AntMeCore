@@ -17,23 +17,23 @@ namespace AntMe
         /// Dictionary for all Values and Discriptions
         /// key = Typename:Keyname (e.g.: "AntMe.Factions.AntFaction:InitialAnthillCount","AntMe.Basics.Items.AntItem:AntRadius")
         /// </summary>
-        private Dictionary<string, ValueDescriptionEntry> Storage;
+        private readonly Dictionary<string, ValueDescriptionEntry> _storage;
 
         /// <summary>
         /// Dictionary for informations and comments about the KeyValueStore (will be saved).
         /// </summary>
-        public Dictionary<string, string> Common { get; private set; }
+        public Dictionary<string, string> Common { get; }
 
 
-        private int nextId = 1;
-        private readonly Tracer tracer = new Tracer("AntMe.Core.KeyValueStore");
+        private int _nextId = 1;
+        private readonly Tracer _tracer = new Tracer("AntMe.Core.KeyValueStore");
 
         /// <summary>
         /// Default Constructor
         /// </summary>
         public KeyValueStore()
         {
-            Storage = new Dictionary<string, ValueDescriptionEntry>();
+            _storage = new Dictionary<string, ValueDescriptionEntry>();
             Common = new Dictionary<string, string>();
         }
 
@@ -99,7 +99,7 @@ namespace AntMe
         {
             if (!Regex.IsMatch(typeKey, @"\w+|\d+|\.|\+|(\<\w+|\d+|\.|\+|\>)"))
                 throw new ArgumentException("The TypeKey matches not the definition: " + '"' + typeKey + '"');
-            return string.Format("{0}:{1}", typeKey, key);
+            return $"{typeKey}:{key}";
         }
 
         /// <summary>
@@ -170,11 +170,10 @@ namespace AntMe
         public void Set(string key, string value, string description = null)
         {
             // TODO: Check right syntax (full.type.name:key)
-            ValueDescriptionEntry entry;
-            if (!Storage.TryGetValue(key, out entry))
+            if (!_storage.TryGetValue(key, out var entry))
             {
                 entry = new ValueDescriptionEntry() { Value = value, Description = description };
-                Storage[key] = entry;
+                _storage[key] = entry;
             }
             else
             {
@@ -269,10 +268,7 @@ namespace AntMe
         /// <summary>
         /// Enumerates all Settings Keys.
         /// </summary>
-        public IEnumerable<string> Keys
-        {
-            get { return Storage.Keys; }
-        }
+        public IEnumerable<string> Keys => _storage.Keys;
 
         /// <summary>
         /// Clones the instance of the KeyValueStore
@@ -311,39 +307,35 @@ namespace AntMe
         public void Merge(KeyValueStore keyValueStore)
         {
             // merge storage dictonary 
-            foreach (var key in keyValueStore.Storage.Keys)
+            foreach (var key in keyValueStore._storage.Keys)
             {
-                ValueDescriptionEntry newVDE;
-                keyValueStore.Storage.TryGetValue(key, out newVDE);
-                if (Storage.Keys.Contains(key))
+                keyValueStore._storage.TryGetValue(key, out var newVde);
+                if (_storage.Keys.Contains(key))
                 {
-                    ValueDescriptionEntry orgVDE;
-                    Storage.TryGetValue(key, out orgVDE);
-                    if (orgVDE == null)
-                        orgVDE = new ValueDescriptionEntry();
-                    if (string.IsNullOrEmpty(newVDE.Value))
-                        newVDE.Value = orgVDE.Value;
-                    if (string.IsNullOrEmpty(newVDE.Description))
-                        newVDE.Description = orgVDE.Description;
+                    _storage.TryGetValue(key, out var orgVde);
+                    if (orgVde == null)
+                        orgVde = new ValueDescriptionEntry();
+                    if (newVde != null && string.IsNullOrEmpty(newVde.Value))
+                        newVde.Value = orgVde.Value;
+                    if (newVde != null && string.IsNullOrEmpty(newVde.Description))
+                        newVde.Description = orgVde.Description;
 
-                    Storage[key] = newVDE;
+                    _storage[key] = newVde;
                 }
                 else
                 {
-                    Storage.Add(key, newVDE != null ? newVDE : new ValueDescriptionEntry());
+                    _storage.Add(key, newVde ?? new ValueDescriptionEntry());
                 }
             }
 
             // merge common dictonary 
             foreach (var key in keyValueStore.Common.Keys)
             {
-                string newValue;
-                keyValueStore.Common.TryGetValue(key, out newValue);
+                keyValueStore.Common.TryGetValue(key, out var newValue);
 
                 if (Common.Keys.Contains(key))
                 {
-                    string orgValue;
-                    Common.TryGetValue(key, out orgValue);
+                    Common.TryGetValue(key, out var orgValue);
 
                     if (string.IsNullOrEmpty(newValue))
                         newValue = orgValue;
@@ -387,8 +379,7 @@ namespace AntMe
         /// <returns>Description</returns>
         public string GetDescription(string key)
         {
-            ValueDescriptionEntry result;
-            if (Storage.TryGetValue(key, out result))
+            if (_storage.TryGetValue(key, out var result))
                 return result.Description;
             return string.Empty;
         }
@@ -422,8 +413,7 @@ namespace AntMe
         /// <returns>Value</returns>
         public string GetString(string key)
         {
-            ValueDescriptionEntry result;
-            if (Storage.TryGetValue(key, out result))
+            if (_storage.TryGetValue(key, out var result))
                 return result.Value;
             return string.Empty;
         }
@@ -530,21 +520,9 @@ namespace AntMe
         public float? GetFloat(string key)
         {
             string value = GetString(key);
-            float result;
-            if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
+            if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
                 return result;
             return null;
-        }
-
-        /// <summary>
-        /// Gets the Description with the given Key interpreted as String.
-        /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="key">Key</param>
-        /// <returns>Description</returns>
-        private ValueDescriptionEntry GetValueDescriptionEntry<T>(string key)
-        {
-            return GetValueDescriptionEntry(FullKey<T>(key));
         }
 
         /// <summary>
@@ -554,8 +532,7 @@ namespace AntMe
         /// <returns>Description</returns>
         private ValueDescriptionEntry GetValueDescriptionEntry(string key)
         {
-            ValueDescriptionEntry result;
-            if (Storage.TryGetValue(key, out result))
+            if (_storage.TryGetValue(key, out var result))
                 return result;
             return null;
         }
@@ -563,7 +540,7 @@ namespace AntMe
         private void Load(Stream stream)
         {
 
-            List<string> Errors = new List<string>();
+            List<string> errors = new List<string>();
 
             using (StreamReader sr = new StreamReader(stream))
             {
@@ -573,71 +550,73 @@ namespace AntMe
                 while (sr.Peek() >= 0)
                 {
                     currentLine++;
-                    bool waitforTypeKey = false;
                     string rawData = sr.ReadLine();
-                    string editedData = rawData.TrimStart(' ').TrimEnd(' ');
-
-                    if (editedData.StartsWith("["))
+                    if (rawData != null)
                     {
-                        if (editedData.IndexOf(']') == -1)
+                        string editedData = rawData.TrimStart(' ').TrimEnd(' ');
+
+                        if (editedData.StartsWith("["))
                         {
-                            waitforTypeKey = true;
-                            Errors.Add(string.Format("ERROR Line {0}: missing ']' (end of TypeKey deklaration)", currentLine.ToString()));
-                            tracer.Trace(System.Diagnostics.TraceEventType.Error, nextId++, string.Format("ERROR Line {0}: missing ']' (end of TypeKey deklaration)", currentLine.ToString()));
-                            continue;
+                            if (editedData.IndexOf(']') == -1)
+                            {
+                                errors.Add(
+                                    $"ERROR Line {currentLine}: missing ']' (end of TypeKey deklaration)");
+                                _tracer.Trace(System.Diagnostics.TraceEventType.Error, _nextId++,
+                                    $"ERROR Line {currentLine}: missing ']' (end of TypeKey deklaration)");
+                                continue;
+                            }
+
+                            currentTypeKey = editedData.Substring(1, editedData.IndexOf(']') - 1).TrimStart(' ').TrimEnd(' ');
                         }
-
-                        currentTypeKey = editedData.Substring(1, editedData.IndexOf(']') - 1).TrimStart(' ').TrimEnd(' ');
-                        continue;
-                    }
-                    else if (waitforTypeKey)
-                        continue;
-                    else if (editedData.Contains("="))
-                    {
-
-                        string key = editedData.Substring(0, editedData.IndexOf('=')).TrimEnd(' ');
-                        editedData = editedData.Remove(0, editedData.IndexOf('=') + 1);
-
-                        if (currentTypeKey == "Common")
+                        else if (editedData.Contains("="))
                         {
-                            Common.Add(key, editedData.TrimStart(' ').TrimEnd(' '));
-                            continue;
+
+                            string key = editedData.Substring(0, editedData.IndexOf('=')).TrimEnd(' ');
+                            editedData = editedData.Remove(0, editedData.IndexOf('=') + 1);
+
+                            if (currentTypeKey == "Common")
+                            {
+                                Common.Add(key, editedData.TrimStart(' ').TrimEnd(' '));
+                                continue;
+                            }
+                            var vde = new ValueDescriptionEntry();
+
+                            if (editedData.IndexOf("//", StringComparison.Ordinal) >= 0)
+                            {
+                                vde.Value = editedData.Substring(0, editedData.IndexOf("//", StringComparison.Ordinal)).TrimStart(' ').TrimEnd(' ');
+                                vde.Description = editedData.Remove(0, editedData.IndexOf("//", StringComparison.Ordinal) + 2).TrimStart(' ').TrimEnd(' ');
+                            }
+                            else
+                            {
+                                vde.Value = editedData.TrimStart(' ').TrimEnd(' ');
+                            }
+
+                            if (string.IsNullOrWhiteSpace(vde.Value))
+                            {
+                                errors.Add($"ERROR Line {currentLine}: missing Value");
+                                _tracer.Trace(System.Diagnostics.TraceEventType.Error, _nextId++,
+                                    $"ERROR Line {currentLine}: missing Value");
+                            }
+                            Set(FullKey(currentTypeKey, key), vde);
+
                         }
-                        ValueDescriptionEntry VDE = new ValueDescriptionEntry();
-
-                        if (editedData.IndexOf("//") >= 0)
+                        else if (string.IsNullOrWhiteSpace(editedData))
                         {
-                            VDE.Value = editedData.Substring(0, editedData.IndexOf("//")).TrimStart(' ').TrimEnd(' ');
-                            VDE.Description = editedData.Remove(0, editedData.IndexOf("//") + 2).TrimStart(' ').TrimEnd(' ');
                         }
                         else
                         {
-                            VDE.Value = editedData.TrimStart(' ').TrimEnd(' ');
+                            errors.Add(
+                                $"ERROR Line {currentLine}: could not be deserialized, make sure it matches the Format([TYPEKEY] or KEY=VALUE//DESCRIPTION)");
+                            _tracer.Trace(System.Diagnostics.TraceEventType.Error, _nextId++,
+                                $"ERROR Line {currentLine}: could not be deserialized, make sure it matches the Format([TYPEKEY] or KEY=VALUE//DESCRIPTION)");
                         }
-
-                        if (string.IsNullOrWhiteSpace(VDE.Value))
-                        {
-                            Errors.Add(string.Format("ERROR Line {0}: missing Value", currentLine.ToString()));
-                            tracer.Trace(System.Diagnostics.TraceEventType.Error, nextId++, string.Format("ERROR Line {0}: missing Value", currentLine.ToString()));
-                        }
-                        Set(FullKey(currentTypeKey, key), VDE);
-
-                    }
-                    else if (string.IsNullOrWhiteSpace(editedData))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        Errors.Add(string.Format("ERROR Line {0}: could not be deserialized, make sure it matches the Format([TYPEKEY] or KEY=VALUE//DESCRIPTION)", currentLine.ToString()));
-                        tracer.Trace(System.Diagnostics.TraceEventType.Error, nextId++, string.Format("ERROR Line {0}: could not be deserialized, make sure it matches the Format([TYPEKEY] or KEY=VALUE//DESCRIPTION)", currentLine.ToString()));
                     }
                 }
                 sr.Close();
             }
 
-            if (Errors.Count > 0)
-                throw new AggregateException(string.Join(Environment.NewLine, Errors.ToArray()));
+            if (errors.Count > 0)
+                throw new AggregateException(string.Join(Environment.NewLine, errors.ToArray()));
         }
 
         /// <summary>
@@ -661,7 +640,7 @@ namespace AntMe
         public void Save(Stream stream, bool alignedValues = false)
         {
 
-            StreamWriter sw = new StreamWriter(stream);
+            var sw = new StreamWriter(stream);
 
             if (Common.Count > 0)
             {
@@ -686,25 +665,25 @@ namespace AntMe
 
                 if (alignedValues)
                 {
-                    foreach (var key in Storage.Where(k => k.Key.StartsWith(string.Format("{0}:", typekey))).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
+                    foreach (var key in _storage.Where(k => k.Key.StartsWith(string.Format("{0}:", typekey))).Select(k => k.Key.Substring(k.Key.IndexOf(":", StringComparison.Ordinal) + 1)).ToArray())
                     {
-                        string fullkey = string.Format("{0}:{1}", typekey, key);
-                        ValueDescriptionEntry VDE = GetValueDescriptionEntry(fullkey);
+                        string fullkey = $"{typekey}:{key}";
+                        ValueDescriptionEntry vde = GetValueDescriptionEntry(fullkey);
                         keyLength = Math.Max(keyLength, key.Length);
-                        valueLength = Math.Max(valueLength, VDE.Value.Length);
+                        valueLength = Math.Max(valueLength, vde.Value.Length);
                     }
                 }
 
-                foreach (var key in Storage.Where(k => k.Key.StartsWith(string.Format("{0}:", typekey))).Select(k => k.Key.Substring(k.Key.IndexOf(":") + 1)).ToArray())
+                foreach (var key in _storage.Where(k => k.Key.StartsWith(string.Format("{0}:", typekey))).Select(k => k.Key.Substring(k.Key.IndexOf(":", StringComparison.Ordinal) + 1)).ToArray())
                 {
-                    string fullkey = string.Format("{0}:{1}", typekey, key);
-                    ValueDescriptionEntry VDE = GetValueDescriptionEntry(fullkey);
+                    string fullkey = $"{typekey}:{key}";
+                    ValueDescriptionEntry vde = GetValueDescriptionEntry(fullkey);
                     string description = " // ";
-                    if (string.IsNullOrWhiteSpace(VDE.Description))
+                    if (string.IsNullOrWhiteSpace(vde.Description))
                         description = string.Empty;
                     else
-                        description += VDE.Description;
-                    sw.WriteLine("{0}={1}{2}", key.ToString().PadRight(keyLength), (VDE.Value?.ToString(CultureInfo.InvariantCulture) ?? "").PadRight(valueLength), description);
+                        description += vde.Description;
+                    sw.WriteLine("{0}={1}{2}", key.PadRight(keyLength), (vde.Value?.ToString(CultureInfo.InvariantCulture) ?? "").PadRight(valueLength), description);
                 }
                 sw.WriteLine();
 

@@ -31,13 +31,13 @@ namespace AntMe
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public MapTileState() : base() { }
+        protected MapTileState() : base() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="mapTile">Related Tile</param>
-        public MapTileState(MapTile mapTile) : base()
+        protected MapTileState(MapTile mapTile) : base()
         {
             MapTile = mapTile;
 
@@ -51,22 +51,42 @@ namespace AntMe
             MapTile.OnOrientationChanged += (v) => { Orientation = v; };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="version"></param>
         public void DeserializeFirst(BinaryReader stream, byte version)
         {
             HeightLevel = stream.ReadInt32();
             Orientation = (MapTileOrientation)stream.ReadUInt16();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="version"></param>
         public void DeserializeUpdate(BinaryReader stream, byte version)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="version"></param>
         public void SerializeFirst(BinaryWriter stream, byte version)
         {
             stream.Write(HeightLevel);
             stream.Write((ushort)Orientation);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="version"></param>
         public void SerializeUpdate(BinaryWriter stream, byte version)
         {
         }

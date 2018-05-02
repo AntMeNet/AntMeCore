@@ -14,19 +14,38 @@ namespace AntMe
         /// </summary>
         public Index2 CellIndex { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public InvalidMapTileException() : base() { }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellIndex"></param>
+        /// <param name="message"></param>
         public InvalidMapTileException(Index2 cellIndex, string message) : base(message)
         {
             CellIndex = cellIndex;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellIndex"></param>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         public InvalidMapTileException(Index2 cellIndex, string message, Exception innerException)
             : base(message, innerException)
         {
             CellIndex = cellIndex;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
         public InvalidMapTileException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -35,6 +54,11 @@ namespace AntMe
                 info.GetInt32("CellIndex.Y"));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);

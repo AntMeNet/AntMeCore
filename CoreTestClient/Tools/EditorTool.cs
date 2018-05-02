@@ -32,8 +32,8 @@ namespace CoreTestClient.Tools
                 throw new ArgumentOutOfRangeException("Cell Index is out of range");
 
             if (position.HasValue && 
-                (position.Value.X < 0 || position.Value.X >= mapSize.X * Map.CELLSIZE ||
-                position.Value.Y < 0 || position.Value.Y >= mapSize.Y * Map.CELLSIZE))
+                (position.Value.X < 0 || position.Value.X >= mapSize.X * Map.Cellsize ||
+                position.Value.Y < 0 || position.Value.Y >= mapSize.Y * Map.Cellsize))
                 throw new ArgumentOutOfRangeException("Position is out of range");
 
             OnApply(map, cell, position);

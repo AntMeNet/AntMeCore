@@ -54,16 +54,16 @@ namespace AntMe
         /// Registers additional Map Properties.
         /// </summary>
         /// <typeparam name="T">Type of Map Property</typeparam>
-        /// <typeparam name="S">Type of State for the Map Property</typeparam>
+        /// <typeparam name="TS">Type of State for the Map Property</typeparam>
         /// <param name="extensionPack"></param>
         /// <param name="name"></param>
         /// <param name="createPropertyDelegate"></param>
         /// <param name="createStateDelegate"></param>
-        void RegisterMapProperty<T, S>(IExtensionPack extensionPack, string name, 
+        void RegisterMapProperty<T, TS>(IExtensionPack extensionPack, string name, 
             Func<Map, T> createPropertyDelegate = null, 
-            Func<Map, MapProperty, S> createStateDelegate = null)
+            Func<Map, MapProperty, TS> createStateDelegate = null)
             where T : MapProperty
-            where S : MapStateProperty;
+            where TS : MapStateProperty;
 
         /// <summary>
         /// List all Map Properties.
@@ -114,18 +114,18 @@ namespace AntMe
         /// Registeres a Map Tile.
         /// </summary>
         /// <typeparam name="T">Map Tile Type</typeparam>
-        /// <typeparam name="S">Map Tile State Type</typeparam>
-        /// <typeparam name="I">Map Tile Info Type</typeparam>
+        /// <typeparam name="TS">Map Tile State Type</typeparam>
+        /// <typeparam name="TI">Map Tile Info Type</typeparam>
         /// <param name="extensionPack">Extension Pack</param>
         /// <param name="name">Name</param>
         /// <param name="createStateDelegate">Optional Create State Delegate</param>
         /// <param name="createInfoDelegate">Optional Create Info Delegate</param>
-        void RegisterMapTile<T, S, I>(IExtensionPack extensionPack, string name,
-            Func<MapTile, S> createStateDelegate = null,
-            Func<MapTile, Item, I> createInfoDelegate = null)
+        void RegisterMapTile<T, TS, TI>(IExtensionPack extensionPack, string name,
+            Func<MapTile, TS> createStateDelegate = null,
+            Func<MapTile, Item, TI> createInfoDelegate = null)
             where T : MapTile
-            where S : MapTileState
-            where I : MapTileInfo;
+            where TS : MapTileState
+            where TI : MapTileInfo;
 
         /// <summary>
         /// List of all Map Tiles
@@ -136,25 +136,57 @@ namespace AntMe
 
         #region Map Tile Properties
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <typeparam name="T"></typeparam>
         void RegisterMapTileProperty<T>(IExtensionPack extensionPack, string name)
             where T : MapTileProperty;
 
-        void RegisterMapTilePropertyS<T, S>(IExtensionPack extensionPack, string name,
-            Func<MapTile, MapTileProperty, S> createStateDelegate = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createStateDelegate"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TS"></typeparam>
+        void RegisterMapTilePropertyS<T, TS>(IExtensionPack extensionPack, string name,
+            Func<MapTile, MapTileProperty, TS> createStateDelegate = null)
             where T : MapTileProperty
-            where S : MapTileStateProperty;
+            where TS : MapTileStateProperty;
 
-        void RegisterMapTilePropertyI<T, I>(IExtensionPack extensionPack, string name,
-            Func<MapTile, MapTileProperty, Item, I> createInfoDelegate = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createInfoDelegate"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TI"></typeparam>
+        void RegisterMapTilePropertyI<T, TI>(IExtensionPack extensionPack, string name,
+            Func<MapTile, MapTileProperty, Item, TI> createInfoDelegate = null)
             where T : MapTileProperty
-            where I : MapTileInfoProperty;
+            where TI : MapTileInfoProperty;
 
-        void RegisterMapTilePropertySI<T, S, I>(IExtensionPack extensionPack, string name,
-            Func<MapTile, MapTileProperty, S> createStateDelegate = null,
-            Func<MapTile, MapTileProperty, Item, I> createInfoDelegate = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createStateDelegate"></param>
+        /// <param name="createInfoDelegate"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TS"></typeparam>
+        /// <typeparam name="TI"></typeparam>
+        void RegisterMapTilePropertySi<T, TS, TI>(IExtensionPack extensionPack, string name,
+            Func<MapTile, MapTileProperty, TS> createStateDelegate = null,
+            Func<MapTile, MapTileProperty, Item, TI> createInfoDelegate = null)
             where T : MapTileProperty
-            where S : MapTileStateProperty
-            where I : MapTileInfoProperty;
+            where TS : MapTileStateProperty
+            where TI : MapTileInfoProperty;
 
         /// <summary>
         /// List of all Map Tile Properties.
@@ -165,19 +197,41 @@ namespace AntMe
 
         #region Map Tile Attachments
 
-        void AttachMapTileProperty<I, P>(IExtensionPack extensionPack, string name, Func<MapTile, P> createPropertyDelegate = null)
-            where I : MapTile
-            where P : MapTileProperty;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createPropertyDelegate"></param>
+        /// <typeparam name="TI"></typeparam>
+        /// <typeparam name="TP"></typeparam>
+        void AttachMapTileProperty<TI, TP>(IExtensionPack extensionPack, string name, Func<MapTile, TP> createPropertyDelegate = null)
+            where TI : MapTile
+            where TP : MapTileProperty;
 
+        /// <summary>
+        /// 
+        /// </summary>
         IEnumerable<IAttachmentTypeMapperEntry> MapTileAttachments { get; }
 
         #endregion
 
         #region Map Tile Extender
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="extenderDelegate"></param>
+        /// <param name="priority"></param>
+        /// <typeparam name="T"></typeparam>
         void RegisterMapTileExtender<T>(IExtensionPack extensionPack, string name, Action<MapTile> extenderDelegate, int priority)
             where T : MapTile;
 
+        /// <summary>
+        /// 
+        /// </summary>
         IEnumerable<IRankedTypeMapperEntry> MapTileExtender { get; }
 
         #endregion
@@ -192,14 +246,14 @@ namespace AntMe
         /// <param name="createStateDelegate">Delegat zur manuellen Erstellung eines States</param>
         /// <param name="createInfoDelegate">Delegat zur manuellen Erstellung eines Info Objektes</param>
         /// <typeparam name="T">Type des Types</typeparam>
-        /// <typeparam name="S">Dazugehöriger State Type</typeparam>
-        /// <typeparam name="I">Dazugehöriger Info Type</typeparam>
-        void RegisterItem<T, S, I>(IExtensionPack extensionPack, string name,
-            Func<Item, S> createStateDelegate = null,
-            Func<Item, Item, I> createInfoDelegate = null)
+        /// <typeparam name="TS">Dazugehöriger State Type</typeparam>
+        /// <typeparam name="TI">Dazugehöriger Info Type</typeparam>
+        void RegisterItem<T, TS, TI>(IExtensionPack extensionPack, string name,
+            Func<Item, TS> createStateDelegate = null,
+            Func<Item, Item, TI> createInfoDelegate = null)
             where T : Item
-            where S : ItemState
-            where I : ItemInfo;
+            where TS : ItemState
+            where TI : ItemInfo;
 
         /// <summary>
         /// Liefert eine Liste registrierter Game Items.
@@ -222,27 +276,27 @@ namespace AntMe
         /// Registriert ein Item Property das nur ein State Property hat.
         /// </summary>
         /// <typeparam name="T">Type des Property</typeparam>
-        /// <typeparam name="S">Type des State Properties</typeparam>
+        /// <typeparam name="TS">Type des State Properties</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties</param>
         /// <param name="createStateDelegate">Optionaler Delegat zur Erzeugung des States.</param>
-        void RegisterItemPropertyS<T, S>(IExtensionPack extensionPack, string name,
-            Func<Item, ItemProperty, S> createStateDelegate = null)
+        void RegisterItemPropertyS<T, TS>(IExtensionPack extensionPack, string name,
+            Func<Item, ItemProperty, TS> createStateDelegate = null)
             where T : ItemProperty
-            where S : ItemStateProperty;
+            where TS : ItemStateProperty;
 
         /// <summary>
         /// Registriert ein Item Property das nur ein Info Property hat.
         /// </summary>
         /// <typeparam name="T">Type des Property</typeparam>
-        /// <typeparam name="I">Type des Info Property</typeparam>
+        /// <typeparam name="TI">Type des Info Property</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties</param>
         /// <param name="createInfoDelegate">Optionaler Delegat zur Erzeugung des Info Properties.</param>
-        void RegisterItemPropertyI<T, I>(IExtensionPack extensionPack, string name,
-            Func<Item, ItemProperty, Item, I> createInfoDelegate = null)
+        void RegisterItemPropertyI<T, TI>(IExtensionPack extensionPack, string name,
+            Func<Item, ItemProperty, Item, TI> createInfoDelegate = null)
             where T : ItemProperty
-            where I : ItemInfoProperty;
+            where TI : ItemInfoProperty;
 
         /// <summary>
         /// Registriert ein Item Property mit samt den State- und Info-Properties
@@ -252,14 +306,14 @@ namespace AntMe
         /// <param name="createStateDelegate">Delegate zum Erstellen eines neuen State Properties</param>
         /// <param name="createInfoDelegate">Delegate zum Erstellen eines neuen Info Properties</param>
         /// <typeparam name="T">Type des Property</typeparam>
-        /// <typeparam name="S">Type des State Property</typeparam>
-        /// <typeparam name="I">Type des Info Property</typeparam>
-        void RegisterItemPropertySI<T, S, I>(IExtensionPack extensionPack, string name,
-            Func<Item, ItemProperty, S> createStateDelegate = null,
-            Func<Item, ItemProperty, Item, I> createInfoDelegate = null)
+        /// <typeparam name="TS">Type des State Property</typeparam>
+        /// <typeparam name="TI">Type des Info Property</typeparam>
+        void RegisterItemPropertySi<T, TS, TI>(IExtensionPack extensionPack, string name,
+            Func<Item, ItemProperty, TS> createStateDelegate = null,
+            Func<Item, ItemProperty, Item, TI> createInfoDelegate = null)
             where T : ItemProperty
-            where S : ItemStateProperty
-            where I : ItemInfoProperty;
+            where TS : ItemStateProperty
+            where TI : ItemInfoProperty;
 
         /// <summary>
         /// Liefert eine Liste aller registrierten Properties zurück.
@@ -273,14 +327,14 @@ namespace AntMe
         /// <summary>
         /// Hängt ein definiertes Property an ein Item an.
         /// </summary>
-        /// <typeparam name="I">Item</typeparam>
-        /// <typeparam name="P">Property</typeparam>
+        /// <typeparam name="TI">Item</typeparam>
+        /// <typeparam name="TP">Property</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Attachments</param>
         /// <param name="createPropertyDelegate">Erstellungsdelegat</param>
-        void AttachItemProperty<I, P>(IExtensionPack extensionPack, string name, Func<Item, P> createPropertyDelegate = null)
-            where I : Item
-            where P : ItemProperty;
+        void AttachItemProperty<TI, TP>(IExtensionPack extensionPack, string name, Func<Item, TP> createPropertyDelegate = null)
+            where TI : Item
+            where TP : ItemProperty;
 
         /// <summary>
         /// Auflistung aller registrierten Item Attachments.
@@ -315,28 +369,28 @@ namespace AntMe
         /// Registriert eine neue Faciton.
         /// </summary>
         /// <typeparam name="T">Typ der Faction</typeparam>
-        /// <typeparam name="S">Typ des Faction States</typeparam>
-        /// <typeparam name="I">Typ der Faction Info</typeparam>
-        /// <typeparam name="F">Typ der Factory</typeparam>
-        /// <typeparam name="FI">Typ der Factory Interop</typeparam>
-        /// <typeparam name="U">Typ der Unit</typeparam>
-        /// <typeparam name="UI">Typ der Unit Interop</typeparam>
-        /// <typeparam name="IT">Item Type</typeparam>
+        /// <typeparam name="TS">Typ des Faction States</typeparam>
+        /// <typeparam name="TI">Typ der Faction Info</typeparam>
+        /// <typeparam name="TF">Typ der Factory</typeparam>
+        /// <typeparam name="TFi">Typ der Factory Interop</typeparam>
+        /// <typeparam name="TU">Typ der Unit</typeparam>
+        /// <typeparam name="TUi">Typ der Unit Interop</typeparam>
+        /// <typeparam name="TIt">Item Type</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack.</param>
         /// <param name="name">Name der Faction.</param>
         /// <param name="createStateDelegate">Optionaler Delegat zur Erstellung des Faction States.</param>
         /// <param name="createInfoDelegate">Optionaler Delegat zur Erstellung der Faction Info.</param>
-        void RegisterFaction<T, S, I, F, FI, U, UI, IT>(IExtensionPack extensionPack, string name,
-            Func<Faction, S> createStateDelegate = null,
-            Func<Faction, Item, I> createInfoDelegate = null)
+        void RegisterFaction<T, TS, TI, TF, TFi, TU, TUi, TIt>(IExtensionPack extensionPack, string name,
+            Func<Faction, TS> createStateDelegate = null,
+            Func<Faction, Item, TI> createInfoDelegate = null)
             where T : Faction
-            where S : FactionState
-            where I : FactionInfo
-            where F : FactionFactory
-            where FI : FactoryInterop
-            where U : FactionUnit
-            where UI : UnitInterop
-            where IT : FactionItem;
+            where TS : FactionState
+            where TI : FactionInfo
+            where TF : FactionFactory
+            where TFi : FactoryInterop
+            where TU : FactionUnit
+            where TUi : UnitInterop
+            where TIt : FactionItem;
 
         /// <summary>
         /// Liefert eine Liste der registrierten Factions.
@@ -360,44 +414,44 @@ namespace AntMe
         /// Registriert ein Faction Property mit zugehörigem State Property.
         /// </summary>
         /// <typeparam name="T">Typ des Properties.</typeparam>
-        /// <typeparam name="S">Typ des State Properties.</typeparam>
+        /// <typeparam name="TS">Typ des State Properties.</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties.</param>
         /// <param name="createStateDelegate">Optionaler Delegat zur Erstellung des State Properties.</param>
-        void RegisterFactionPropertyS<T, S>(IExtensionPack extensionPack, string name,
-            Func<Faction, FactionProperty, S> createStateDelegate = null)
+        void RegisterFactionPropertyS<T, TS>(IExtensionPack extensionPack, string name,
+            Func<Faction, FactionProperty, TS> createStateDelegate = null)
             where T : FactionProperty
-            where S : FactionStateProperty;
+            where TS : FactionStateProperty;
 
         /// <summary>
         /// Registriert ein Faction Property mit zugehörigem Info Property.
         /// </summary>
         /// <typeparam name="T">Typ des Properties.</typeparam>
-        /// <typeparam name="I">Typ des Info Properties.</typeparam>
+        /// <typeparam name="TI">Typ des Info Properties.</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties.</param>
         /// <param name="createInfoDelegate">Optionaler Delegat zur Erstellung des Info Properties.</param>
-        void RegisterFactionPropertyI<T, I>(IExtensionPack extensionPack, string name,
-            Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+        void RegisterFactionPropertyI<T, TI>(IExtensionPack extensionPack, string name,
+            Func<Faction, FactionProperty, Item, TI> createInfoDelegate = null)
             where T : FactionProperty
-            where I : FactionInfoProperty;
+            where TI : FactionInfoProperty;
 
         /// <summary>
         /// Registriert ein Faction Property mit zugehörigem State- und Info-Property.
         /// </summary>
         /// <typeparam name="T">Typ des Properties.</typeparam>
-        /// <typeparam name="S">Typ des State Properties.</typeparam>
-        /// <typeparam name="I">Typ des Info Properties.</typeparam>
+        /// <typeparam name="TS">Typ des State Properties.</typeparam>
+        /// <typeparam name="TI">Typ des Info Properties.</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties.</param>
         /// <param name="createStateDelegate">Optionaler Delegat zur Erstellung des State Properties.</param>
         /// <param name="createInfoDelegate">Optionaler Delegat zur Erstellung des Info Properties.</param>
-        void RegisterFactionPropertySI<T, S, I>(IExtensionPack extensionPack, string name,
-            Func<Faction, FactionProperty, S> createStateDelegate = null,
-            Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+        void RegisterFactionPropertySi<T, TS, TI>(IExtensionPack extensionPack, string name,
+            Func<Faction, FactionProperty, TS> createStateDelegate = null,
+            Func<Faction, FactionProperty, Item, TI> createInfoDelegate = null)
             where T : FactionProperty
-            where S : FactionStateProperty
-            where I : FactionInfoProperty;
+            where TS : FactionStateProperty
+            where TI : FactionInfoProperty;
 
         /// <summary>
         /// Auflistung aller registrierten Faction Properties.
@@ -408,10 +462,21 @@ namespace AntMe
 
         #region Faction Attachment Properties
 
-        void AttachFactionProperty<F, P>(IExtensionPack extensionPack, string name, Func<Faction, P> createPropertyDelegate = null)
-            where F : Faction
-            where P : FactionProperty;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="extensionPack"></param>
+        /// <param name="name"></param>
+        /// <param name="createPropertyDelegate"></param>
+        /// <typeparam name="TF"></typeparam>
+        /// <typeparam name="TP"></typeparam>
+        void AttachFactionProperty<TF, TP>(IExtensionPack extensionPack, string name, Func<Faction, TP> createPropertyDelegate = null)
+            where TF : Faction
+            where TP : FactionProperty;
 
+        /// <summary>
+        /// 
+        /// </summary>
         IEnumerable<IAttachmentTypeMapperEntry> FactionAttachments { get; }
 
         #endregion
@@ -437,35 +502,41 @@ namespace AntMe
 
         #region Interop Attachment Properties
 
+        /// <summary>
+        /// 
+        /// </summary>
         IEnumerable<IAttachmentTypeMapperEntry> FactoryInteropAttachments { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         IEnumerable<IAttachmentTypeMapperEntry> UnitInteropAttachments { get; }
 
         /// <summary>
         /// Hängt ein Property an eine gegebene Factory Interop an.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <typeparam name="P"></typeparam>
+        /// <typeparam name="TP"></typeparam>
         /// <param name="extensionPack"></param>
         /// <param name="name"></param>
         /// <param name="createPropertyDelegate"></param>
-        void AttachFactoryInteropProperty<T, P>(IExtensionPack extensionPack, string name,
-            Func<Faction, FactoryInterop, P> createPropertyDelegate = null)
+        void AttachFactoryInteropProperty<T, TP>(IExtensionPack extensionPack, string name,
+            Func<Faction, FactoryInterop, TP> createPropertyDelegate = null)
             where T : FactoryInterop
-            where P : FactoryInteropProperty;
+            where TP : FactoryInteropProperty;
 
         /// <summary>
         /// Hängt ein Property an eine gegebene Unit Interop an.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <typeparam name="P"></typeparam>
+        /// <typeparam name="TP"></typeparam>
         /// <param name="extensionPack"></param>
         /// <param name="name"></param>
         /// <param name="createPropertyDelegate"></param>
-        void AttachUnitInteropProperty<T, P>(IExtensionPack extensionPack, string name,
-            Func<UnitInterop, P> createPropertyDelegate = null)
+        void AttachUnitInteropProperty<T, TP>(IExtensionPack extensionPack, string name,
+            Func<UnitInterop, TP> createPropertyDelegate = null)
             where T : UnitInterop
-            where P : UnitInteropProperty;
+            where TP : UnitInteropProperty;
 
         #endregion
 
@@ -516,25 +587,25 @@ namespace AntMe
         /// <summary>
         /// Registriert ein Level Property
         /// </summary>
-        /// <typeparam name="P">Typ des Properties</typeparam>
+        /// <typeparam name="TP">Typ des Properties</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties</param>
         /// <param name="createPropertyDelegate">Optionaler Erstellungs-Delegat</param>
-        void RegisterLevelProperty<P>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null)
-            where P : LevelProperty;
+        void RegisterLevelProperty<TP>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null)
+            where TP : LevelProperty;
 
         /// <summary>
         /// Registriert ein Level Property mit State Property.
         /// </summary>
-        /// <typeparam name="P">Typ des Properties</typeparam>
-        /// <typeparam name="S">Typ des State Properties</typeparam>
+        /// <typeparam name="TP">Typ des Properties</typeparam>
+        /// <typeparam name="TS">Typ des State Properties</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties</param>
         /// <param name="createPropertyDelegate">Optionaler Erstellungs-Delegat</param>
         /// <param name="createStatePropertyDelegate">Optionaler Delegat zur Erstellung des States</param>
-        void RegisterLevelProperty<P, S>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null, Func<Level, LevelProperty, LevelStateProperty> createStatePropertyDelegate = null)
-            where P : LevelProperty
-            where S : LevelStateProperty;
+        void RegisterLevelProperty<TP, TS>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null, Func<Level, LevelProperty, LevelStateProperty> createStatePropertyDelegate = null)
+            where TP : LevelProperty
+            where TS : LevelStateProperty;
 
         #endregion
 
@@ -548,13 +619,13 @@ namespace AntMe
         /// <summary>
         /// Registriert eine Extender-Methode für einen bestimmten Level Type
         /// </summary>
-        /// <typeparam name="L">Typ des Levels</typeparam>
+        /// <typeparam name="TL">Typ des Levels</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name</param>
         /// <param name="extenderDelegate">Methode</param>
         /// <param name="rank">Aufruf-Ranking</param>
-        void RegisterLevelExtender<L>(IExtensionPack extensionPack, string name, int rank, Action<Level> extenderDelegate)
-            where L : Level;
+        void RegisterLevelExtender<TL>(IExtensionPack extensionPack, string name, int rank, Action<Level> extenderDelegate)
+            where TL : Level;
 
         #endregion
     }

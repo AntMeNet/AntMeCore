@@ -8,12 +8,12 @@
         /// <summary>
         /// Name of the Map Tile.
         /// </summary>
-        public string MapTileType { get; private set; }
+        public string MapTileType { get; }
 
         /// <summary>
         /// Returns the Payload for the given Map Tile.
         /// </summary>
-        public byte[] Payload { get; private set; }
+        public byte[] Payload { get; }
 
         /// <summary>
         /// Default Constructor for the Deserializer.

@@ -26,7 +26,7 @@
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
         /// <param name="interop">UnitInterop</param>
-        public UnitInteropProperty(Faction faction, FactionItem item, UnitInterop interop)
+        protected UnitInteropProperty(Faction faction, FactionItem item, UnitInterop interop)
         {
             Faction = faction;
             Item = item;

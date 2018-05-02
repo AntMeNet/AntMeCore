@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace AntMe
 {
@@ -12,12 +9,29 @@ namespace AntMe
     [Serializable]
     public sealed class InvalidMapException : Exception
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public InvalidMapException() { }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
         public InvalidMapException(string message) : base(message) { }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         public InvalidMapException(string message, Exception innerException) : base(message, innerException) { }
 
-        protected InvalidMapException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public InvalidMapException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

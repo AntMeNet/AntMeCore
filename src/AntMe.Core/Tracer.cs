@@ -12,9 +12,9 @@ namespace AntMe
         /// <summary>
         /// Referenz auf die Trace Source.
         /// </summary>
-        protected TraceSource source;
+        protected TraceSource Source;
 
-        private bool autoFlush;
+        private readonly bool _autoFlush;
 
         /// <summary>
         /// Neue Instanz des Tracers.
@@ -23,8 +23,8 @@ namespace AntMe
         /// <param name="autoFlush"></param>
         public Tracer(string name, bool autoFlush = true)
         {
-            this.autoFlush = autoFlush;
-            source = new TraceSource(name);
+            _autoFlush = autoFlush;
+            Source = new TraceSource(name);
         }
 
         /// <summary>
@@ -34,8 +34,8 @@ namespace AntMe
         /// <param name="id">Event ID</param>
         public void Trace(TraceEventType eventType, int id)
         {
-            source.TraceEvent(eventType, id);
-            if (autoFlush) source.Flush();
+            Source.TraceEvent(eventType, id);
+            if (_autoFlush) Source.Flush();
         }
 
         /// <summary>
@@ -46,8 +46,8 @@ namespace AntMe
         /// <param name="message">Event Message</param>
         public void Trace(TraceEventType eventType, int id, string message)
         {
-            source.TraceEvent(eventType, id, message);
-            if (autoFlush) source.Flush();
+            Source.TraceEvent(eventType, id, message);
+            if (_autoFlush) Source.Flush();
         }
 
         /// <summary>
@@ -59,8 +59,8 @@ namespace AntMe
         /// <param name="args"></param>
         public void Trace(TraceEventType eventType, int id, string format, params object[] args)
         {
-            source.TraceEvent(eventType, id, format, args);
-            if (autoFlush) source.Flush();
+            Source.TraceEvent(eventType, id, format, args);
+            if (_autoFlush) Source.Flush();
         }
 
         /// <summary>
@@ -85,8 +85,8 @@ namespace AntMe
                 ex = ex.InnerException;
             }
 
-            source.TraceData(eventType, id, "{0}: {1}", message, sb.ToString());
-            if (autoFlush) source.Flush();
+            Source.TraceData(eventType, id, "{0}: {1}", message, sb.ToString());
+            if (_autoFlush) Source.Flush();
         }
     }
 }

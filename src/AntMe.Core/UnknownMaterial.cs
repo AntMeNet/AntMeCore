@@ -8,12 +8,12 @@
         /// <summary>
         /// Name of the origianl Material Type.
         /// </summary>
-        public string MaterialType { get; private set; }
+        public string MaterialType { get; }
 
         /// <summary>
         /// Returns the Payload.
         /// </summary>
-        public byte[] Payload { get; private set; }
+        public byte[] Payload { get; }
 
         /// <summary>
         /// Default Constructor for the Deserializer.

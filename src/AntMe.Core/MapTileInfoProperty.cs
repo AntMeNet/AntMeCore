@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AntMe
+﻿namespace AntMe
 {
     /// <summary>
     /// Base Class for all Map Tile Property Infos.
@@ -18,7 +13,7 @@ namespace AntMe
         /// <summary>
         /// Reference to the related Property.
         /// </summary>
-        protected readonly new MapTileProperty Property;
+        protected new readonly MapTileProperty Property;
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
@@ -26,7 +21,7 @@ namespace AntMe
         /// <param name="mapTile">Related Map Tile</param>
         /// <param name="property">Related Property</param>
         /// <param name="observer">Observer</param>
-        public MapTileInfoProperty(MapTile mapTile, MapTileProperty property, Item observer) 
+        protected MapTileInfoProperty(MapTile mapTile, MapTileProperty property, Item observer) 
             : base(property, observer)
         {
             MapTile = mapTile;

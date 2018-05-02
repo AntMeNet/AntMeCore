@@ -32,10 +32,10 @@ namespace CoreTestClient
         {
             InitializeComponent();
 
-            mapSizeXNumberic.Minimum = Map.MIN_WIDTH;
-            mapSizeXNumberic.Maximum = Map.MAX_WIDTH;
-            mapSizeYNumberic.Minimum = Map.MIN_HEIGHT;
-            mapSizeYNumberic.Maximum = Map.MAX_HEIGHT;
+            mapSizeXNumberic.Minimum = Map.MinWidth;
+            mapSizeXNumberic.Maximum = Map.MaxWidth;
+            mapSizeYNumberic.Minimum = Map.MinHeight;
+            mapSizeYNumberic.Maximum = Map.MaxHeight;
 
             MapSize = new Index2(30, 20);
             BlockedBorder = true;

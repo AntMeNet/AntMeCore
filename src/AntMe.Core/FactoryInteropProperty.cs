@@ -25,7 +25,7 @@
         /// </summary>
         /// <param name="faction">Reference to Faction.</param>
         /// <param name="interop">Reference to the Interop.</param>
-        public FactoryInteropProperty(Faction faction, FactoryInterop interop)
+        protected FactoryInteropProperty(Faction faction, FactoryInterop interop)
         {
             Faction = faction;
             Interop = interop;

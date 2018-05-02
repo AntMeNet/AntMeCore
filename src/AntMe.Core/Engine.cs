@@ -9,18 +9,16 @@ namespace AntMe
     /// </summary>
     public sealed class Engine : PropertyList<EngineProperty>
     {
-        private readonly ITypeResolver typeResolver;
+        private readonly HashSet<Item> _items;
+        private readonly Dictionary<int, Item> _itemsById;
 
-        private readonly HashSet<Item> items;
-        private readonly Dictionary<int, Item> itemsById;
+        private readonly Queue<Item> _insertQueue;
+        private readonly Queue<Item> _removeQueue;
 
-        private readonly Queue<Item> insertQueue;
-        private readonly Queue<Item> removeQueue;
-
-        private int nextId = 1;
+        private int _nextId = 1;
 
         // Last ID: 2
-        private readonly Tracer tracer = new Tracer("AntMe.Engine");
+        private readonly Tracer _tracer = new Tracer("AntMe.Engine");
 
         /// <summary>
         /// Default Constructor for Type Mapper
@@ -28,26 +26,26 @@ namespace AntMe
         /// <param name="resolver">Reference to the Type Resolver</param>
         public Engine(ITypeResolver resolver)
         {
-            tracer.Trace(TraceEventType.Information, 1, "Engine wird instanziiert");
+            _tracer.Trace(TraceEventType.Information, 1, "Engine wird instanziiert");
 
-            typeResolver = resolver;
+            TypeResolver = resolver;
             State = EngineState.Uninitialized;
             Round = -1;
 
-            items = new HashSet<Item>();
-            itemsById = new Dictionary<int, Item>();
-            insertQueue = new Queue<Item>();
-            removeQueue = new Queue<Item>();
+            _items = new HashSet<Item>();
+            _itemsById = new Dictionary<int, Item>();
+            _insertQueue = new Queue<Item>();
+            _removeQueue = new Queue<Item>();
 
             resolver.ResolveEngine(this);
 
-            tracer.Trace(TraceEventType.Information, 2, "Engine ist instanziiert");
+            _tracer.Trace(TraceEventType.Information, 2, "Engine ist instanziiert");
         }
 
         /// <summary>
         /// Reference to the Type Resolver.
         /// </summary>
-        public ITypeResolver TypeResolver { get { return typeResolver; } }
+        public ITypeResolver TypeResolver { get; }
 
         /// <summary>
         /// Gets the current Simulation Round or -1, of not started.
@@ -76,7 +74,7 @@ namespace AntMe
 
             // Check Parameter
             if (map == null)
-                throw new ArgumentNullException("map");
+                throw new ArgumentNullException(nameof(map));
 
             // Check Map
             map.ValidateMap();
@@ -127,7 +125,7 @@ namespace AntMe
             Round++;
 
             // Pre Update Call for every Item
-            foreach (Item item in items)
+            foreach (Item item in _items)
                 item.BeforeUpdate();
 
             // Update Calls for the Properties
@@ -135,16 +133,16 @@ namespace AntMe
                 property.Update();
 
             // Post Update Call for all Items
-            foreach (Item item in items)
+            foreach (Item item in _items)
                 item.AfterUpdate();
 
             // Add new Items
-            while (insertQueue.Count > 0)
-                PrivateInsertItem(insertQueue.Dequeue());
+            while (_insertQueue.Count > 0)
+                PrivateInsertItem(_insertQueue.Dequeue());
 
             // Remove new Items
-            while (removeQueue.Count > 0)
-                PrivateRemoveItem(removeQueue.Dequeue());
+            while (_removeQueue.Count > 0)
+                PrivateRemoveItem(_removeQueue.Dequeue());
 
             // Inform about another Round
             OnNextRound?.Invoke(Round);
@@ -173,11 +171,11 @@ namespace AntMe
         /// <param name="item">New Items</param>
         private void PrivateInsertItem(Item item)
         {
-            int id = nextId++;
+            int id = _nextId++;
 
             // Add Item to the internal Item List
-            items.Add(item);
-            itemsById.Add(id, item);
+            _items.Add(item);
+            _itemsById.Add(id, item);
 
             item.InternalInsertEngine(this, id);
 
@@ -194,14 +192,14 @@ namespace AntMe
         /// <param name="item">Item to remove</param>
         private void PrivateRemoveItem(Item item)
         {
-            if (items.Contains(item))
+            if (_items.Contains(item))
             {
                 // Inform about removed Item
                 OnRemoveItem?.Invoke(item);
 
                 // Remove Item from internal Lists
-                items.Remove(item);
-                itemsById.Remove(item.Id);
+                _items.Remove(item);
+                _itemsById.Remove(item.Id);
                 item.InternalRemoveEngine();
             }
         }
@@ -229,10 +227,10 @@ namespace AntMe
 
             // Z Axis
             float height = Map.GetHeight(new Vector2(item.Position.X, item.Position.Y));
-            if (item.Position.Z < Map.MIN_Z || item.Position.Z < height)
-                item.Position = new Vector3(item.Position.X, item.Position.Y, Math.Max(Map.MIN_Z, height));
-            if (item.Position.Z > Map.MAX_Z)
-                item.Position = new Vector3(item.Position.X, item.Position.Y, Map.MAX_Z - Vector3.EpsMin);
+            if (item.Position.Z < Map.MinZ || item.Position.Z < height)
+                item.Position = new Vector3(item.Position.X, item.Position.Y, Math.Max(Map.MinZ, height));
+            if (item.Position.Z > Map.MaxZ)
+                item.Position = new Vector3(item.Position.X, item.Position.Y, Map.MaxZ - Vector3.EpsMin);
 
             item.Cell = Map.GetCellIndex(item.Position);
         }
@@ -246,7 +244,7 @@ namespace AntMe
         /// </summary>
         public IEnumerable<Item> Items
         {
-            get { return items; }
+            get { return _items; }
         }
 
         /// <summary>
@@ -263,11 +261,11 @@ namespace AntMe
                 throw new NotSupportedException("Engine must be in ready- or update-mode");
 
             // Item can't be already Part of an Engine
-            if (items.Contains(item) || insertQueue.Contains(item))
+            if (_items.Contains(item) || _insertQueue.Contains(item))
                 throw new InvalidOperationException("Item is already part of the Simulation");
 
             // Queue to insert
-            insertQueue.Enqueue(item);                
+            _insertQueue.Enqueue(item);                
         }
 
         /// <summary>
@@ -284,11 +282,11 @@ namespace AntMe
                 throw new NotSupportedException("Engine is not in ready- or update-Mode");
 
             // Item must be Part of the Simulation
-            if (!items.Contains(item) && !removeQueue.Contains(item))
+            if (!_items.Contains(item) && !_removeQueue.Contains(item))
                 return;
 
             // Queue to remove
-            removeQueue.Enqueue(item);
+            _removeQueue.Enqueue(item);
         }
 
         #endregion

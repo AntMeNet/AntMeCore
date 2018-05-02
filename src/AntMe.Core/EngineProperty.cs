@@ -11,13 +11,13 @@
         protected readonly Engine Engine;
 
         // Last ID: 0
-        private readonly Tracer tracer = new Tracer("AntMe.EngineExtension");
+        private readonly Tracer _tracer = new Tracer("AntMe.EngineExtension");
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="engine">Reference to the Engine</param>
-        public EngineProperty(Engine engine)
+        protected EngineProperty(Engine engine)
         {
             Engine = engine;
 

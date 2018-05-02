@@ -10,15 +10,15 @@ namespace AntMe
     /// </summary>
     public abstract class MapTile : PropertyList<MapTileProperty>, ISerializableState
     {
-        private MapTileState state;
+        private MapTileState _state;
 
-        private MapMaterial material;
+        private MapMaterial _material;
 
-        private MapTileOrientation orientation;
+        private MapTileOrientation _orientation;
 
-        private byte heightLevel;
+        private byte _heightLevel;
 
-        private Dictionary<Item, MapTileInfo> infos;
+        private readonly Dictionary<Item, MapTileInfo> _infos;
 
         /// <summary>
         /// Reference to the Simulation Context.
@@ -29,16 +29,16 @@ namespace AntMe
         /// List and Data of all unknown Property from Deserialization.
         /// </summary>
         [Browsable(false)]
-        public Dictionary<string, byte[]> UnknownProperties { get; private set; }
+        public Dictionary<string, byte[]> UnknownProperties { get; }
 
         /// <summary>
         /// Default Constructor.
         /// </summary>
         /// <param name="context">Simulation Context</param>
-        public MapTile(SimulationContext context)
+        protected MapTile(SimulationContext context)
         {
             Context = context;
-            infos = new Dictionary<Item, MapTileInfo>();
+            _infos = new Dictionary<Item, MapTileInfo>();
             UnknownProperties = new Dictionary<string, byte[]>();
 
             context.Resolver.ResolveMapTile(context, this);
@@ -50,9 +50,7 @@ namespace AntMe
         /// <returns></returns>
         public MapTileState GetState()
         {
-            if (state == null)
-                state = Context.Resolver.CreateMapTileState(this);
-            return state;
+            return _state ?? (_state = Context.Resolver.CreateMapTileState(this));
         }
 
         /// <summary>
@@ -63,18 +61,18 @@ namespace AntMe
         public MapTileInfo GetInfo(Item observer)
         {
             if (observer == null)
-                throw new ArgumentNullException("observer");
+                throw new ArgumentNullException(nameof(observer));
 
             // Check Info Cache
-            if (infos.ContainsKey(observer))
-                return infos[observer];
+            if (_infos.ContainsKey(observer))
+                return _infos[observer];
 
             // Generate new Instance
             var info = Context.Resolver.CreateMapTileInfo(this, observer);
             if (info == null)
                 throw new NotSupportedException("Could not create new Map Tile Info");
 
-            infos.Add(observer, info);
+            _infos.Add(observer, info);
             return info;
         }
 
@@ -84,10 +82,10 @@ namespace AntMe
         [Browsable(false)]
         public MapMaterial Material
         {
-            get { return material; }
+            get => _material;
             set
             {
-                material = value;
+                _material = value;
                 OnMaterialChanged?.Invoke(value);
             }
         }
@@ -99,10 +97,10 @@ namespace AntMe
         [Description("Gets or sets the Orientation of this Tile.")]
         public MapTileOrientation Orientation
         {
-            get { return orientation; }
+            get => _orientation;
             set
             {
-                orientation = value;
+                _orientation = value;
                 OnOrientationChanged?.Invoke(value);
             }
         }
@@ -114,10 +112,10 @@ namespace AntMe
         [Description("Sets or gets the base Height Level.")]
         public byte HeightLevel
         {
-            get { return heightLevel; }
+            get => _heightLevel;
             set
             {
-                heightLevel = value;
+                _heightLevel = value;
                 OnHeightLevelChanged?.Invoke(value);
             }
         }

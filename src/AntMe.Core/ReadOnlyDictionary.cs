@@ -9,7 +9,7 @@ namespace AntMe
     /// <typeparam name="TValue">Dictionary Value</typeparam>
     public sealed class ReadOnlyDictionary<TKey, TValue>
     {
-        private IDictionary<TKey, TValue> dictionary;
+        private readonly IDictionary<TKey, TValue> _dictionary;
 
         /// <summary>
         /// Default Constructor for the Dictionary Wrapper.
@@ -17,7 +17,7 @@ namespace AntMe
         /// <param name="dictionary">Base Dictionary</param>
         public ReadOnlyDictionary(IDictionary<TKey, TValue> dictionary)
         {
-            this.dictionary = dictionary;
+            _dictionary = dictionary;
         }
 
         /// <summary>
@@ -27,16 +27,13 @@ namespace AntMe
         /// <returns>Contains Key</returns>
         public bool ContainsKey(TKey key)
         {
-            return dictionary.ContainsKey(key);
+            return _dictionary.ContainsKey(key);
         }
 
         /// <summary>
         /// List of available Keys.
         /// </summary>
-        public IEnumerable<TKey> Keys
-        {
-            get { return dictionary.Keys; }
-        }
+        public IEnumerable<TKey> Keys => _dictionary.Keys;
 
         /// <summary>
         /// Tries to get the Value of the given Key.
@@ -46,7 +43,7 @@ namespace AntMe
         /// <returns>Return if the Key was available</returns>
         public bool TryGetValue(TKey key, out TValue value)
         {
-            return dictionary.TryGetValue(key, out value);
+            return _dictionary.TryGetValue(key, out value);
         }
 
         /// <summary>
@@ -54,17 +51,11 @@ namespace AntMe
         /// </summary>
         /// <param name="key">Key</param>
         /// <returns></returns>
-        public TValue this[TKey key]
-        {
-            get { return dictionary[key]; }
-        }
+        public TValue this[TKey key] => _dictionary[key];
 
         /// <summary>
         /// Returns the Number of containing Items.
         /// </summary>
-        public int Count
-        {
-            get { return dictionary.Count; }
-        }
+        public int Count => _dictionary.Count;
     }
 }

@@ -101,7 +101,7 @@ namespace CoreTestClient
             // Display Game Time in Status Bar
             if (CurrentClient != null && CurrentClient.CurrentState != null)
             {
-                timeLabel.Text = TimeSpan.FromSeconds((double)CurrentClient.CurrentState.Round / Level.FRAMES_PER_SECOND).ToString("h\\:mm\\:ss");
+                timeLabel.Text = TimeSpan.FromSeconds((double)CurrentClient.CurrentState.Round / Level.FramesPerSecond).ToString("h\\:mm\\:ss");
             }
             else
             {

@@ -9,7 +9,7 @@ namespace AntMe
     /// additional Properties to Name and Author.
     /// </summary>
     [Serializable]
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public abstract class FactoryAttribute : Attribute
     {
         /// <summary>

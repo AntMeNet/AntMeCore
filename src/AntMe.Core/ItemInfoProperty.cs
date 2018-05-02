@@ -13,7 +13,7 @@
         /// <summary>
         /// Reference to the related Property.
         /// </summary>
-        protected readonly new ItemProperty Property;
+        protected new readonly ItemProperty Property;
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
@@ -21,7 +21,7 @@
         /// <param name="item">Related Item</param>
         /// <param name="property">Related Property</param>
         /// <param name="observer">Observer</param>
-        public ItemInfoProperty(Item item, ItemProperty property, Item observer) : base(property, observer)
+        protected ItemInfoProperty(Item item, ItemProperty property, Item observer) : base(property, observer)
         {
             Item = item;
             Property = property;

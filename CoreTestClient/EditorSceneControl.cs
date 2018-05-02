@@ -98,17 +98,17 @@ namespace CoreTestClient
             // Draw hovered
             if (HoveredCell.HasValue)
                 g.FillRectangle(hoverBrush,
-                    new RectangleF(HoveredCell.Value.X * Map.CELLSIZE, HoveredCell.Value.Y * Map.CELLSIZE, Map.CELLSIZE, Map.CELLSIZE));
+                    new RectangleF(HoveredCell.Value.X * Map.Cellsize, HoveredCell.Value.Y * Map.Cellsize, Map.Cellsize, Map.Cellsize));
 
             // Draw Selection
             if (SelectedCell.HasValue)
             {
                 g.DrawRectangle(selectionFrame, 
                     new Rectangle(
-                        (int)(SelectedCell.Value.X * Map.CELLSIZE), 
-                        (int)(SelectedCell.Value.Y * Map.CELLSIZE), 
-                        (int)Map.CELLSIZE, 
-                        (int)Map.CELLSIZE));
+                        (int)(SelectedCell.Value.X * Map.Cellsize), 
+                        (int)(SelectedCell.Value.Y * Map.Cellsize), 
+                        (int)Map.Cellsize, 
+                        (int)Map.Cellsize));
             }
 
             // Draw Startpoints
@@ -119,8 +119,8 @@ namespace CoreTestClient
                     if (StartPoints[i].HasValue)
                     {
                         PointF point = new PointF(
-                            ((StartPoints[i].Value.X + 0.5f) * Map.CELLSIZE), 
-                            ((StartPoints[i].Value.Y + 0.5f) * Map.CELLSIZE));
+                            ((StartPoints[i].Value.X + 0.5f) * Map.Cellsize), 
+                            ((StartPoints[i].Value.Y + 0.5f) * Map.Cellsize));
 
                         SizeF size = g.MeasureString((i + 1).ToString(), startPointFont);
                         g.FillRectangle(startPointBackground, new RectangleF(point.X - (size.Width / 2), point.Y - (size.Height / 2), size.Width, size.Height));

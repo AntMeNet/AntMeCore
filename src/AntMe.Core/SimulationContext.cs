@@ -10,22 +10,22 @@ namespace AntMe
         /// <summary>
         /// Reference to the Type Resolver.
         /// </summary>
-        public ITypeResolver Resolver { get; private set; }
+        public ITypeResolver Resolver { get; }
 
         /// <summary>
         /// Reference to the Type Mapper.
         /// </summary>
-        public ITypeMapper Mapper { get; private set; }
+        public ITypeMapper Mapper { get; }
 
         /// <summary>
         /// Settings for the current Context.
         /// </summary>
-        public KeyValueStore Settings { get; private set; }
+        public KeyValueStore Settings { get; }
 
         /// <summary>
         /// Randomizer for the current Context.
         /// </summary>
-        public Random Random { get; private set; }
+        public Random Random { get; }
 
         /// <summary>
         /// Default Constructor.

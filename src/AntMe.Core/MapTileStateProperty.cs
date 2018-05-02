@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace AntMe
 {
@@ -16,12 +15,12 @@ namespace AntMe
         /// <summary>
         /// Reference to the Map Tile Property.
         /// </summary>
-        protected readonly new MapTileProperty Property;
+        protected new readonly MapTileProperty Property;
 
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public MapTileStateProperty() : base() { }
+        public MapTileStateProperty() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
@@ -34,18 +33,38 @@ namespace AntMe
             Property = property;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="version"></param>
         public override void DeserializeFirst(BinaryReader stream, byte version)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="version"></param>
         public override void DeserializeUpdate(BinaryReader stream, byte version)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="version"></param>
         public override void SerializeFirst(BinaryWriter stream, byte version)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="version"></param>
         public override void SerializeUpdate(BinaryWriter stream, byte version)
         {
         }

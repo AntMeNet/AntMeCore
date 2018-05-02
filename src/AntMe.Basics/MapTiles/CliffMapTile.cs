@@ -19,7 +19,7 @@
         /// <returns>Map Height</returns>
         public override float GetHeight(Vector2 position)
         {
-            return (HeightLevel + 1) * Map.LEVELHEIGHT;
+            return (HeightLevel + 1) * Map.Levelheight;
         }
     }
 }

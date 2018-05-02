@@ -9,22 +9,18 @@ namespace AntMe
     /// </summary>
     public sealed class MapState : PropertyList<MapStateProperty>, ISerializableState
     {
-        private readonly Map Map;
-
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public MapState() : base() { }
+        public MapState() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="map">Reference to the related Map</param>
-        public MapState(Map map) : base()
+        public MapState(Map map)
         {
-            Map = map;
-
-            Index2 size = Map.GetCellCount();
+            var size = map.GetCellCount();
             Tiles = new MapTileState[size.X, size.Y];
         }
 
@@ -61,7 +57,7 @@ namespace AntMe
         public Vector2 GetSize()
         {
             Index2 cells = GetCellCount();
-            return new Vector2(cells.X * Map.CELLSIZE, cells.Y * Map.CELLSIZE);
+            return new Vector2(cells.X * Map.Cellsize, cells.Y * Map.Cellsize);
         }
 
         /// <summary>

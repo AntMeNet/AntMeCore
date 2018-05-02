@@ -186,7 +186,7 @@ namespace AntMe.Runtime
         /// <typeparam name="T">Type des Property</typeparam>
         /// <typeparam name="S">Type des State Property</typeparam>
         /// <typeparam name="I">Type des Info Property</typeparam>
-        public void RegisterItemPropertySI<T, S, I>(IExtensionPack extensionPack, string name,
+        public void RegisterItemPropertySi<T, S, I>(IExtensionPack extensionPack, string name,
             Func<Item, ItemProperty, S> createStateDelegate = null,
             Func<Item, ItemProperty, Item, I> createInfoDelegate = null)
             where T : ItemProperty

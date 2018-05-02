@@ -13,19 +13,19 @@
         /// <summary>
         /// Reference to the Map Property.
         /// </summary>
-        protected readonly new MapProperty Property;
+        protected new readonly MapProperty Property;
 
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public MapStateProperty() : base() { }
+        protected MapStateProperty() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="map">Related Map</param>
         /// <param name="property">Related Engine Property</param>
-        public MapStateProperty(Map map, MapProperty property) : base(property)
+        protected MapStateProperty(Map map, MapProperty property) : base(property)
         {
             Map = map;
             Property = property;

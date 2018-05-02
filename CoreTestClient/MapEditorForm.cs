@@ -360,7 +360,7 @@ namespace CoreTestClient
                 errorsList.SelectedItems[0].Tag is InvalidMapTileException)
             {
                 InvalidMapTileException ex = errorsList.SelectedItems[0].Tag as InvalidMapTileException;
-                selectionTool.Apply(map, ex.CellIndex, new Vector2((ex.CellIndex.X + 0.5f) * Map.CELLSIZE, (ex.CellIndex.Y + 0.5f) * Map.CELLSIZE));
+                selectionTool.Apply(map, ex.CellIndex, new Vector2((ex.CellIndex.X + 0.5f) * Map.Cellsize, (ex.CellIndex.Y + 0.5f) * Map.Cellsize));
             }
         }
 

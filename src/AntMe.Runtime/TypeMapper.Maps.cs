@@ -251,7 +251,7 @@ namespace AntMe.Runtime
             RegisterMapTileProperty<T, MapTileStateProperty, I>(extensionPack, name, false, true, null, createInfoDelegate);
         }
 
-        public void RegisterMapTilePropertySI<T, S, I>(IExtensionPack extensionPack, string name,
+        public void RegisterMapTilePropertySi<T, S, I>(IExtensionPack extensionPack, string name,
             Func<MapTile, MapTileProperty, S> createStateDelegate = null,
             Func<MapTile, MapTileProperty, Item, I> createInfoDelegate = null)
             where T : MapTileProperty

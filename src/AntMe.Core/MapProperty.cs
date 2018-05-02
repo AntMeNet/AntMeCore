@@ -9,6 +9,9 @@ namespace AntMe
     /// </summary>
     public abstract class MapProperty : Property, ISerializableState
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly SimulationContext Context;
 
         /// <summary>
@@ -21,7 +24,7 @@ namespace AntMe
         /// </summary>
         /// <param name="context">Simulation Context</param>
         /// <param name="map">Reference to the related Map</param>
-        public MapProperty(SimulationContext context, Map map)
+        protected MapProperty(SimulationContext context, Map map)
         {
             Context = context;
             Map = map;

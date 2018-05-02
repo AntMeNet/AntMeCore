@@ -13,7 +13,7 @@
         /// <summary>
         /// Reference to the related Property.
         /// </summary>
-        protected readonly new FactionProperty Property;
+        protected new readonly FactionProperty Property;
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
@@ -21,7 +21,7 @@
         /// <param name="faction">Related Faction</param>
         /// <param name="property">Related Property</param>
         /// <param name="observer">Observer</param>
-        public FactionInfoProperty(Faction faction, FactionProperty property, Item observer)
+        protected FactionInfoProperty(Faction faction, FactionProperty property, Item observer)
             : base(property, observer)
         {
             Faction = faction;

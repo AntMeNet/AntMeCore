@@ -20,7 +20,7 @@
         /// </summary>
         /// <param name="mapTile">Map Tile</param>
         /// <param name="observer">Observer</param>
-        public MapTileInfo(MapTile mapTile, Item observer)
+        protected MapTileInfo(MapTile mapTile, Item observer)
         {
             MapTile = mapTile;
             Observer = observer;

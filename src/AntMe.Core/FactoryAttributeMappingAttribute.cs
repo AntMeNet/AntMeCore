@@ -6,7 +6,7 @@ namespace AntMe
     /// Attribute to map additional Name- and Author-Properties of inherited Attributes of the <see cref="FactoryAttribute"/>. 
     /// This is required for localized Versions of the <see cref="PlayerAttribute"/>.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class FactoryAttributeMappingAttribute : Attribute
     {
         /// <summary>

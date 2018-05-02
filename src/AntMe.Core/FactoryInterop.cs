@@ -25,12 +25,11 @@ namespace AntMe
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="context">Reference to the Simulation Context</param>
         /// <param name="faction">Instance of the related Faction</param>
-        public FactoryInterop(Faction faction)
+        protected FactoryInterop(Faction faction)
         {
             if (faction == null)
-                throw new ArgumentNullException("faction");
+                throw new ArgumentNullException(nameof(faction));
 
             // Faction soll bereits teil eines Levels sein.
             if (faction.Level == null)
@@ -46,7 +45,7 @@ namespace AntMe
         protected override void Update(int round)
         {
             Round = round;
-            GameTime = TimeSpan.FromSeconds((double)round / Level.FRAMES_PER_SECOND);
+            GameTime = TimeSpan.FromSeconds((double)round / Level.FramesPerSecond);
 
             base.Update(round);
         }

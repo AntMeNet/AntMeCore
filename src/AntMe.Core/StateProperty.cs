@@ -15,13 +15,13 @@ namespace AntMe
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public StateProperty() { }
+        protected StateProperty() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="property">Reference to the related Engine Property</param>
-        public StateProperty(Property property)
+        protected StateProperty(Property property)
         {
             Property = property;
         }

@@ -13,7 +13,7 @@ namespace AntMe.Levelpack.Levels
         "AntMe! Classic",
         "This one is the classic AntMe! 1.0 Level. Static, plain Map with random resources here and there...",
         MinPlayerCount = 0,
-        MaxPlayerCount = MAX_SLOTS
+        MaxPlayerCount = MaxSlots
     )]
     public sealed class ClassicLevel : Level
     {
@@ -56,8 +56,8 @@ namespace AntMe.Levelpack.Levels
             if (sugar == null)
             {
                 Vector2 pos = new Vector2(
-                    ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
-                    ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
+                    ((float)Random.NextDouble() * (cells.X - 1)) * Map.Cellsize,
+                    ((float)Random.NextDouble() * (cells.Y - 1)) * Map.Cellsize);
                 sugar = new SugarItem(Context, pos, 1000);
                 Engine.InsertItem(sugar);
             }
@@ -65,8 +65,8 @@ namespace AntMe.Levelpack.Levels
             if (apple == null)
             {
                 Vector2 pos = new Vector2(
-                    ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
-                    ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
+                    ((float)Random.NextDouble() * (cells.X - 1)) * Map.Cellsize,
+                    ((float)Random.NextDouble() * (cells.Y - 1)) * Map.Cellsize);
                 apple = new AppleItem(Context, pos, 250);
                 Engine.InsertItem(apple);
             }
@@ -74,8 +74,8 @@ namespace AntMe.Levelpack.Levels
             if (bugs.Count < 3)
             {
                 Vector2 pos = new Vector2(
-                    ((float)Random.NextDouble() * (cells.X - 1)) * Map.CELLSIZE,
-                    ((float)Random.NextDouble() * (cells.Y - 1)) * Map.CELLSIZE);
+                    ((float)Random.NextDouble() * (cells.X - 1)) * Map.Cellsize,
+                    ((float)Random.NextDouble() * (cells.Y - 1)) * Map.Cellsize);
                 Angle orientation = Angle.FromDegree(Random.Next(0, 359));
                 ClassicBugItem bug = new ClassicBugItem(Context, pos, orientation);
                 bugs.Add(bug);

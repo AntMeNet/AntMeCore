@@ -113,9 +113,9 @@ namespace CoreTestClient
                 return;
 
             _mapCells = size;
-            _mapSize = new Vector2(size.X * Map.CELLSIZE, size.Y * Map.CELLSIZE);
+            _mapSize = new Vector2(size.X * Map.Cellsize, size.Y * Map.Cellsize);
 
-            mapLabel.Text = "Map: " + _mapCells.X + "/" + _mapCells.Y + " @ " + Map.CELLSIZE;
+            mapLabel.Text = "Map: " + _mapCells.X + "/" + _mapCells.Y + " @ " + Map.Cellsize;
         }
 
         private TreeNode levelNode;

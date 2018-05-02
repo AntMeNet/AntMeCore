@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Linq;
-using System.Text;
-using System.IO.Compression;
 using System.ComponentModel;
 
 namespace AntMe
@@ -19,68 +16,68 @@ namespace AntMe
         /// <summary>
         /// Size of a single Cell in World Units.
         /// </summary>
-        public const float CELLSIZE = 50f;
+        public const float Cellsize = 50f;
 
         /// <summary>
         /// Minimum Number of Cells in X Direction.
         /// </summary>
-        public const int MIN_WIDTH = 10;
+        public const int MinWidth = 10;
 
         /// <summary>
         /// Minimum Number of Cells in Y Direction.
         /// </summary>
-        public const int MIN_HEIGHT = 10;
+        public const int MinHeight = 10;
 
         /// <summary>
         /// Maximum Number of Cells in X Direction.
         /// </summary>
-        public const int MAX_WIDTH = 100;
+        public const int MaxWidth = 100;
 
         /// <summary>
         /// Maximum Number of Cells in Y Direction.
         /// </summary>
-        public const int MAX_HEIGHT = 100;
+        public const int MaxHeight = 100;
 
         /// <summary>
         /// Minimum Count of Start Points.
         /// </summary>
-        public const int MIN_STARTPOINTS = 1;
+        public const int MinStartpoints = 1;
 
         /// <summary>
         /// Maximum Count of Start Points.
         /// </summary>
-        public const int MAX_STARTPOINTS = Level.MAX_SLOTS;
+        public const int MaxStartpoints = Level.MaxSlots;
 
         /// <summary>
         /// Minimum Hight of Units.
         /// </summary>
-        public const float MIN_Z = 0f;
+        public const float MinZ = 0f;
 
         /// <summary>
         /// Maximum Hight of Units.
         /// </summary>
-        public const float MAX_Z = 50f;
+        public const float MaxZ = 50f;
 
         /// <summary>
         /// Height of a single Height Level.
         /// </summary>
-        public const float LEVELHEIGHT = 20f;
+        public const float Levelheight = 20f;
 
         /// <summary>
         /// Maximum Height Level.
         /// </summary>
-        public const byte MAX_LEVEL = 2;
+        public const byte MaxLevel = 2;
 
         #endregion
 
-        private MapState state;
+        private MapState _state;
 
-        private SimulationContext context;
+        private readonly SimulationContext _context;
 
         /// <summary>
         /// Holds all Map Tiles.
         /// </summary>
-        private MapTile[,] tiles;
+        private readonly MapTile[,] _tiles;
 
         /// <summary>
         /// Gets or sets the border behavior of this Map.
@@ -110,8 +107,8 @@ namespace AntMe
         /// <returns>Map Tile</returns>
         public MapTile this[int x, int y]
         {
-            get { return tiles[x, y]; }
-            set { tiles[x, y] = value; }
+            get => _tiles[x, y];
+            set => _tiles[x, y] = value;
         }
 
         /// <summary>
@@ -137,30 +134,31 @@ namespace AntMe
         /// <param name="playerCount"></param>
         public Map(SimulationContext context, int width, int height, int playerCount)
         {
-            this.context = context;
+            _context = context;
 
             UnknownProperties = new Dictionary<string, byte[]>();
 
             // Check Parameter
-            if (width < MIN_WIDTH)
-                throw new ArgumentOutOfRangeException(string.Format("Map must have at least {0} Columns", MIN_WIDTH));
-            if (width > MAX_WIDTH)
-                throw new ArgumentOutOfRangeException(string.Format("Map must have a max of {0} Columns", MAX_WIDTH));
-            if (height < MIN_HEIGHT)
-                throw new ArgumentOutOfRangeException(string.Format("Map must have at least {0} Rows", MIN_HEIGHT));
-            if (height > MAX_HEIGHT)
-                throw new ArgumentOutOfRangeException(string.Format("Map must have a max of {0} Rows", MAX_HEIGHT));
+            if (width < MinWidth)
+                throw new ArgumentOutOfRangeException(nameof(width), $"Map must have at least {MinWidth} Columns");
+            if (width > MaxWidth)
+                throw new ArgumentOutOfRangeException(nameof(width), $"Map must have a max of {MaxWidth} Columns");
+            if (height < MinHeight)
+                throw new ArgumentOutOfRangeException(nameof(height), $"Map must have at least {MinHeight} Rows");
+            if (height > MaxHeight)
+                throw new ArgumentOutOfRangeException(nameof(height), $"Map must have a max of {MaxHeight} Rows");
             if (playerCount < 0)
-                throw new ArgumentOutOfRangeException("Player Count can't me smaller than zero");
-            if (playerCount > Level.MAX_SLOTS)
-                throw new ArgumentOutOfRangeException(string.Format("Player Count can't be greater than {}", Level.MAX_SLOTS));
+                throw new ArgumentOutOfRangeException(nameof(playerCount), "Player Count can't me smaller than zero");
+            if (playerCount > Level.MaxSlots)
+                throw new ArgumentOutOfRangeException(nameof(playerCount),
+                    $"Player Count can't be greater than {Level.MaxSlots}");
 
             // Create Tiles
-            tiles = new MapTile[width, height];
+            _tiles = new MapTile[width, height];
 
             // Create Players
-            int dx = width / 6;
-            int dy = height / 6;
+            var dx = width / 6;
+            var dy = height / 6;
             StartPoints = new Index2[playerCount];
             if (playerCount >= 1)
                 StartPoints[0] = new Index2(dx, dy);
@@ -179,7 +177,7 @@ namespace AntMe
             if (playerCount >= 8)
                 StartPoints[7] = new Index2(5 * dx, 3 * dy);
 
-            this.context.Resolver.ResolveMap(context, this);
+            _context.Resolver.ResolveMap(context, this);
         }
 
         /// <summary>
@@ -199,16 +197,16 @@ namespace AntMe
         public MapState GetState()
         {
             // On first Call create State
-            if (state == null)
-                state = context.Resolver.CreateMapState(this);
+            if (_state == null)
+                _state = _context.Resolver.CreateMapState(this);
 
             // Update Tile States
             Index2 size = GetCellCount();
             for (int y = 0; y < size.Y; y++)
                 for (int x = 0; x < size.X; x++)
-                    state.Tiles[x, y] = this[x, y].GetState();
+                    _state.Tiles[x, y] = this[x, y].GetState();
 
-            return state;
+            return _state;
         }
 
         /// <summary>
@@ -216,30 +214,30 @@ namespace AntMe
         /// </summary>
         public void ValidateMap()
         {
-            List<Exception> exceptions = new List<Exception>();
+            var exceptions = new List<Exception>();
 
             // Validate Tiles Stuff
-            if (tiles != null)
+            if (_tiles != null)
             {
                 Index2 cells = GetCellCount();
 
                 // Check Map Dimensions
-                if (cells.X < MIN_WIDTH)
-                    exceptions.Add(new InvalidMapException(string.Format("Map must have at least {0} Columns", MIN_WIDTH)));
-                if (cells.X > MAX_WIDTH)
-                    exceptions.Add(new InvalidMapException(string.Format("Map must have a maximum of {0} Columns", MAX_WIDTH)));
-                if (cells.Y < MIN_HEIGHT)
-                    exceptions.Add(new InvalidMapException(string.Format("Map must have at least {0} Rows", MIN_HEIGHT)));
-                if (cells.Y > MAX_HEIGHT)
-                    exceptions.Add(new InvalidMapException(string.Format("Map must have a maximum of {0} Rows", MAX_HEIGHT)));
+                if (cells.X < MinWidth)
+                    exceptions.Add(new InvalidMapException($"Map must have at least {MinWidth} Columns"));
+                if (cells.X > MaxWidth)
+                    exceptions.Add(new InvalidMapException($"Map must have a maximum of {MaxWidth} Columns"));
+                if (cells.Y < MinHeight)
+                    exceptions.Add(new InvalidMapException($"Map must have at least {MinHeight} Rows"));
+                if (cells.Y > MaxHeight)
+                    exceptions.Add(new InvalidMapException($"Map must have a maximum of {MaxHeight} Rows"));
 
                 // Check Individual Cells
-                List<Exception> result = new List<Exception>();
-                for (int y = 0; y < cells.Y; y++)
+                var result = new List<Exception>();
+                for (var y = 0; y < cells.Y; y++)
                 {
-                    for (int x = 0; x < cells.X; x++)
+                    for (var x = 0; x < cells.X; x++)
                     {
-                        MapTile tile = tiles[x, y];
+                        var tile = _tiles[x, y];
 
                         // Check if Map Tile exists
                         if (tile == null)
@@ -255,10 +253,10 @@ namespace AntMe
                         }
 
                         // Collect neighbours
-                        MapTile northTile = (y <= 0 ? null : tiles[x, y - 1]);
-                        MapTile southTile = (y >= cells.Y - 1 ? null : tiles[x, y + 1]);
-                        MapTile westTile = (x <= 0 ? null : tiles[x - 1, y]);
-                        MapTile eastTile = (x >= cells.X - 1 ? null : tiles[x + 1, y]);
+                        var northTile = (y <= 0 ? null : _tiles[x, y - 1]);
+                        var southTile = (y >= cells.Y - 1 ? null : _tiles[x, y + 1]);
+                        var westTile = (x <= 0 ? null : _tiles[x - 1, y]);
+                        var eastTile = (x >= cells.X - 1 ? null : _tiles[x + 1, y]);
 
                         // Check Height Map
                         if (y <= 0)
@@ -268,7 +266,7 @@ namespace AntMe
                         }
                         else
                         {
-                            if (tile.ConnectionLevelNorth != (northTile != null ? northTile.ConnectionLevelSouth : null))
+                            if (tile.ConnectionLevelNorth != northTile?.ConnectionLevelSouth)
                                 exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the North"));
                         }
 
@@ -279,7 +277,7 @@ namespace AntMe
                         }
                         else
                         {
-                            if (tile.ConnectionLevelSouth != (southTile != null ? southTile.ConnectionLevelNorth : null))
+                            if (tile.ConnectionLevelSouth != southTile?.ConnectionLevelNorth)
                                 exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the South"));
                         }
 
@@ -290,7 +288,7 @@ namespace AntMe
                         }
                         else
                         {
-                            if (tile.ConnectionLevelWest != (westTile != null ? westTile.ConnectionLevelEast : null))
+                            if (tile.ConnectionLevelWest != westTile?.ConnectionLevelEast)
                                 exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the West"));
                         }
 
@@ -301,7 +299,7 @@ namespace AntMe
                         }
                         else
                         {
-                            if (tile.ConnectionLevelEast != (eastTile != null ? eastTile.ConnectionLevelWest : null))
+                            if (tile.ConnectionLevelEast != eastTile?.ConnectionLevelWest)
                                 exceptions.Add(new InvalidMapTileException(new Index2(x, y), "Wrong Connection Level to the East"));
                         }
 
@@ -345,24 +343,24 @@ namespace AntMe
             if (StartPoints != null)
             {
                 // Spieleranzahl prüfen
-                if (GetPlayerCount() < MIN_STARTPOINTS)
-                    exceptions.Add(new InvalidMapException(string.Format("There must be at least {0} player", MIN_STARTPOINTS)));
-                if (GetPlayerCount() > MAX_STARTPOINTS)
-                    exceptions.Add(new Exception(string.Format("The maximum Player Count is {0}", MAX_STARTPOINTS)));
+                if (GetPlayerCount() < MinStartpoints)
+                    exceptions.Add(new InvalidMapException($"There must be at least {MinStartpoints} player"));
+                if (GetPlayerCount() > MaxStartpoints)
+                    exceptions.Add(new Exception($"The maximum Player Count is {MaxStartpoints}"));
 
                 // Alle Startpunkte überprüfen
                 for (int i = 0; i < StartPoints.Length; i++)
                 {
                     // Prüfen, ob die Zelle existiert
                     Index2 startPoint = StartPoints[i];
-                    if (startPoint.X < 0 || startPoint.X >= tiles.GetLength(0) ||
-                        startPoint.Y < 0 || startPoint.Y >= tiles.GetLength(1))
-                        exceptions.Add(new InvalidMapException(string.Format("StartPoint {0} is out of map bounds", i)));
+                    if (startPoint.X < 0 || startPoint.X >= _tiles.GetLength(0) ||
+                        startPoint.Y < 0 || startPoint.Y >= _tiles.GetLength(1))
+                        exceptions.Add(new InvalidMapException($"StartPoint {i} is out of map bounds"));
 
                     // Prüfen, ob noch ein anderer Startpoint auf der selben Zelle ist.
                     for (int j = 0; j < StartPoints.Length; j++)
                         if (i != j && StartPoints[i] == StartPoints[j])
-                            exceptions.Add(new InvalidMapException(string.Format("StartPoints {0} and {1} are on the same Cell", i, j)));
+                            exceptions.Add(new InvalidMapException($"StartPoints {i} and {j} are on the same Cell"));
                 }
             }
             else
@@ -404,13 +402,13 @@ namespace AntMe
         public Index2 GetCellIndex(float x, float y)
         {
             // Wenns keine Map gibt
-            if (tiles == null)
+            if (_tiles == null)
                 return Index2.Zero;
 
             Index2 limit = GetCellCount();
 
-            var indexX = (int)(x / CELLSIZE);
-            var indexY = (int)(y / CELLSIZE);
+            var indexX = (int)(x / Cellsize);
+            var indexY = (int)(y / Cellsize);
 
             if (indexX < 0)
                 indexX = 0;
@@ -452,7 +450,7 @@ namespace AntMe
         /// <returns>Local Postion</returns>
         public Vector2 GetLocalPosition(float x, float y)
         {
-            return new Vector2(x % CELLSIZE, y % CELLSIZE);
+            return new Vector2(x % Cellsize, y % Cellsize);
         }
 
         /// <summary>
@@ -461,10 +459,10 @@ namespace AntMe
         /// <returns>Cell Count</returns>
         public Index2 GetCellCount()
         {
-            if (tiles != null)
+            if (_tiles != null)
                 return new Index2(
-                    tiles.GetLength(0),
-                    tiles.GetLength(1));
+                    _tiles.GetLength(0),
+                    _tiles.GetLength(1));
             return Index2.Zero;
         }
 
@@ -476,8 +474,8 @@ namespace AntMe
         {
             Index2 cells = GetCellCount();
             return new Vector2(
-                cells.X * CELLSIZE,
-                cells.Y * CELLSIZE);
+                cells.X * Cellsize,
+                cells.Y * Cellsize);
         }
 
         /// <summary>
@@ -562,7 +560,7 @@ namespace AntMe
             writer.Write((byte)(Properties.Count() + UnknownProperties.Count));
             foreach (var property in Properties)
             {
-                writer.Write(property.GetType().FullName);
+                writer.Write(property.GetType().FullName ?? throw new InvalidOperationException());
                 SerializeType(writer, property);
             }
 
@@ -623,19 +621,17 @@ namespace AntMe
                     if (tile.Material == null)
                     {
                         // No Material -> Skip
-                        continue;
                     }
-                    else if (tile.Material is UnknownMaterial)
+                    else if (tile.Material is UnknownMaterial unknownMaterial)
                     {
                         // Unknown Material
-                        UnknownMaterial unknownMaterial = tile.Material as UnknownMaterial;
                         if (!materialTypes.Contains(unknownMaterial.MaterialType))
                             materialTypes.Add(unknownMaterial.MaterialType);
                     }
                     else
                     {
                         // Common Material
-                        Type materialType = tile.Material.GetType();
+                        var materialType = tile.Material.GetType();
                         if (!materialTypes.Contains(materialType.FullName))
                             materialTypes.Add(materialType.FullName);
                     }
@@ -679,7 +675,7 @@ namespace AntMe
                         {
                             int materialIndex;
                             if (tile.Material is UnknownMaterial)
-                                materialIndex = materialTypes.IndexOf((tile.Material as UnknownMaterial).MaterialType) + 1;
+                                materialIndex = materialTypes.IndexOf(((UnknownMaterial) tile.Material).MaterialType) + 1;
                             else materialIndex = materialTypes.IndexOf(tile.Material.GetType().FullName) + 1;
                             writer.Write((byte)materialIndex);
                             SerializeType(writer, tile.Material);
@@ -708,7 +704,6 @@ namespace AntMe
                     else
                     {
                         writer.Write((byte)0);
-                        continue;
                     }
                 }
             }
@@ -719,9 +714,9 @@ namespace AntMe
             int dumpCount = reader.ReadInt16();
             byte[] dump = reader.ReadBytes(dumpCount);
 
-            using (MemoryStream mem = new MemoryStream(dump))
+            using (var mem = new MemoryStream(dump))
             {
-                using (BinaryReader memReader = new BinaryReader(mem))
+                using (var memReader = new BinaryReader(mem))
                 {
                     state.DeserializeFirst(memReader, 2);
                 }
@@ -736,16 +731,16 @@ namespace AntMe
         /// <param name="state"></param>
         private void SerializeType(BinaryWriter writer, ISerializableState state)
         {
-            using (MemoryStream mem = new MemoryStream())
+            using (var mem = new MemoryStream())
             {
-                using (BinaryWriter memWriter = new BinaryWriter(mem))
+                using (var memWriter = new BinaryWriter(mem))
                 {
                     // Serialize
                     state.SerializeFirst(memWriter, 2);
 
                     // Copy to Buffer
-                    int count = (int)mem.Position;
-                    byte[] buffer = new byte[count];
+                    var count = (int)mem.Position;
+                    var buffer = new byte[count];
                     mem.Position = 0;
                     mem.Read(buffer, 0, count);
 
@@ -799,7 +794,11 @@ namespace AntMe
             for (int i = 0; i < mapPropertyCount; i++)
             {
                 string propertyName = reader.ReadString();
-                MapProperty property = Properties.FirstOrDefault(p => p.GetType().FullName.Equals(propertyName));
+                var property = Properties.FirstOrDefault(p =>
+                {
+                    var fullName = p.GetType().FullName;
+                    return fullName != null && fullName.Equals(propertyName);
+                });
                 if (property != null)
                 {
                     DeserializeType(reader, property);
@@ -843,12 +842,12 @@ namespace AntMe
 
                     // Identify Map Tile Type
                     string tileTypeName = mapTileTypes[tileTypeIndex - 1];
-                    var tileTypeMap = context.Mapper.MapTiles.FirstOrDefault(t => t.Type.FullName.Equals(tileTypeName));
+                    var tileTypeMap = _context.Mapper.MapTiles.FirstOrDefault(t => t.Type.FullName != null && t.Type.FullName.Equals(tileTypeName));
                     MapTile mapTile;
                     if (tileTypeMap != null)
                     {
                         // Deserialize known Type
-                        mapTile = Activator.CreateInstance(tileTypeMap.Type, context) as MapTile;
+                        mapTile = Activator.CreateInstance(tileTypeMap.Type, _context) as MapTile;
                         DeserializeType(reader, mapTile);
                     }
                     else
@@ -856,7 +855,7 @@ namespace AntMe
                         // Handle missing Map Tile Type
                         int bufferSize = reader.ReadInt16();
                         byte[] payload = reader.ReadBytes(bufferSize);
-                        mapTile = new UnknownMapTile(context, tileTypeName, payload);
+                        mapTile = new UnknownMapTile(_context, tileTypeName, payload);
                     }
                     this[x, y] = mapTile;
 
@@ -865,19 +864,23 @@ namespace AntMe
                     if (materialIndex > 0)
                     {
                         string materialTypeName = materialTypes[materialIndex - 1];
-                        var materialMap = context.Mapper.MapMaterials.FirstOrDefault(m => m.Type.FullName.Equals(materialTypeName));
+                        var materialMap = _context.Mapper.MapMaterials.FirstOrDefault(m => m.Type.FullName != null && m.Type.FullName.Equals(materialTypeName));
                         if (materialMap != null)
                         {
                             // Deserialize known Type
-                            mapTile.Material = Activator.CreateInstance(materialMap.Type, context) as MapMaterial;
-                            DeserializeType(reader, mapTile.Material);
+                            if (mapTile != null)
+                            {
+                                mapTile.Material = Activator.CreateInstance(materialMap.Type, _context) as MapMaterial;
+                                DeserializeType(reader, mapTile.Material);
+                            }
                         }
                         else
                         {
                             // Handle missing Material Type
                             int bufferSize = reader.ReadInt16();
                             byte[] payload = reader.ReadBytes(bufferSize);
-                            mapTile.Material = new UnknownMaterial(context, materialTypeName, payload);
+                            if (mapTile != null)
+                                mapTile.Material = new UnknownMaterial(_context, materialTypeName, payload);
                         }
                     }
 
@@ -887,18 +890,25 @@ namespace AntMe
                     {
                         int propertyIndex = reader.ReadByte();
                         string propertyName = propertyTypes[propertyIndex];
-                        var property = mapTile.Properties.FirstOrDefault(p => p.GetType().FullName.Equals(propertyName));
-                        if (property != null)
+                        if (mapTile != null)
                         {
-                            // Deserialize Data
-                            DeserializeType(reader, property);
-                        }
-                        else
-                        {
-                            // Handle missing Property Type
-                            int bufferSize = reader.ReadInt16();
-                            byte[] payload = reader.ReadBytes(bufferSize);
-                            UnknownProperties.Add(propertyName, payload);
+                            var property = mapTile.Properties.FirstOrDefault(p =>
+                            {
+                                var fullName = p.GetType().FullName;
+                                return fullName != null && fullName.Equals(propertyName);
+                            });
+                            if (property != null)
+                            {
+                                // Deserialize Data
+                                DeserializeType(reader, property);
+                            }
+                            else
+                            {
+                                // Handle missing Property Type
+                                int bufferSize = reader.ReadInt16();
+                                byte[] payload = reader.ReadBytes(bufferSize);
+                                UnknownProperties.Add(propertyName, payload);
+                            }
                         }
                     }
                 }

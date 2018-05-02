@@ -8,13 +8,13 @@
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public FactionStateProperty() : base() { }
+        protected FactionStateProperty() : base() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Related Faction</param>
         /// <param name="property">Related Faction Property</param>
-        public FactionStateProperty(Faction faction, FactionProperty property) : base(property) { }
+        protected FactionStateProperty(Faction faction, FactionProperty property) : base(property) { }
     }
 }

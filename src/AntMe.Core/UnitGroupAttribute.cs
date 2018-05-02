@@ -5,7 +5,7 @@ namespace AntMe
     /// <summary>
     /// Attribute to name a Group of Units.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class UnitGroupAttribute : Attribute
     {
         /// <summary>

@@ -24,7 +24,7 @@ namespace AntMe
         /// </summary>
         /// <param name="context">Simulation Context</param>
         /// <param name="mapTile">Related Map Tile</param>
-        public MapTileProperty(SimulationContext context, MapTile mapTile) : base()
+        protected MapTileProperty(SimulationContext context, MapTile mapTile)
         {
             Context = context;
             MapTile = mapTile;

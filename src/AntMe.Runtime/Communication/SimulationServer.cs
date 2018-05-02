@@ -20,7 +20,7 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Initial Framerate for the simulation.
         /// </summary>
-        public const byte INITFRAMERATE = Level.FRAMES_PER_SECOND;
+        public const byte INITFRAMERATE = Level.FramesPerSecond;
 
         /// <summary>
         /// Default Name for Pipes.
@@ -338,8 +338,8 @@ namespace AntMe.Runtime.Communication
         private object simulationLock = new object();
         private TypeInfo levelType = null;
         private LevelInfo levelInfo = null;
-        private TypeInfo[] playerTypes = new TypeInfo[AntMe.Level.MAX_SLOTS];
-        private PlayerInfo[] playerInfos = new PlayerInfo[AntMe.Level.MAX_SLOTS];
+        private TypeInfo[] playerTypes = new TypeInfo[AntMe.Level.MaxSlots];
+        private PlayerInfo[] playerInfos = new PlayerInfo[AntMe.Level.MaxSlots];
         private Slot[] slots = new[] 
         { 
             new Slot() { Id = 0, ColorKey = (PlayerColor)0, PlayerInfo = false, Profile = null, ReadyState = false, Team = 0 },
@@ -459,7 +459,7 @@ namespace AntMe.Runtime.Communication
                     }
 
                     // Reset Slots
-                    for (byte i = 0; i < Level.MAX_SLOTS; i++)
+                    for (byte i = 0; i < Level.MaxSlots; i++)
                     {
                         slots[i].Profile = null;
                         playerInfos[i] = null;
@@ -817,7 +817,7 @@ namespace AntMe.Runtime.Communication
                     Map map = MapSerializer.Deserialize(context, levelInfo.Map);
 
                     int count = 0;
-                    for (int i = 0; i < Level.MAX_SLOTS; i++)
+                    for (int i = 0; i < Level.MaxSlots; i++)
                     {
                         // Check Player
                         if (slots[i].Profile != null)

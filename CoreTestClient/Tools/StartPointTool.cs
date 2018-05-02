@@ -27,9 +27,9 @@ namespace CoreTestClient.Tools
             Image image = Image.FromFile(path);
             button.Image = image;
 
-            buttons = new ToolStripItem[Map.MAX_STARTPOINTS];
-            StartPoints = new Index2?[Map.MAX_STARTPOINTS];
-            for (byte i = 0; i < Map.MAX_STARTPOINTS; i++)
+            buttons = new ToolStripItem[Map.MaxStartpoints];
+            StartPoints = new Index2?[Map.MaxStartpoints];
+            for (byte i = 0; i < Map.MaxStartpoints; i++)
             {
                 ToolStripItem b = button.DropDownItems.Add(string.Format("Slot {0}", i + 1));
                 buttons[i] = b;

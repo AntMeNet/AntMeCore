@@ -5,20 +5,18 @@
     /// </summary>
     public abstract class ItemProperty : Property
     {
-        private readonly Item item;
-
         /// <summary>
         /// Default Constructor.
         /// </summary>
         /// <param name="item">Reference to the related Item.</param>
-        public ItemProperty(Item item)
+        protected ItemProperty(Item item)
         {
-            this.item = item;
+            Item = item;
         }
 
         /// <summary>
         /// Reference to the related Item.
         /// </summary>
-        public Item Item { get { return item; } }
+        public Item Item { get; }
     }
 }

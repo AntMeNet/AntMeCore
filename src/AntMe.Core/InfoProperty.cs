@@ -20,7 +20,7 @@
         /// </summary>
         /// <param name="property">Property</param>
         /// <param name="observer">Observer</param>
-        public InfoProperty(Property property, Item observer)
+        protected InfoProperty(Property property, Item observer)
         {
             Property = property;
             Observer = observer;

@@ -6,7 +6,7 @@ namespace AntMe
     /// <summary>
     /// Level Description Attribute to hold all relevant Information about a Level.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     [Serializable]
     public sealed class LevelDescriptionAttribute : Attribute
     {
@@ -53,18 +53,20 @@ namespace AntMe
 
             // Check Name
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException("name", string.Format("The Level Desciption with the ID {0} has no valid Name", id.ToString()));
+                throw new ArgumentNullException(nameof(name),
+                    $"The Level Desciption with the ID {id.ToString()} has no valid Name");
 
             // Check Description
             if (string.IsNullOrEmpty(description))
-                throw new ArgumentNullException("description", string.Format("The Level Desciption with the ID {0} and Name '{1}' has no valid Description", id.ToString(), name));
+                throw new ArgumentNullException(nameof(description),
+                    $"The Level Desciption with the ID {id.ToString()} and Name '{name}' has no valid Description");
 
             Id = id;
             Name = name;
             Description = description;
 
             MinPlayerCount = 0;
-            MaxPlayerCount = Level.MAX_SLOTS;
+            MaxPlayerCount = Level.MaxSlots;
             Hidden = false;
         }
 
@@ -116,12 +118,12 @@ namespace AntMe
                 throw new ArgumentException("Description kann nicht leer sein");
 
             // Min Player
-            if (MinPlayerCount < 0 || MinPlayerCount > Level.MAX_SLOTS)
-                throw new ArgumentOutOfRangeException(string.Format("MinPlayerCount muss zwischen 0 und {0} liegen.", Level.MAX_SLOTS));
+            if (MinPlayerCount < 0 || MinPlayerCount > Level.MaxSlots)
+                throw new ArgumentOutOfRangeException(string.Format("MinPlayerCount muss zwischen 0 und {0} liegen.", Level.MaxSlots));
 
             // Max Player
-            if (MaxPlayerCount < 0 || MaxPlayerCount > Level.MAX_SLOTS)
-                throw new ArgumentOutOfRangeException(string.Format("MaxPlayerCount muss zwischen 0 und {0} liegen.", Level.MAX_SLOTS));
+            if (MaxPlayerCount < 0 || MaxPlayerCount > Level.MaxSlots)
+                throw new ArgumentOutOfRangeException(string.Format("MaxPlayerCount muss zwischen 0 und {0} liegen.", Level.MaxSlots));
         }
     }
 }

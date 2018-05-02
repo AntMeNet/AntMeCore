@@ -13,19 +13,19 @@
         /// <summary>
         /// Reference to the Property.
         /// </summary>
-        protected readonly new ItemProperty Property;
+        protected new readonly ItemProperty Property;
 
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public ItemStateProperty() : base() { }
+        protected ItemStateProperty() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         /// <param name="property">Related Engine Property</param>
-        public ItemStateProperty(Item item, ItemProperty property) : base(property)
+        protected ItemStateProperty(Item item, ItemProperty property) : base(property)
         {
             Item = item;
             Property = property;

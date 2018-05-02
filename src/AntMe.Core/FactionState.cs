@@ -61,13 +61,13 @@ namespace AntMe
         /// <summary>
         /// Default Contructor for the Deserializer.
         /// </summary>
-        public FactionState() : base() { }
+        public FactionState() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Faction</param>
-        public FactionState(Faction faction) : base()
+        public FactionState(Faction faction)
         {
             Faction = faction;
 
@@ -127,7 +127,7 @@ namespace AntMe
         /// <returns>State Description</returns>
         public override string ToString()
         {
-            return string.Format("{0} ({1}/{2})", Name, FactionName, SlotIndex);
+            return $"{Name} ({FactionName}/{SlotIndex})";
         }
     }
 

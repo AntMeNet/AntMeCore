@@ -130,7 +130,7 @@ namespace AntMe.Runtime
             RegisterFactionProperty<T, FactionStateProperty, I>(extensionPack, name, false, true, null, createInfoDelegate);
         }
 
-        public void RegisterFactionPropertySI<T, S, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+        public void RegisterFactionPropertySi<T, S, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
             where T : FactionProperty
             where S : FactionStateProperty
             where I : FactionInfoProperty

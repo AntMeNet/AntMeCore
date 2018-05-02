@@ -20,24 +20,21 @@ namespace AntMe
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
-        /// <param name="context">Simulation Context</param>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="item">Refernce to the Item</param>
-        public UnitInterop(Faction faction, FactionItem item)
+        protected UnitInterop(Faction faction, FactionItem item)
         {
             if (faction == null)
-                throw new ArgumentNullException("faction");
+                throw new ArgumentNullException(nameof(faction));
 
             // Faction soll bereits teil eines Levels sein.
             if (faction.Level == null)
                 throw new ArgumentException("Faction is not Part of a Level");
 
             // AntItem darf nicht null sein.
-            if (item == null)
-                throw new ArgumentNullException("item");
 
             Faction = faction;
-            Item = item;
+            Item = item ?? throw new ArgumentNullException(nameof(item));
         }
 
         #region Properties

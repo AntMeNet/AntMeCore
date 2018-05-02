@@ -13,7 +13,7 @@
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public FactionItem(SimulationContext context, Faction faction, Vector2 position, float radius, Angle orientation)
+        protected FactionItem(SimulationContext context, Faction faction, Vector2 position, float radius, Angle orientation)
             : this(context, null, faction, position, radius, orientation)
         {
         }
@@ -27,7 +27,7 @@
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public FactionItem(SimulationContext context, UnitAttributeCollection attributes, Faction faction, Vector2 position, float radius, Angle orientation)
+        protected FactionItem(SimulationContext context, UnitAttributeCollection attributes, Faction faction, Vector2 position, float radius, Angle orientation)
             : base(context, attributes, position, radius, orientation)
         {
             Faction = faction;
@@ -36,6 +36,6 @@
         /// <summary>
         /// Returns a reference to the related Faction.
         /// </summary>
-        public Faction Faction { get; private set; }
+        public Faction Faction { get; }
     }
 }

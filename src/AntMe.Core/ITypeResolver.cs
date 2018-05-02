@@ -22,9 +22,15 @@ namespace AntMe
         /// <summary>
         /// Resolves the given Map.
         /// </summary>
+        /// <param name="context"></param>
         /// <param name="map">Map</param>
         void ResolveMap(SimulationContext context, Map map);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="tile"></param>
         void ResolveMapTile(SimulationContext context, MapTile tile);
 
         /// <summary>
@@ -34,8 +40,19 @@ namespace AntMe
         /// <returns>Map State</returns>
         MapState CreateMapState(Map map);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <returns></returns>
         MapTileState CreateMapTileState(MapTile tile);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <param name="observer"></param>
+        /// <returns></returns>
         MapTileInfo CreateMapTileInfo(MapTile tile, Item observer);
 
         #endregion
@@ -51,17 +68,17 @@ namespace AntMe
         /// <summary>
         /// Erstellt ein neues State-Objekt für das übergebene Item.
         /// </summary>
-        /// <param name="Item">Zugehöriges Item</param>
+        /// <param name="item">Zugehöriges Item</param>
         /// <returns>State Objekt</returns>
-        ItemState CreateItemState(Item Item);
+        ItemState CreateItemState(Item item);
 
         /// <summary>
         /// Erstellt ein neues Info-Objekt auf Basis der beiden übergebenen Items.
         /// </summary>
-        /// <param name="Item">Item das im Info Objekt repräsentiert wird</param>
+        /// <param name="item">Item das im Info Objekt repräsentiert wird</param>
         /// <param name="observer">Item das auf das Basis-Item schaut.</param>
         /// <returns>Info</returns>
-        ItemInfo CreateItemInfo(Item Item, Item observer);
+        ItemInfo CreateItemInfo(Item item, Item observer);
 
         #endregion
 

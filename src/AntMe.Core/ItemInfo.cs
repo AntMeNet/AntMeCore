@@ -31,34 +31,22 @@ namespace AntMe
         /// <summary>
         /// Gets the real Distance (Radius to Radius) to the Item.
         /// </summary>
-        public float Distance
-        {
-            get { return Math.Max(0, GetDistance(Observer, Item) - Radius - Observer.Radius); }
-        }
+        public float Distance => Math.Max(0, GetDistance(Observer, Item) - Radius - Observer.Radius);
 
         /// <summary>
         /// Gets the direction to the Item.
         /// </summary>
-        public int Direction
-        {
-            get { return GetDirection(Observer, Item); }
-        }
+        public int Direction => GetDirection(Observer, Item);
 
         /// <summary>
         /// Returns the Item Radius.
         /// </summary>
-        public float Radius
-        {
-            get { return Item.Radius; }
-        }
+        public float Radius => Item.Radius;
 
         /// <summary>
         /// Returns true of the Item is still alive.
         /// </summary>
-        public bool IsAlive
-        {
-            get { return Item.Id > 0; }
-        }
+        public bool IsAlive => Item.Id > 0;
 
         /// <summary>
         /// Internal call to get the related Item.
@@ -86,29 +74,15 @@ namespace AntMe
         /// <returns>Is this the same Info?</returns>
         public override bool Equals(object obj)
         {
-            if (obj == null)
-                return false;
-
             if (!(obj is ItemInfo))
                 return false;
 
-            var other = obj as ItemInfo;
+            var other = (ItemInfo) obj;
             return Item == other.Item && 
                 Observer == other.Observer;
         }
         
         #region Static Helper
-
-        /// <summary>
-        /// Calculates the Distance between two Items.
-        /// </summary>
-        /// <param name="item1">Item Info 1</param>
-        /// <param name="item2">Item Info 2</param>
-        /// <returns></returns>
-        private static float GetDistance(ItemInfo item1, ItemInfo item2)
-        {
-            return GetDistance(item1.Item, item2.Item);
-        }
 
         /// <summary>
         /// Calculates the Distance between two Items.
@@ -119,17 +93,6 @@ namespace AntMe
         private static float GetDistance(Item item1, Item item2)
         {
             return Item.GetDistance(item1, item2);
-        }
-
-        /// <summary>
-        /// Calculates the Direction from Item 1 to Item 2.
-        /// </summary>
-        /// <param name="source">Item Info 1</param>
-        /// <param name="target">Item Info 2</param>
-        /// <returns></returns>
-        private static int GetDirection(ItemInfo source, ItemInfo target)
-        {
-            return Item.GetDirection(source.Item, target.Item).Degree;
         }
 
         /// <summary>

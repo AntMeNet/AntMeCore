@@ -70,19 +70,19 @@ namespace AntMe.Basics.MapTiles
         {
             // Clamp Position to the Cell Boarders
             position = new Vector2(
-                Math.Max(0, Math.Min(Map.CELLSIZE, position.X)),
-                Math.Max(0, Math.Min(Map.CELLSIZE, position.Y)));
+                Math.Max(0, Math.Min(Map.Cellsize, position.X)),
+                Math.Max(0, Math.Min(Map.Cellsize, position.Y)));
 
             // Normalize to [0..1(
-            position /= Map.CELLSIZE;
+            position /= Map.Cellsize;
 
             // Calculation
             switch (Orientation)
             {
-                case MapTileOrientation.NotRotated: return (1f - position.Y + HeightLevel) * Map.LEVELHEIGHT;
-                case MapTileOrientation.RotBy90Degrees: return (position.Y + HeightLevel) * Map.LEVELHEIGHT;
-                case MapTileOrientation.RotBy180Degrees: return (position.X + HeightLevel) * Map.LEVELHEIGHT;
-                case MapTileOrientation.RotBy270Degrees: return (1f - position.X + HeightLevel) * Map.LEVELHEIGHT;
+                case MapTileOrientation.NotRotated: return (1f - position.Y + HeightLevel) * Map.Levelheight;
+                case MapTileOrientation.RotBy90Degrees: return (position.Y + HeightLevel) * Map.Levelheight;
+                case MapTileOrientation.RotBy180Degrees: return (position.X + HeightLevel) * Map.Levelheight;
+                case MapTileOrientation.RotBy270Degrees: return (1f - position.X + HeightLevel) * Map.Levelheight;
                 default: throw new NotSupportedException("Unsupported Map Tile Orientation");
             }
         }

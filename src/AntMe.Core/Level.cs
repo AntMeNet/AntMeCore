@@ -1,7 +1,6 @@
 ﻿using AntMe.Serialization;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace AntMe
@@ -14,25 +13,22 @@ namespace AntMe
         /// <summary>
         /// Gives the maximum Number of Players per Level.
         /// </summary>
-        public const byte MAX_SLOTS = 8;
+        public const byte MaxSlots = 8;
 
         /// <summary>
         /// Frames per Second for a realtime Simulation.
         /// </summary>
-        public const int FRAMES_PER_SECOND = 20;
+        public const int FramesPerSecond = 20;
 
         /// <summary>
         /// Simulation Engine.
         /// </summary>
-        private Engine engine = null;
+        private Engine _engine;
 
         /// <summary>
         /// Slot specific Settings.
         /// </summary>
-        private KeyValueStore[] slotSettings;
-
-        // Last ID: 0
-        private readonly Tracer tracer = new Tracer("AntMe.Level");
+        private readonly KeyValueStore[] _slotSettings;
 
         /// <summary>
         /// Holds the current Simulation Context for this Level.
@@ -42,7 +38,7 @@ namespace AntMe
         /// <summary>
         /// Holds the Level Description from the Attribute.
         /// </summary>
-        public LevelDescriptionAttribute LevelDescription { get; private set; }
+        public LevelDescriptionAttribute LevelDescription { get; }
 
         /// <summary>
         /// Returns the last occured Exception (on Failure)
@@ -62,19 +58,19 @@ namespace AntMe
         /// <summary>
         /// Global Settings for the whole Level.
         /// </summary>
-        public KeyValueStore Settings { get { return Context.Settings; } }
+        public KeyValueStore Settings => Context.Settings;
 
         /// <summary>
         /// Reference to the Simulation Engine.
         /// </summary>
-        public Engine Engine { get { return engine; } }
+        public Engine Engine => _engine;
 
         /// <summary>
         /// Level related Randomizer. Should be used for random generated Items 
         /// for the common level. All Factions have own Randomizer to use for 
         /// Faction-relatved stuff.
         /// </summary>
-        public Random Random { get { return Context.Random; } }
+        public Random Random => Context.Random;
 
         /// <summary>
         /// Returns the current Status of the Level.
@@ -100,18 +96,18 @@ namespace AntMe
             Context = new SimulationContext(context.Resolver, context.Mapper, context.Settings);
 
             // Clone Settings for Slots
-            slotSettings = new KeyValueStore[MAX_SLOTS];
-            for (int i = 0; i < MAX_SLOTS; i++)
-                slotSettings[i] = Settings.Clone();
+            _slotSettings = new KeyValueStore[MaxSlots];
+            for (int i = 0; i < MaxSlots; i++)
+                _slotSettings[i] = Settings.Clone();
 
             // Give the Level Designer the chance to change Faction/Slot Settings.
-            DoSettings(Settings, slotSettings);
+            DoSettings(Settings, _slotSettings);
 
             Mode = LevelMode.Uninit;
 
             // Ermitteln des LevelDescriptionAttribute
-            Type level = GetType();
-            object[] levelDescriptions = level.GetCustomAttributes(typeof(LevelDescriptionAttribute), false);
+            var level = GetType();
+            var levelDescriptions = level.GetCustomAttributes(typeof(LevelDescriptionAttribute), false);
             if (levelDescriptions.Length != 1)
             {
                 Mode = LevelMode.InitFailed;
@@ -158,18 +154,18 @@ namespace AntMe
                 new Random(RandomSeed));
 
             // Check for the right number of Slots.
-            if (slots.Length > MAX_SLOTS)
+            if (slots.Length > MaxSlots)
             {
-                var exception = new ArgumentOutOfRangeException("There are too many Slots");
+                var exception = new ArgumentOutOfRangeException(nameof(slots), "There are too many Slots");
                 SetMode(LevelMode.InitFailed, exception);
                 throw exception;
             }
 
             // Generate Engine
-            engine = new Engine(Context.Resolver);
+            _engine = new Engine(Context.Resolver);
 
             // Generate Map and validate.
-            Map map = MapSerializer.Deserialize(Context, GetMap());
+            var map = MapSerializer.Deserialize(Context, GetMap());
             if (map == null)
             {
                 var exception = new NotSupportedException("No Map was created");
@@ -208,9 +204,9 @@ namespace AntMe
             }
 
             // Gegencheck mit Level-Attributen
-            int playerCount = 0;
-            int highestSlot = 0;
-            for (int i = 0; i < slots.Length; i++)
+            var playerCount = 0;
+            var highestSlot = 0;
+            for (var i = 0; i < slots.Length; i++)
             {
                 if (slots[i] != null)
                 {
@@ -236,33 +232,34 @@ namespace AntMe
             // Faction Counts mit Map- und Level-Requirements gegenchecken
             if (playerCount < minPlayer)
             {
-                var exception = new NotSupportedException(string.Format("Not enought player. Requires {0} Player", minPlayer));
+                var exception = new NotSupportedException($"Not enought player. Requires {minPlayer} Player");
                 SetMode(LevelMode.InitFailed, exception);
                 throw exception;
             }
 
             if (playerCount > maxPlayer)
             {
-                var exception = new NotSupportedException(string.Format("Too many player. Requires a Maximum of {0} Player", maxPlayer));
+                var exception = new NotSupportedException($"Too many player. Requires a Maximum of {maxPlayer} Player");
                 SetMode(LevelMode.InitFailed, exception);
                 throw exception;
             }
 
             if (highestSlot > map.GetPlayerCount())
             {
-                var exception = new NotSupportedException(string.Format("Too many Slots used. Map has only {0} Slots", map.GetPlayerCount()));
+                var exception = new NotSupportedException(
+                    $"Too many Slots used. Map has only {map.GetPlayerCount()} Slots");
                 SetMode(LevelMode.InitFailed, exception);
                 throw exception;
             }
 
             // Factions erzeugen
-            Factions = new Faction[MAX_SLOTS];
+            Factions = new Faction[MaxSlots];
             for (int i = 0; i < slots.Length; i++)
             {
                 if (slots[i] == null)
                     continue;
 
-                SimulationContext factionContext = new SimulationContext(Context.Resolver, Context.Mapper, slotSettings[i]);
+                SimulationContext factionContext = new SimulationContext(Context.Resolver, Context.Mapper, _slotSettings[i]);
 
                 // Identify and generate Faction
                 try
@@ -278,15 +275,15 @@ namespace AntMe
                 // In Case the Faction could not be found...
                 if (Factions[i] == null)
                 {
-                    var exception = new Exception(string.Format("Cound not identify Faction for player {0}.", slots[i].Name));
+                    var exception = new Exception($"Cound not identify Faction for player {slots[i].Name}.");
                     SetMode(LevelMode.InitFailed, exception);
                     throw exception;
                 }
             }
 
-            engine.Init(map);
-            engine.OnInsertItem += engine_OnInsertItem;
-            engine.OnRemoveItem += engine_OnRemoveItem;
+            _engine.Init(map);
+            _engine.OnInsertItem += engine_OnInsertItem;
+            _engine.OnRemoveItem += engine_OnRemoveItem;
 
             // Fraktionen ins Spiel einbetten
             for (byte i = 0; i < Factions.Length; i++)
@@ -336,18 +333,15 @@ namespace AntMe
         /// <param name="faction"></param>
         private void InitFaction(byte slotIndex, LevelSlot slot, Faction faction)
         {
-            if (faction == null)
-                return;
-
-            faction.Init(
+            faction?.Init(
                 slotIndex,
                 slot.Team,
                 slot.Name,
                 slot.Color,
                 new Random(RandomSeed + slotIndex + 1),
                 new Vector2(
-                (engine.Map.StartPoints[slotIndex].X + 0.5f) * Map.CELLSIZE,
-                (engine.Map.StartPoints[slotIndex].Y + 0.5f) * Map.CELLSIZE));
+                    (_engine.Map.StartPoints[slotIndex].X + 0.5f) * Map.Cellsize,
+                    (_engine.Map.StartPoints[slotIndex].Y + 0.5f) * Map.Cellsize));
         }
 
         #endregion
@@ -401,12 +395,12 @@ namespace AntMe
             // TODO: try/catch für Programmierfehler
             // TODO: Watchdog für Laufzeit-Überschreitung
 
-            engine.Update();
+            _engine.Update();
 
             // Updates der Factions
-            for (int i = 0; i < MAX_SLOTS; i++)
+            for (int i = 0; i < MaxSlots; i++)
             {
-                Factions[i]?.Update(engine.Round);
+                Factions[i]?.Update(_engine.Round);
             }
 
             try
@@ -434,23 +428,23 @@ namespace AntMe
                 State.Map = Engine.Map.GetState();
 
                 // Collect Faction States
-                for (int i = 0; i < MAX_SLOTS; i++)
+                for (int i = 0; i < MaxSlots; i++)
                     if (Factions[i] != null)
                         State.Factions.Add(Factions[i].GetFactionState());
             }
 
-            State.Round = engine.Round;
+            State.Round = _engine.Round;
             State.Mode = Mode;
 
             // Remove old Items
             foreach (var item in State.Items.ToArray())
             {
-                if (!engine.Items.Any(i => i.Id == item.Id))
+                if (_engine.Items.All(i => i.Id != item.Id))
                     State.Items.Remove(item);
             }
 
             // Insert new Items
-            foreach (Item item in engine.Items)
+            foreach (Item item in _engine.Items)
             {
                 ItemState itemState = item.GetState();
                 if (!State.Items.Contains(itemState))
@@ -511,13 +505,13 @@ namespace AntMe
 
             // Make shure there is a winner
             if (slots.Length < 1)
-                throw new ArgumentException("No Winner selected", "slots");
+                throw new ArgumentException("No Winner selected", nameof(slots));
 
             for (int i = 0; i < slots.Length; i++)
             {
                 // Check for valid Slot Index
-                if (slots[i] < 0 && slots[i] >= MAX_SLOTS)
-                    throw new ArgumentException(string.Format("Slot must be between 0 and {0}", MAX_SLOTS - 1), "slots");
+                if (slots[i] >= MaxSlots)
+                    throw new ArgumentException($"Slot must be between 0 and {MaxSlots - 1}", nameof(slots));
 
                 // Check for existing Faction
                 if (Factions[slots[i]] == null)
@@ -548,13 +542,13 @@ namespace AntMe
 
             // Make shure there is a winner
             if (slots.Length < 1)
-                throw new ArgumentException("No Winner selected", "slots");
+                throw new ArgumentException("No Winner selected", nameof(slots));
 
             for (int i = 0; i < slots.Length; i++)
             {
                 // Check for valid Slot Index
-                if (slots[i] < 0 && slots[i] >= MAX_SLOTS)
-                    throw new ArgumentException(string.Format("Slot must be between 0 and {0}", MAX_SLOTS - 1), "slots");
+                if (slots[i] >= MaxSlots)
+                    throw new ArgumentException($"Slot must be between 0 and {MaxSlots - 1}", nameof(slots));
 
                 // Check for existing Faction
                 if (Factions[slots[i]] == null)

@@ -8,7 +8,7 @@ namespace AntMe
     /// </summary>
     public sealed class UnitAttributeCollection
     {
-        private Dictionary<string, sbyte> values;
+        private readonly Dictionary<string, sbyte> _values;
 
         /// <summary>
         /// Default Constructor.
@@ -19,11 +19,11 @@ namespace AntMe
         {
             Name = name;
 
-            values = new Dictionary<string, sbyte>();
+            _values = new Dictionary<string, sbyte>();
             int sum = 0;
             foreach (var item in attributes)
             {
-                values.Add(item.Key, item.Value);
+                _values.Add(item.Key, item.Value);
                 sum += item.Value;
             }
 
@@ -35,12 +35,12 @@ namespace AntMe
         /// <summary>
         /// Gets or sets Name of the Unit Category.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// List of all available Keys.
         /// </summary>
-        public IEnumerable<string> Keys { get { return values.Keys; } }
+        public IEnumerable<string> Keys => _values.Keys;
 
         /// <summary>
         /// Returns the Value of the given Key or 0 if not available.
@@ -49,8 +49,7 @@ namespace AntMe
         /// <returns>Attribute Value or 0</returns>
         public sbyte GetValue(string key)
         {
-            sbyte result = 0;
-            values.TryGetValue(key, out result);
+            _values.TryGetValue(key, out var result);
             return result;
         }
     }

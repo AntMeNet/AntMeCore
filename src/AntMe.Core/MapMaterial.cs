@@ -13,20 +13,20 @@ namespace AntMe
         /// </summary>
         protected readonly SimulationContext Context;
 
-        private float speed;
+        private float _speed;
 
         /// <summary>
         /// Default Constructor without Parameters.
         /// </summary>
         /// <param name="context">Simulation Context</param>
-        public MapMaterial(SimulationContext context) : this(context, 1f) { }
+        protected MapMaterial(SimulationContext context) : this(context, 1f) { }
 
         /// <summary>
         /// Default Constructor.
         /// </summary>
         /// <param name="context">Simulation Context</param>
         /// <param name="speed">Map Tile Speed</param>
-        public MapMaterial(SimulationContext context, float speed)
+        protected MapMaterial(SimulationContext context, float speed)
         {
             Context = context;
             Speed = speed;
@@ -39,10 +39,10 @@ namespace AntMe
         [Description("Speed Multiplier for walking Units.")]
         public float Speed
         {
-            get { return speed; }
+            get => _speed;
             protected set
             {
-                speed = value;
+                _speed = value;
                 OnSpeedChanged?.Invoke(value);
             }
         }

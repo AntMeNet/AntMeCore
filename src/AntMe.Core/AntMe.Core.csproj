@@ -144,9 +144,6 @@
     <Compile Include="AntMeExtensionAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PropertyStructure.cd" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Serialization\AntVideoStructureV1.txt" />
     <Content Include="Serialization\AntVideoStructureV2.txt" />
     <Content Include="Serialization\MapFileStructureV1.txt" />

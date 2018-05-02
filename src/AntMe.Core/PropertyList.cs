@@ -11,32 +11,20 @@ namespace AntMe
     /// <typeparam name="T">Property Type</typeparam>
     public abstract class PropertyList<T> : IEnumerable<T> where T : Property
     {
-        private readonly Dictionary<Type, T> properties = new Dictionary<Type, T>();
+        private readonly Dictionary<Type, T> _properties = new Dictionary<Type, T>();
 
         /// <summary>
         /// Gets the Property of the given Type.
         /// </summary>
         /// <param name="type">Requested Property Type</param>
         /// <returns>Property Instance or null</returns>
-        public T this[Type type]
-        {
-            get
-            {
-                T result;
-                if (properties.TryGetValue(type, out result))
-                    return result;
-                return null;
-            }
-        }
+        public T this[Type type] => _properties.TryGetValue(type, out var result) ? result : null;
 
         /// <summary>
         /// List of all Properties.
         /// </summary>
         [Browsable(false)]
-        public IEnumerable<T> Properties
-        {
-            get { return properties.Values; }
-        }
+        public IEnumerable<T> Properties => _properties.Values;
 
         /// <summary>
         /// Generates an Enumerator for all Properties.
@@ -44,7 +32,7 @@ namespace AntMe
         /// <returns>Enumerator</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            return properties.Values.GetEnumerator();
+            return _properties.Values.GetEnumerator();
         }
 
         /// <summary>
@@ -53,7 +41,7 @@ namespace AntMe
         /// <returns>Enumerator</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return properties.Values.GetEnumerator();
+            return _properties.Values.GetEnumerator();
         }
 
         /// <summary>
@@ -63,16 +51,16 @@ namespace AntMe
         public void AddProperty(T property)
         {
             if (property == null)
-                throw new ArgumentNullException("property");
+                throw new ArgumentNullException(nameof(property));
 
             // Check for Type Collisions
-            Type type = property.GetType();
-            if (properties.ContainsKey(type))
+            var type = property.GetType();
+            if (_properties.ContainsKey(type))
                 throw new InvalidOperationException("Property Type already added");
 
             ValidateAddProperty(property);
 
-            properties.Add(type, property);
+            _properties.Add(type, property);
         }
 
         /// <summary>
@@ -84,11 +72,11 @@ namespace AntMe
         /// <summary>
         /// Checks if the Property is part of the List.
         /// </summary>
-        /// <typeparam name="V">Property Type to check</typeparam>
+        /// <typeparam name="TV">Property Type to check</typeparam>
         /// <returns>Is in List</returns>
-        public bool ContainsProperty<V>() where V : T
+        public bool ContainsProperty<TV>() where TV : T
         {
-            return ContainsProperty(typeof(V));
+            return ContainsProperty(typeof(TV));
         }
 
         /// <summary>
@@ -99,17 +87,17 @@ namespace AntMe
         public bool ContainsProperty(Type type)
         {
             if (type == null) return false;
-            return properties.ContainsKey(type);
+            return _properties.ContainsKey(type);
         }
 
         /// <summary>
         /// Gets the Property with the requested Type.
         /// </summary>
-        /// <typeparam name="V">Property Type</typeparam>
+        /// <typeparam name="TV">Property Type</typeparam>
         /// <returns>Instance of this Type or null</returns>
-        public V GetProperty<V>() where V : T
+        public TV GetProperty<TV>() where TV : T
         {
-            return GetProperty(typeof(V)) as V;
+            return GetProperty(typeof(TV)) as TV;
         }
 
         /// <summary>
@@ -119,8 +107,8 @@ namespace AntMe
         /// <returns>Instance of this Type or null</returns>
         public T GetProperty(Type type)
         {
-            if (type != null && properties.ContainsKey(type))
-                return properties[type];
+            if (type != null && _properties.ContainsKey(type))
+                return _properties[type];
             return null;
         }
     }

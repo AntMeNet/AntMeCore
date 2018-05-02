@@ -14,7 +14,7 @@
         /// Default Constructor.
         /// </summary>
         /// <param name="faction">Reference to the related Faction.</param>
-        public FactionProperty(Faction faction) : base()
+        protected FactionProperty(Faction faction)
         {
             Faction = faction;
         }

@@ -30,14 +30,14 @@ namespace AntMe
         /// </summary>
         public abstract byte[] Picture { get; }
 
-        private List<Type> _registeredLevels = new List<Type>();
+        private readonly List<Type> _registeredLevels = new List<Type>();
+
         private List<bool> _lockState = new List<bool>();
-        private int counter = 0;
 
         /// <summary>
         /// Constructor of the campaign.
         /// </summary>
-        public Campaign()
+        protected Campaign()
         {
             OnInit();
         }
@@ -74,9 +74,13 @@ namespace AntMe
         /// <param name="level">Unlocked level</param>
         protected void UnlockLevel(Type level)
         {
-            for (int i = 0; i < _registeredLevels.Count; i++)
+            for (var i = 0; i < _registeredLevels.Count; i++)
+            {
                 if (_registeredLevels[i] == level)
+                {
                     _lockState[i] = true;
+                }
+            }
         }
 
         /// <summary>
@@ -86,8 +90,12 @@ namespace AntMe
         protected void LockLevel(Type level)
         {
             for (int i = 0; i < _registeredLevels.Count; i++)
+            {
                 if (_registeredLevels[i] == level)
+                {
                     _lockState[i] = false;
+                }
+            }
         }
 
         /// <summary>
@@ -96,11 +104,15 @@ namespace AntMe
         /// <returns></returns>
         public List<Type> GetUnlockedLevels()
         {
-            List<Type> levels = new List<Type>();
+            var levels = new List<Type>();
 
             for (int i = 0; i < _registeredLevels.Count; i++)
+            {
                 if (_lockState[i])
+                {
                     levels.Add(_registeredLevels[i]);
+                }
+            }
 
             return levels;
         }
@@ -112,9 +124,9 @@ namespace AntMe
         {
             get 
             {
-                using (MemoryStream stream = new MemoryStream())
+                using (var stream = new MemoryStream())
                 {
-                    BinaryFormatter formatter = new BinaryFormatter();
+                    var formatter = new BinaryFormatter();
                     formatter.Serialize(stream, _lockState);
 
                     byte[] buffer = new byte[stream.Position];
@@ -126,9 +138,9 @@ namespace AntMe
             }
             set 
             {
-                using (MemoryStream stream = new MemoryStream(value))
+                using (var stream = new MemoryStream(value))
                 {
-                    BinaryFormatter formatter = new BinaryFormatter();
+                    var formatter = new BinaryFormatter();
                     _lockState = formatter.Deserialize(stream) as List<bool>;
                 }
             }

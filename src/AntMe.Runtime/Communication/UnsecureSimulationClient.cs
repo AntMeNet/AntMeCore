@@ -22,8 +22,8 @@ namespace AntMe.Runtime.Communication
             simulation = Activator.CreateInstance(levelType, context) as Level;
 
             // Player erzeugen
-            LevelSlot[] levelSlots = new LevelSlot[AntMe.Level.MAX_SLOTS];
-            for (int i = 0; i < AntMe.Level.MAX_SLOTS; i++)
+            LevelSlot[] levelSlots = new LevelSlot[AntMe.Level.MaxSlots];
+            for (int i = 0; i < AntMe.Level.MaxSlots; i++)
             {
                 // Skipp, falls nicht vorhanden
                 if (players[i] == null)

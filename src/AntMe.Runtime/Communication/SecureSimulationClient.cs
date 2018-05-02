@@ -17,10 +17,10 @@
             Setup settings = new Setup();
             settings.Seed = seed;
             settings.Level = level.Type;
-            settings.Player = new TypeInfo[AntMe.Level.MAX_SLOTS];
-            settings.Colors = new PlayerColor[AntMe.Level.MAX_SLOTS];
+            settings.Player = new TypeInfo[AntMe.Level.MaxSlots];
+            settings.Colors = new PlayerColor[AntMe.Level.MaxSlots];
 
-            for (int i = 0; i < AntMe.Level.MAX_SLOTS; i++)
+            for (int i = 0; i < AntMe.Level.MaxSlots; i++)
             {
                 // Farben übertragen
                 settings.Colors[i] = slots[i].ColorKey;

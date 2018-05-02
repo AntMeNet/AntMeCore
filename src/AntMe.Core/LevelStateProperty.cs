@@ -9,13 +9,13 @@ namespace AntMe
         /// <summary>
         /// Default Constructor for the Deserializer.
         /// </summary>
-        public LevelStateProperty() : base() { }
+        protected LevelStateProperty() { }
 
         /// <summary>
         /// Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="level">Related Level</param>
         /// <param name="property">Related Level Property</param>
-        public LevelStateProperty(Level level, LevelProperty property) : base(property) { }
+        protected LevelStateProperty(Level level, LevelProperty property) : base(property) { }
     }
 }

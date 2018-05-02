@@ -666,7 +666,7 @@ namespace AntMe.Basics.EngineProperties
         /// <returns></returns>
         private PositionResult HandleCeilingBorder(ref float positionZ)
         {
-            positionZ = Map.MAX_Z - Radius - Vector3.EpsMin;
+            positionZ = Map.MaxZ - Radius - Vector3.EpsMin;
             return PositionResult.Blocked;
         }
 
@@ -679,7 +679,7 @@ namespace AntMe.Basics.EngineProperties
         private PositionResult HandleFloorBorder(ref float positionZ, float height)
         {
             // TODO: Cell-Höhe berücksichtigen
-            positionZ = Math.Max(Map.MIN_Z, height);
+            positionZ = Math.Max(Map.MinZ, height);
             return PositionResult.Blocked;
         }
 
@@ -713,7 +713,7 @@ namespace AntMe.Basics.EngineProperties
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    positionX = ((cell.X + 1) * Map.CELLSIZE) + Radius;
+                    positionX = ((cell.X + 1) * Map.Cellsize) + Radius;
                     if (!forced) TriggerCellEvent(Compass.West);
                     return PositionResult.Blocked;
                 }
@@ -738,7 +738,7 @@ namespace AntMe.Basics.EngineProperties
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    positionX = (cell.X * Map.CELLSIZE) - Radius;
+                    positionX = (cell.X * Map.Cellsize) - Radius;
                     if (!forced) TriggerCellEvent(Compass.East);
                     return PositionResult.Blocked;
                 }
@@ -764,7 +764,7 @@ namespace AntMe.Basics.EngineProperties
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    positionY = ((cell.Y + 1) * Map.CELLSIZE) + Radius;
+                    positionY = ((cell.Y + 1) * Map.Cellsize) + Radius;
                     if (!forced) TriggerCellEvent(Compass.North);
                     return PositionResult.Blocked;
                 }
@@ -790,7 +790,7 @@ namespace AntMe.Basics.EngineProperties
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    positionY = (cell.Y * Map.CELLSIZE) - Radius;
+                    positionY = (cell.Y * Map.Cellsize) - Radius;
                     if (!forced) TriggerCellEvent(Compass.South);
                     return PositionResult.Blocked;
                 }

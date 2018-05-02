@@ -10,11 +10,11 @@
     /// <summary>
     /// Default Delegate for all Index-based Value Changes.
     /// </summary>
-    /// <typeparam name="I">Type of Index</typeparam>
-    /// <typeparam name="V">Type of Value</typeparam>
+    /// <typeparam name="TI">Type of Index</typeparam>
+    /// <typeparam name="TV">Type of Value</typeparam>
     /// <param name="index">Index of the Value</param>
     /// <param name="value">Value</param>
-    public delegate void ValueUpdate<in I, in V>(I index, V value);
+    public delegate void ValueUpdate<in TI, in TV>(TI index, TV value);
 
     /// <summary>
     /// Default Delegate for property changed events.

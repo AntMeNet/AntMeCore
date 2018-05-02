@@ -36,12 +36,12 @@ namespace AntMe
         /// <summary>
         ///     Height of the base layer.
         /// </summary>
-        public float Height { get; private set; }
+        public float Height { get; }
 
         /// <summary>
         ///     Width of the base layer.
         /// </summary>
-        public float Width { get; private set; }
+        public float Width { get; }
 
         /// <summary>
         ///     Adds a new layer to the mipmap, conserving the ordering by rejected radius.

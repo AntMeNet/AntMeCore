@@ -8,13 +8,13 @@
         /// <summary>
         /// Reference to the Level.
         /// </summary>
-        public Level Level { get; private set; }
+        public Level Level { get; }
 
         /// <summary>
         /// Default Constructor for Type Mapper.
         /// </summary>
         /// <param name="level">Level</param>
-        public LevelProperty(Level level)
+        protected LevelProperty(Level level)
         {
             Level = level;
         }
