@@ -11,12 +11,12 @@ namespace AntMe
         /// <summary>
         /// Index X-Direction.
         /// </summary>
-        public int X;
+        public int X { get; }
 
         /// <summary>
         /// Index Y-Direction.
         /// </summary>
-        public int Y;
+        public int Y { get; }
 
         /// <summary>
         /// Creates a new Index2-Instance.
@@ -34,75 +34,48 @@ namespace AntMe
         /// <summary>
         ///     Null Index
         /// </summary>
-        public static Index2 Zero
-        {
-            get { return new Index2(0, 0); }
-        }
+        public static Index2 Zero => new Index2(0, 0);
 
         /// <summary>
         ///     Index Up
         /// </summary>
-        public static Index2 Up
-        {
-            get { return new Index2(0, -1); }
-        }
+        public static Index2 Up => new Index2(0, -1);
 
 
         /// <summary>
         ///     Index Down
         /// </summary>
-        public static Index2 Down
-        {
-            get { return new Index2(0, 1); }
-        }
+        public static Index2 Down => new Index2(0, 1);
 
         /// <summary>
         ///     Index Left
         /// </summary>
-        public static Index2 Left
-        {
-            get { return new Index2(-1, 0); }
-        }
+        public static Index2 Left => new Index2(-1, 0);
 
         /// <summary>
         ///     Index Right
         /// </summary>
-        public static Index2 Right
-        {
-            get { return new Index2(1, 0); }
-        }
+        public static Index2 Right => new Index2(1, 0);
 
         /// <summary>
         ///     Index Upper Left
         /// </summary>
-        public static Index2 UpperLeft
-        {
-            get { return new Index2(-1, -1); }
-        }
+        public static Index2 UpperLeft => new Index2(-1, -1);
 
         /// <summary>
         ///     Index Upper Right
         /// </summary>
-        public static Index2 UpperRight
-        {
-            get { return new Index2(1, -1); }
-        }
+        public static Index2 UpperRight => new Index2(1, -1);
 
         /// <summary>
         ///     Index Lower Left
         /// </summary>
-        public static Index2 LowerLeft
-        {
-            get { return new Index2(-1, 1); }
-        }
+        public static Index2 LowerLeft => new Index2(-1, 1);
 
         /// <summary>
         ///     Index Lower Right
         /// </summary>
-        public static Index2 LowerRight
-        {
-            get { return new Index2(1, 1); }
-        }
+        public static Index2 LowerRight => new Index2(1, 1);
 
         #endregion
 
@@ -160,7 +133,7 @@ namespace AntMe
         /// <returns>a same like b?</returns>
         public static bool operator ==(Index2 a, Index2 b)
         {
-            return (a.X == b.X && a.Y == b.Y);
+            return a.X == b.X && a.Y == b.Y;
         }
 
         /// <summary>
@@ -182,7 +155,7 @@ namespace AntMe
         /// <returns>Value as String.</returns>
         public override string ToString()
         {
-            return string.Format("{0}/{1}", X, Y);
+            return $"{X}/{Y}";
         }
 
         /// <summary>
@@ -205,7 +178,7 @@ namespace AntMe
                 return false;
 
             var other = (Index2)obj;
-            return (X == other.X && Y == other.Y);
+            return X == other.X && Y == other.Y;
         }
     }
 }
