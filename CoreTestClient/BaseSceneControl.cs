@@ -77,42 +77,45 @@ namespace CoreTestClient
             get { return cameraPosition; }
             private set
             {
+                float x = value.X;
+                float y = value.Y;
+
                 // Check against Borders
                 float width = ((ClientRectangle.Width - BORDER) / 2) / CameraScale;
                 if (width * 2 >= mapSize.X * Map.CELLSIZE)
                 {
                     // Map smaller than the Screen
-                    value.X = mapSize.X * Map.CELLSIZE / 2;
+                    x = mapSize.X * Map.CELLSIZE / 2;
                 }
                 else
                 {
                     // Too far left
-                    if (value.X < width)
-                        value.X = width;
+                    if (x < width)
+                        x = width;
 
                     // Too far right
-                    if (value.X > (mapSize.X * Map.CELLSIZE) - width)
-                        value.X = (mapSize.X * Map.CELLSIZE) - width;
+                    if (x > (mapSize.X * Map.CELLSIZE) - width)
+                        x = (mapSize.X * Map.CELLSIZE) - width;
                 }
 
                 float height = ((ClientRectangle.Height - BORDER) / 2) / CameraScale;
                 if (height * 2 >= mapSize.Y * Map.CELLSIZE)
                 {
                     // Map smaller than the Screen
-                    value.Y = mapSize.Y * Map.CELLSIZE / 2;
+                    y = mapSize.Y * Map.CELLSIZE / 2;
                 }
                 else
                 {
                     // Too far up
-                    if (value.Y < height)
-                        value.Y = height;
+                    if (y < height)
+                        y = height;
 
                     // Too far down
-                    if (value.Y > (mapSize.Y * Map.CELLSIZE) - height)
-                        value.Y = (mapSize.Y * Map.CELLSIZE) - height;
+                    if (y > (mapSize.Y * Map.CELLSIZE) - height)
+                        y = (mapSize.Y * Map.CELLSIZE) - height;
                 }
 
-                cameraPosition = value;
+                cameraPosition = new Vector2(x, y);
             }
         }
 

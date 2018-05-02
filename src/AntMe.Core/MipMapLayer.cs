@@ -71,9 +71,9 @@ namespace AntMe
         /// </summary>
         private void CheckValues()
         {
-            if (Width < Vector2.EPS_MIN)
+            if (Width < Vector2.EpsMin)
                 throw new ArgumentException("A MipMapLayer must have a positive width.");
-            if (Height < Vector2.EPS_MIN)
+            if (Height < Vector2.EpsMin)
                 throw new ArgumentException("A MipMapLayer must have a positive height.");
         }
 
