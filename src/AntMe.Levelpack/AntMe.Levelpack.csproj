@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,12 +9,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AntMe.Levelpack</RootNamespace>
     <AssemblyName>AntMe.Levelpack</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Debug\AntMe.Levelpack.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\AntMe.Levelpack.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -58,12 +61,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AntMe.Basics\AntMe.Basics.csproj">
-      <Project>{FC17801C-CF46-4612-915D-98704F9C11D4}</Project>
-      <Name>AntMe.Basics</Name>
+    <ProjectReference Include="..\AntMe.Basic\AntMe.Basic.csproj">
+      <Project>{77c997c2-c2c7-4e55-bb99-af36359c4ee5}</Project>
+      <Name>AntMe.Basic</Name>
     </ProjectReference>
     <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj">
-      <Project>{A2A811C2-600D-451B-AA15-346BF7ECED4A}</Project>
+      <Project>{98cb8f24-2d2e-469e-8096-7ab538829358}</Project>
       <Name>AntMe.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\AntMe.Runtime\AntMe.Runtime.csproj">
@@ -71,7 +74,11 @@
       <Name>AntMe.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="NETStandard.Library">
+      <Version>2.0.3</Version>
+    </PackageReference>
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\arenaLevel.map" />
     <None Include="Resources\battlefield.map" />

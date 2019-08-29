@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CoreTestClient</RootNamespace>
     <AssemblyName>CoreTestClient</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
@@ -306,8 +306,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\src\AntMe.Basic\AntMe.Basic.csproj">
+      <Project>{77c997c2-c2c7-4e55-bb99-af36359c4ee5}</Project>
+      <Name>AntMe.Basic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\src\AntMe.Core\AntMe.Core.csproj">
-      <Project>{a2a811c2-600d-451b-aa15-346bf7eced4a}</Project>
+      <Project>{98cb8f24-2d2e-469e-8096-7ab538829358}</Project>
       <Name>AntMe.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\src\AntMe.Generator\AntMe.Generator.csproj">
@@ -319,7 +323,11 @@
       <Name>AntMe.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="NETStandard.Library">
+      <Version>2.0.3</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

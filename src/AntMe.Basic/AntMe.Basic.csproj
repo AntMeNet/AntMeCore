@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>AntMe.Basics</AssemblyName>
+    <RootNamespace>AntMe.Basics</RootNamespace>
+    <PackageId>AntMe! 2.0 Basics</PackageId>
+    <Version>2.0.0.63</Version>
+    <Description>Default Game Items of the AntMe!</Description>
+    <Company>AntMe! GmbH</Company>
+    <Copyright>Copyright ©  2015 AntMe! GmbH</Copyright>
+    <Authors />
+    <Product>AntMe! 2.0</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <DocumentationFile>..\..\bin\Debug\AntMe.Basics.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <DocumentationFile>..\..\bin\Release\AntMe.Basics.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Factions\Ants\femaleNames.txt" />
+    <None Remove="Factions\Bugs\maleNames.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Factions\Ants\femaleNames.txt" />
+    <Content Include="Factions\Bugs\maleNames.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Factions\Ants\AntGeneratorFiles.Designer.cs">
+      <DependentUpon>AntGeneratorFiles.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Factions\Bugs\BugGeneratorFiles.Designer.cs">
+      <DependentUpon>BugGeneratorFiles.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Factions\Ants\AntGeneratorFiles.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>AntGeneratorFiles.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Factions\Bugs\BugGeneratorFiles.resx">
+      <LastGenOutput>BugGeneratorFiles.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

@@ -215,12 +215,6 @@
     <Content Include="Factions\Ants\femaleNames.txt" />
     <Content Include="Factions\Bugs\maleNames.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj">
-      <Project>{a2a811c2-600d-451b-aa15-346bf7eced4a}</Project>
-      <Name>AntMe.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

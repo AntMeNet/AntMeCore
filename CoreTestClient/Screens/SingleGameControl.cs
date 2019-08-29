@@ -40,6 +40,7 @@ namespace CoreTestClient.Screens
             string[] extensionPaths = new string[] {
                 Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions",
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions\\netstandard2.0",
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
             };
 
