@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="AntMe.AntMeExtension" />
-    <ProjectReference Include="..\AntMe.Basic\AntMe.Basic.csproj" />
+    <ProjectReference Include="..\AntMe.Basics\AntMe.Basics.csproj" />
     <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj" />
   </ItemGroup>
 

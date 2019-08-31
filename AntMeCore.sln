@@ -16,9 +16,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Generator", "src\AntM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Levelpack", "src\AntMe.Levelpack\AntMe.Levelpack.csproj", "{0D4186A3-2123-4744-853B-53A48B3C9B55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Core", "src\AntMe.Core\AntMe.Core.csproj", "{98CB8F24-2D2E-469E-8096-7AB538829358}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntMe.Core", "src\AntMe.Core\AntMe.Core.csproj", "{98CB8F24-2D2E-469E-8096-7AB538829358}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Basic", "src\AntMe.Basic\AntMe.Basic.csproj", "{77C997C2-C2C7-4E55-BB99-AF36359C4EE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntMe.Basics", "src\AntMe.Basics\AntMe.Basics.csproj", "{77C997C2-C2C7-4E55-BB99-AF36359C4EE5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntMe.Extension.Community", "src\AntMe.Extension.Community\AntMe.Extension.Community.csproj", "{6B5BD43F-EB90-4940-A408-60BFAF8A9D18}"
 EndProject

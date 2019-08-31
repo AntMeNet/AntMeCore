@@ -306,9 +306,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\AntMe.Basic\AntMe.Basic.csproj">
+    <ProjectReference Include="..\src\AntMe.Basics\AntMe.Basics.csproj">
       <Project>{77c997c2-c2c7-4e55-bb99-af36359c4ee5}</Project>
-      <Name>AntMe.Basic</Name>
+      <Name>AntMe.Basics</Name>
     </ProjectReference>
     <ProjectReference Include="..\src\AntMe.Core\AntMe.Core.csproj">
       <Project>{98cb8f24-2d2e-469e-8096-7ab538829358}</Project>
