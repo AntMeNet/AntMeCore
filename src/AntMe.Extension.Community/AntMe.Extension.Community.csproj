@@ -13,7 +13,6 @@
     <Product>AntMe! 2.0</Product>
   </PropertyGroup>
 
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\Debug\Extensions\</OutputPath>
     <DocumentationFile>..\..\bin\Debug\Extensions\AntMe.Extension.Community.XML</DocumentationFile>
@@ -26,6 +25,9 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="AntMe.AntMeExtension" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AntMe.Basics\AntMe.Basics.csproj" />
     <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj" />
   </ItemGroup>
