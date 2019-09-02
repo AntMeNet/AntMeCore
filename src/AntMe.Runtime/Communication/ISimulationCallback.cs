@@ -2,6 +2,8 @@
 
 namespace AntMe.Runtime.Communication
 {
+
+
     internal interface ISimulationCallback
     {
         [OperationContract(IsOneWay = true)]

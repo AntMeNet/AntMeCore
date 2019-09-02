@@ -1,6 +1,4 @@
-﻿using AntMe;
-
-namespace AntMe.Runtime.EventLog
+﻿namespace AntMe.Runtime.EventLog
 {
     /// <summary>
     /// Interface für alle Observer, die im EventLog aktiv werden wollen.

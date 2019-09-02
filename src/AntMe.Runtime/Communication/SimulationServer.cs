@@ -1,10 +1,8 @@
-﻿using AntMe.Serialization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
-using System.ServiceModel.Description;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -340,8 +338,8 @@ namespace AntMe.Runtime.Communication
         private LevelInfo levelInfo = null;
         private TypeInfo[] playerTypes = new TypeInfo[AntMe.Level.MAX_SLOTS];
         private PlayerInfo[] playerInfos = new PlayerInfo[AntMe.Level.MAX_SLOTS];
-        private Slot[] slots = new[] 
-        { 
+        private Slot[] slots = new[]
+        {
             new Slot() { Id = 0, ColorKey = (PlayerColor)0, PlayerInfo = false, Profile = null, ReadyState = false, Team = 0 },
             new Slot() { Id = 1, ColorKey = (PlayerColor)1, PlayerInfo = false, Profile = null, ReadyState = false, Team = 1 },
             new Slot() { Id = 2, ColorKey = (PlayerColor)2, PlayerInfo = false, Profile = null, ReadyState = false, Team = 2 },
@@ -1154,7 +1152,7 @@ namespace AntMe.Runtime.Communication
                     }
 
                     // Serialize
-                    byte[] buffer =  receiver.Serializer.Serialize(state);
+                    byte[] buffer = receiver.Serializer.Serialize(state);
                     RunAsync(receiver, () => receiver.CallbackInterface.SimulationState(buffer));
                 }
             }

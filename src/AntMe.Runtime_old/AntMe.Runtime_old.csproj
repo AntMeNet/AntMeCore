@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0D4186A3-2123-4744-853B-53A48B3C9B55}</ProjectGuid>
+    <ProjectGuid>{B15F5FBE-7460-4F89-AD30-CC3D135293B4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AntMe.Levelpack</RootNamespace>
-    <AssemblyName>AntMe.Levelpack</AssemblyName>
+    <RootNamespace>AntMe.Runtime</RootNamespace>
+    <AssemblyName>AntMe.Runtime</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -25,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Debug\AntMe.Levelpack.XML</DocumentationFile>
+    <DocumentationFile>..\..\bin\Debug\AntMe.Runtime.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -35,43 +35,22 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\AntMe.Levelpack.XML</DocumentationFile>
+    <DocumentationFile>..\..\bin\Release\AntMe.Runtime.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Campaigns\AntCampaign.cs" />
-    <Compile Include="Campaigns\TutorialCampaign.cs" />
-    <Compile Include="Campaigns\TutorialLevel1.cs" />
-    <Compile Include="Campaigns\TutorialLevel2.cs" />
-    <Compile Include="Campaigns\TutorialLevel3.cs" />
-    <Compile Include="Levels\ArenaLevel.cs" />
-    <Compile Include="Levels\CaptureTheAppleEasy.cs" />
-    <Compile Include="Levels\CaptureTheAppleHard.cs" />
-    <Compile Include="Levels\ClassicLevel.cs" />
-    <Compile Include="Levels\MazeRace.cs" />
-    <Compile Include="Levels\OpenBattle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AntMe.Basics\AntMe.Basics.csproj">
-      <Project>{77c997c2-c2c7-4e55-bb99-af36359c4ee5}</Project>
-      <Name>AntMe.Basics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj">
       <Project>{98cb8f24-2d2e-469e-8096-7ab538829358}</Project>
       <Name>AntMe.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AntMe.Runtime_old\AntMe.Runtime_old.csproj">
-      <Project>{B15F5FBE-7460-4F89-AD30-CC3D135293B4}</Project>
-      <Name>AntMe.Runtime_old</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -79,20 +58,7 @@
       <Version>2.0.3</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\arenaLevel.map" />
-    <None Include="Resources\battlefield.map" />
-    <None Include="Resources\default.map" />
-    <None Include="Resources\mace.map" />
-    <None Include="Resources\openfield.map" />
-    <None Include="Resources\plateau.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

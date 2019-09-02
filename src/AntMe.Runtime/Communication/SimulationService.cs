@@ -1,5 +1,4 @@
-﻿using AntMe;
-using System;
+﻿using System;
 using System.ServiceModel;
 
 namespace AntMe.Runtime.Communication

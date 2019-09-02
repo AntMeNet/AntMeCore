@@ -1,5 +1,4 @@
-﻿using AntMe;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 
 namespace AntMe.Runtime.Communication
 {
@@ -23,9 +22,9 @@ namespace AntMe.Runtime.Communication
         [FaultContract(typeof(AntMeFault))]
         void Goodbye();
 
-        #region Methoden
+#region Methoden
 
-        #region Master Handling
+#region Master Handling
 
         [OperationContract(
                     IsInitiating = false,
@@ -41,9 +40,9 @@ namespace AntMe.Runtime.Communication
         [FaultContract(typeof(AntMeFault))]
         void FreeMaster();
 
-        #endregion
+#endregion
 
-        #region User Handling
+#region User Handling
 
         [OperationContract(
             IsInitiating = false,
@@ -52,9 +51,9 @@ namespace AntMe.Runtime.Communication
         [FaultContract(typeof(AntMeFault))]
         void ChangeUsername(string name);
 
-        #endregion
+#endregion
 
-        #region Chat Handling
+#region Chat Handling
 
         [OperationContract(
             IsInitiating = false,
@@ -63,9 +62,9 @@ namespace AntMe.Runtime.Communication
         [FaultContract(typeof(AntMeFault))]
         void SendMessage(string message);
 
-        #endregion
+#endregion
 
-        #region Settings Handling
+#region Settings Handling
 
         [OperationContract(
             IsInitiating = false,
@@ -109,9 +108,9 @@ namespace AntMe.Runtime.Communication
         [FaultContract(typeof(AntMeFault))]
         void SetMasterState(byte slot, PlayerColor color, byte team, bool ready);
 
-        #endregion
+#endregion
 
-        #region Flow Handling
+#region Flow Handling
 
         [OperationContract(
             IsInitiating = false,
@@ -148,8 +147,8 @@ namespace AntMe.Runtime.Communication
         [FaultContract(typeof(AntMeFault))]
         void PitchSimulation(byte frames);
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
     }
 }

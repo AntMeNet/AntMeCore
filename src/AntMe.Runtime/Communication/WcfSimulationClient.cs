@@ -1,10 +1,10 @@
-﻿using AntMe.Runtime.EventLog;
-using AntMe.Serialization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
+using AntMe.Runtime.EventLog;
+using AntMe.Serialization;
 
 namespace AntMe.Runtime.Communication
 {
@@ -28,7 +28,7 @@ namespace AntMe.Runtime.Communication
 
         private string[] extensionPaths;
 
-        #region Construction
+#region Construction
 
         /// <summary>
         /// Private Constructor
@@ -157,9 +157,9 @@ namespace AntMe.Runtime.Communication
         /// </summary>
         public event ErrorClientDelegate OnError;
 
-        #endregion
+#endregion
 
-        #region Connection
+#region Connection
 
         /// <summary>
         /// Is the current Client the Server Master?
@@ -285,9 +285,9 @@ namespace AntMe.Runtime.Communication
 
         }
 
-        #endregion
+#endregion
 
-        #region Simulation Management
+#region Simulation Management
 
         /// <summary>
         /// Aqure the Master-Slot
@@ -447,9 +447,9 @@ namespace AntMe.Runtime.Communication
 
         }
 
-        #endregion
+#endregion
 
-        #region Flow
+#region Flow
 
         /// <summary>
         /// Start the Simulation.
@@ -555,7 +555,7 @@ namespace AntMe.Runtime.Communication
             }
         }
 
-        #endregion
+#endregion
 
         public event SimulationClientDelegate<UserProfile> OnMasterChanged;
 
@@ -584,7 +584,7 @@ namespace AntMe.Runtime.Communication
             // TODO (Deserializer?)
         }
 
-        #region Server Callbacks
+#region Server Callbacks
 
         private void callback_OnUsernameChanged(UserProfile user)
         {
@@ -745,6 +745,6 @@ namespace AntMe.Runtime.Communication
             OnLevelChanged?.Invoke(this, levelInfo);
         }
 
-        #endregion
+#endregion
     }
 }

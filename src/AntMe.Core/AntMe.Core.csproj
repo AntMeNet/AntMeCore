@@ -11,7 +11,7 @@
     <Copyright>Copyright ©  2015 AntMe! GmbH</Copyright>
     <Authors />
     <Product>AntMe! 2.0</Product>
-    <!--<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>-->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -1,7 +1,7 @@
-﻿using AntMe.Serialization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using AntMe.Serialization;
 
 namespace AntMe.Runtime
 {
@@ -20,10 +20,10 @@ namespace AntMe.Runtime
                 throw new ArgumentNullException("settings", "Leve is null");
 
             if (settings.Player.Length != Level.MAX_SLOTS)
-                throw new ArgumentException(string.Format("Player-Array must have a length of {0}", Level.MAX_SLOTS));
+                throw new ArgumentException(string.Format((string)"Player-Array must have a length of {0}", (object)Level.MAX_SLOTS));
 
             if (settings.Colors.Length != Level.MAX_SLOTS)
-                throw new ArgumentException(string.Format("Player-Array must have a length of {0}", Level.MAX_SLOTS));
+                throw new ArgumentException(string.Format((string)"Player-Array must have a length of {0}", (object)Level.MAX_SLOTS));
 
             // Eindeutigkeit der Farben prüfen
             var colors = new List<PlayerColor>();

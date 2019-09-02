@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreTestClient", "CoreTestC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2D47AABB-19AB-4DD9-86A0-E981CCF34EEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Runtime", "src\AntMe.Runtime\AntMe.Runtime.csproj", "{B15F5FBE-7460-4F89-AD30-CC3D135293B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Runtime_old", "src\AntMe.Runtime_old\AntMe.Runtime_old.csproj", "{B15F5FBE-7460-4F89-AD30-CC3D135293B4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Generator", "src\AntMe.Generator\AntMe.Generator.csproj", "{FA3D1283-C79D-47A1-81AF-265EB95D6D51}"
 EndProject
@@ -21,6 +21,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntMe.Basics", "src\AntMe.Basics\AntMe.Basics.csproj", "{77C997C2-C2C7-4E55-BB99-AF36359C4EE5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntMe.Extension.Community", "src\AntMe.Extension.Community\AntMe.Extension.Community.csproj", "{6B5BD43F-EB90-4940-A408-60BFAF8A9D18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Runtime", "src\AntMe.Runtime\AntMe.Runtime.csproj", "{0CC2A65A-8B65-4946-BF0F-8C4B61453ED1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +58,10 @@ Global
 		{6B5BD43F-EB90-4940-A408-60BFAF8A9D18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B5BD43F-EB90-4940-A408-60BFAF8A9D18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B5BD43F-EB90-4940-A408-60BFAF8A9D18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CC2A65A-8B65-4946-BF0F-8C4B61453ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CC2A65A-8B65-4946-BF0F-8C4B61453ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CC2A65A-8B65-4946-BF0F-8C4B61453ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CC2A65A-8B65-4946-BF0F-8C4B61453ED1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

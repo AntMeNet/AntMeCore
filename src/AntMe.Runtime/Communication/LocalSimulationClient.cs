@@ -1,10 +1,10 @@
-﻿using AntMe.Runtime.EventLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using AntMe.Runtime.EventLog;
 
 namespace AntMe.Runtime.Communication
 {

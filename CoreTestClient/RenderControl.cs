@@ -1,12 +1,10 @@
 ﻿using AntMe;
-using AntMe.Runtime.Communication;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using System.Collections.Generic;
 using CoreTestClient.Renderer;
-using AntMe.Runtime;
 using System.IO;
 
 namespace CoreTestClient

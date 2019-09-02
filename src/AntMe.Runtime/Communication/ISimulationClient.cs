@@ -1,6 +1,6 @@
-﻿using AntMe.Runtime.EventLog;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
+using AntMe.Runtime.EventLog;
 
 namespace AntMe.Runtime.Communication
 {

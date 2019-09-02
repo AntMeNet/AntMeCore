@@ -59,9 +59,9 @@
       <Project>{98cb8f24-2d2e-469e-8096-7ab538829358}</Project>
       <Name>AntMe.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AntMe.Runtime\AntMe.Runtime.csproj">
+    <ProjectReference Include="..\AntMe.Runtime_old\AntMe.Runtime_old.csproj">
       <Project>{b15f5fbe-7460-4f89-ad30-cc3d135293b4}</Project>
-      <Name>AntMe.Runtime</Name>
+      <Name>AntMe.Runtime_old</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

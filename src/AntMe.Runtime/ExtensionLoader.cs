@@ -1,11 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Policy;
 using System.Xml.Serialization;
 
 namespace AntMe.Runtime
@@ -30,7 +28,7 @@ namespace AntMe.Runtime
         private static Dictionary<Guid, CampaignStatistics> campaignStatistics = new Dictionary<Guid, CampaignStatistics>();
         private static Dictionary<Guid, LevelStatistics> levelStatistics = new Dictionary<Guid, LevelStatistics>();
         private static TypeMapper typeMapper = new TypeMapper();
-        
+
 
         /// <summary>
         /// Tries to Loads all available Extensions within the valid extension pathes.
@@ -87,8 +85,8 @@ namespace AntMe.Runtime
                 {
                     // Try to load and add to list
                     var assembly = Assembly.LoadFile(file);
-                    var attributes = assembly.GetCustomAttributes(typeof(AntMeExtensionAttribute),true);
-                    
+                    var attributes = assembly.GetCustomAttributes(typeof(AntMeExtensionAttribute), true);
+
                     if (attributes != null)
                     {
                         var extensionAttribute = attributes.FirstOrDefault() as AntMeExtensionAttribute;
@@ -746,7 +744,6 @@ namespace AntMe.Runtime
         #endregion
 
         #region Additional App Domain Stuff
-
         /// <summary>
         /// Scans the given Assembly for additional Level-, Campaign- and Player-Elements within a closed AppDomain.
         /// </summary>
@@ -763,6 +760,7 @@ namespace AntMe.Runtime
             // Analyse
             return SecureAnalyseExtension(extensionPaths, file, level, player);
         }
+
 
         /// <summary>
         /// Scans the given Assembly for additional Level-, Campaign- and Player-Elements within a closed AppDomain.
@@ -840,7 +838,6 @@ namespace AntMe.Runtime
             }
             return null;
         }
-
         #endregion
     }
 

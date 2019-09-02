@@ -1,120 +1,45 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B15F5FBE-7460-4F89-AD30-CC3D135293B4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AntMe.Runtime</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>AntMe.Runtime</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <TargetFrameworkProfile />
+    <RootNamespace>AntMe.Runtime</RootNamespace>
+    <PackageId>AntMe! 2.0 Runtime</PackageId>
+    <Version>2.0.0.747</Version>
+    <Description>All the runtime Components of AntMe! Simulations</Description>
+    <Company>AntMe! GmbH</Company>
+    <Copyright>Copyright ©  2015 AntMe! GmbH</Copyright>
+    <Authors />
+    <Product>AntMe! 2.0</Product>
+    <!--<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Debug\AntMe.Runtime.XML</DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>..\..\bin\Debug\AntMe.Runtime.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\AntMe.Runtime.XML</DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>..\..\bin\Release\AntMe.Runtime.xml</DocumentationFile>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CampaignInfo.cs" />
-    <Compile Include="CampaignStatistics.cs" />
-    <Compile Include="Communication\AntMeFault.cs" />
-    <Compile Include="Communication\SimulationClient.cs" />
-    <Compile Include="Communication\SimulationService.cs" />
-    <Compile Include="Communication\UnsecureSimulationClient.cs" />
-    <Compile Include="Communication\WcfSimulationCallback.cs" />
-    <Compile Include="Communication\WcfSimulationClient.cs" />
-    <Compile Include="Communication\ISimulationCallback.cs" />
-    <Compile Include="Communication\ISimulationService.cs" />
-    <Compile Include="Communication\SimulationServer.cs" />
-    <Compile Include="Communication\ISimulationClient.cs" />
-    <Compile Include="Communication\LocalSimulationClient.cs" />
-    <Compile Include="Communication\SecureSimulationClient.cs">
+    <Compile Update="Communication\SecureSimulationClient.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Communication\Slot.cs" />
-    <Compile Include="Communication\UserProfile.cs" />
-    <Compile Include="EventLog\AddFactionItemEntry.cs" />
-    <Compile Include="EventLog\AddItemEntry.cs" />
-    <Compile Include="EventLog\Entry.cs" />
-    <Compile Include="EventLog\FactionEntry.cs" />
-    <Compile Include="EventLog\FactionItemEntry.cs" />
-    <Compile Include="EventLog\FactionPointsEntry.cs" />
-    <Compile Include="EventLog\FactionPointsObserver.cs" />
-    <Compile Include="EventLog\ILogObserver.cs" />
-    <Compile Include="EventLog\ItemCountObserver.cs" />
-    <Compile Include="EventLog\ItemEntry.cs" />
-    <Compile Include="EventLog\Log.cs" />
-    <Compile Include="EventLog\RemoveItemEntry.cs" />
-    <Compile Include="ExtensionLoader.cs" />
-    <Compile Include="ExtensionLoaderHost.cs" />
-    <Compile Include="LevelFilterInfo.cs" />
-    <Compile Include="LevelInfo.cs" />
-    <Compile Include="LevelStatistics.cs" />
-    <Compile Include="LoaderInfo.cs" />
-    <Compile Include="PlayerInfo.cs" />
-    <Compile Include="PlayerStatistics.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SecureHost.cs" />
-    <Compile Include="SecureSimulation.cs" />
-    <Compile Include="Setup.cs" />
-    <Compile Include="SimulationState.cs" />
-    <Compile Include="TypeInfo.cs" />
-    <Compile Include="TypeMapper.cs" />
-    <Compile Include="TypeMapper.Interops.cs" />
-    <Compile Include="TypeMapper.Items.cs" />
-    <Compile Include="TypeMapper.Levels.cs" />
-    <Compile Include="TypeMapper.Maps.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="TypeMapper.Factions.cs" />
+    <AssemblyAttribute Include="AntMe.AntMeExtension" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj">
-      <Project>{98cb8f24-2d2e-469e-8096-7ab538829358}</Project>
-      <Name>AntMe.Core</Name>
-    </ProjectReference>
+    <PackageReference Include="Mono.Cecil" Version="0.11.0" />
   </ItemGroup>
+  
   <ItemGroup>
-    <PackageReference Include="NETStandard.Library">
-      <Version>2.0.3</Version>
-    </PackageReference>
+    <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  
 </Project>

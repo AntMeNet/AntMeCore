@@ -1,6 +1,5 @@
 ﻿using AntMe.Serialization;
 using System;
-using System.Security.Policy;
 
 namespace AntMe.Runtime
 {
@@ -91,7 +90,7 @@ namespace AntMe.Runtime
                 }
 
                 // Simulation regulär zu Ende
-                else if (state.Mode > LevelMode.Running) 
+                else if (state.Mode > LevelMode.Running)
                 {
                     State = SimulationState.Finished;
                     Stop();

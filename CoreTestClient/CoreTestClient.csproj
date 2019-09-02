@@ -318,9 +318,9 @@
       <Project>{fa3d1283-c79d-47a1-81af-265eb95d6d51}</Project>
       <Name>AntMe.Generator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\AntMe.Runtime\AntMe.Runtime.csproj">
+    <ProjectReference Include="..\src\AntMe.Runtime_old\AntMe.Runtime_old.csproj">
       <Project>{b15f5fbe-7460-4f89-ad30-cc3d135293b4}</Project>
-      <Name>AntMe.Runtime</Name>
+      <Name>AntMe.Runtime_old</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
