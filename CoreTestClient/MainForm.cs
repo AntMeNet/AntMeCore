@@ -4,6 +4,7 @@ using System;
 using System.Windows.Forms;
 using AntMe.Runtime;
 using AntMe.Runtime.Client.Communication;
+using AntMe.Runtime.Simulation.Communication;
 
 namespace CoreTestClient
 {
@@ -58,7 +59,7 @@ namespace CoreTestClient
             {
                 // Stop Simulation
                 CurrentClient.StopSimulation();
-
+                
                 // Dispose Viewer
                 mainPanel.Controls.Remove(Renderer);
                 Renderer.Dispose();
@@ -67,6 +68,7 @@ namespace CoreTestClient
                 // Dispose Client
                 CurrentClient.Dispose();
                 CurrentClient = null;
+                SimulationServer.Stop();
             }
 
             // Close open Modes

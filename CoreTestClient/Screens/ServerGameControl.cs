@@ -49,10 +49,18 @@ namespace CoreTestClient.Screens
             ISimulationClient result = null;
             Task.Run(async () =>
             {
-                var uri = "http://loclahost:200/Test";
+                var uri = "http://localhost:80/AntMeServer/";
                 SimulationServer.Start(extensionPaths,uri);
 
-                result = await SimulationClient.CreateSignalR(extensionPaths, uri + "/signalR");
+                try
+                {
+                    result = await SimulationClient.CreateSignalR(extensionPaths, uri + "signalR");
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
                 await result.AquireMaster();
                 await result.UploadLevel(level.Type);
                 for (byte i = 0; i < 8; i++)

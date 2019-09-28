@@ -35,6 +35,9 @@ namespace AntMe.Runtime.Client
             ServerState = Runtime.SimulationState.Stopped;
             Rate = AntMe.Level.FRAMES_PER_SECOND;
 
+            for (byte i = 0; i < AntMe.Level.MAX_SLOTS; i++)
+                _slots.Add(new Slot { Id = i });
+
         }
 
         public async Task Create(string uri)

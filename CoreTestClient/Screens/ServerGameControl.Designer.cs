@@ -19,7 +19,6 @@ namespace CoreTestClient.Screens
             {
                 components.Dispose();
             }
-            SimulationServer.Stop();
             base.Dispose(disposing);
         }
 
