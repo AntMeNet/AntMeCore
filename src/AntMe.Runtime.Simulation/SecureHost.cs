@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using AntMe.Serialization;
 
-namespace AntMe.Runtime
+namespace AntMe.Runtime.Simulation
 {
     internal sealed class SecureHost : MarshalByRefObject
     {

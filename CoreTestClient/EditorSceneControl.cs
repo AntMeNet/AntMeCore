@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System;
 using System.Linq;
+using AntMe.Runtime;
 
 namespace CoreTestClient
 {

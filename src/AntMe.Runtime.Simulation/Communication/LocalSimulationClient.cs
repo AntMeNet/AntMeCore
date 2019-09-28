@@ -4,9 +4,12 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using AntMe.Runtime.Client.Communication;
+using AntMe.Runtime.Communication;
 using AntMe.Runtime.EventLog;
 
-namespace AntMe.Runtime.Communication
+namespace AntMe.Runtime.Simulation.Communication
 {
     /// <summary>
     /// Basisklasse für alle lokal stattfindenen Simulationen.
@@ -126,8 +129,9 @@ namespace AntMe.Runtime.Communication
         /// Hat in diesem Kontext keine Funktion, da es sich um eine 
         /// lokale Simulation handelt.
         /// </summary>
-        public void Open()
+        public Task Open()
         {
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -135,11 +139,10 @@ namespace AntMe.Runtime.Communication
         /// lokale Simulation handelt.
         /// </summary>
         /// <param name="username">Benutzername</param>
-        public void Open(string username)
+        public async Task Open(string username)
         {
-            Open();
-
-            ChangeUsername(username);
+            await Open();
+            await ChangeUsername(username);
         }
 
         /// <summary>
@@ -147,28 +150,48 @@ namespace AntMe.Runtime.Communication
         /// Auswirkungen, da es sich um eine lokale Simulation handelt.
         /// </summary>
         /// <param name="ex"></param>
-        public void CloseByError(Exception ex)
+        public Task CloseByError(Exception ex)
         {
-            OnError?.Invoke(this, ex.Message);
+            OnError?.Invoke(this, ex);
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Hat in diesem Kontext keine Funktion, da es sich um eine 
         /// lokale Simulation handelt.
         /// </summary>
-        public void Close()
+        public Task Close()
         {
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Wird in diesem Kontext nicht geworfen.
         /// </summary>
-        public event CloseClientDelegate OnClose;
+        public event EventHandler OnClose;
 
         /// <summary>
         /// Informiert über einen Fehler in der Simulation.
         /// </summary>
-        public event ErrorClientDelegate OnError;
+        public event EventHandler<Exception> OnError;
+
+        /// <summary>
+        /// Hat in diesem Kontext keine Funktion, da es sich um eine 
+        /// lokale Simulation handelt.
+        /// </summary>
+        public Task<int> Hello(string username)
+        {
+            return Task.FromResult(-1);
+        }
+
+        /// <summary>
+        /// Hat in diesem Kontext keine Funktion, da es sich um eine 
+        /// lokale Simulation handelt.
+        /// </summary>
+        public Task Goodbye()
+        {
+            return Task.CompletedTask;
+        }
 
         #endregion
 
@@ -179,9 +202,9 @@ namespace AntMe.Runtime.Communication
         /// </summary>
         /// <param name="message">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
-        public bool AquireMaster()
+        public Task AquireMaster()
         {
-            return true;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -189,9 +212,9 @@ namespace AntMe.Runtime.Communication
         /// </summary>
         /// <param name="message">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
-        public bool FreeMaster()
+        public Task FreeMaster()
         {
-            return true;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -199,35 +222,35 @@ namespace AntMe.Runtime.Communication
         /// </summary>
         /// <param name="message">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
-        public bool ChangeUsername(string name)
+        public Task ChangeUsername(string name)
         {
-            return true;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Wird in diesem Kontext nicht genutzt.
         /// </summary>
-        public event SimulationClientDelegate<UserProfile> OnMasterChanged;
+        public event EventHandler<UserProfile> OnMasterChanged;
 
         /// <summary>
         /// Wird in diesem Kontext nicht genutzt.
         /// </summary>
-        public event SimulationClientDelegate OnUserlistChanged;
+        public event EventHandler OnUserlistChanged;
 
         /// <summary>
         /// Wird in diesem Kontext nicht genutzt.
         /// </summary>
-        public event SimulationClientDelegate<UserProfile> OnUserAdded;
+        public event EventHandler<UserProfile> OnUserAdded;
 
         /// <summary>
         /// Wird in diesem Kontext nicht genutzt.
         /// </summary>
-        public event SimulationClientDelegate<int> OnUserDropped;
+        public event EventHandler<int> OnUserDropped;
 
         /// <summary>
         /// Wird in diesem Kontext nicht genutzt.
         /// </summary>
-        public event SimulationClientDelegate<UserProfile> OnUsernameChanged;
+        public event EventHandler<UserProfile> OnUsernameChanged;
 
         #endregion
 
@@ -237,12 +260,13 @@ namespace AntMe.Runtime.Communication
         /// Sendet eine Nachricht an sich selbst, da es sich hier um eine lokale Simulation handelt.
         /// </summary>
         /// <param name="message">Nachricht</param>
-        public void SendMessage(string message)
+        public Task SendMessage(string message)
         {
             OnMessageReceived?.Invoke(this, master, message);
+            return Task.CompletedTask;
         }
 
-        public event SimulationClientDelegate<UserProfile, string> OnMessageReceived;
+        public event Action<ISimulationClient, UserProfile, string> OnMessageReceived;
 
         #endregion
 
@@ -254,7 +278,7 @@ namespace AntMe.Runtime.Communication
         /// <param name="level">Level Infos mit AssemblyFile und TypeName</param>
         /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
-        public bool UploadLevel(TypeInfo level)
+        public Task UploadLevel(TypeInfo level)
         {
             // Sicher stellen, dass der Modus stimmt.
             if (ServerState != SimulationState.Stopped)
@@ -271,7 +295,7 @@ namespace AntMe.Runtime.Communication
                 // Event werfen
                 OnLevelChanged?.Invoke(this, null);
 
-                return true;
+                return Task.CompletedTask;
             }
             else
             {
@@ -299,7 +323,7 @@ namespace AntMe.Runtime.Communication
                 // Event werfen
                 OnLevelChanged?.Invoke(this, this.level);
 
-                return true;
+                return Task.CompletedTask;
             }
         }
 
@@ -309,7 +333,7 @@ namespace AntMe.Runtime.Communication
         /// <param name="player">KI</param>
         /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
-        public bool UploadPlayer(TypeInfo player)
+        public Task UploadPlayer(TypeInfo player)
         {
             return UploadMaster(0, player);
         }
@@ -321,7 +345,7 @@ namespace AntMe.Runtime.Communication
         /// <param name="player">KI</param>
         /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
-        public bool UploadMaster(byte slot, TypeInfo player)
+        public Task UploadMaster(byte slot, TypeInfo player)
         {
             // Sicher stellen, dass der Modus stimmt.
             if (ServerState != SimulationState.Stopped)
@@ -349,7 +373,7 @@ namespace AntMe.Runtime.Communication
                 // Event werfen
                 OnPlayerChanged?.Invoke(this, slot);
 
-                return true;
+                return Task.CompletedTask;
             }
             else
             {
@@ -376,7 +400,7 @@ namespace AntMe.Runtime.Communication
                 // Event werfen
                 OnPlayerChanged?.Invoke(this, slot);
 
-                return true;
+                return Task.CompletedTask;
             }
         }
 
@@ -388,12 +412,12 @@ namespace AntMe.Runtime.Communication
         /// <param name="ready">gibt an, ob der Slot vollständig ist</param>
         /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
-        public bool SetPlayerState(byte slot, PlayerColor color, byte team, bool ready)
+        public Task SetPlayerState(byte slot, PlayerColor color, byte team, bool ready)
         {
             return SetMasterState(slot, color, team, ready);
         }
 
-        public bool UnsetPlayerState()
+        public Task UnsetPlayerState()
         {
             throw new NotImplementedException();
         }
@@ -406,7 +430,7 @@ namespace AntMe.Runtime.Communication
         /// <param name="ready">gibt an, ob der Slot vollständig ist</param>
         /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
-        public bool SetMasterState(byte slot, PlayerColor color, byte team, bool ready)
+        public Task SetMasterState(byte slot, PlayerColor color, byte team, bool ready)
         {
             // Sicher stellen, dass der Modus stimmt.
             if (ServerState != SimulationState.Stopped)
@@ -453,7 +477,7 @@ namespace AntMe.Runtime.Communication
 
             OnPlayerChanged?.Invoke(this, slot);
 
-            return true;
+            return Task.CompletedTask;
         }
 
         private void ResetSlots()
@@ -470,23 +494,23 @@ namespace AntMe.Runtime.Communication
             }
 
             // Event werfen
-            OnPlayerReset?.Invoke(this);
+            OnPlayerReset?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
         /// Informiert über ein neues Level.
         /// </summary>
-        public event SimulationClientDelegate<LevelInfo> OnLevelChanged;
+        public event EventHandler<LevelInfo> OnLevelChanged;
 
         /// <summary>
         /// Informiert über einen kompletten Reset der Player Slots.
         /// </summary>
-        public event SimulationClientDelegate OnPlayerReset;
+        public event EventHandler OnPlayerReset;
 
         /// <summary>
         /// Informiert über eine Änderung des angegebenen Slots.
         /// </summary>
-        public event SimulationClientDelegate<byte> OnPlayerChanged;
+        public event EventHandler<byte> OnPlayerChanged;
 
         #endregion
 
@@ -507,19 +531,19 @@ namespace AntMe.Runtime.Communication
         /// </summary>
         /// <param name="result">Eventuelle Fehlermeldung</param>
         /// <returns>Erfolgsmeldung</returns>
-        public bool StartSimulation()
+        public Task StartSimulation()
         {
             // Im Falle des Pause-Modes wird einfach fortgesetzt
             if (state == SimulationState.Paused)
             {
                 ResumeSimulation();
-                return true;
+                return Task.CompletedTask;
             }
 
             // Simulation läuft bereits
             if (state == SimulationState.Running)
             {
-                return true;
+                return Task.CompletedTask;
             }
 
             // Prüfen, ob ein Level vorhanden ist
@@ -575,13 +599,13 @@ namespace AntMe.Runtime.Communication
             thread.Priority = ThreadPriority.Lowest;
             thread.Start();
 
-            return true;
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Pausiert eine laufende Anwendung oder tut nichts, falls gestoppt.
         /// </summary>
-        public void PauseSimulation()
+        public Task PauseSimulation()
         {
             // Nicht reagieren, falls die Simulation nicht läuft.
             if (state == SimulationState.Running)
@@ -589,59 +613,63 @@ namespace AntMe.Runtime.Communication
                 state = SimulationState.Paused;
                 OnSimulationChanged?.Invoke(this, state, rate);
             }
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Setzt eine pausierte Simulation wieder fort.
         /// </summary>
-        public void ResumeSimulation()
+        public Task ResumeSimulation()
         {
             // Nur reagieren, falls der Pause-Mode aktiv ist
-            if (state != SimulationState.Paused)
-                return;
-
-            // state melden und setzen
-            state = SimulationState.Running;
-            OnSimulationChanged?.Invoke(this, state, rate);
+            if (state == SimulationState.Paused)
+            {
+                // state melden und setzen
+                state = SimulationState.Running;
+                OnSimulationChanged?.Invoke(this, state, rate);
+            }
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Stoppt eine laufende Anwendung.
         /// </summary>
-        public void StopSimulation()
+        public Task StopSimulation()
         {
             // Nicht reagieren, falls ohnehin eine Simulation läuft.
-            if (state == SimulationState.Stopped)
-                return;
+            if (state != SimulationState.Stopped)
+            {
+                // State ändern und kurz auf den Thread warten.
+                state = SimulationState.Stopped;
+                if (thread.Join(2000))
+                    thread.Abort();
 
-            // State ändern und kurz auf den Thread warten.
-            state = SimulationState.Stopped;
-            if (thread.Join(2000))
-                thread.Abort();
-
-            OnSimulationChanged?.Invoke(this, state, rate);
+                OnSimulationChanged?.Invoke(this, state, rate);
+            }
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Left eine neue Framerate für die Simulation fest.
         /// </summary>
         /// <param name="frames">Neue Rate in Frames pro Sekunde</param>
-        public void PitchSimulation(byte frames)
+        public Task PitchSimulation(byte frames)
         {
             rate = Math.Max((byte)1, frames);
 
             OnSimulationChanged?.Invoke(this, state, rate);
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Informiert über die Änderung des Simulation States und der Framerate.
         /// </summary>
-        public event SimulationClientDelegate<SimulationState, byte> OnSimulationChanged;
+        public event Action<ISimulationClient, SimulationState, byte> OnSimulationChanged;
 
         /// <summary>
         /// Informiert über einen neuen Simulation State.
         /// </summary>
-        public event SimulationClientDelegate<LevelState> OnSimulationState;
+        public event EventHandler<LevelState> OnSimulationState;
 
         #endregion
 
@@ -677,7 +705,7 @@ namespace AntMe.Runtime.Communication
             catch (Exception ex)
             {
                 // Event werfen
-                OnError?.Invoke(this, ex.Message);
+                OnError?.Invoke(this, ex);
 
                 // Simulation stoppen
                 StopSimulation();

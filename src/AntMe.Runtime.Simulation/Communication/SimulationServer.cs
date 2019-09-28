@@ -2,11 +2,19 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using System.Threading;
 using System.Threading.Tasks;
+using AntMe.Runtime.Communication;
+using AntMe.Serialization;
+using Microsoft.AspNet.SignalR;
+using Microsoft.Owin.Cors;
+using Microsoft.Owin.Hosting;
+using Owin;
 
-namespace AntMe.Runtime.Communication
+namespace AntMe.Runtime.Simulation.Communication
 {
     /// <summary>
     /// Host for WCF based Remote Simulations.
@@ -52,15 +60,14 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Starts to listen for new connections.
         /// </summary>
-        /// <param name = "extensionPaths" > List of pathes to search for Extensions</param>
-        /// <param name="pipeName">name of NamedPipe or null, if disabled</param>
-        /// <param name="port">TCP Port to listen for new connection or 0, if disabled</param>
-        public static void Start(string[] extensionPaths, string pipeName, int port)
+        /// <param name = "extensionPaths" > List of paths to search for Extensions</param>
+        /// <param name="uri">Service Url</param>
+        public static void Start(string[] extensionPaths, string uri)
         {
             if (instance != null)
                 throw new Exception("Server is already running");
 
-            instance = new SimulationServer(extensionPaths, pipeName, port);
+            instance = new SimulationServer(extensionPaths, uri);
             try
             {
                 instance.Open();
@@ -84,10 +91,6 @@ namespace AntMe.Runtime.Communication
             {
                 instance.Close();
             }
-            catch (Exception)
-            {
-                throw;
-            }
             finally
             {
                 instance = null;
@@ -97,31 +100,31 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Returns current Server State.
         /// </summary>
-        public static bool IsRunning { get { return instance != null; } }
+        public static bool IsRunning => instance != null;
 
         /// <summary>
         /// Registers a new Client at the server Instance.
         /// </summary>
-        /// <param name="service">Reference to the service</param>
+        /// <param name="connectionId">Caller id</param>
         /// <param name="callback">Reference to the callback</param>
         /// <param name="server">output Parameter for the server Reference</param>
         /// <returns>New Id for this client.</returns>
-        internal static int Register(ISimulationService service, ISimulationCallback callback, out SimulationServer server)
+        internal static int Register(string connectionId, ISimulationCallback callback, out SimulationServer server)
         {
             if (instance == null)
                 throw new Exception("Server is not running");
 
             server = instance;
-            return instance.RegisterClient(service, callback);
+            return instance.RegisterClient(connectionId, callback);
         }
 
         /// <summary>
-        /// Unregisters a client from the server.
+        /// Unregister a client from the server.
         /// </summary>
-        /// <param name="service"></param>
-        internal static void Unregister(ISimulationService service)
+        /// <param name="connectionId"></param>
+        internal static void Unregister(string connectionId)
         {
-            instance.UnregisterClient(service);
+            instance.UnregisterClient(connectionId);
         }
 
         #endregion
@@ -129,76 +132,50 @@ namespace AntMe.Runtime.Communication
         #region Service Host Handling
 
         /// <summary>
-        /// Pipe Name (NamedPipes)
+        /// Service Url
         /// </summary>
-        private string pipeName;
+        private string _uri;
 
         /// <summary>
-        /// Port Number (TCP)
+        /// List of paths to search for Extensions.
         /// </summary>
-        private int port;
+        private string[] _extensionPaths;
 
         /// <summary>
-        /// Service Host for incoming Connections.
+        /// Host disposable
         /// </summary>
-        private ServiceHost host;
+        private IDisposable host;
 
-        /// <summary>
-        /// List of pathes to search for Extensions.
-        /// </summary>
-        private string[] extensionPaths;
-
-        private SimulationServer(string[] extensionPaths, string pipeName, int port)
+        private SimulationServer(string[] extensionPaths, string uri)
         {
-            this.pipeName = pipeName;
-            this.port = port;
-            this.extensionPaths = extensionPaths;
+            _extensionPaths = extensionPaths;
+            _uri = uri;
         }
 
         /// <summary>
         /// </summary>
         private void Open()
         {
-            List<Uri> uris = new List<Uri>();
-            if (!string.IsNullOrEmpty(pipeName))
-                uris.Add(new Uri("net.pipe://localhost"));
-
-
-            host = new ServiceHost(typeof(SimulationService), uris.ToArray());
-
-            if (!string.IsNullOrEmpty(pipeName))
-                host.AddServiceEndpoint(typeof(ISimulationService), new NetNamedPipeBinding(), pipeName);
-
-            host.Description.Behaviors.Add(new ServiceThrottlingBehavior()
-            {
-                MaxConcurrentCalls = 500,
-                MaxConcurrentInstances = 100,
-                MaxConcurrentSessions = 200
-            });
-
-            host.Open();
+            host = WebApp.Start<Startup>(_uri);
         }
 
         private void Close()
         {
             // TODO: Disconnect all clients
-            if (host != null)
-            {
-                host.Close();
-            }
+            host?.Dispose();
         }
 
         #endregion
 
         #region Connection Management
 
-        private Dictionary<ISimulationService, ClientInfo> clients = new Dictionary<ISimulationService, ClientInfo>();
+        private Dictionary<string, ClientInfo> clients = new Dictionary<string, ClientInfo>();
 
         private int nextId = 0;
 
         private class ClientInfo
         {
-            public ISimulationService ServiceInterface { get; set; }
+            public string ConnectionId { get; set; }
 
             public LevelStateByteSerializer Serializer { get; set; }
 
@@ -211,7 +188,7 @@ namespace AntMe.Runtime.Communication
             public PlayerInfo PlayerInfo { get; set; }
         }
 
-        private int RegisterClient(ISimulationService service, ISimulationCallback callback)
+        private int RegisterClient(string connectionId, ISimulationCallback callback)
         {
             int id;
             ClientInfo info;
@@ -221,7 +198,7 @@ namespace AntMe.Runtime.Communication
                 id = nextId++;
                 info = new ClientInfo()
                 {
-                    ServiceInterface = service,
+                    ConnectionId = connectionId,
                     CallbackInterface = callback,
                     UserProfile = new UserProfile()
                     {
@@ -230,7 +207,7 @@ namespace AntMe.Runtime.Communication
                     }
                 };
 
-                clients.Add(service, info);
+                clients.Add(connectionId, info);
             }
 
             // Send new User to the rest
@@ -242,10 +219,10 @@ namespace AntMe.Runtime.Communication
             return id;
         }
 
-        private void UnregisterClient(ISimulationService service)
+        private void UnregisterClient(string connectionId)
         {
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 // Remove from Game
                 int removedSlot = -1;
@@ -289,7 +266,7 @@ namespace AntMe.Runtime.Communication
                 lock (clients)
                 {
                     client.PlayerType = null;
-                    clients.Remove(service);
+                    clients.Remove(connectionId);
                 }
 
                 // Send remove User to the rest
@@ -301,12 +278,12 @@ namespace AntMe.Runtime.Communication
 
         #region Chat Management
 
-        internal void ChangeUsername(ISimulationService service, string username)
+        internal void ChangeUsername(string connectionId, string username)
         {
             // TODO: Check username
 
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 client.UserProfile.Username = username;
 
@@ -315,12 +292,12 @@ namespace AntMe.Runtime.Communication
             }
         }
 
-        internal void SendMessage(ISimulationService service, string message)
+        internal void SendMessage(string connectionId, string message)
         {
             // TODO: Validate?
 
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 // Tell others
                 SendMessageReceived(client.UserProfile, message);
@@ -357,11 +334,11 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Aquires Master State for the caller.
         /// </summary>
-        /// <param name="service">Caller</param>
-        internal void AquireMaster(ISimulationService service)
+        /// <param name="connectionId">Caller id</param>
+        internal void AquireMaster(string connectionId)
         {
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 lock (simulationLock)
                 {
@@ -388,11 +365,11 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Clears the Master State
         /// </summary>
-        /// <param name="service"></param>
-        internal void FreeMaster(ISimulationService service)
+        /// <param name="connectionId">Caller id</param>
+        internal void FreeMaster(string connectionId)
         {
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 lock (simulationLock)
                 {
@@ -416,21 +393,21 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Uploads a new Level to the System.
         /// </summary>
-        /// <param name="service"></param>
+        /// <param name="connectionId">Caller id</param>
         /// <param name="levelType">TypeInfo of the new level</param>
-        internal void UploadLevel(ISimulationService service, TypeInfo levelType)
+        internal void UploadLevel(string connectionId, TypeInfo levelType)
         {
             // Check File Size
             if (levelType != null && levelType.AssemblyFile.Length > SimulationServer.MAXLEVELSIZE)
                 throw new ArgumentException("File is too large");
 
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 // Analyse Level
                 LevelInfo levelInfo = null;
                 if (levelType != null)
-                    levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, levelType.AssemblyFile, levelType.TypeName);
+                    levelInfo = ExtensionLoader.SecureFindLevel(_extensionPaths, levelType.AssemblyFile, levelType.TypeName);
 
                 lock (simulationLock)
                 {
@@ -484,21 +461,21 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Uploads a Client related Player File.
         /// </summary>
-        /// <param name="service"></param>
+        /// <param name="connectionId">Caller id</param>
         /// <param name="playerType">Player File</param>
-        internal void UploadPlayer(ISimulationService service, TypeInfo playerType)
+        internal void UploadPlayer(string connectionId, TypeInfo playerType)
         {
             // Check File Size
             if (playerType != null && playerType.AssemblyFile.Length > MAXPLAYERSIZE)
                 throw new ArgumentException("File is too large");
 
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 // Analyse File
                 PlayerInfo playerInfo = null;
                 if (playerType != null)
-                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
+                    playerInfo = ExtensionLoader.SecureFindPlayer(_extensionPaths, playerType.AssemblyFile, playerType.TypeName);
 
                 // Save Player Infos
                 if (playerInfo == null)
@@ -554,10 +531,10 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Uploads a Player File into a Slot
         /// </summary>
-        /// <param name="service"></param>
+        /// <param name="connectionId">Caller id</param>
         /// <param name="slot">Target Slot</param>
         /// <param name="playerType">Player File</param>
-        internal void UploadMaster(ISimulationService service, byte slot, TypeInfo playerType)
+        internal void UploadMaster(string connectionId, byte slot, TypeInfo playerType)
         {
             // Check Slot
             if (slot < 0 || slot > 7)
@@ -572,11 +549,11 @@ namespace AntMe.Runtime.Communication
                 throw new InvalidOperationException("No level is set yet");
 
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 PlayerInfo playerInfo = null;
                 if (playerType != null)
-                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
+                    playerInfo = ExtensionLoader.SecureFindPlayer(_extensionPaths, playerType.AssemblyFile, playerType.TypeName);
 
                 lock (simulationLock)
                 {
@@ -618,12 +595,12 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Sets the Player State for the given Slot
         /// </summary>
-        /// <param name="service"></param>
+        /// <param name="connectionId">Caller id</param>
         /// <param name="slot">Target Slot</param>
         /// <param name="color">Prefered Color</param>
         /// <param name="team">Team Number</param>
         /// <param name="ready">Ready Flag</param>
-        internal void SetPlayerState(ISimulationService service, byte slot, PlayerColor color, byte team, bool ready)
+        internal void SetPlayerState(string connectionId, byte slot, PlayerColor color, byte team, bool ready)
         {
             // Check Slot Range
             if (slot < 0 || slot > 7)
@@ -638,7 +615,7 @@ namespace AntMe.Runtime.Communication
                 throw new InvalidOperationException("No level is set yet");
 
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 Slot oldSlot = null;
                 lock (simulationLock)
@@ -702,11 +679,11 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Resets the Slot of the calling user
         /// </summary>
-        /// <param name="service"></param>
-        internal void UnsetPlayerState(SimulationService service)
+        /// <param name="connectionId">Caller id</param>
+        internal void UnsetPlayerState(string connectionId)
         {
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 Slot slot = null;
                 lock (simulationLock)
@@ -739,12 +716,12 @@ namespace AntMe.Runtime.Communication
         /// <summary>
         /// Sets the Master State for the given Slot
         /// </summary>
-        /// <param name="service"></param>
+        /// <param name="connectionId">Caller id</param>
         /// <param name="slot">Target Slot</param>
         /// <param name="color">Prefered Color</param>
         /// <param name="team">Team Number</param>
         /// <param name="ready">Ready Flag</param>
-        internal void SetMasterState(ISimulationService service, byte slot, PlayerColor color, byte team, bool ready)
+        internal void SetMasterState(string connectionId, byte slot, PlayerColor color, byte team, bool ready)
         {
             // Check Slot Range
             if (slot < 0 || slot > 7)
@@ -759,7 +736,7 @@ namespace AntMe.Runtime.Communication
                 throw new InvalidOperationException("No level is set yet");
 
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 if (master != client.UserProfile)
                     throw new InvalidOperationException("You are not the master");
@@ -789,10 +766,10 @@ namespace AntMe.Runtime.Communication
 
         #region Flow Management
 
-        internal void StartSimulation(ISimulationService service)
+        internal void StartSimulation(string connectionId)
         {
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 lock (simulationLock)
                 {
@@ -854,7 +831,7 @@ namespace AntMe.Runtime.Communication
                     if (count > levelInfo.LevelDescription.MaxPlayerCount)
                         throw new InvalidOperationException("Too many player for this Map");
 
-                    simulation = new SecureSimulation(extensionPaths);
+                    simulation = new SecureSimulation(_extensionPaths);
                     simulation.Start(settings);
 
                     // Start Simulation Loop
@@ -873,10 +850,10 @@ namespace AntMe.Runtime.Communication
             }
         }
 
-        internal void PauseSimulation(ISimulationService service)
+        internal void PauseSimulation(string connectionId)
         {
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 if (master != client.UserProfile)
                     throw new InvalidOperationException("You are not the master");
@@ -896,10 +873,10 @@ namespace AntMe.Runtime.Communication
             }
         }
 
-        internal void ResumeSimulation(ISimulationService service)
+        internal void ResumeSimulation(string connectionId)
         {
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 if (master != client.UserProfile)
                     throw new InvalidOperationException("You are not the master");
@@ -919,10 +896,10 @@ namespace AntMe.Runtime.Communication
             }
         }
 
-        internal void StopSimulation(ISimulationService service)
+        internal void StopSimulation(string connectionId)
         {
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 if (master != client.UserProfile)
                     throw new InvalidOperationException("You are not the master");
@@ -940,10 +917,10 @@ namespace AntMe.Runtime.Communication
             }
         }
 
-        internal void PitchSimulation(ISimulationService service, byte frames)
+        internal void PitchSimulation(string connectionId, byte frames)
         {
             ClientInfo client;
-            if (clients.TryGetValue(service, out client))
+            if (clients.TryGetValue(connectionId, out client))
             {
                 if (master != client.UserProfile)
                     throw new InvalidOperationException("You are not the master");
@@ -1169,7 +1146,7 @@ namespace AntMe.Runtime.Communication
                 catch (Exception ex)
                 {
                     // TODO: Log somewhere
-                    Unregister(client.ServiceInterface);
+                    Unregister(client.ConnectionId);
                 }
             });
             t.Start();

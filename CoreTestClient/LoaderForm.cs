@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AntMe.Runtime;
 
 namespace CoreTestClient
 {

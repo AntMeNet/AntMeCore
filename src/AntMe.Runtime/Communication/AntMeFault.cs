@@ -3,7 +3,7 @@
 namespace AntMe.Runtime.Communication
 {
     [DataContract]
-    internal class AntMeFault
+    public class AntMeFault
     {
         [DataMember]
         public string Title { get; set; }

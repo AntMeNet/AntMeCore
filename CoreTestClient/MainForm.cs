@@ -2,6 +2,8 @@
 using CoreTestClient.Screens;
 using System;
 using System.Windows.Forms;
+using AntMe.Runtime;
+using AntMe.Runtime.Client.Communication;
 
 namespace CoreTestClient
 {
@@ -133,16 +135,18 @@ namespace CoreTestClient
             }
         }
 
+        private void CurrentClient_OnError(object sender, Exception e)
+        {
+            MessageBox.Show(e.Message);
+        }
+
         private void CurrentClient_OnSimulationChanged(ISimulationClient client, SimulationState simulationState, byte frames)
         {
             framesToolButton.Text = string.Format("{0} fps", frames);
             // throw new NotImplementedException();
         }
 
-        private void CurrentClient_OnError(ISimulationClient client, string message)
-        {
-            MessageBox.Show(message);
-        }
+
 
         private void codeGeneratorMenu_Click(object sender, EventArgs e)
         {
@@ -210,5 +214,11 @@ namespace CoreTestClient
                 form.ShowDialog(this);
             }
         }
+
+        private void ServerGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SwitchMode(new ServerGameControl());
+        }
+
     }
 }

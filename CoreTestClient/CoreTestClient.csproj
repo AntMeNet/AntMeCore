@@ -158,6 +158,12 @@
     <Compile Include="Screens\GameModeScreen.Designer.cs">
       <DependentUpon>GameModeScreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="Screens\ServerGameControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Screens\ServerGameControl.Designer.cs">
+      <DependentUpon>ServerGameControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Screens\SingleGameControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -227,6 +233,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Screens\ServerGameControl.resx">
+      <DependentUpon>ServerGameControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Screens\SingleGameControl.resx">
       <DependentUpon>SingleGameControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -306,6 +315,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="NETStandard.Library">
+      <Version>2.0.3</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\src\AntMe.Basics\AntMe.Basics.csproj">
       <Project>{77c997c2-c2c7-4e55-bb99-af36359c4ee5}</Project>
       <Name>AntMe.Basics</Name>
@@ -318,15 +332,18 @@
       <Project>{fa3d1283-c79d-47a1-81af-265eb95d6d51}</Project>
       <Name>AntMe.Generator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\AntMe.Runtime_old\AntMe.Runtime_old.csproj">
-      <Project>{b15f5fbe-7460-4f89-ad30-cc3d135293b4}</Project>
-      <Name>AntMe.Runtime_old</Name>
+    <ProjectReference Include="..\src\AntMe.Runtime.Client\AntMe.Runtime.Client.csproj">
+      <Project>{29a110af-4cbd-4d07-99d3-ca75b7431da2}</Project>
+      <Name>AntMe.Runtime.Client</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NETStandard.Library">
-      <Version>2.0.3</Version>
-    </PackageReference>
+    <ProjectReference Include="..\src\AntMe.Runtime.Simulation\AntMe.Runtime.Simulation.csproj">
+      <Project>{fdf47c47-7444-43e9-936c-096af08b8d7a}</Project>
+      <Name>AntMe.Runtime.Simulation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\AntMe.Runtime\AntMe.Runtime.csproj">
+      <Project>{0cc2a65a-8b65-4946-bf0f-8c4b61453ed1}</Project>
+      <Name>AntMe.Runtime</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,13 +3,14 @@ using System.Windows.Forms;
 using AntMe;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using AntMe.Runtime;
 using AntMe.Runtime.Client.Communication;
 using AntMe.Runtime.Simulation.Communication;
 
 namespace CoreTestClient.Screens
 {
-    public partial class SingleGameControl : GameModeScreen
+    public partial class ServerGameControl : GameModeScreen
     {
         private LevelInfo level = null;
 
@@ -35,7 +36,7 @@ namespace CoreTestClient.Screens
                 return true;
             }
         }
-
+        
         public override ISimulationClient StartSimulation()
         {
             string[] extensionPaths = new string[] {
@@ -45,22 +46,31 @@ namespace CoreTestClient.Screens
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
             };
 
-            ISimulationClient result = SimulationClient.CreateSecure(extensionPaths, ExtensionLoader.DefaultTypeResolver);
-            result.AquireMaster();
-            result.UploadLevel(level.Type);
-            for (byte i = 0; i < 8; i++)
+            ISimulationClient result = null;
+            Task.Run(async () =>
             {
-                if (slots[i] != null)
+                var uri = "http://loclahost:200/Test";
+                SimulationServer.Start(extensionPaths,uri);
+
+                result = await SimulationClient.CreateSignalR(extensionPaths, uri + "/signalR");
+                await result.AquireMaster();
+                await result.UploadLevel(level.Type);
+                for (byte i = 0; i < 8; i++)
                 {
-                    result.UploadMaster(i, slots[i].Type);
-                    result.SetMasterState(i, (PlayerColor)i, i, true);
+                    if (slots[i] != null)
+                    {
+                        await result.UploadMaster(i, slots[i].Type);
+                        await result.SetMasterState(i, (PlayerColor)i, i, true);
+                    }
                 }
-            }
-            result.StartSimulation();
+
+                await result.StartSimulation();
+
+            }).Wait();
             return result;
         }
 
-        public SingleGameControl()
+        public ServerGameControl()
         {
             InitializeComponent();
             UpdateView();
@@ -76,7 +86,7 @@ namespace CoreTestClient.Screens
                     levelRemoveButton.Visible = true;
                     levelLabel.Text = level.LevelDescription.Name;
                     UpdateView();
-                }   
+                }
             }
         }
 

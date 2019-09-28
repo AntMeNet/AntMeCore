@@ -1,4 +1,6 @@
-﻿namespace AntMe.Runtime.Communication
+﻿using AntMe.Runtime.Communication;
+
+namespace AntMe.Runtime.Simulation.Communication
 {
     /// <summary>
     /// Wrapper um eine abgesicherte Simulation in einer AppDomain

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System;
+using AntMe.Runtime;
 
 namespace CoreTestClient
 {

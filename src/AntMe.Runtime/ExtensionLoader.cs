@@ -84,7 +84,7 @@ namespace AntMe.Runtime
                 try
                 {
                     // Try to load and add to list
-                    var assembly = Assembly.LoadFile(file);
+                    var assembly = Assembly.LoadFrom(file);
                     var attributes = assembly.GetCustomAttributes(typeof(AntMeExtensionAttribute), true);
 
                     if (attributes != null)
@@ -772,19 +772,20 @@ namespace AntMe.Runtime
         /// <returns>Collection of found Elements and occured Errors</returns>
         public static LoaderInfo SecureAnalyseExtension(string[] extensionPaths, byte[] file, bool level, bool player)
         {
-            AppDomainSetup setup = new AppDomainSetup();
-            setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            Evidence evidence = new Evidence();
-            AppDomain appDomain = AppDomain.CreateDomain("AntMe! Analyzer", evidence, setup);
+            //AppDomainSetup setup = new AppDomainSetup();
+            //setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+            //Evidence evidence = new Evidence();
+            //AppDomain appDomain = AppDomain.CreateDomain("AntMe! Analyzer", evidence, setup);
 
-            Type hostType = typeof(ExtensionLoaderHost);
+            //Type hostType = typeof(ExtensionLoaderHost);
 
-            ExtensionLoaderHost host = appDomain.CreateInstanceAndUnwrap(hostType.Assembly.FullName, hostType.FullName) as ExtensionLoaderHost;
+            //ExtensionLoaderHost host = appDomain.CreateInstanceAndUnwrap(hostType.Assembly.FullName, hostType.FullName) as ExtensionLoaderHost;
+            var host = new ExtensionLoaderHost();
             LoaderInfo info = host.AnalyseExtension(extensionPaths, file, level, level, player);
             foreach (var item in info.Players)
                 item.Source = PlayerSource.Imported;
 
-            AppDomain.Unload(appDomain);
+            //AppDomain.Unload(appDomain);
 
             return info;
         }

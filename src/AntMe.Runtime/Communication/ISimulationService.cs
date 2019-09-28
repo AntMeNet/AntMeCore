@@ -1,154 +1,65 @@
-﻿using System.ServiceModel;
+﻿using System.Threading.Tasks;
 
 namespace AntMe.Runtime.Communication
 {
-    [ServiceContract(
-        SessionMode = SessionMode.Required,
-        CallbackContract = typeof(ISimulationCallback)
-    )]
-    internal interface ISimulationService
+    public interface ISimulationService
     {
-        [OperationContract(
-            IsInitiating = true,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        int Hello(string username);
+        Task<int> Hello(string username);
+        Task Goodbye();
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = true
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void Goodbye();
+        #region Methoden
 
-#region Methoden
+        #region Master Handling
 
-#region Master Handling
+        Task AquireMaster();
 
-        [OperationContract(
-                    IsInitiating = false,
-                    IsTerminating = false
-                )]
-        [FaultContract(typeof(AntMeFault))]
-        void AquireMaster();
+        Task FreeMaster();
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void FreeMaster();
+        #endregion
 
-#endregion
+        #region User Handling
 
-#region User Handling
+        Task ChangeUsername(string name);
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void ChangeUsername(string name);
+        #endregion
 
-#endregion
+        #region Chat Handling
 
-#region Chat Handling
+        Task SendMessage(string message);
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void SendMessage(string message);
+        #endregion
 
-#endregion
+        #region Settings Handling
 
-#region Settings Handling
+        Task UploadLevel(TypeInfo level);
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void UploadLevel(TypeInfo level);
+        Task UploadPlayer(TypeInfo player);
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void UploadPlayer(TypeInfo player);
+        Task UploadMaster(byte slot, TypeInfo player);
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void UploadMaster(byte slot, TypeInfo player);
+        Task SetPlayerState(byte slot, PlayerColor color, byte team, bool ready);
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void SetPlayerState(byte slot, PlayerColor color, byte team, bool ready);
+        Task UnsetPlayerState();
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void UnsetPlayerState();
+        Task SetMasterState(byte slot, PlayerColor color, byte team, bool ready);
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void SetMasterState(byte slot, PlayerColor color, byte team, bool ready);
+        #endregion
 
-#endregion
+        #region Flow Handling
 
-#region Flow Handling
+        Task StartSimulation();
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void StartSimulation();
+        Task PauseSimulation();
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void PauseSimulation();
+        Task ResumeSimulation();
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void ResumeSimulation();
+        Task StopSimulation();
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void StopSimulation();
+        Task PitchSimulation(byte frames);
 
-        [OperationContract(
-            IsInitiating = false,
-            IsTerminating = false
-        )]
-        [FaultContract(typeof(AntMeFault))]
-        void PitchSimulation(byte frames);
+        #endregion
 
-#endregion
+        #endregion
 
-#endregion
     }
 }

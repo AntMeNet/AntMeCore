@@ -69,10 +69,6 @@
       <Project>{98cb8f24-2d2e-469e-8096-7ab538829358}</Project>
       <Name>AntMe.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AntMe.Runtime_old\AntMe.Runtime_old.csproj">
-      <Project>{B15F5FBE-7460-4F89-AD30-CC3D135293B4}</Project>
-      <Name>AntMe.Runtime_old</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NETStandard.Library">

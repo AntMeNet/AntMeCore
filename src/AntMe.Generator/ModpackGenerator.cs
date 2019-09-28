@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using AntMe.Runtime;
 
 namespace AntMe.Generator
 {
@@ -71,7 +72,7 @@ namespace AntMe.Generator
                 // TODO: Ingnoriere Vererbungsstack
                 AnalyseType<UnitInteropProperty>(item.AttachmentType, dictionary);
             }
-            
+
 
             // Collect all Factory Interops
             foreach (var item in ExtensionLoader.DefaultTypeMapper.FactionProperties)
@@ -89,7 +90,7 @@ namespace AntMe.Generator
             AnalyseType(t, dict);
 
             while (t != typeof(T) && t != null)
-            {   
+            {
                 t = t.BaseType;
                 AnalyseType(t, dict);
             }

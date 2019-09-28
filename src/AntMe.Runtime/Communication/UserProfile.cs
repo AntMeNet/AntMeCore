@@ -12,12 +12,12 @@ namespace AntMe.Runtime.Communication
         /// Client Id.
         /// </summary>
         [DataMember]
-        public int Id { get; internal set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Display Name.
         /// </summary>
         [DataMember]
-        public string Username { get; internal set; }
+        public string Username { get; set; }
     }
 }

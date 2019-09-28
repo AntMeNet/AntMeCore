@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Reflection;
+using AntMe.Runtime.Communication;
 
-namespace AntMe.Runtime.Communication
+namespace AntMe.Runtime.Simulation.Communication
 {
     internal sealed class UnsecureSimulationClient : LocalSimulationClient
     {

@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>AntMe.Runtime</AssemblyName>
-    <RootNamespace>AntMe.Runtime</RootNamespace>
-    <PackageId>AntMe! 2.0 Runtime</PackageId>
+    <AssemblyName>AntMe.Runtime.Client</AssemblyName>
+    <RootNamespace>AntMe. Client Runtime.Client</RootNamespace>
+    <PackageId>AntMe! 2.0 Runtime Client</PackageId>
     <Version>2.0.0.747</Version>
-    <Description>All the runtime Components of AntMe! Simulations</Description>
+    <Description>All the runtime Client Components of AntMe! Simulations</Description>
     <Company>AntMe! GmbH</Company>
     <Copyright>Copyright ©  2015 AntMe! GmbH</Copyright>
     <Authors />
@@ -16,24 +16,20 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\Debug\</OutputPath>
-    <DocumentationFile>..\..\bin\Debug\AntMe.Runtime.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\Debug\AntMe.RuntimeClient.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\bin\Release\</OutputPath>
-    <DocumentationFile>..\..\bin\Release\AntMe.Runtime.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\Release\AntMe.Runtime.Client.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="AntMe.AntMeExtension" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Client" Version="2.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mono.Cecil" Version="0.11.0" />
+    <ProjectReference Include="..\AntMe.Runtime\AntMe.Runtime.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\AntMe.Core\AntMe.Core.csproj" />
-  </ItemGroup>
-  
+
 </Project>

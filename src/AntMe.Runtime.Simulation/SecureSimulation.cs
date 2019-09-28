@@ -1,7 +1,8 @@
-﻿using AntMe.Serialization;
-using System;
+﻿using System;
+using System.Security.Policy;
+using AntMe.Serialization;
 
-namespace AntMe.Runtime
+namespace AntMe.Runtime.Simulation
 {
     /// <summary>
     /// Der sichere AppDomain Host für eine laufende Simulation. Mit Hilfe der 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using CoreTestClient.Renderer;
 using System.IO;
+using AntMe.Runtime.Client.Communication;
 
 namespace CoreTestClient
 {
@@ -48,7 +49,7 @@ namespace CoreTestClient
             }
         }
 
-        private void Simulation_OnSimulationState(ISimulationClient client, LevelState levelState)
+        private void Simulation_OnSimulationState(object sender, LevelState levelState)
         {
             if (currentState == null)
             {
