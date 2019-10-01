@@ -45,6 +45,8 @@ namespace CoreTestClient
 
         private bool mouseDown = false;
 
+        private bool needsRevalidation = false;
+
         public MapEditorForm()
         {
             context = ExtensionLoader.CreateSimulationContext();
@@ -115,6 +117,9 @@ namespace CoreTestClient
         {
             if (e.Button == MouseButtons.Left)
                 mouseDown = false;
+
+            if (needsRevalidation)
+                RevalidateMap();
         }
 
         private void Scene_MouseDown(object sender, MouseEventArgs e)
@@ -264,6 +269,12 @@ namespace CoreTestClient
 
         private void RevalidateMap()
         {
+            if(mouseDown)
+            {
+                needsRevalidation = true;
+                return;
+            }
+
             scene.Revalidate();
 
             errorsList.Items.Clear();
@@ -288,6 +299,8 @@ namespace CoreTestClient
             }
 
             errorContainer.Panel2Collapsed = scene.ValidationExceptions.Count == 0;
+
+            needsRevalidation = false;
         }
 
         private void SetTile(Index2? cell, MapTile tile)
