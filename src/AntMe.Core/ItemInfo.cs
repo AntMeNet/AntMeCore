@@ -5,7 +5,7 @@ namespace AntMe
     /// <summary>
     ///     Base Class for all Info Objects.
     /// </summary>
-    public class ItemInfo : PropertyList<ItemInfoProperty>
+    public abstract class ItemInfo : PropertyList<ItemInfoProperty>
     {
         /// <summary>
         ///     Reference to the observed Item.
@@ -13,30 +13,37 @@ namespace AntMe
         protected readonly Item Item;
 
         /// <summary>
-        ///     Reference to the observing Item.
-        /// </summary>
-        protected readonly Item Observer;
-
-        /// <summary>
         ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Reference to the observed Item.</param>
-        /// <param name="observer">Reference to the observing Item.</param>
-        public ItemInfo(Item item, Item observer)
+        protected ItemInfo(Item item)
         {
             Item = item;
-            Observer = observer;
         }
 
         /// <summary>
         ///     Gets the real Distance (Radius to Radius) to the Item.
         /// </summary>
-        public float Distance => Math.Max(0, GetDistance(Observer, Item) - Radius - Observer.Radius);
+        public float Distance
+        {
+            get
+            {
+                Item observer = null; // TODO: Get observer
+                return Math.Max(0, GetDistance(observer, Item) - Radius - observer.Radius);
+            }
+        }
 
         /// <summary>
         ///     Gets the direction to the Item.
         /// </summary>
-        public int Direction => GetDirection(Observer, Item);
+        public int Direction
+        {
+            get
+            {
+                Item observer = null; // TODO: Get observer
+                return GetDirection(observer, Item);
+            }
+        }
 
         /// <summary>
         ///     Returns the Item Radius.
@@ -55,34 +62,6 @@ namespace AntMe
         internal Item GetItem()
         {
             return Item;
-        }
-
-        /// <summary>
-        ///     Generates a unique Hash Code for this Info.
-        /// </summary>
-        /// <returns>Hash Code</returns>
-        public override int GetHashCode()
-        {
-            return Item.Id.GetHashCode() +
-                   Observer.Id.GetHashCode();
-        }
-
-        /// <summary>
-        ///     Compares two Info Items.
-        /// </summary>
-        /// <param name="obj">Other Item</param>
-        /// <returns>Is this the same Info?</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-                return false;
-
-            if (!(obj is ItemInfo))
-                return false;
-
-            var other = obj as ItemInfo;
-            return Item == other.Item &&
-                   Observer == other.Observer;
         }
 
         #region Static Helper

@@ -146,7 +146,7 @@ namespace AntMe.Basics.Factions.Ants
         public AnthillInfo GetClosestAnthill(Item item)
         {
             // TODO: Check for a smarter Way without Info Object
-            return antHills.Values.Select(anthill => anthill.GetItemInfo(item) as AnthillInfo).OrderBy(i => i.Distance)
+            return antHills.Values.Select(anthill => anthill.GetItemInfo() as AnthillInfo).OrderBy(i => i.Distance)
                 .FirstOrDefault();
         }
     }

@@ -59,9 +59,8 @@ namespace AntMe
         ///     Erstellt ein neues Info-Objekt auf Basis der beiden übergebenen Items.
         /// </summary>
         /// <param name="Item">Item das im Info Objekt repräsentiert wird</param>
-        /// <param name="observer">Item das auf das Basis-Item schaut.</param>
         /// <returns>Info</returns>
-        ItemInfo CreateItemInfo(Item Item, Item observer);
+        ItemInfo CreateItemInfo(Item Item);
 
         #endregion
 

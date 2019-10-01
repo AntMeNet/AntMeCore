@@ -20,9 +20,8 @@
         /// </summary>
         /// <param name="mapTile">Related Map Tile</param>
         /// <param name="property">Related Property</param>
-        /// <param name="observer">Observer</param>
-        public MapTileInfoProperty(MapTile mapTile, MapTileProperty property, Item observer)
-            : base(property, observer)
+        protected MapTileInfoProperty(MapTile mapTile, MapTileProperty property)
+            : base(property)
         {
             MapTile = mapTile;
             Property = property;

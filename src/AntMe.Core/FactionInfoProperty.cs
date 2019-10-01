@@ -20,9 +20,8 @@
         /// </summary>
         /// <param name="faction">Related Faction</param>
         /// <param name="property">Related Property</param>
-        /// <param name="observer">Observer</param>
-        public FactionInfoProperty(Faction faction, FactionProperty property, Item observer)
-            : base(property, observer)
+        protected FactionInfoProperty(Faction faction, FactionProperty property)
+            : base(property)
         {
             Faction = faction;
             Property = property;

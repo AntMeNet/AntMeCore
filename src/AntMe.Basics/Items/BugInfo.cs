@@ -1,14 +1,12 @@
 ﻿namespace AntMe.Basics.Items
 {
-    public class BugInfo : ItemInfo
+    public sealed class BugInfo : ItemInfo
     {
-        public BugInfo(BugItem item, Item observer)
-            : base(item, observer)
+        public BugInfo(BugItem item) : base(item)
         {
         }
 
-        public BugInfo(ClassicBugItem item, Item observer)
-            : base(item, observer)
+        public BugInfo(ClassicBugItem item) : base(item)
         {
         }
     }

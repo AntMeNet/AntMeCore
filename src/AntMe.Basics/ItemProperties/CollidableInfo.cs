@@ -2,21 +2,21 @@
 {
     public sealed class CollidableInfo : ItemInfoProperty
     {
-        private readonly CollidableProperty property;
+        private readonly CollidableProperty _property;
 
-        public CollidableInfo(Item item, ItemProperty property, Item observer) : base(item, property, observer)
+        public CollidableInfo(Item item, ItemProperty property) : base(item, property)
         {
-            this.property = property as CollidableProperty;
+            this._property = property as CollidableProperty;
         }
 
         /// <summary>
         ///     Is the Item a fixed Mass
         /// </summary>
-        public bool Fixed => property.CollisionFixed;
+        public bool Fixed => _property.CollisionFixed;
 
         /// <summary>
         ///     Item Mass
         /// </summary>
-        public float Mass => property.CollisionMass;
+        public float Mass => _property.CollisionMass;
     }
 }

@@ -2,16 +2,16 @@
 {
     public sealed class AttackableInfo : ItemInfoProperty
     {
-        private readonly AttackableProperty property;
+        private readonly AttackableProperty _property;
 
-        public AttackableInfo(Item item, ItemProperty property, Item observer)
-            : base(item, property, observer)
+        public AttackableInfo(Item item, ItemProperty property)
+            : base(item, property)
         {
-            this.property = property as AttackableProperty;
+            _property = property as AttackableProperty;
         }
 
-        public int Health => property.AttackableHealth;
+        public int Health => _property.AttackableHealth;
 
-        public int MaximumHealth => property.AttackableMaximumHealth;
+        public int MaximumHealth => _property.AttackableMaximumHealth;
     }
 }

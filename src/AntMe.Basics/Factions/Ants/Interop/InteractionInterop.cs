@@ -11,13 +11,13 @@ namespace AntMe.Basics.Factions.Ants.Interop
     /// </summary>
     public sealed class InteractionInterop : UnitInteropProperty
     {
-        private readonly AppleCollectorProperty apple;
-        private readonly AttackableProperty attackable;
-        private readonly AttackerProperty attacker;
+        private readonly AppleCollectorProperty _apple;
+        private readonly AttackableProperty _attackable;
+        private readonly AttackerProperty _attacker;
 
-        private readonly HashSet<ItemInfo> attackerItems = new HashSet<ItemInfo>();
-        private readonly CarrierProperty carrier;
-        private readonly SugarCollectorProperty sugar;
+        private readonly HashSet<ItemInfo> _attackerItems = new HashSet<ItemInfo>();
+        private readonly CarrierProperty _carrier;
+        private readonly SugarCollectorProperty _sugar;
 
         /// <summary>
         ///     Default Constructor for the Type Mapper.
@@ -29,56 +29,56 @@ namespace AntMe.Basics.Factions.Ants.Interop
         {
             #region Collector
 
-            sugar = item.GetProperty<SugarCollectorProperty>();
-            if (sugar == null)
+            _sugar = item.GetProperty<SugarCollectorProperty>();
+            if (_sugar == null)
                 throw new ArgumentException("Item does not contain SugarCollector");
 
-            apple = item.GetProperty<AppleCollectorProperty>();
-            if (apple == null)
+            _apple = item.GetProperty<AppleCollectorProperty>();
+            if (_apple == null)
                 throw new ArgumentException("Item does not contain AppleCollector");
 
             #endregion
 
             #region Carrier
 
-            carrier = item.GetProperty<CarrierProperty>();
-            if (carrier == null)
+            _carrier = item.GetProperty<CarrierProperty>();
+            if (_carrier == null)
                 throw new ArgumentException("Item does not contain CarrierProperty");
 
             #endregion
 
             #region Attackable
 
-            attackable = item.GetProperty<AttackableProperty>();
-            if (attackable == null)
+            _attackable = item.GetProperty<AttackableProperty>();
+            if (_attackable == null)
                 throw new ArgumentException("Item does not contain AttackableProperty");
 
-            attackable.OnKill += i => { OnKill?.Invoke(); };
+            _attackable.OnKill += i => { OnKill?.Invoke(); };
 
-            attackable.OnAttackerHit += (i, value) => { OnHit?.Invoke(value); };
+            _attackable.OnAttackerHit += (i, value) => { OnHit?.Invoke(value); };
 
-            attackable.OnNewAttackerItem += i =>
+            _attackable.OnNewAttackerItem += i =>
             {
-                var info = Item.GetItemInfo(i.Item);
+                var info = Item.GetItemInfo();
 
-                if (!attackerItems.Contains(info))
-                    attackerItems.Add(info);
+                if (!_attackerItems.Contains(info))
+                    _attackerItems.Add(info);
             };
 
-            attackable.OnLostAttackerItem += i =>
+            _attackable.OnLostAttackerItem += i =>
             {
-                var info = Item.GetItemInfo(i.Item);
+                var info = Item.GetItemInfo();
 
-                if (attackerItems.Contains(info))
-                    attackerItems.Remove(info);
+                if (_attackerItems.Contains(info))
+                    _attackerItems.Remove(info);
             };
 
             #endregion
 
             #region Attacker
 
-            attacker = item.GetProperty<AttackerProperty>();
-            if (attacker == null)
+            _attacker = item.GetProperty<AttackerProperty>();
+            if (_attacker == null)
                 throw new ArgumentException("Item does not contain AttackerProperty");
 
             #endregion
@@ -140,13 +140,13 @@ namespace AntMe.Basics.Factions.Ants.Interop
         public void Drop()
         {
             // Drop portable
-            carrier.Drop();
+            _carrier.Drop();
 
             // Drops Collectables
-            apple.Amount = 0;
+            _apple.Amount = 0;
 
             // Drop Sugar
-            var amount = sugar.Amount;
+            var amount = _sugar.Amount;
             if (Item.Settings.GetBool<AntItem>("DropSugar").Value)
                 Item.Engine.InsertItem(new SugarItem(Item.Faction.Level.Context, Item.Position.ToVector2XY(), amount));
         }
@@ -188,8 +188,8 @@ namespace AntMe.Basics.Factions.Ants.Interop
         public bool Carry(ItemInfo info)
         {
             // Drops old Items
-            if (carrier.CarrierLoad != null)
-                carrier.Drop();
+            if (_carrier.CarrierLoad != null)
+                _carrier.Drop();
 
             var item = Item.GetItemFromInfo(info);
 
@@ -198,7 +198,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             if (portable == null) return false;
 
             // Take
-            return carrier.Carry(portable);
+            return _carrier.Carry(portable);
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             if (attackable == null) return;
 
             // Start to attack
-            attacker.Attack(attackable);
+            _attacker.Attack(attackable);
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// </summary>
         public void StopAttack()
         {
-            attacker.StopAttack();
+            _attacker.StopAttack();
         }
 
         #endregion
@@ -232,67 +232,67 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         ///     List of attacking Items.
         /// </summary>
-        public IEnumerable<ItemInfo> AttackingItems => attackerItems.AsEnumerable();
+        public IEnumerable<ItemInfo> AttackingItems => _attackerItems.AsEnumerable();
 
         /// <summary>
         ///     Gets the current Health state.
         /// </summary>
-        public int Health => attackable.AttackableHealth;
+        public int Health => _attackable.AttackableHealth;
 
         /// <summary>
         ///     Gets the maximum possible Health.
         /// </summary>
-        public int MaximumHealth => attackable.AttackableMaximumHealth;
+        public int MaximumHealth => _attackable.AttackableMaximumHealth;
 
         /// <summary>
         ///     Returns the own Attack Range.
         /// </summary>
-        public float AttackRange => attacker.AttackRange;
+        public float AttackRange => _attacker.AttackRange;
 
         /// <summary>
         ///     Returns the own Attack Strength.
         /// </summary>
-        public int AttackStrength => attacker.AttackStrength;
+        public int AttackStrength => _attacker.AttackStrength;
 
         /// <summary>
         ///     Returns the Recovery Time per Hit.
         /// </summary>
-        public int AttackRecovery => attacker.AttackRecoveryTime;
+        public int AttackRecovery => _attacker.AttackRecoveryTime;
 
         /// <summary>
         ///     Returns the current Target.
         /// </summary>
-        public ItemInfo AttackTarget => attacker.AttackTarget?.Item.GetItemInfo(Item);
+        public ItemInfo AttackTarget => _attacker.AttackTarget?.Item.GetItemInfo();
 
         /// <summary>
         ///     Returns the own Carrier Strength.
         /// </summary>
-        public float Strength => carrier.CarrierStrength;
+        public float Strength => _carrier.CarrierStrength;
 
         /// <summary>
         ///     Returns the current Sugar Load.
         /// </summary>
-        public int SugarLoad => sugar.Amount;
+        public int SugarLoad => _sugar.Amount;
 
         /// <summary>
         ///     Returns the total Sugar Capacity.
         /// </summary>
-        public int MaximumSugarLoad => sugar.Capacity;
+        public int MaximumSugarLoad => _sugar.Capacity;
 
         /// <summary>
         ///     Returns the current Load of Apple Parts.
         /// </summary>
-        public int AppleLoad => apple.Amount;
+        public int AppleLoad => _apple.Amount;
 
         /// <summary>
         ///     Returns the total Apple Capacity.
         /// </summary>
-        public int MaximumAppleLoad => apple.Capacity;
+        public int MaximumAppleLoad => _apple.Capacity;
 
         /// <summary>
         ///     Returns the current Load.
         /// </summary>
-        public ItemInfo CurrentLoad => carrier.CarrierLoad?.Item.GetItemInfo(Item);
+        public ItemInfo CurrentLoad => _carrier.CarrierLoad?.Item.GetItemInfo();
 
         /// <summary>
         ///     Returns whenever the Item carries anything.
@@ -301,7 +301,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         {
             get
             {
-                if (carrier.CarrierLoad != null) return true;
+                if (_carrier.CarrierLoad != null) return true;
                 return Item.Properties.OfType<CollectorProperty>().Any(p => p.Amount > 0);
             }
         }

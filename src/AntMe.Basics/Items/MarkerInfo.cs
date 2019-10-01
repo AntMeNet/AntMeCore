@@ -2,12 +2,12 @@
 {
     public sealed class MarkerInfo : ItemInfo
     {
-        private readonly MarkerItem markerItem;
+        private readonly MarkerItem _markerItem;
 
-        public MarkerInfo(MarkerItem item, Item observer)
-            : base(item, observer)
+        public MarkerInfo(MarkerItem item)
+            : base(item)
         {
-            markerItem = item;
+            _markerItem = item;
         }
 
         /// <summary>
@@ -17,10 +17,10 @@
         {
             get
             {
-                if (Observer is FactionItem)
+                Item observer = null; // TODO: Get Observer
+                if (observer is FactionItem factionObserver)
                 {
-                    var item = Observer as FactionItem;
-                    return item.Faction.SlotIndex == markerItem.Faction.SlotIndex;
+                    return factionObserver.Faction.SlotIndex == _markerItem.Faction.SlotIndex;
                 }
 
                 return false;
@@ -28,23 +28,18 @@
         }
 
         /// <summary>
-        ///     Gibt den Radius des Elementes zurück.
-        /// </summary>
-        public new float Radius => markerItem.Radius;
-
-        /// <summary>
         ///     Gibt die enthaltene Information zurück.
         /// </summary>
-        public int Information => markerItem.Information;
+        public int Information => _markerItem.Information;
 
         /// <summary>
         ///     Gibt das maximale alter dieser Markierung in Runden zurück.
         /// </summary>
-        public int TotalAge => markerItem.TotalAge;
+        public int TotalAge => _markerItem.TotalAge;
 
         /// <summary>
         ///     Gibt das aktuelle Alter der Markierung in Runden zurück.
         /// </summary>
-        public int CurrentAge => markerItem.CurrentAge;
+        public int CurrentAge => _markerItem.CurrentAge;
     }
 }

@@ -2,27 +2,27 @@
 {
     public sealed class AttackerInfo : ItemInfoProperty
     {
-        private readonly AttackerProperty property;
+        private readonly AttackerProperty _property;
 
-        public AttackerInfo(Item item, ItemProperty property, Item observer)
-            : base(item, property, observer)
+        public AttackerInfo(Item item, ItemProperty property)
+            : base(item, property)
         {
-            this.property = property as AttackerProperty;
+            this._property = property as AttackerProperty;
         }
 
         /// <summary>
         ///     Attack Range.
         /// </summary>
-        public float Range => property.AttackRange;
+        public float Range => _property.AttackRange;
 
         /// <summary>
         ///     Recovery Time between Hits.
         /// </summary>
-        public int RecoveryTime => property.AttackRecoveryTime;
+        public int RecoveryTime => _property.AttackRecoveryTime;
 
         /// <summary>
         ///     Attacker Strength.
         /// </summary>
-        public int Strength => property.AttackStrength;
+        public int Strength => _property.AttackStrength;
     }
 }

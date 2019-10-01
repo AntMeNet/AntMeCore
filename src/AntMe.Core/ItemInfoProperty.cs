@@ -20,8 +20,7 @@
         /// </summary>
         /// <param name="item">Related Item</param>
         /// <param name="property">Related Property</param>
-        /// <param name="observer">Observer</param>
-        public ItemInfoProperty(Item item, ItemProperty property, Item observer) : base(property, observer)
+        protected ItemInfoProperty(Item item, ItemProperty property) : base(property)
         {
             Item = item;
             Property = property;

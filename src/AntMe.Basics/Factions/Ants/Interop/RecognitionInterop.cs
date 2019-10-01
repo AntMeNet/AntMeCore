@@ -10,10 +10,10 @@ namespace AntMe.Basics.Factions.Ants.Interop
     /// </summary>
     public sealed class RecognitionInterop : UnitInteropProperty
     {
-        private readonly SightingProperty sighting;
+        private readonly SightingProperty _sighting;
 
-        private readonly HashSet<ItemInfo> smellableItems = new HashSet<ItemInfo>();
-        private readonly HashSet<ItemInfo> visibleItems = new HashSet<ItemInfo>();
+        private readonly HashSet<ItemInfo> _smellableItems = new HashSet<ItemInfo>();
+        private readonly HashSet<ItemInfo> _visibleItems = new HashSet<ItemInfo>();
 
         /// <summary>
         ///     Default Constructor for the Type Mapper.
@@ -31,52 +31,52 @@ namespace AntMe.Basics.Factions.Ants.Interop
             // Insert sniffed Items into the List.
             sniffer.OnNewSmellableItem += property =>
             {
-                var info = property.Item.GetItemInfo(Item);
-                if (!smellableItems.Contains(info))
-                    smellableItems.Add(info);
+                var info = property.Item.GetItemInfo();
+                if (!_smellableItems.Contains(info))
+                    _smellableItems.Add(info);
             };
 
             // Remove sniffed Items from List.
             sniffer.OnLostSmellableItem += property =>
             {
-                var info = property.Item.GetItemInfo(Item);
-                if (smellableItems.Contains(info))
-                    smellableItems.Remove(info);
+                var info = property.Item.GetItemInfo();
+                if (_smellableItems.Contains(info))
+                    _smellableItems.Remove(info);
             };
 
             // Get Sighting Property
-            sighting = Item.GetProperty<SightingProperty>();
-            if (sighting == null)
+            _sighting = Item.GetProperty<SightingProperty>();
+            if (_sighting == null)
                 throw new ArgumentException("Item does not contain SightingProperty");
 
             // Add visible items to List.
-            sighting.OnNewVisibleItem += property =>
+            _sighting.OnNewVisibleItem += property =>
             {
-                var info = property.Item.GetItemInfo(Item);
-                if (!visibleItems.Contains(info))
-                    visibleItems.Add(info);
+                var info = property.Item.GetItemInfo();
+                if (!_visibleItems.Contains(info))
+                    _visibleItems.Add(info);
             };
 
             // Remove visible Items from List.
-            sighting.OnLostVisibleItem += property =>
+            _sighting.OnLostVisibleItem += property =>
             {
-                var info = property.Item.GetItemInfo(Item);
-                if (visibleItems.Contains(info))
-                    visibleItems.Remove(info);
+                var info = property.Item.GetItemInfo();
+                if (_visibleItems.Contains(info))
+                    _visibleItems.Remove(info);
             };
 
             // Set new Environment on Cell Switch
-            sighting.OnEnvironmentChanged += (i, value) => { OnEnvironmentChanged?.Invoke(value); };
+            _sighting.OnEnvironmentChanged += (i, value) => { OnEnvironmentChanged?.Invoke(value); };
         }
 
         protected override void Update(int round)
         {
             // Visible prüfen
-            if (visibleItems.Count > 0)
+            if (_visibleItems.Count > 0)
                 Spots?.Invoke();
 
             // Smellable prüfen
-            if (smellableItems.Count > 0)
+            if (_smellableItems.Count > 0)
                 Smells?.Invoke();
         }
 
@@ -85,22 +85,22 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         ///     List of visible Items in Range.
         /// </summary>
-        public IEnumerable<ItemInfo> VisibleItems => visibleItems.AsEnumerable();
+        public IEnumerable<ItemInfo> VisibleItems => _visibleItems.AsEnumerable();
 
         /// <summary>
         ///     List of smellable items in Range.
         /// </summary>
-        public IEnumerable<ItemInfo> SmellableItems => smellableItems.AsEnumerable();
+        public IEnumerable<ItemInfo> SmellableItems => _smellableItems.AsEnumerable();
 
         /// <summary>
         ///     Visible Environment.
         /// </summary>
-        public VisibleEnvironment Environment => sighting.Environment;
+        public VisibleEnvironment Environment => _sighting.Environment;
 
         /// <summary>
         ///     Gets the current View Range.
         /// </summary>
-        public float ViewRange => sighting.ViewRange;
+        public float ViewRange => _sighting.ViewRange;
 
         #endregion
 

@@ -14,34 +14,34 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <summary>
         ///     Reference to the Collidable Property.
         /// </summary>
-        private readonly CollidableProperty collidable;
+        private readonly CollidableProperty _collidable;
 
         /// <summary>
         ///     List of Collisions during the last Round.
         /// </summary>
-        private readonly HashSet<ItemInfo> collidedItems = new HashSet<ItemInfo>();
+        private readonly HashSet<ItemInfo> _collidedItems = new HashSet<ItemInfo>();
 
         /// <summary>
         ///     Reference to the Walking Property.
         /// </summary>
-        private readonly WalkingProperty walking;
+        private readonly WalkingProperty _walking;
 
         /// <summary>
         ///     Angle to Rotate until Wait()
         /// </summary>
-        private int angleToGo;
+        private int _angleToGo;
 
         /// <summary>
         ///     Current Destination Item.
         /// </summary>
-        private ItemInfo destination;
+        private ItemInfo _destination;
 
         /// <summary>
         ///     Distance to go until Wait()
         /// </summary>
-        private float distanceToGo;
+        private float _distanceToGo;
 
-        private readonly int rotationSpeed;
+        private readonly int _rotationSpeed;
 
         /// <summary>
         ///     Default Constructor for the Type Mapper.
@@ -53,13 +53,13 @@ namespace AntMe.Basics.Factions.Ants.Interop
             : base(faction, item, interop)
         {
             // Get Walking Property
-            walking = Item.GetProperty<WalkingProperty>();
-            if (walking == null)
+            _walking = Item.GetProperty<WalkingProperty>();
+            if (_walking == null)
                 throw new NotSupportedException("There is no Walking Property");
 
             // Get Collision Property
-            collidable = Item.GetProperty<CollidableProperty>();
-            if (collidable == null)
+            _collidable = Item.GetProperty<CollidableProperty>();
+            if (_collidable == null)
                 throw new NotSupportedException("There is no Collidable Property");
 
             var speedAttribute = 0;
@@ -69,29 +69,29 @@ namespace AntMe.Basics.Factions.Ants.Interop
             switch (speedAttribute)
             {
                 case -1:
-                    rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[-1]").Value;
+                    _rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[-1]").Value;
                     break;
                 case 1:
-                    rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[1]").Value;
+                    _rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[1]").Value;
                     break;
                 case 2:
-                    rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[2]").Value;
+                    _rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[2]").Value;
                     break;
                 default:
-                    rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[0]").Value;
+                    _rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[0]").Value;
                     break;
             }
 
             // Handle Collisions with Walls and Borders.
-            walking.OnHitBorder += InternalHitWall;
-            walking.OnHitWall += InternalHitWall;
+            _walking.OnHitBorder += InternalHitWall;
+            _walking.OnHitWall += InternalHitWall;
 
             // Kollisionen mit anderen Items füllt die Liste der Kollisionsitems 
             // und prüft, ob es sich beim getroffenen Item um das Ziel handelt.
-            collidable.OnCollision += (i, v) =>
+            _collidable.OnCollision += (i, v) =>
             {
                 // Zur Liste der kollidierten Items hinzufügen.
-                collidedItems.Add(v.GetItemInfo(Item));
+                _collidedItems.Add(v.GetItemInfo());
 
                 // Prüfen, ob es sich um das aktuelle Ziel handelt.
                 if (CurrentDestination != null &&
@@ -99,7 +99,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 {
                     // Alles anhalten und Reach melden
                     Stop();
-                    OnTargetReched?.Invoke(i.GetItemInfo(Item));
+                    OnTargetReched?.Invoke(i.GetItemInfo());
                 }
             };
         }
@@ -121,62 +121,62 @@ namespace AntMe.Basics.Factions.Ants.Interop
         protected override void Update(int round)
         {
             // Sollten Kollisionen passiert sein, Event werfen
-            if (collidedItems.Count > 0)
+            if (_collidedItems.Count > 0)
                 OnCollision?.Invoke();
 
-            collidedItems.Clear();
+            _collidedItems.Clear();
 
             // Prüfen, ob Target noch existiert und ob das Ziel
-            if (destination != null && !destination.IsAlive)
+            if (_destination != null && !_destination.IsAlive)
             {
                 Stop();
                 return;
             }
 
             // Behandle Bewegungen
-            if (angleToGo != 0)
+            if (_angleToGo != 0)
             {
                 // Drehung
-                var rot = angleToGo > 0 ? Math.Min(angleToGo, rotationSpeed) : Math.Max(angleToGo, -rotationSpeed);
+                var rot = _angleToGo > 0 ? Math.Min(_angleToGo, _rotationSpeed) : Math.Max(_angleToGo, -_rotationSpeed);
 
-                walking.Speed = 0f;
-                walking.Direction = Item.Orientation.AddDegree(rot);
-                angleToGo -= rot;
+                _walking.Speed = 0f;
+                _walking.Direction = Item.Orientation.AddDegree(rot);
+                _angleToGo -= rot;
             }
-            else if (distanceToGo > 0)
+            else if (_distanceToGo > 0)
             {
                 // TODO: Calculate right (based on Position, not MAxSpeed)
                 // Bewegung
-                if (distanceToGo > walking.MaximumSpeed)
+                if (_distanceToGo > _walking.MaximumSpeed)
                 {
-                    walking.Speed = walking.MaximumSpeed;
-                    distanceToGo -= walking.MaximumSpeed;
+                    _walking.Speed = _walking.MaximumSpeed;
+                    _distanceToGo -= _walking.MaximumSpeed;
                 }
                 else
                 {
-                    walking.Speed = distanceToGo;
-                    distanceToGo = 0;
+                    _walking.Speed = _distanceToGo;
+                    _distanceToGo = 0;
                 }
             }
-            else if (destination != null)
+            else if (_destination != null)
             {
                 // Recalc Direction
-                var distance = destination.Distance + Item.Radius + destination.Radius;
-                Angle direction = destination.Direction;
+                var distance = _destination.Distance + Item.Radius + _destination.Radius;
+                Angle direction = _destination.Direction;
                 var angle = Angle.ConvertToDegree(Angle.Diff(Item.Orientation, direction));
 
                 if (distance < Faction.Settings.GetFloat<AntItem>("ZigZagRange").Value)
                 {
                     // Genaue Route
-                    angleToGo = angle;
-                    distanceToGo = distance;
+                    _angleToGo = angle;
+                    _distanceToGo = distance;
                 }
                 else
                 {
                     // ZigZag
                     var zzAngle = Faction.Settings.GetInt<AntItem>("ZigZagAngle").Value;
-                    angleToGo = angle + Faction.Random.Next(-zzAngle, zzAngle);
-                    distanceToGo = Faction.Settings.GetFloat<AntItem>("ZigZagRange").Value;
+                    _angleToGo = angle + Faction.Random.Next(-zzAngle, zzAngle);
+                    _distanceToGo = Faction.Settings.GetFloat<AntItem>("ZigZagRange").Value;
                 }
             }
             else
@@ -201,8 +201,8 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <param name="distance">Distance to go</param>
         public void Goahead(float distance)
         {
-            distanceToGo = distance;
-            destination = null;
+            _distanceToGo = distance;
+            _destination = null;
         }
 
         /// <summary>
@@ -211,8 +211,8 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// <param name="angle">Degrees</param>
         public void Turn(int angle)
         {
-            angleToGo = angle;
-            destination = null;
+            _angleToGo = angle;
+            _destination = null;
         }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         public void GoTo(ItemInfo destination)
         {
             Stop();
-            this.destination = destination;
+            this._destination = destination;
         }
 
         /// <summary>
@@ -265,9 +265,9 @@ namespace AntMe.Basics.Factions.Ants.Interop
         /// </summary>
         public void Stop()
         {
-            angleToGo = 0;
-            distanceToGo = 0;
-            destination = null;
+            _angleToGo = 0;
+            _distanceToGo = 0;
+            _destination = null;
         }
 
         /// <summary>
@@ -303,38 +303,38 @@ namespace AntMe.Basics.Factions.Ants.Interop
             get
             {
                 // In Case of a Destination return Distance
-                if (destination != null)
-                    return destination.Distance;
+                if (_destination != null)
+                    return _destination.Distance;
 
                 // otherwise return the freestyle Distance to go
-                return distanceToGo;
+                return _distanceToGo;
             }
         }
 
         /// <summary>
         ///     Returns the Angle to turn.
         /// </summary>
-        public int AngleToGo => angleToGo;
+        public int AngleToGo => _angleToGo;
 
         /// <summary>
         ///     Returns the current Destination Item.
         /// </summary>
-        public ItemInfo CurrentDestination => destination;
+        public ItemInfo CurrentDestination => _destination;
 
         /// <summary>
         ///     Gibt die maximale Geschwindigkeit der Ameise zurück.
         /// </summary>
-        public float MaximumSpeed => walking.MaximumSpeed;
+        public float MaximumSpeed => _walking.MaximumSpeed;
 
         /// <summary>
         ///     Gibt die Kollisionsmasse der Ameise zurück.
         /// </summary>
-        public float Mass => collidable.CollisionFixed ? float.MaxValue : collidable.CollisionMass;
+        public float Mass => _collidable.CollisionFixed ? float.MaxValue : _collidable.CollisionMass;
 
         /// <summary>
         ///     Liefert eine Liste der Elemente, mit der die Ameise gerade kollidiert ist.
         /// </summary>
-        public IEnumerable<ItemInfo> CollidedItems => collidedItems.AsEnumerable();
+        public IEnumerable<ItemInfo> CollidedItems => _collidedItems.AsEnumerable();
 
         #endregion
 

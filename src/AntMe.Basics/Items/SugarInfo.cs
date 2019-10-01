@@ -2,17 +2,15 @@
 
 namespace AntMe.Basics.Items
 {
-    public class SugarInfo : ItemInfo
+    public sealed class SugarInfo : ItemInfo
     {
         private readonly SugarItem _item;
 
         private readonly SugarCollectableProperty _sugar;
 
-        public SugarInfo(SugarItem item, Item observer)
-            : base(item, observer)
+        public SugarInfo(SugarItem item) : base(item)
         {
             _item = item;
-
             _sugar = _item.GetProperty<SugarCollectableProperty>();
         }
 

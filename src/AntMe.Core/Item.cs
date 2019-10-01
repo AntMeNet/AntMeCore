@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace AntMe
 {
@@ -9,44 +8,44 @@ namespace AntMe
     public abstract class Item : PropertyList<ItemProperty>
     {
         /// <summary>
-        ///     Cache for Info Items.
-        /// </summary>
-        private readonly Dictionary<Item, ItemInfo> _itemInfos = new Dictionary<Item, ItemInfo>();
-
-        /// <summary>
         ///     Current Cell.
         /// </summary>
-        private Index2 cell = Index2.Zero;
+        private Index2 _cell = Index2.Zero;
 
         /// <summary>
         ///     Reference to the Engine
         /// </summary>
-        private Engine engine;
+        private Engine _engine;
 
         /// <summary>
         ///     Current ID or 0 if not added.
         /// </summary>
-        private int id;
+        private int _id;
 
         /// <summary>
         ///     Current Orientation
         /// </summary>
-        private Angle orientation;
+        private Angle _orientation;
 
         /// <summary>
         ///     Current Position
         /// </summary>
-        private Vector3 position;
+        private Vector3 _position;
 
         /// <summary>
-        ///     CUrrent Radius
+        ///     Current Radius
         /// </summary>
-        private float radius;
+        private float _radius;
 
         /// <summary>
         ///     Instance of the Item State.
         /// </summary>
-        private ItemState state;
+        private ItemState _state;
+
+        /// <summary>
+        ///     Instance of the item info.
+        /// </summary>
+        private ItemInfo _info;
 
         /// <summary>
         ///     Default Constructor.
@@ -55,7 +54,7 @@ namespace AntMe
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public Item(SimulationContext context, Vector2 position, float radius, Angle orientation)
+        protected Item(SimulationContext context, Vector2 position, float radius, Angle orientation)
             : this(context, null, position, radius, orientation)
         {
         }
@@ -68,7 +67,7 @@ namespace AntMe
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public Item(SimulationContext context, UnitAttributeCollection attributes, Vector2 position, float radius,
+        protected Item(SimulationContext context, UnitAttributeCollection attributes, Vector2 position, float radius,
             Angle orientation)
         {
             Context = context;
@@ -84,7 +83,7 @@ namespace AntMe
         /// <summary>
         ///     Reference to the attached Engine.
         /// </summary>
-        public Engine Engine => engine;
+        public Engine Engine => _engine;
 
         /// <summary>
         ///     Current Simulation Context
@@ -109,19 +108,19 @@ namespace AntMe
         /// <summary>
         ///     Id of this Game Item.
         /// </summary>
-        public int Id => id;
+        public int Id => _id;
 
         /// <summary>
         ///     Current Map Cell.
         /// </summary>
         public Index2 Cell
         {
-            get => cell;
+            get => _cell;
             internal set
             {
-                if (cell != value)
+                if (_cell != value)
                 {
-                    cell = value;
+                    _cell = value;
                     CellChanged?.Invoke(this, value);
                 }
             }
@@ -132,10 +131,10 @@ namespace AntMe
         /// </summary>
         public Angle Orientation
         {
-            get => orientation;
+            get => _orientation;
             set
             {
-                orientation = value;
+                _orientation = value;
                 OrientationChanged?.Invoke(this, value);
             }
         }
@@ -145,10 +144,10 @@ namespace AntMe
         /// </summary>
         public float Radius
         {
-            get => radius;
+            get => _radius;
             set
             {
-                radius = value;
+                _radius = value;
                 RadiusChanged?.Invoke(this, value);
             }
         }
@@ -158,12 +157,12 @@ namespace AntMe
         /// </summary>
         public Vector3 Position
         {
-            get => position;
+            get => _position;
             set
             {
-                if (position != value)
+                if (_position != value)
                 {
-                    position = value;
+                    _position = value;
 
                     // Zelle updaten
                     if (Engine != null)
@@ -178,24 +177,16 @@ namespace AntMe
         /// <summary>
         ///     Generates an Info Object for the given Observer.
         /// </summary>
-        /// <param name="observer">Obsering Item</param>
         /// <returns>Info Object</returns>
-        public ItemInfo GetItemInfo(Item observer)
+        public ItemInfo GetItemInfo()
         {
-            if (observer == null)
-                throw new ArgumentNullException("observer");
+            if (_info == null)
+                _info =Context.Resolver.CreateItemInfo(this);
 
-            // Check Info Cache
-            if (_itemInfos.ContainsKey(observer))
-                return _itemInfos[observer];
-
-            // Generate new Instance
-            var info = Context.Resolver.CreateItemInfo(this, observer);
-            if (info == null)
+            if (_info == null)
                 throw new NotSupportedException("Could not create new Game Item Info");
 
-            _itemInfos.Add(observer, info);
-            return info;
+            return _info;
         }
 
         /// <summary>
@@ -219,11 +210,11 @@ namespace AntMe
         public ItemState GetState()
         {
             // Create new Instance one first Call.
-            if (state == null)
-                state = Context.Resolver.CreateItemState(this);
+            if (_state == null)
+                _state = Context.Resolver.CreateItemState(this);
 
-            OnBeforeState(state);
-            return state;
+            OnBeforeState(_state);
+            return _state;
         }
 
         #region Property Management
@@ -296,8 +287,8 @@ namespace AntMe
         /// <param name="id">New Id</param>
         internal void InternalInsertEngine(Engine engine, int id)
         {
-            this.engine = engine;
-            this.id = id;
+            this._engine = engine;
+            this._id = id;
 
             OnInsert();
             Inserted?.Invoke(this);
@@ -311,8 +302,8 @@ namespace AntMe
             OnRemoved();
             Removed?.Invoke(this);
 
-            engine = null;
-            id = 0;
+            _engine = null;
+            _id = 0;
 
             // TODO: Cleanup Infos
         }

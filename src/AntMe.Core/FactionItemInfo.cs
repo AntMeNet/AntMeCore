@@ -8,48 +8,80 @@
         /// <summary>
         ///     Reference to the related Faction Item.
         /// </summary>
-        private readonly FactionItem factionItem;
+        private readonly FactionItem _factionItem;
 
         /// <summary>
         ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Reference to the Item</param>
-        /// <param name="observer">Reference to the Observer item</param>
-        public FactionItemInfo(FactionItem item, Item observer)
-            : base(item, observer)
+        public FactionItemInfo(FactionItem item)
+            : base(item)
         {
-            factionItem = item;
-
-            IsFriendly = false;
-            IsAllied = false;
-            IsEnemy = true;
-            if (observer is FactionItem)
-            {
-                var factionObserver = observer as FactionItem;
-                IsFriendly = factionItem.Faction.SlotIndex == factionObserver.Faction.SlotIndex;
-                IsAllied = factionItem.Faction.TeamIndex == factionObserver.Faction.TeamIndex;
-                IsEnemy = !IsAllied;
-            }
+            _factionItem = item;
         }
 
         /// <summary>
         ///     Gets detailed Faction Information.
         /// </summary>
-        public FactionInfo Faction => factionItem.Faction.GetFactionInfo(Observer);
+        public FactionInfo Faction
+        {
+            get
+            {
+                Item observer = null; // TODO: Get observer
+                return _factionItem.Faction.GetFactionInfo(observer);
+            }
+        }
 
         /// <summary>
         ///     Is Item from same Faction? (Same Slot)
         /// </summary>
-        public bool IsFriendly { get; }
+        public bool IsFriendly
+        {
+            get
+            {
+                Item observer = null; // TODO: Get observer
+                if (observer is FactionItem factionObserver)
+                {
+                    return _factionItem.Faction.SlotIndex == factionObserver.Faction.SlotIndex;
+                }
+
+                return false;
+            }
+        }
+
 
         /// <summary>
         ///     Is Item from an allied Faction? (Same Team)
         /// </summary>
-        public bool IsAllied { get; }
+        public bool IsAllied
+        {
+            get
+            {
+                Item observer = null; // TODO: Get observer
+                if (observer is FactionItem factionObserver)
+                {
+                    return _factionItem.Faction.TeamIndex == factionObserver.Faction.TeamIndex;
+                }
+
+                return false;
+            }
+        }
 
         /// <summary>
         ///     Is Item an Enemy?
         /// </summary>
-        public bool IsEnemy { get; }
+        public bool IsEnemy
+        {
+            get
+            {
+                Item observer = null; // TODO: Get observer
+                if (observer is FactionItem factionObserver)
+                {
+                    return _factionItem.Faction.TeamIndex != factionObserver.Faction.TeamIndex;
+                }
+
+                return false;
+            }
+        }
     }
 }

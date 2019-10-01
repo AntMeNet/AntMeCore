@@ -1,9 +1,9 @@
 ﻿namespace AntMe.Basics.Items
 {
-    public class AppleInfo : ItemInfo
+    public sealed class AppleInfo : ItemInfo
     {
-        public AppleInfo(Item item, Item observer)
-            : base(item, observer)
+        public AppleInfo(Item item)
+            : base(item)
         {
         }
 

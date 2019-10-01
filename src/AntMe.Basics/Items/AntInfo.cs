@@ -1,9 +1,8 @@
 ﻿namespace AntMe.Basics.Items
 {
-    public class AntInfo : FactionItemInfo
+    public sealed class AntInfo : FactionItemInfo
     {
-        public AntInfo(AntItem item, Item observer)
-            : base(item, observer)
+        public AntInfo(AntItem item) : base(item)
         {
         }
     }

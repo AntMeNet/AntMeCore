@@ -1,13 +1,12 @@
 ﻿namespace AntMe.Basics.Items
 {
-    public class AnthillInfo : FactionItemInfo
+    public sealed class AnthillInfo : FactionItemInfo
     {
-        private readonly AnthillItem anthillItem;
+        private readonly AnthillItem _anthillItem;
 
-        public AnthillInfo(FactionItem item, Item observer)
-            : base(item, observer)
+        public AnthillInfo(FactionItem item) : base(item)
         {
-            anthillItem = item as AnthillItem;
+            _anthillItem = item as AnthillItem;
         }
     }
 }

@@ -602,13 +602,10 @@ namespace AntMe.Runtime
         /// <param name="item">Item Instanz</param>
         /// <param name="observer">Beobachtendes Game Item</param>
         /// <returns>Neue Instanz des passenden Infos</returns>
-        public ItemInfo CreateItemInfo(Item item, Item observer)
+        public ItemInfo CreateItemInfo(Item item)
         {
             if (item == null)
                 throw new ArgumentNullException("item");
-
-            if (observer == null)
-                throw new ArgumentNullException("observer");
 
             var container = itemsContainer.FirstOrDefault(g => g.Type == item.GetType());
             if (container == null)
@@ -621,7 +618,7 @@ namespace AntMe.Runtime
 
             if (container != null)
             {
-                var info = Activator.CreateInstance(container.InfoType, item, observer) as ItemInfo;
+                var info = Activator.CreateInstance(container.InfoType, item) as ItemInfo;
 
                 // Info-Properties in Abhängigkeit der Item-Props
                 foreach (var property in item.Properties)
@@ -634,7 +631,7 @@ namespace AntMe.Runtime
                     if (map.CreateInfoDelegate != null)
                     {
                         // Option 1: Create Delegate
-                        prop = map.CreateInfoDelegate(item, property, observer);
+                        prop = map.CreateInfoDelegate(item, property, null);
 
                         if (prop != null)
                         {
@@ -648,7 +645,7 @@ namespace AntMe.Runtime
                     else if (map.InfoType != null)
                     {
                         // Option 2: Automatische Erstellung
-                        prop = Activator.CreateInstance(map.InfoType, item, property, observer) as ItemInfoProperty;
+                        prop = Activator.CreateInstance(map.InfoType, item, property, null) as ItemInfoProperty;
                         if (prop == null)
                             // TODO: Trace
                             throw new Exception("Could not create Info Property");
