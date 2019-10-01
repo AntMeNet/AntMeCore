@@ -3,7 +3,7 @@
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Property for collidable Items.
+    ///     Property for collidable Items.
     /// </summary>
     public sealed class CollidableProperty : ItemProperty
     {
@@ -12,7 +12,7 @@ namespace AntMe.Basics.ItemProperties
         private float collisionRadius = 1f;
 
         /// <summary>
-        /// Default Constructor with a fixed Body.
+        ///     Default Constructor with a fixed Body.
         /// </summary>
         /// <param name="item">Reference to the Item</param>
         public CollidableProperty(Item item) : base(item)
@@ -23,7 +23,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Constructor with a movable Body.
+        ///     Constructor with a movable Body.
         /// </summary>
         /// <param name="item">Reference to the Item</param>
         /// <param name="mass">Mass of this Body</param>
@@ -34,11 +34,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the collision Radius.
+        ///     Gets or sets the collision Radius.
         /// </summary>
         public float CollisionRadius
         {
-            get { return collisionRadius; }
+            get => collisionRadius;
             set
             {
                 collisionRadius = Math.Max(value, 0f);
@@ -47,11 +47,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the collision Mass.
+        ///     Gets or sets the collision Mass.
         /// </summary>
         public float CollisionMass
         {
-            get { return collisionMass; }
+            get => collisionMass;
             set
             {
                 collisionMass = Math.Max(value, 0f);
@@ -60,11 +60,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets if the Body is fixed or movable.
+        ///     Gets or sets if the Body is fixed or movable.
         /// </summary>
         public bool CollisionFixed
         {
-            get { return collisionFixed; }
+            get => collisionFixed;
             set
             {
                 collisionFixed = value;
@@ -75,7 +75,7 @@ namespace AntMe.Basics.ItemProperties
         #region Internal Calls
 
         /// <summary>
-        /// Gets a call after a Collision with the given Item.
+        ///     Gets a call after a Collision with the given Item.
         /// </summary>
         /// <param name="item">Colliding Item</param>
         internal void CollideItem(Item item)
@@ -88,22 +88,22 @@ namespace AntMe.Basics.ItemProperties
         #region Events
 
         /// <summary>
-        /// Signal for a changed collision Radius.
+        ///     Signal for a changed collision Radius.
         /// </summary>
         public event ValueChanged<float> OnCollisionRadiusChanged;
 
         /// <summary>
-        /// Signal for a changed collision Mass.
+        ///     Signal for a changed collision Mass.
         /// </summary>
         public event ValueChanged<float> OnCollisionMassChanged;
 
         /// <summary>
-        /// Signal for a changed Fixed Body Flag.
+        ///     Signal for a changed Fixed Body Flag.
         /// </summary>
         public event ValueChanged<bool> OnCollisionFixedChanged;
 
         /// <summary>
-        /// Signal on Collision with another Item.
+        ///     Signal on Collision with another Item.
         /// </summary>
         public event ValueChanged<Item> OnCollision;
 

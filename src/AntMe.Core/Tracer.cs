@@ -5,19 +5,19 @@ using System.Text;
 namespace AntMe
 {
     /// <summary>
-    /// Klasse zum Logging.
+    ///     Klasse zum Logging.
     /// </summary>
     public class Tracer
     {
+        private readonly bool autoFlush;
+
         /// <summary>
-        /// Referenz auf die Trace Source.
+        ///     Referenz auf die Trace Source.
         /// </summary>
         protected TraceSource source;
 
-        private bool autoFlush;
-
         /// <summary>
-        /// Neue Instanz des Tracers.
+        ///     Neue Instanz des Tracers.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="autoFlush"></param>
@@ -28,7 +28,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Loggt ein Event.
+        ///     Loggt ein Event.
         /// </summary>
         /// <param name="eventType">Event Type</param>
         /// <param name="id">Event ID</param>
@@ -39,7 +39,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Loggt ein Event.
+        ///     Loggt ein Event.
         /// </summary>
         /// <param name="eventType">Event Type</param>
         /// <param name="id">Event ID</param>
@@ -51,7 +51,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Loggt ein Event.
+        ///     Loggt ein Event.
         /// </summary>
         /// <param name="eventType">Event Type</param>
         /// <param name="id">Event ID</param>
@@ -64,7 +64,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Loggt ein Event.
+        ///     Loggt ein Event.
         /// </summary>
         /// <param name="eventType">Event Type</param>
         /// <param name="id">Event ID</param>
@@ -72,9 +72,9 @@ namespace AntMe
         /// <param name="ex">Dazugehörige Exception</param>
         public void Trace(TraceEventType eventType, int id, string message, Exception ex)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            string prefix = string.Empty;
+            var prefix = string.Empty;
             while (ex != null)
             {
                 sb.Append(prefix);

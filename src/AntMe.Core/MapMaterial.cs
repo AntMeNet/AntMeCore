@@ -4,25 +4,32 @@ using System.IO;
 namespace AntMe
 {
     /// <summary>
-    /// Base Class for all Materials used in Maps.
+    ///     Base Class for all Materials used in Maps.
     /// </summary>
     public abstract class MapMaterial : ISerializableState
     {
         /// <summary>
-        /// Reference to the Simulation Context.
+        ///     Reference to the Simulation Context.
         /// </summary>
         protected readonly SimulationContext Context;
+
+        /// <summary>
+        ///     Signal for a changed Speed.
+        /// </summary>
+        public ValueUpdate<float> OnSpeedChanged;
 
         private float speed;
 
         /// <summary>
-        /// Default Constructor without Parameters.
+        ///     Default Constructor without Parameters.
         /// </summary>
         /// <param name="context">Simulation Context</param>
-        public MapMaterial(SimulationContext context) : this(context, 1f) { }
+        public MapMaterial(SimulationContext context) : this(context, 1f)
+        {
+        }
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="context">Simulation Context</param>
         /// <param name="speed">Map Tile Speed</param>
@@ -33,13 +40,13 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Speed Multiplier for walking Units.
+        ///     Speed Multiplier for walking Units.
         /// </summary>
         [DisplayName("Speed")]
         [Description("Speed Multiplier for walking Units.")]
         public float Speed
         {
-            get { return speed; }
+            get => speed;
             protected set
             {
                 speed = value;
@@ -48,7 +55,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -58,7 +65,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -67,7 +74,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -77,17 +84,12 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
         public virtual void DeserializeUpdate(BinaryReader stream, byte version)
         {
         }
-
-        /// <summary>
-        /// Signal for a changed Speed.
-        /// </summary>
-        public ValueUpdate<float> OnSpeedChanged;
     }
 }

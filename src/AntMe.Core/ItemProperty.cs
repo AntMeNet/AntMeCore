@@ -1,24 +1,22 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Base Class for all Item Properties.
+    ///     Base Class for all Item Properties.
     /// </summary>
     public abstract class ItemProperty : Property
     {
-        private readonly Item item;
-
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="item">Reference to the related Item.</param>
         public ItemProperty(Item item)
         {
-            this.item = item;
+            Item = item;
         }
 
         /// <summary>
-        /// Reference to the related Item.
+        ///     Reference to the related Item.
         /// </summary>
-        public Item Item { get { return item; } }
+        public Item Item { get; }
     }
 }

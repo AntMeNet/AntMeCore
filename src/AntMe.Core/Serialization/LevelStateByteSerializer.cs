@@ -4,16 +4,15 @@ using System.IO;
 namespace AntMe.Serialization
 {
     /// <summary>
-    /// Specialized Level State Serializer to handle Frames as Byte[].
+    ///     Specialized Level State Serializer to handle Frames as Byte[].
     /// </summary>
     public sealed class LevelStateByteSerializer : IDisposable
     {
+        private LevelStateSerializer serializer;
         private MemoryStream stream;
 
-        private LevelStateSerializer serializer;
-
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         public LevelStateByteSerializer(SimulationContext context)
         {
@@ -22,7 +21,19 @@ namespace AntMe.Serialization
         }
 
         /// <summary>
-        /// Serializes a Level State into a Byte Array.
+        ///     Disposes all Resources.
+        /// </summary>
+        public void Dispose()
+        {
+            serializer?.Dispose();
+            serializer = null;
+
+            stream?.Dispose();
+            stream = null;
+        }
+
+        /// <summary>
+        ///     Serializes a Level State into a Byte Array.
         /// </summary>
         /// <param name="state">Level State</param>
         /// <returns>Raw Data</returns>
@@ -31,7 +42,7 @@ namespace AntMe.Serialization
             stream.Seek(0, SeekOrigin.Begin);
             serializer.Serialize(state);
 
-            byte[] output = new byte[stream.Position];
+            var output = new byte[stream.Position];
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(output, 0, output.Length);
 
@@ -39,7 +50,7 @@ namespace AntMe.Serialization
         }
 
         /// <summary>
-        /// Deserializes a Level State out of a Byte Array.
+        ///     Deserializes a Level State out of a Byte Array.
         /// </summary>
         /// <param name="data">Raw Data</param>
         /// <returns>Level State</returns>
@@ -50,18 +61,6 @@ namespace AntMe.Serialization
             stream.Seek(0, SeekOrigin.Begin);
 
             return serializer.Deserialize();
-        }
-
-        /// <summary>
-        /// Disposes all Resources.
-        /// </summary>
-        public void Dispose()
-        {
-            serializer?.Dispose();
-            serializer = null;
-
-            stream?.Dispose();
-            stream = null;
         }
     }
 }

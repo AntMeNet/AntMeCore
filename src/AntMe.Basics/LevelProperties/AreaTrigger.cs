@@ -3,12 +3,12 @@
 namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
-    /// Level Trigger to inform about Units entering specific Areas.
+    ///     Level Trigger to inform about Units entering specific Areas.
     /// </summary>
     public class AreaTrigger : ITrigger
     {
         /// <summary>
-        /// Default Constructor without Parameter.
+        ///     Default Constructor without Parameter.
         /// </summary>
         public AreaTrigger()
         {
@@ -18,7 +18,7 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Initializes the Trigger with the given Area.
+        ///     Initializes the Trigger with the given Area.
         /// </summary>
         /// <param name="upperLeft">Upper Left Corner</param>
         /// <param name="lowerRight">Lower Right Corner</param>
@@ -30,56 +30,56 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Gets or sets the upper Left Corner of the Area.
+        ///     Gets or sets the upper Left Corner of the Area.
         /// </summary>
         public Vector2 UpperLeft { get; set; }
 
         /// <summary>
-        /// Gets or sets the lower Right Corner of the Area.
+        ///     Gets or sets the lower Right Corner of the Area.
         /// </summary>
         public Vector2 LowerRight { get; set; }
 
         /// <summary>
-        /// Gets or sets if the Trigger is active and should be triggered.
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the optional Type Filter for Items.
+        ///     Gets or Sets the optional Type Filter for Items.
         /// </summary>
         public Type ItemTypeFilter { get; set; }
 
         /// <summary>
-        /// Gets or Sets the optional Faction Filter for Items.
+        ///     Gets or Sets the optional Faction Filter for Items.
         /// </summary>
         public Type FactionTypeFilter { get; set; }
 
         /// <summary>
-        /// Gets or Sets the optional Slot Filter for Items.
+        ///     Gets or Sets the optional Slot Filter for Items.
         /// </summary>
         public byte? SlotFilter { get; set; }
 
         /// <summary>
-        /// Gets or sets a custom Filter.
+        ///     Gets or sets a custom Filter.
         /// </summary>
         public Func<Item, bool> CustomFilter { get; set; }
 
         /// <summary>
-        /// Gets called in every Round to check Trigger Condition.
+        ///     Gets or sets if the Trigger is active and should be triggered.
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        ///     Gets called in every Round to check Trigger Condition.
         /// </summary>
         /// <param name="level">Reference to the Level</param>
         /// <returns>Triggered?</returns>
         public bool Update(Level level)
         {
-            bool hit = false;
-            foreach (Item item in level.Engine.Items)
+            var hit = false;
+            foreach (var item in level.Engine.Items)
             {
                 // Apply Item Filter
                 if (ItemTypeFilter != null &&
                     !ItemTypeFilter.IsAssignableFrom(item.GetType()))
                     continue;
 
-                FactionItem factionItem = item as FactionItem;
+                var factionItem = item as FactionItem;
 
                 // Apply Slot Filter
                 if (SlotFilter.HasValue)
@@ -97,9 +97,8 @@ namespace AntMe.Basics.LevelProperties
 
                 // Apply custom Filter
                 if (CustomFilter != null)
-                {
-                    if (!CustomFilter(item)) continue;
-                }
+                    if (!CustomFilter(item))
+                        continue;
 
                 // Check Area
                 if (item.Position.X >= UpperLeft.X &&
@@ -111,11 +110,12 @@ namespace AntMe.Basics.LevelProperties
                     OnItemTrapped?.Invoke(this, item);
                 }
             }
+
             return hit;
         }
 
         /// <summary>
-        /// Signal for every Item that is within the Trigger Area.
+        ///     Signal for every Item that is within the Trigger Area.
         /// </summary>
         public event TriggerEvent<Item> OnItemTrapped;
     }

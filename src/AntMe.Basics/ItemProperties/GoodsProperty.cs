@@ -3,7 +3,7 @@
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Base Class for all Good related Item Properties.
+    ///     Base Class for all Good related Item Properties.
     /// </summary>
     public abstract class GoodsProperty : ItemProperty
     {
@@ -11,11 +11,19 @@ namespace AntMe.Basics.ItemProperties
         private int capacity;
 
         /// <summary>
-        /// Gets or sets the Maximum Capacity for this Good.
+        ///     Default Constructor.
+        /// </summary>
+        /// <param name="item">Item</param>
+        public GoodsProperty(Item item) : base(item)
+        {
+        }
+
+        /// <summary>
+        ///     Gets or sets the Maximum Capacity for this Good.
         /// </summary>
         public int Capacity
         {
-            get { return capacity; }
+            get => capacity;
             set
             {
                 capacity = Math.Max(0, value);
@@ -29,11 +37,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the current Amount of the good.
+        ///     Gets or sets the current Amount of the good.
         /// </summary>
         public int Amount
         {
-            get { return amount; }
+            get => amount;
             set
             {
                 // Cap to Capacity.
@@ -43,13 +51,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Default Constructor.
-        /// </summary>
-        /// <param name="item">Item</param>
-        public GoodsProperty(Item item) : base(item) { }
-
-        /// <summary>
-        /// Signal for a changed Capacity
+        ///     Signal for a changed Capacity
         /// </summary>
         public event ValueChanged<int> OnCapacityChanged;
 

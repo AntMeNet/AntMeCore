@@ -1,19 +1,19 @@
 ﻿namespace AntMe.Basics.MapTiles
 {
     /// <summary>
-    /// Base Class for all Cliff Map Tiles 
+    ///     Base Class for all Cliff Map Tiles
     /// </summary>
     public abstract class CliffMapTile : MapTile
     {
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         public CliffMapTile(SimulationContext context) : base(context)
         {
         }
 
         /// <summary>
-        /// Returns the Height at the given Position.
+        ///     Returns the Height at the given Position.
         /// </summary>
         /// <param name="position">relative Position</param>
         /// <returns>Map Height</returns>

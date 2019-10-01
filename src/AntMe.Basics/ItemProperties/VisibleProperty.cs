@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Property for all visible Items.
+    ///     Property for all visible Items.
     /// </summary>
     public sealed class VisibleProperty : ItemProperty
     {
@@ -14,7 +13,7 @@ namespace AntMe.Basics.ItemProperties
         private float visibilityRadius;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="item">Item</param>
         public VisibleProperty(Item item) : base(item)
@@ -23,11 +22,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the Visibility Radius.
+        ///     Gets or sets the Visibility Radius.
         /// </summary>
         public float VisibilityRadius
         {
-            get { return visibilityRadius; }
+            get => visibilityRadius;
             set
             {
                 visibilityRadius = Math.Max(0f, value);
@@ -36,12 +35,9 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// List of Items that are able to see this Item.
+        ///     List of Items that are able to see this Item.
         /// </summary>
-        public IEnumerable<SightingProperty> SightingItems
-        {
-            get { return sightingItems.AsEnumerable(); }
-        }
+        public IEnumerable<SightingProperty> SightingItems => sightingItems.AsEnumerable();
 
         #region Internal Calls
 
@@ -80,17 +76,17 @@ namespace AntMe.Basics.ItemProperties
         #region Events
 
         /// <summary>
-        /// Signal for a changed Visibility Radius.
+        ///     Signal for a changed Visibility Radius.
         /// </summary>
         public event ValueChanged<float> OnVisibilityRadiusChanged;
 
         /// <summary>
-        /// Signal for a new Sighting Item.
+        ///     Signal for a new Sighting Item.
         /// </summary>
         public event ChangeItem<SightingProperty> OnNewSightingItem;
 
         /// <summary>
-        /// Signal for a removed Sighting Item.
+        ///     Signal for a removed Sighting Item.
         /// </summary>
         public event ChangeItem<SightingProperty> OnLostSightingItem;
 

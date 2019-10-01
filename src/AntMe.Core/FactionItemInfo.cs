@@ -1,17 +1,17 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Base Info Class for all Faction Items.
+    ///     Base Info Class for all Faction Items.
     /// </summary>
     public abstract class FactionItemInfo : ItemInfo
     {
         /// <summary>
-        /// Reference to the related Faction Item.
+        ///     Reference to the related Faction Item.
         /// </summary>
         private readonly FactionItem factionItem;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Reference to the Item</param>
         /// <param name="observer">Reference to the Observer item</param>
@@ -25,31 +25,31 @@
             IsEnemy = true;
             if (observer is FactionItem)
             {
-                FactionItem factionObserver = observer as FactionItem;
-                IsFriendly = (factionItem.Faction.SlotIndex == factionObserver.Faction.SlotIndex);
-                IsAllied = (factionItem.Faction.TeamIndex == factionObserver.Faction.TeamIndex);
+                var factionObserver = observer as FactionItem;
+                IsFriendly = factionItem.Faction.SlotIndex == factionObserver.Faction.SlotIndex;
+                IsAllied = factionItem.Faction.TeamIndex == factionObserver.Faction.TeamIndex;
                 IsEnemy = !IsAllied;
             }
         }
 
         /// <summary>
-        /// Gets detailed Faction Information.
+        ///     Gets detailed Faction Information.
         /// </summary>
-        public FactionInfo Faction { get { return factionItem.Faction.GetFactionInfo(Observer); } }
+        public FactionInfo Faction => factionItem.Faction.GetFactionInfo(Observer);
 
         /// <summary>
-        /// Is Item from same Faction? (Same Slot)
+        ///     Is Item from same Faction? (Same Slot)
         /// </summary>
-        public bool IsFriendly { get; private set; }
+        public bool IsFriendly { get; }
 
         /// <summary>
-        /// Is Item from an allied Faction? (Same Team)
+        ///     Is Item from an allied Faction? (Same Team)
         /// </summary>
-        public bool IsAllied { get; private set; }
+        public bool IsAllied { get; }
 
         /// <summary>
-        /// Is Item an Enemy?
+        ///     Is Item an Enemy?
         /// </summary>
-        public bool IsEnemy { get; private set; }
+        public bool IsEnemy { get; }
     }
 }

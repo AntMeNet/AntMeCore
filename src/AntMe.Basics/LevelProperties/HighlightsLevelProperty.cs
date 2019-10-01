@@ -4,15 +4,15 @@ using System.Collections.Generic;
 namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
-    /// Base Class for all Highlight Level Properties.
+    ///     Base Class for all Highlight Level Properties.
     /// </summary>
     /// <typeparam name="T">Type of Highlights</typeparam>
     public abstract class HighlightsLevelProperty<T> : LevelProperty where T : Highlight
     {
-        private Queue<T> highlights = null;
+        private readonly Queue<T> highlights;
 
         /// <summary>
-        /// Default Constructor for Type Mapper.
+        ///     Default Constructor for Type Mapper.
         /// </summary>
         /// <param name="level">Level</param>
         public HighlightsLevelProperty(Level level) : base(level)
@@ -21,7 +21,7 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Adds a new Highlight to the Output Queue.
+        ///     Adds a new Highlight to the Output Queue.
         /// </summary>
         /// <param name="highlight">Highlight</param>
         protected void AddHighlight(T highlight)

@@ -4,14 +4,14 @@ using System.Resources;
 namespace AntMe
 {
     /// <summary>
-    /// Level Description Attribute to hold all relevant Information about a Level.
+    ///     Level Description Attribute to hold all relevant Information about a Level.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     [Serializable]
     public sealed class LevelDescriptionAttribute : Attribute
     {
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="guid">Guid of this Level</param>
         /// <param name="name">Name of this Level</param>
@@ -22,7 +22,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="guid">Guid of this Level</param>
         /// <param name="resourceType">Type of Resource Class for Name and Description</param>
@@ -32,14 +32,44 @@ namespace AntMe
         {
             // Ressourcen auflösen und Strings auslesen
             var resourceManager = new ResourceManager(resourceType);
-            string name = resourceManager.GetString(nameKey);
-            string description = resourceManager.GetString(descriptionKey);
+            var name = resourceManager.GetString(nameKey);
+            var description = resourceManager.GetString(descriptionKey);
 
             Init(guid, name, description);
         }
 
         /// <summary>
-        /// Initializes the Attribute Stuff and checks the data.
+        ///     Level ID.
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
+        ///     Name of the Level.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        ///     Short Description of the Level.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        ///     Maximum Count of Players for the Level.
+        /// </summary>
+        public int MaxPlayerCount { get; set; }
+
+        /// <summary>
+        ///     Minimum Count of Players for the Level.
+        /// </summary>
+        public int MinPlayerCount { get; set; }
+
+        /// <summary>
+        ///     Is this Level free for play or hidden in an Campaign?
+        /// </summary>
+        public bool Hidden { get; set; }
+
+        /// <summary>
+        ///     Initializes the Attribute Stuff and checks the data.
         /// </summary>
         /// <param name="guid">Guid of this Level</param>
         /// <param name="name">Name of this Level</param>
@@ -53,11 +83,14 @@ namespace AntMe
 
             // Check Name
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException("name", string.Format("The Level Desciption with the ID {0} has no valid Name", id.ToString()));
+                throw new ArgumentNullException("name",
+                    string.Format("The Level Desciption with the ID {0} has no valid Name", id.ToString()));
 
             // Check Description
             if (string.IsNullOrEmpty(description))
-                throw new ArgumentNullException("description", string.Format("The Level Desciption with the ID {0} and Name '{1}' has no valid Description", id.ToString(), name));
+                throw new ArgumentNullException("description",
+                    string.Format("The Level Desciption with the ID {0} and Name '{1}' has no valid Description",
+                        id.ToString(), name));
 
             Id = id;
             Name = name;
@@ -69,37 +102,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Level ID.
-        /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
-        /// Name of the Level.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Short Description of the Level.
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Maximum Count of Players for the Level.
-        /// </summary>
-        public int MaxPlayerCount { get; set; }
-
-        /// <summary>
-        /// Minimum Count of Players for the Level.
-        /// </summary>
-        public int MinPlayerCount { get; set; }
-
-        /// <summary>
-        /// Is this Level free for play or hidden in an Campaign?
-        /// </summary>
-        public bool Hidden { get; set; }
-
-        /// <summary>
-        /// Validates all Level Description Properties.
+        ///     Validates all Level Description Properties.
         /// </summary>
         public void Validate()
         {
@@ -117,11 +120,13 @@ namespace AntMe
 
             // Min Player
             if (MinPlayerCount < 0 || MinPlayerCount > Level.MAX_SLOTS)
-                throw new ArgumentOutOfRangeException(string.Format("MinPlayerCount muss zwischen 0 und {0} liegen.", Level.MAX_SLOTS));
+                throw new ArgumentOutOfRangeException(string.Format("MinPlayerCount muss zwischen 0 und {0} liegen.",
+                    Level.MAX_SLOTS));
 
             // Max Player
             if (MaxPlayerCount < 0 || MaxPlayerCount > Level.MAX_SLOTS)
-                throw new ArgumentOutOfRangeException(string.Format("MaxPlayerCount muss zwischen 0 und {0} liegen.", Level.MAX_SLOTS));
+                throw new ArgumentOutOfRangeException(string.Format("MaxPlayerCount muss zwischen 0 und {0} liegen.",
+                    Level.MAX_SLOTS));
         }
     }
 }

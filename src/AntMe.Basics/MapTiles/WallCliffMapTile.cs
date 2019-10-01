@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AntMe.Basics.MapTiles
 {
     /// <summary>
-    /// Reporesents a Wall in a Cliff
+    ///     Reporesents a Wall in a Cliff
     /// </summary>
     public class WallCliffMapTile : CliffMapTile
     {
@@ -16,12 +16,14 @@ namespace AntMe.Basics.MapTiles
         // 
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
-        public WallCliffMapTile(SimulationContext context) : base(context) { }
+        public WallCliffMapTile(SimulationContext context) : base(context)
+        {
+        }
 
         /// <summary>
-        /// Returns the Level to enter on the South Side.
+        ///     Returns the Level to enter on the South Side.
         /// </summary>
         protected override byte? GetConnectionLevelSouth()
         {
@@ -29,11 +31,11 @@ namespace AntMe.Basics.MapTiles
         }
 
         /// <summary>
-        /// Returns the Level to enter on the North Side.
+        ///     Returns the Level to enter on the North Side.
         /// </summary>
         protected override byte? GetConnectionLevelNorth()
         {
-            return (byte)(HeightLevel + 1);
+            return (byte) (HeightLevel + 1);
         }
 
         protected override bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions)
@@ -43,6 +45,7 @@ namespace AntMe.Basics.MapTiles
                 exceptions.Add(new NotSupportedException("Map Tile must be a Cliff Tile"));
                 return false;
             }
+
             return true;
         }
 
@@ -53,6 +56,7 @@ namespace AntMe.Basics.MapTiles
                 exceptions.Add(new NotSupportedException("Map Tile must be a Cliff Tile"));
                 return false;
             }
+
             return true;
         }
     }

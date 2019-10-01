@@ -4,44 +4,19 @@ using System.IO;
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// State Property for all Attacker Items.
+    ///     State Property for all Attacker Items.
     /// </summary>
     public sealed class AttackerState : ItemStateProperty
     {
         /// <summary>
-        /// Attack Range.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        [DisplayName("Attack Range")]
-        [Description("Attack Range")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public float AttackRange { get; set; }
+        public AttackerState()
+        {
+        }
 
         /// <summary>
-        /// Recovery Time between Hits.
-        /// </summary>
-        [DisplayName("Attack Recover Time")]
-        [Description("Recovery Time between Hits")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public int AttackRecoveryTime { get; set; }
-
-        /// <summary>
-        /// Attacker Strength.
-        /// </summary>
-        [DisplayName("Attack Strength")]
-        [Description("Attacker Strength")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public int AttackStrength { get; set; }
-
-        /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public AttackerState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         /// <param name="property">Related Engine Property</param>
@@ -57,7 +32,34 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Attack Range.
+        /// </summary>
+        [DisplayName("Attack Range")]
+        [Description("Attack Range")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public float AttackRange { get; set; }
+
+        /// <summary>
+        ///     Recovery Time between Hits.
+        /// </summary>
+        [DisplayName("Attack Recover Time")]
+        [Description("Recovery Time between Hits")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public int AttackRecoveryTime { get; set; }
+
+        /// <summary>
+        ///     Attacker Strength.
+        /// </summary>
+        [DisplayName("Attack Strength")]
+        [Description("Attacker Strength")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public int AttackStrength { get; set; }
+
+        /// <summary>
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -69,7 +71,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -81,7 +83,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -93,7 +95,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

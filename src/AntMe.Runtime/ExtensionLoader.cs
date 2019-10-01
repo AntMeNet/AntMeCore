@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -11,7 +10,7 @@ using System.Xml.Serialization;
 namespace AntMe.Runtime
 {
     /// <summary>
-    /// Static Class to load and analyze external Content like Extensions, Levels or Players.
+    ///     Static Class to load and analyze external Content like Extensions, Levels or Players.
     /// </summary>
     public static class ExtensionLoader
     {
@@ -19,34 +18,39 @@ namespace AntMe.Runtime
 
         #region local Process Area
 
-        private static bool extensionsLoaded = false;
-        private static IEnumerable<IExtensionPack> extensionPackCache = null;
-        private static IEnumerable<CampaignInfo> campaignCache = null;
-        private static IEnumerable<LevelInfo> levelCache = null;
-        private static IEnumerable<PlayerInfo> playerCache = null;
-        private static KeyValueStore extensionSettings = null;
-        private static Dictionary<string, KeyValueStore> dictionaries = null;
-        private static Dictionary<Guid, PlayerStatistics> playerStatistics = new Dictionary<Guid, PlayerStatistics>();
-        private static Dictionary<Guid, CampaignStatistics> campaignStatistics = new Dictionary<Guid, CampaignStatistics>();
-        private static Dictionary<Guid, LevelStatistics> levelStatistics = new Dictionary<Guid, LevelStatistics>();
-        private static TypeMapper typeMapper = new TypeMapper();
-        
+        private static bool extensionsLoaded;
+        private static IEnumerable<IExtensionPack> extensionPackCache;
+        private static IEnumerable<CampaignInfo> campaignCache;
+        private static IEnumerable<LevelInfo> levelCache;
+        private static IEnumerable<PlayerInfo> playerCache;
+        private static KeyValueStore extensionSettings;
+        private static Dictionary<string, KeyValueStore> dictionaries;
+
+        private static readonly Dictionary<Guid, PlayerStatistics> playerStatistics =
+            new Dictionary<Guid, PlayerStatistics>();
+
+        private static readonly Dictionary<Guid, CampaignStatistics> campaignStatistics =
+            new Dictionary<Guid, CampaignStatistics>();
+
+        private static readonly Dictionary<Guid, LevelStatistics> levelStatistics =
+            new Dictionary<Guid, LevelStatistics>();
+
+        private static readonly TypeMapper typeMapper = new TypeMapper();
+
 
         /// <summary>
-        /// Tries to Loads all available Extensions within the valid extension pathes.
-        /// 
-        /// The method searchs for Extensions in the following pathes:
-        /// - Application Path (e.g. "C:\Program Files\AntMe!\")
-        /// - Extension Folder of the Application Path (e.g. "C:\Program Files\AntMe!\Extensions")
-        /// - App Data Folder ("C:\Users\[username]\AppData\Local\AntMe\Extensions")
-        /// 
-        /// The method loads the following fragments:
-        /// - Factions (always)
-        /// - GameItems (always)
-        /// - Extenders (always)
-        /// - Campaigns (only full)
-        /// - Players (only full)
-        /// - Levels (only full)
+        ///     Tries to Loads all available Extensions within the valid extension pathes.
+        ///     The method searchs for Extensions in the following pathes:
+        ///     - Application Path (e.g. "C:\Program Files\AntMe!\")
+        ///     - Extension Folder of the Application Path (e.g. "C:\Program Files\AntMe!\Extensions")
+        ///     - App Data Folder ("C:\Users\[username]\AppData\Local\AntMe\Extensions")
+        ///     The method loads the following fragments:
+        ///     - Factions (always)
+        ///     - GameItems (always)
+        ///     - Extenders (always)
+        ///     - Campaigns (only full)
+        ///     - Players (only full)
+        ///     - Levels (only full)
         /// </summary>
         /// <param name="extensionPaths">List of pathes to search for Extensions</param>
         /// <param name="token">Optional Reference to a Progress Token</param>
@@ -56,10 +60,10 @@ namespace AntMe.Runtime
             if (extensionsLoaded)
                 return;
 
-            List<string> extensionfiles = new List<string>();
-            List<string> locaFiles = new List<string>();
-            List<Exception> errors = new List<Exception>();
-            List<Assembly> assemblies = new List<Assembly>();
+            var extensionfiles = new List<string>();
+            var locaFiles = new List<string>();
+            var errors = new List<Exception>();
+            var assemblies = new List<Assembly>();
 
             foreach (var path in extensionPaths)
             {
@@ -73,7 +77,7 @@ namespace AntMe.Runtime
             }
 
             // Calculation of total Tasks (based on the number of files)
-            int currentTask = 0;
+            var currentTask = 0;
             if (token != null)
             {
                 token.TotalTasks = (full ? extensionfiles.Count * 2 : extensionfiles.Count) + 1;
@@ -87,8 +91,8 @@ namespace AntMe.Runtime
                 {
                     // Try to load and add to list
                     var assembly = Assembly.LoadFile(file);
-                    var attributes = assembly.GetCustomAttributes(typeof(AntMeExtensionAttribute),true);
-                    
+                    var attributes = assembly.GetCustomAttributes(typeof(AntMeExtensionAttribute), true);
+
                     if (attributes != null)
                     {
                         var extensionAttribute = attributes.FirstOrDefault() as AntMeExtensionAttribute;
@@ -120,9 +124,9 @@ namespace AntMe.Runtime
             if (token != null && token.Cancel) return;
 
             // Pass 1 Load Extension Packs
-            List<IExtensionPack> extensionPacks = new List<IExtensionPack>();
-            KeyValueStore settings = new KeyValueStore();
-            KeyValueStore dictionary = new KeyValueStore();
+            var extensionPacks = new List<IExtensionPack>();
+            var settings = new KeyValueStore();
+            var dictionary = new KeyValueStore();
             foreach (var assembly in assemblies)
             {
                 foreach (var type in assembly.GetExportedTypes())
@@ -174,9 +178,9 @@ namespace AntMe.Runtime
             {
                 try
                 {
-                    string[] parts = file.Split('.');
-                    CultureInfo culture = new CultureInfo(parts[parts.Length - 2]);
-                    KeyValueStore store = new KeyValueStore(file);
+                    var parts = file.Split('.');
+                    var culture = new CultureInfo(parts[parts.Length - 2]);
+                    var store = new KeyValueStore(file);
 
                     KeyValueStore target;
                     if (!dictionaries.TryGetValue(culture.TwoLetterISOLanguageName, out target))
@@ -207,14 +211,14 @@ namespace AntMe.Runtime
             // Fill Caches
             if (full)
             {
-                List<CampaignInfo> campaigns = new List<CampaignInfo>();
-                List<LevelInfo> levels = new List<LevelInfo>();
-                List<PlayerInfo> players = new List<PlayerInfo>();
+                var campaigns = new List<CampaignInfo>();
+                var levels = new List<LevelInfo>();
+                var players = new List<PlayerInfo>();
 
                 // Pass 3 (Levels & Players) [campaigns, levels, players]
                 foreach (var assembly in assemblies)
                 {
-                    LoaderInfo loader = AnalyseAssembly(assembly, true, true, true);
+                    var loader = AnalyseAssembly(assembly, true, true, true);
 
                     // Types mit File Dump
                     if (loader.Campaigns.Count > 0 ||
@@ -223,7 +227,7 @@ namespace AntMe.Runtime
                     {
                         // File dump
                         Stream stream = assembly.GetFiles()[0];
-                        byte[] file = new byte[stream.Length];
+                        var file = new byte[stream.Length];
                         stream.Read(file, 0, file.Length);
 
                         // Campaigns laden
@@ -274,22 +278,22 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Loads all known statitics for the available Campagins, Levels and Players.
+        ///     Loads all known statitics for the available Campagins, Levels and Players.
         /// </summary>
         public static void LoadStatistics()
         {
             // Statistics laden
-            string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\AntMe";
+            var dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\AntMe";
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
             // Levels
             try
             {
-                byte[] cache = File.ReadAllBytes(dir + "\\Level.stats");
-                using (MemoryStream stream = new MemoryStream(cache))
+                var cache = File.ReadAllBytes(dir + "\\Level.stats");
+                using (var stream = new MemoryStream(cache))
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(LevelStatistics[]));
+                    var serializer = new XmlSerializer(typeof(LevelStatistics[]));
                     var result = serializer.Deserialize(stream) as LevelStatistics[];
                     if (result != null)
                     {
@@ -299,15 +303,17 @@ namespace AntMe.Runtime
                     }
                 }
             }
-            catch { }
+            catch
+            {
+            }
 
             // Campaigns
             try
             {
-                byte[] cache = File.ReadAllBytes(dir + "\\Campaign.stats");
-                using (MemoryStream stream = new MemoryStream(cache))
+                var cache = File.ReadAllBytes(dir + "\\Campaign.stats");
+                using (var stream = new MemoryStream(cache))
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(CampaignStatistics[]));
+                    var serializer = new XmlSerializer(typeof(CampaignStatistics[]));
                     var result = serializer.Deserialize(stream) as CampaignStatistics[];
                     if (result != null)
                     {
@@ -317,15 +323,17 @@ namespace AntMe.Runtime
                     }
                 }
             }
-            catch { }
+            catch
+            {
+            }
 
             // Player
             try
             {
-                byte[] cache = File.ReadAllBytes(dir + "\\Player.stats");
-                using (MemoryStream stream = new MemoryStream(cache))
+                var cache = File.ReadAllBytes(dir + "\\Player.stats");
+                using (var stream = new MemoryStream(cache))
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(PlayerStatistics[]));
+                    var serializer = new XmlSerializer(typeof(PlayerStatistics[]));
                     var result = serializer.Deserialize(stream) as PlayerStatistics[];
                     if (result != null)
                     {
@@ -335,73 +343,80 @@ namespace AntMe.Runtime
                     }
                 }
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         /// <summary>
-        /// Saves the current state of Campaign-, Level- and Player Statistics.
+        ///     Saves the current state of Campaign-, Level- and Player Statistics.
         /// </summary>
         public static void SaveStatistics()
         {
-            string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\AntMe";
+            var dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\AntMe";
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
             // Levels
             try
             {
-                using (MemoryStream stream = new MemoryStream())
+                using (var stream = new MemoryStream())
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(LevelStatistics[]));
+                    var serializer = new XmlSerializer(typeof(LevelStatistics[]));
                     serializer.Serialize(stream, levelStatistics.Values.ToArray());
 
-                    byte[] cache = new byte[stream.Position];
+                    var cache = new byte[stream.Position];
                     stream.Position = 0;
                     stream.Read(cache, 0, cache.Length);
 
                     File.WriteAllBytes(dir + "\\Level.stats", cache);
                 }
             }
-            catch { }
+            catch
+            {
+            }
 
             // Players
             try
             {
-                using (MemoryStream stream = new MemoryStream())
+                using (var stream = new MemoryStream())
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(PlayerStatistics[]));
+                    var serializer = new XmlSerializer(typeof(PlayerStatistics[]));
                     serializer.Serialize(stream, playerStatistics.Values.ToArray());
 
-                    byte[] cache = new byte[stream.Position];
+                    var cache = new byte[stream.Position];
                     stream.Position = 0;
                     stream.Read(cache, 0, cache.Length);
 
                     File.WriteAllBytes(dir + "\\Player.stats", cache);
                 }
             }
-            catch { }
+            catch
+            {
+            }
 
             // Campaigns
             try
             {
-                using (MemoryStream stream = new MemoryStream())
+                using (var stream = new MemoryStream())
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(CampaignStatistics[]));
+                    var serializer = new XmlSerializer(typeof(CampaignStatistics[]));
                     serializer.Serialize(stream, campaignStatistics.Values.ToArray());
 
-                    byte[] cache = new byte[stream.Position];
+                    var cache = new byte[stream.Position];
                     stream.Position = 0;
                     stream.Read(cache, 0, cache.Length);
 
                     File.WriteAllBytes(dir + "\\Campaign.stats", cache);
                 }
             }
-            catch { }
-
+            catch
+            {
+            }
         }
 
         /// <summary>
-        /// List of all available Extension Packs.
+        ///     List of all available Extension Packs.
         /// </summary>
         public static IEnumerable<IExtensionPack> ExtensionPacks
         {
@@ -415,7 +430,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// List of all available Campaigns.
+        ///     List of all available Campaigns.
         /// </summary>
         public static IEnumerable<CampaignInfo> Campaigns
         {
@@ -429,7 +444,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// List of all available Levels.
+        ///     List of all available Levels.
         /// </summary>
         /// <returns></returns>
         public static IEnumerable<LevelInfo> Levels
@@ -443,7 +458,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// List of all available Players.
+        ///     List of all available Players.
         /// </summary>
         /// <returns></returns>
         public static IEnumerable<PlayerInfo> Players
@@ -458,21 +473,21 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Reference to the default Type Mapper.
+        ///     Reference to the default Type Mapper.
         /// </summary>
-        public static ITypeMapper DefaultTypeMapper { get { return typeMapper; } }
+        public static ITypeMapper DefaultTypeMapper => typeMapper;
 
         /// <summary>
-        /// Reference to the default Type Resolver.
+        ///     Reference to the default Type Resolver.
         /// </summary>
-        public static ITypeResolver DefaultTypeResolver { get { return typeMapper; } }
+        public static ITypeResolver DefaultTypeResolver => typeMapper;
 
         /// <summary>
-        /// Returns a copy of the Extension Settings.
+        ///     Returns a copy of the Extension Settings.
         /// </summary>
-        public static KeyValueStore ExtensionSettings { get { return extensionSettings.Clone(); } }
+        public static KeyValueStore ExtensionSettings => extensionSettings.Clone();
 
-        public static string[] LocalizedLanguages { get { return dictionaries.Keys.ToArray(); } }
+        public static string[] LocalizedLanguages => dictionaries.Keys.ToArray();
 
         public static KeyValueStore GetDictionary(string culture)
         {
@@ -487,7 +502,7 @@ namespace AntMe.Runtime
         #region Common Analyze Methods
 
         /// <summary>
-        /// Scans the given Assembly for potential stuff like Campaigns, Levels and Players.
+        ///     Scans the given Assembly for potential stuff like Campaigns, Levels and Players.
         /// </summary>
         /// <param name="assembly">Assembly to search in</param>
         /// <param name="campaign">Scan for new Campaigns</param>
@@ -496,8 +511,8 @@ namespace AntMe.Runtime
         /// <returns>Scan Results</returns>
         internal static LoaderInfo AnalyseAssembly(Assembly assembly, bool level, bool campaign, bool player)
         {
-            LoaderInfo loaderInfo = new LoaderInfo();
-            bool isStatic = false;
+            var loaderInfo = new LoaderInfo();
+            var isStatic = false;
 
             foreach (var type in assembly.GetTypes())
             {
@@ -512,50 +527,44 @@ namespace AntMe.Runtime
                 {
                     // Found Level
                     if (level && type.IsSubclassOf(typeof(Level)))
-                    {
                         try
                         {
-                            LevelInfo levelInfo = AnalyseLevelType(type);
+                            var levelInfo = AnalyseLevelType(type);
                             loaderInfo.Levels.Add(levelInfo);
                         }
                         catch (Exception ex)
                         {
                             loaderInfo.Errors.Add(ex);
                         }
-                    }
 
                     // Found Campaign
                     if (campaign && type.IsSubclassOf(typeof(Campaign)))
-                    {
                         try
                         {
-                            CampaignInfo campaignInfo = AnalyseCampaignType(type);
+                            var campaignInfo = AnalyseCampaignType(type);
                             loaderInfo.Campaigns.Add(campaignInfo);
                         }
                         catch (Exception ex)
                         {
                             loaderInfo.Errors.Add(ex);
                         }
-                    }
 
                     // Found Player (Ignorieren, falls Faction-Liste null)
                     if (player && type.GetCustomAttributes(typeof(FactoryAttribute), true).Length > 0)
-                    {
                         try
                         {
-                            PlayerInfo playerInfo = AnalysePlayerType(type);
+                            var playerInfo = AnalysePlayerType(type);
                             loaderInfo.Players.Add(playerInfo);
                         }
                         catch (Exception ex)
                         {
                             loaderInfo.Errors.Add(ex);
                         }
-                    }
 
                     // Found Extender
                     if (type.GetInterface("IExtender") != null)
                     {
-                        Type[] interfaces = type.GetInterfaces();
+                        var interfaces = type.GetInterfaces();
                     }
                 }
             }
@@ -568,85 +577,84 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Liest alle notwendigen Informationen aus dem gegebenen Typ aus und 
-        /// liefert das gesammelte LevelInfo.
+        ///     Liest alle notwendigen Informationen aus dem gegebenen Typ aus und
+        ///     liefert das gesammelte LevelInfo.
         /// </summary>
         /// <param name="type">Type</param>
         /// <returns>Infos über das Level</returns>
         private static LevelInfo AnalyseLevelType(Type type)
         {
-            LevelDescriptionAttribute[] descriptionAttributes =
-                (LevelDescriptionAttribute[])type.GetCustomAttributes(
-                typeof(LevelDescriptionAttribute), false);
-            FactionFilterAttribute[] filterAttributes =
-                (FactionFilterAttribute[])type.GetCustomAttributes(
-                typeof(FactionFilterAttribute), false);
+            var descriptionAttributes =
+                (LevelDescriptionAttribute[]) type.GetCustomAttributes(
+                    typeof(LevelDescriptionAttribute), false);
+            var filterAttributes =
+                (FactionFilterAttribute[]) type.GetCustomAttributes(
+                    typeof(FactionFilterAttribute), false);
 
             // Kein oder zu viele Description Attributes
             if (descriptionAttributes.Length != 1)
                 throw new NotSupportedException(
                     string.Format("The Class '{0}' ({1}) has no valid LevelDescription",
-                    type.FullName,
-                    type.Assembly.FullName));
+                        type.FullName,
+                        type.Assembly.FullName));
 
-            LevelInfo levelInfo = new LevelInfo();
+            var levelInfo = new LevelInfo();
             levelInfo.Type = TypeInfo.FromType(type);
             levelInfo.LevelDescription = descriptionAttributes[0];
             levelInfo.FactionFilter = new LevelFilterInfo[filterAttributes.Length];
-            for (int i = 0; i < filterAttributes.Length; i++)
-            {
-                levelInfo.FactionFilter[i] = new LevelFilterInfo()
+            for (var i = 0; i < filterAttributes.Length; i++)
+                levelInfo.FactionFilter[i] = new LevelFilterInfo
                 {
                     SlotIndex = filterAttributes[i].SlotIndex,
                     Comment = filterAttributes[i].Comment,
-                    Type = new TypeInfo()
+                    Type = new TypeInfo
                     {
                         AssemblyName = filterAttributes[i].FactionType.Assembly.FullName,
                         TypeName = filterAttributes[i].FactionType.FullName
                     }
                 };
-            }
 
             // Load Map
-            SimulationContext context = CreateSimulationContext();
-            Level level = Activator.CreateInstance(type, context) as Level;
+            var context = CreateSimulationContext();
+            var level = Activator.CreateInstance(type, context) as Level;
             levelInfo.Map = level.GetMap();
 
             // Stats anhängen
             if (!levelStatistics.ContainsKey(levelInfo.LevelDescription.Id))
-                levelStatistics.Add(levelInfo.LevelDescription.Id, new LevelStatistics() { Guid = levelInfo.LevelDescription.Id });
+                levelStatistics.Add(levelInfo.LevelDescription.Id,
+                    new LevelStatistics {Guid = levelInfo.LevelDescription.Id});
             levelInfo.Statistics = levelStatistics[levelInfo.LevelDescription.Id];
 
             return levelInfo;
         }
 
         /// <summary>
-        /// Liest alle notwendigen Informationen aus dem gegebenen Typ aus und 
-        /// liefert das gesammelte CampaignInfo.
+        ///     Liest alle notwendigen Informationen aus dem gegebenen Typ aus und
+        ///     liefert das gesammelte CampaignInfo.
         /// </summary>
         /// <param name="type">Type</param>
         /// <returns>Infos über die Campaign</returns>
         private static CampaignInfo AnalyseCampaignType(Type type)
         {
-            CampaignDescriptionAttribute[] descriptionAttributes =
-                (CampaignDescriptionAttribute[])type.GetCustomAttributes(
-                typeof(CampaignDescriptionAttribute), false);
+            var descriptionAttributes =
+                (CampaignDescriptionAttribute[]) type.GetCustomAttributes(
+                    typeof(CampaignDescriptionAttribute), false);
 
             // Kein oder zu viele Description Attributes
             if (descriptionAttributes.Length != 1)
                 throw new NotSupportedException(
                     string.Format("The Class '{0}' ({1}) has no valid CampaignDescription",
-                    type.FullName,
-                    type.Assembly.FullName));
+                        type.FullName,
+                        type.Assembly.FullName));
 
-            Campaign campaign = Activator.CreateInstance(type) as Campaign;
+            var campaign = Activator.CreateInstance(type) as Campaign;
 
             // Config setzen, falls vorhanden
             CampaignStatistics stats = null;
             if (campaignStatistics.TryGetValue(campaign.Guid, out stats))
                 campaign.Settings = stats.Settings;
 
-            CampaignInfo campaignInfo = new CampaignInfo();
+            var campaignInfo = new CampaignInfo();
             campaignInfo.Guid = campaign.Guid;
             campaignInfo.Name = campaign.Name;
             campaignInfo.Description = campaign.Description;
@@ -657,7 +665,7 @@ namespace AntMe.Runtime
             // List all unlocked Levels
             foreach (var level in campaign.GetUnlockedLevels())
             {
-                LevelInfo info = AnalyseLevelType(level);
+                var info = AnalyseLevelType(level);
 
                 // Sicherstellen, dass Level-Anforderungen passen
                 if (info.LevelDescription.MinPlayerCount > 1)
@@ -669,63 +677,65 @@ namespace AntMe.Runtime
             // Stats anhängen
             if (!campaignStatistics.ContainsKey(campaign.Guid))
             {
-                CampaignStatistics statistics = new CampaignStatistics()
+                var statistics = new CampaignStatistics
                 {
                     Guid = campaign.Guid,
                     Settings = campaign.Settings
                 };
                 campaignStatistics.Add(campaign.Guid, statistics);
             }
+
             campaignInfo.Statistics = campaignStatistics[campaign.Guid];
 
             return campaignInfo;
         }
 
         /// <summary>
-        /// Liest alle notwendigen Informationen aus dem gegebenen Typ aus und 
-        /// liefert das gesammelte PlayerInfo.
+        ///     Liest alle notwendigen Informationen aus dem gegebenen Typ aus und
+        ///     liefert das gesammelte PlayerInfo.
         /// </summary>
         /// <param name="type">Type</param>
         /// <returns>Infos über den Player</returns>
         private static PlayerInfo AnalysePlayerType(Type type)
         {
-            FactoryAttribute[] playerAttributes =
-                (FactoryAttribute[])type.GetCustomAttributes(typeof(FactoryAttribute), true);
+            var playerAttributes =
+                (FactoryAttribute[]) type.GetCustomAttributes(typeof(FactoryAttribute), true);
 
             // Kein oder zu viele Description Attributes
             if (playerAttributes.Length != 1)
                 throw new NotSupportedException(
                     string.Format("The Class '{0}' ({1}) has no valid PlayerAttribute",
-                    type.FullName,
-                    type.Assembly.FullName));
+                        type.FullName,
+                        type.Assembly.FullName));
 
             // Property Mapping
-            FactoryAttribute playerAttribute = playerAttributes[0];
-            var mappings = playerAttribute.GetType().GetCustomAttributes(typeof(FactoryAttributeMappingAttribute), true);
+            var playerAttribute = playerAttributes[0];
+            var mappings = playerAttribute.GetType()
+                .GetCustomAttributes(typeof(FactoryAttributeMappingAttribute), true);
 
             if (mappings.Length != 1)
                 throw new NotSupportedException("The Player Attribute has no valid Property Mapping");
 
             var mapping = mappings[0] as FactoryAttributeMappingAttribute;
-            Type playerType = playerAttribute.GetType();
+            var playerType = playerAttribute.GetType();
 
             // Map Name
-            PropertyInfo nameProperty = playerType.GetProperty(mapping.NameProperty);
+            var nameProperty = playerType.GetProperty(mapping.NameProperty);
             if (nameProperty == null)
                 throw new NotSupportedException("The Name Property from Player Attribute Mapping does not exist");
-            string name = (string)nameProperty.GetValue(playerAttribute, null);
+            var name = (string) nameProperty.GetValue(playerAttribute, null);
             if (string.IsNullOrEmpty(name))
                 throw new NotSupportedException("The Name of a Player can't be Empty");
 
             // Map Author
-            PropertyInfo authorProperty = playerType.GetProperty(mapping.AuthorProperty);
+            var authorProperty = playerType.GetProperty(mapping.AuthorProperty);
             if (authorProperty == null)
                 throw new NotSupportedException("The Author Property from Player Attribute Mapping does not exist");
-            string author = (string)authorProperty.GetValue(playerAttribute, null);
+            var author = (string) authorProperty.GetValue(playerAttribute, null);
             if (author == null)
                 author = string.Empty;
 
-            PlayerInfo playerInfo = new PlayerInfo()
+            var playerInfo = new PlayerInfo
             {
                 Guid = type.GUID,
                 Type = TypeInfo.FromType(type),
@@ -748,24 +758,25 @@ namespace AntMe.Runtime
         #region Additional App Domain Stuff
 
         /// <summary>
-        /// Scans the given Assembly for additional Level-, Campaign- and Player-Elements within a closed AppDomain.
+        ///     Scans the given Assembly for additional Level-, Campaign- and Player-Elements within a closed AppDomain.
         /// </summary>
         /// <param name="extensionPaths">List of pathes to search for Extensions</param>
         /// <param name="filename">Filename</param>
         /// <param name="level">Search for Levels and Campagins</param>
         /// <param name="player">Search for Players</param>
         /// <returns>Collection of found Elements and occured Errors</returns>
-        public static LoaderInfo SecureAnalyseExtension(string[] extensionPaths, string filename, bool level, bool player)
+        public static LoaderInfo SecureAnalyseExtension(string[] extensionPaths, string filename, bool level,
+            bool player)
         {
             // Datei öffnen
-            byte[] file = File.ReadAllBytes(filename);
+            var file = File.ReadAllBytes(filename);
 
             // Analyse
             return SecureAnalyseExtension(extensionPaths, file, level, player);
         }
 
         /// <summary>
-        /// Scans the given Assembly for additional Level-, Campaign- and Player-Elements within a closed AppDomain.
+        ///     Scans the given Assembly for additional Level-, Campaign- and Player-Elements within a closed AppDomain.
         /// </summary>
         /// <param name="extensionPaths">List of pathes to search for Extensions</param>
         /// <param name="file">Filedump</param>
@@ -774,15 +785,16 @@ namespace AntMe.Runtime
         /// <returns>Collection of found Elements and occured Errors</returns>
         public static LoaderInfo SecureAnalyseExtension(string[] extensionPaths, byte[] file, bool level, bool player)
         {
-            AppDomainSetup setup = new AppDomainSetup();
+            var setup = new AppDomainSetup();
             setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            Evidence evidence = new Evidence();
-            AppDomain appDomain = AppDomain.CreateDomain("AntMe! Analyzer", evidence, setup);
+            var evidence = new Evidence();
+            var appDomain = AppDomain.CreateDomain("AntMe! Analyzer", evidence, setup);
 
-            Type hostType = typeof(ExtensionLoaderHost);
+            var hostType = typeof(ExtensionLoaderHost);
 
-            ExtensionLoaderHost host = appDomain.CreateInstanceAndUnwrap(hostType.Assembly.FullName, hostType.FullName) as ExtensionLoaderHost;
-            LoaderInfo info = host.AnalyseExtension(extensionPaths, file, level, level, player);
+            var host =
+                appDomain.CreateInstanceAndUnwrap(hostType.Assembly.FullName, hostType.FullName) as ExtensionLoaderHost;
+            var info = host.AnalyseExtension(extensionPaths, file, level, level, player);
             foreach (var item in info.Players)
                 item.Source = PlayerSource.Imported;
 
@@ -792,7 +804,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Generates a Simulatio Context from the Default Mapper and Settings from this Extension Loader.
+        ///     Generates a Simulatio Context from the Default Mapper and Settings from this Extension Loader.
         /// </summary>
         /// <param name="random">Optional Randomizer</param>
         /// <returns>New Instance of Simulation Context</returns>
@@ -802,7 +814,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Searches in the given Assembly for the requested Level Type within a closed AppDomain.
+        ///     Searches in the given Assembly for the requested Level Type within a closed AppDomain.
         /// </summary>
         /// <param name="extensionPaths">List of pathes to search for Extensions</param>
         /// <param name="file">Filedump of the Assembly</param>
@@ -810,19 +822,15 @@ namespace AntMe.Runtime
         /// <returns>LevelInfo of the fitting Level or null in case of no result</returns>
         public static LevelInfo SecureFindLevel(string[] extensionPaths, byte[] file, string typeName)
         {
-            LoaderInfo info = SecureAnalyseExtension(extensionPaths, file, true, false);
+            var info = SecureAnalyseExtension(extensionPaths, file, true, false);
             foreach (var level in info.Levels)
-            {
                 if (level.Type.TypeName.Equals(typeName))
-                {
                     return level;
-                }
-            }
             return null;
         }
 
         /// <summary>
-        /// Searches in the given Assembly for the requested Player Type within a closed AppDomain.
+        ///     Searches in the given Assembly for the requested Player Type within a closed AppDomain.
         /// </summary>
         /// <param name="extensionPaths">List of pathes to search for Extensions</param>
         /// <param name="file">Filedump of the Assembly</param>
@@ -830,14 +838,10 @@ namespace AntMe.Runtime
         /// <returns>PlayerInfo of the fitting Player or null in case of no result</returns>
         public static PlayerInfo SecureFindPlayer(string[] extensionPaths, byte[] file, string typeName)
         {
-            LoaderInfo info = SecureAnalyseExtension(extensionPaths, file, false, true);
+            var info = SecureAnalyseExtension(extensionPaths, file, false, true);
             foreach (var player in info.Players)
-            {
                 if (player.Type.TypeName.Equals(typeName))
-                {
                     return player;
-                }
-            }
             return null;
         }
 
@@ -845,12 +849,12 @@ namespace AntMe.Runtime
     }
 
     /// <summary>
-    /// Token for tracking the current progress and handle the Cancel-Flag.
+    ///     Token for tracking the current progress and handle the Cancel-Flag.
     /// </summary>
     public class ProgressToken
     {
         /// <summary>
-        /// Create a new token.
+        ///     Create a new token.
         /// </summary>
         public ProgressToken()
         {
@@ -858,23 +862,23 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Cancel Signal to stop the current Task.
+        ///     Cancel Signal to stop the current Task.
         /// </summary>
         public bool Cancel { get; set; }
 
         /// <summary>
-        /// Total Amount of Tasks within the current process.
+        ///     Total Amount of Tasks within the current process.
         /// </summary>
         public int TotalTasks { get; set; }
 
         /// <summary>
-        /// Amount of finished Tasks within the current process.
+        ///     Amount of finished Tasks within the current process.
         /// </summary>
         public int CurrentTask { get; set; }
 
         /// <summary>
-        /// List of occured Errors so far.
+        ///     List of occured Errors so far.
         /// </summary>
-        public List<Exception> Errors { get; private set; }
+        public List<Exception> Errors { get; }
     }
 }

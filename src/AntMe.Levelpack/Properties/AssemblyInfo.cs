@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using AntMe;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -35,4 +35,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("2.0.0.721")]
 [assembly: AssemblyFileVersion("2.0.0.721")]
 
-[assembly: AntMe.AntMeExtension()]
+[assembly: AntMeExtension]

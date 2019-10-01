@@ -1,5 +1,4 @@
-﻿using AntMe.Serialization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,38 +6,39 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
 using System.Threading.Tasks;
+using AntMe.Serialization;
 
 namespace AntMe.Runtime.Communication
 {
     /// <summary>
-    /// Host for WCF based Remote Simulations.
+    ///     Host for WCF based Remote Simulations.
     /// </summary>
     public sealed class SimulationServer
     {
         #region Constants
 
         /// <summary>
-        /// Initial Framerate for the simulation.
+        ///     Initial Framerate for the simulation.
         /// </summary>
         public const byte INITFRAMERATE = Level.FRAMES_PER_SECOND;
 
         /// <summary>
-        /// Default Name for Pipes.
+        ///     Default Name for Pipes.
         /// </summary>
         public const string DEFAULTPIPE = "AntMeService";
 
         /// <summary>
-        /// Default Port for TCP Connections.
+        ///     Default Port for TCP Connections.
         /// </summary>
         public const int DEFAULTPORT = 599;
 
         /// <summary>
-        /// Maximum Size for Levels.
+        ///     Maximum Size for Levels.
         /// </summary>
         public const int MAXLEVELSIZE = 100000;
 
         /// <summary>
-        /// Maximum Size for Player-Files.
+        ///     Maximum Size for Player-Files.
         /// </summary>
         public const int MAXPLAYERSIZE = 100000;
 
@@ -47,14 +47,14 @@ namespace AntMe.Runtime.Communication
         #region Static Server Methods
 
         /// <summary>
-        /// Instance of Service Host.
+        ///     Instance of Service Host.
         /// </summary>
         private static SimulationServer instance;
 
         /// <summary>
-        /// Starts to listen for new connections.
+        ///     Starts to listen for new connections.
         /// </summary>
-        /// <param name = "extensionPaths" > List of pathes to search for Extensions</param>
+        /// <param name="extensionPaths"> List of pathes to search for Extensions</param>
         /// <param name="pipeName">name of NamedPipe or null, if disabled</param>
         /// <param name="port">TCP Port to listen for new connection or 0, if disabled</param>
         public static void Start(string[] extensionPaths, string pipeName, int port)
@@ -75,7 +75,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Stops running server.
+        ///     Stops running server.
         /// </summary>
         public static void Stop()
         {
@@ -86,10 +86,6 @@ namespace AntMe.Runtime.Communication
             {
                 instance.Close();
             }
-            catch (Exception)
-            {
-                throw;
-            }
             finally
             {
                 instance = null;
@@ -97,18 +93,19 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Returns current Server State.
+        ///     Returns current Server State.
         /// </summary>
-        public static bool IsRunning { get { return instance != null; } }
+        public static bool IsRunning => instance != null;
 
         /// <summary>
-        /// Registers a new Client at the server Instance.
+        ///     Registers a new Client at the server Instance.
         /// </summary>
         /// <param name="service">Reference to the service</param>
         /// <param name="callback">Reference to the callback</param>
         /// <param name="server">output Parameter for the server Reference</param>
         /// <returns>New Id for this client.</returns>
-        internal static int Register(ISimulationService service, ISimulationCallback callback, out SimulationServer server)
+        internal static int Register(ISimulationService service, ISimulationCallback callback,
+            out SimulationServer server)
         {
             if (instance == null)
                 throw new Exception("Server is not running");
@@ -118,7 +115,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Unregisters a client from the server.
+        ///     Unregisters a client from the server.
         /// </summary>
         /// <param name="service"></param>
         internal static void Unregister(ISimulationService service)
@@ -131,24 +128,24 @@ namespace AntMe.Runtime.Communication
         #region Service Host Handling
 
         /// <summary>
-        /// Pipe Name (NamedPipes)
+        ///     Pipe Name (NamedPipes)
         /// </summary>
-        private string pipeName;
+        private readonly string pipeName;
 
         /// <summary>
-        /// Port Number (TCP)
+        ///     Port Number (TCP)
         /// </summary>
         private int port;
 
         /// <summary>
-        /// Service Host for incoming Connections.
+        ///     Service Host for incoming Connections.
         /// </summary>
         private ServiceHost host;
 
         /// <summary>
-        /// List of pathes to search for Extensions.
+        ///     List of pathes to search for Extensions.
         /// </summary>
-        private string[] extensionPaths;
+        private readonly string[] extensionPaths;
 
         private SimulationServer(string[] extensionPaths, string pipeName, int port)
         {
@@ -161,7 +158,7 @@ namespace AntMe.Runtime.Communication
         /// </summary>
         private void Open()
         {
-            List<Uri> uris = new List<Uri>();
+            var uris = new List<Uri>();
             if (!string.IsNullOrEmpty(pipeName))
                 uris.Add(new Uri("net.pipe://localhost"));
 
@@ -171,7 +168,7 @@ namespace AntMe.Runtime.Communication
             if (!string.IsNullOrEmpty(pipeName))
                 host.AddServiceEndpoint(typeof(ISimulationService), new NetNamedPipeBinding(), pipeName);
 
-            host.Description.Behaviors.Add(new ServiceThrottlingBehavior()
+            host.Description.Behaviors.Add(new ServiceThrottlingBehavior
             {
                 MaxConcurrentCalls = 500,
                 MaxConcurrentInstances = 100,
@@ -184,19 +181,17 @@ namespace AntMe.Runtime.Communication
         private void Close()
         {
             // TODO: Disconnect all clients
-            if (host != null)
-            {
-                host.Close();
-            }
+            if (host != null) host.Close();
         }
 
         #endregion
 
         #region Connection Management
 
-        private Dictionary<ISimulationService, ClientInfo> clients = new Dictionary<ISimulationService, ClientInfo>();
+        private readonly Dictionary<ISimulationService, ClientInfo> clients =
+            new Dictionary<ISimulationService, ClientInfo>();
 
-        private int nextId = 0;
+        private int nextId;
 
         private class ClientInfo
         {
@@ -221,11 +216,11 @@ namespace AntMe.Runtime.Communication
             lock (clients)
             {
                 id = nextId++;
-                info = new ClientInfo()
+                info = new ClientInfo
                 {
                     ServiceInterface = service,
                     CallbackInterface = callback,
-                    UserProfile = new UserProfile()
+                    UserProfile = new UserProfile
                     {
                         Id = id,
                         Username = "Client " + id
@@ -250,13 +245,12 @@ namespace AntMe.Runtime.Communication
             if (clients.TryGetValue(service, out client))
             {
                 // Remove from Game
-                int removedSlot = -1;
-                bool removedAsMaster = false;
+                var removedSlot = -1;
+                var removedAsMaster = false;
                 lock (simulationLock)
                 {
                     // Search for Slots with that user
                     foreach (var slot in slots)
-                    {
                         if (slot.Profile == client.UserProfile)
                         {
                             // Reset Slot
@@ -269,7 +263,6 @@ namespace AntMe.Runtime.Communication
                             removedSlot = slot.Id;
                             break;
                         }
-                    }
 
                     // Remove from Master
                     if (master == client.UserProfile)
@@ -323,41 +316,61 @@ namespace AntMe.Runtime.Communication
 
             ClientInfo client;
             if (clients.TryGetValue(service, out client))
-            {
                 // Tell others
                 SendMessageReceived(client.UserProfile, message);
-            }
         }
 
         #endregion
 
         #region Match Management
 
-        private UserProfile master = null;
+        private UserProfile master;
 
-        private object simulationLock = new object();
-        private TypeInfo levelType = null;
-        private LevelInfo levelInfo = null;
-        private TypeInfo[] playerTypes = new TypeInfo[AntMe.Level.MAX_SLOTS];
-        private PlayerInfo[] playerInfos = new PlayerInfo[AntMe.Level.MAX_SLOTS];
-        private Slot[] slots = new[] 
-        { 
-            new Slot() { Id = 0, ColorKey = (PlayerColor)0, PlayerInfo = false, Profile = null, ReadyState = false, Team = 0 },
-            new Slot() { Id = 1, ColorKey = (PlayerColor)1, PlayerInfo = false, Profile = null, ReadyState = false, Team = 1 },
-            new Slot() { Id = 2, ColorKey = (PlayerColor)2, PlayerInfo = false, Profile = null, ReadyState = false, Team = 2 },
-            new Slot() { Id = 3, ColorKey = (PlayerColor)3, PlayerInfo = false, Profile = null, ReadyState = false, Team = 3 },
-            new Slot() { Id = 4, ColorKey = (PlayerColor)4, PlayerInfo = false, Profile = null, ReadyState = false, Team = 4 },
-            new Slot() { Id = 5, ColorKey = (PlayerColor)5, PlayerInfo = false, Profile = null, ReadyState = false, Team = 5 },
-            new Slot() { Id = 6, ColorKey = (PlayerColor)6, PlayerInfo = false, Profile = null, ReadyState = false, Team = 6 },
-            new Slot() { Id = 7, ColorKey = (PlayerColor)7, PlayerInfo = false, Profile = null, ReadyState = false, Team = 7 }
+        private readonly object simulationLock = new object();
+        private TypeInfo levelType;
+        private LevelInfo levelInfo;
+        private readonly TypeInfo[] playerTypes = new TypeInfo[Level.MAX_SLOTS];
+        private readonly PlayerInfo[] playerInfos = new PlayerInfo[Level.MAX_SLOTS];
+
+        private readonly Slot[] slots =
+        {
+            new Slot {Id = 0, ColorKey = 0, PlayerInfo = false, Profile = null, ReadyState = false, Team = 0},
+            new Slot
+            {
+                Id = 1, ColorKey = (PlayerColor) 1, PlayerInfo = false, Profile = null, ReadyState = false, Team = 1
+            },
+            new Slot
+            {
+                Id = 2, ColorKey = (PlayerColor) 2, PlayerInfo = false, Profile = null, ReadyState = false, Team = 2
+            },
+            new Slot
+            {
+                Id = 3, ColorKey = (PlayerColor) 3, PlayerInfo = false, Profile = null, ReadyState = false, Team = 3
+            },
+            new Slot
+            {
+                Id = 4, ColorKey = (PlayerColor) 4, PlayerInfo = false, Profile = null, ReadyState = false, Team = 4
+            },
+            new Slot
+            {
+                Id = 5, ColorKey = (PlayerColor) 5, PlayerInfo = false, Profile = null, ReadyState = false, Team = 5
+            },
+            new Slot
+            {
+                Id = 6, ColorKey = (PlayerColor) 6, PlayerInfo = false, Profile = null, ReadyState = false, Team = 6
+            },
+            new Slot
+            {
+                Id = 7, ColorKey = (PlayerColor) 7, PlayerInfo = false, Profile = null, ReadyState = false, Team = 7
+            }
         };
 
-        private SecureSimulation simulation = null;
-        private byte frames = SimulationServer.INITFRAMERATE;
-        private bool paused = false;
+        private SecureSimulation simulation;
+        private byte frames = INITFRAMERATE;
+        private bool paused;
 
         /// <summary>
-        /// Aquires Master State for the caller.
+        ///     Aquires Master State for the caller.
         /// </summary>
         /// <param name="service">Caller</param>
         internal void AquireMaster(ISimulationService service)
@@ -388,7 +401,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Clears the Master State
+        ///     Clears the Master State
         /// </summary>
         /// <param name="service"></param>
         internal void FreeMaster(ISimulationService service)
@@ -412,18 +425,17 @@ namespace AntMe.Runtime.Communication
             {
                 throw new InvalidOperationException("Client not registered");
             }
-
         }
 
         /// <summary>
-        /// Uploads a new Level to the System.
+        ///     Uploads a new Level to the System.
         /// </summary>
         /// <param name="service"></param>
         /// <param name="levelType">TypeInfo of the new level</param>
         internal void UploadLevel(ISimulationService service, TypeInfo levelType)
         {
             // Check File Size
-            if (levelType != null && levelType.AssemblyFile.Length > SimulationServer.MAXLEVELSIZE)
+            if (levelType != null && levelType.AssemblyFile.Length > MAXLEVELSIZE)
                 throw new ArgumentException("File is too large");
 
             ClientInfo client;
@@ -432,7 +444,8 @@ namespace AntMe.Runtime.Communication
                 // Analyse Level
                 LevelInfo levelInfo = null;
                 if (levelType != null)
-                    levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, levelType.AssemblyFile, levelType.TypeName);
+                    levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, levelType.AssemblyFile,
+                        levelType.TypeName);
 
                 lock (simulationLock)
                 {
@@ -464,7 +477,7 @@ namespace AntMe.Runtime.Communication
                         slots[i].Profile = null;
                         playerInfos[i] = null;
                         playerTypes[i] = null;
-                        slots[i].ColorKey = (PlayerColor)i;
+                        slots[i].ColorKey = (PlayerColor) i;
                         slots[i].PlayerInfo = false;
                         slots[i].ReadyState = false;
                         slots[i].Team = i;
@@ -484,7 +497,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Uploads a Client related Player File.
+        ///     Uploads a Client related Player File.
         /// </summary>
         /// <param name="service"></param>
         /// <param name="playerType">Player File</param>
@@ -500,7 +513,8 @@ namespace AntMe.Runtime.Communication
                 // Analyse File
                 PlayerInfo playerInfo = null;
                 if (playerType != null)
-                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
+                    playerInfo =
+                        ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
 
                 // Save Player Infos
                 if (playerInfo == null)
@@ -518,8 +532,7 @@ namespace AntMe.Runtime.Communication
                 Slot affectedSlot = null;
                 lock (simulationLock)
                 {
-                    for (int i = 0; i < slots.Length; i++)
-                    {
+                    for (var i = 0; i < slots.Length; i++)
                         if (slots[i].Profile == client.UserProfile)
                         {
                             affectedSlot = slots[i];
@@ -540,7 +553,6 @@ namespace AntMe.Runtime.Communication
 
                             break;
                         }
-                    }
                 }
 
                 // Inform others
@@ -554,7 +566,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Uploads a Player File into a Slot
+        ///     Uploads a Player File into a Slot
         /// </summary>
         /// <param name="service"></param>
         /// <param name="slot">Target Slot</param>
@@ -566,7 +578,7 @@ namespace AntMe.Runtime.Communication
                 throw new ArgumentOutOfRangeException("Slot must be between 0 and 7");
 
             // Check File Size
-            if (playerType != null && playerType.AssemblyFile.Length > SimulationServer.MAXPLAYERSIZE)
+            if (playerType != null && playerType.AssemblyFile.Length > MAXPLAYERSIZE)
                 throw new ArgumentException("File is too large");
 
             // Check for an existing Level
@@ -578,7 +590,8 @@ namespace AntMe.Runtime.Communication
             {
                 PlayerInfo playerInfo = null;
                 if (playerType != null)
-                    playerInfo = ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
+                    playerInfo =
+                        ExtensionLoader.SecureFindPlayer(extensionPaths, playerType.AssemblyFile, playerType.TypeName);
 
                 lock (simulationLock)
                 {
@@ -618,7 +631,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Sets the Player State for the given Slot
+        ///     Sets the Player State for the given Slot
         /// </summary>
         /// <param name="service"></param>
         /// <param name="slot">Target Slot</param>
@@ -649,7 +662,7 @@ namespace AntMe.Runtime.Communication
                         throw new InvalidOperationException("You are not Owner of this Slot");
 
                     // Free old Slot
-                    for (int i = 0; i < slots.Length; i++)
+                    for (var i = 0; i < slots.Length; i++)
                     {
                         // Skip current slot
                         if (i == slot)
@@ -702,7 +715,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Resets the Slot of the calling user
+        ///     Resets the Slot of the calling user
         /// </summary>
         /// <param name="service"></param>
         internal void UnsetPlayerState(SimulationService service)
@@ -714,8 +727,7 @@ namespace AntMe.Runtime.Communication
                 lock (simulationLock)
                 {
                     // Find Slot
-                    for (int i = 0; i < slots.Length; i++)
-                    {
+                    for (var i = 0; i < slots.Length; i++)
                         // Reset old slot
                         if (slots[i].Profile == client.UserProfile)
                         {
@@ -725,7 +737,6 @@ namespace AntMe.Runtime.Communication
                             slot.ReadyState = false;
                             break;
                         }
-                    }
                 }
 
                 // Send Info about the current Slot
@@ -739,7 +750,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Sets the Master State for the given Slot
+        ///     Sets the Master State for the given Slot
         /// </summary>
         /// <param name="service"></param>
         /// <param name="slot">Target Slot</param>
@@ -808,17 +819,16 @@ namespace AntMe.Runtime.Communication
                     if (levelInfo == null)
                         throw new InvalidOperationException("There is no level set");
 
-                    Setup settings = new Setup()
+                    var settings = new Setup
                     {
                         Level = levelType
                     };
 
-                    SimulationContext context = ExtensionLoader.CreateSimulationContext();
-                    Map map = MapSerializer.Deserialize(context, levelInfo.Map);
+                    var context = ExtensionLoader.CreateSimulationContext();
+                    var map = MapSerializer.Deserialize(context, levelInfo.Map);
 
-                    int count = 0;
-                    for (int i = 0; i < Level.MAX_SLOTS; i++)
-                    {
+                    var count = 0;
+                    for (var i = 0; i < Level.MAX_SLOTS; i++)
                         // Check Player
                         if (slots[i].Profile != null)
                         {
@@ -842,11 +852,11 @@ namespace AntMe.Runtime.Communication
                                 var playerInfo = playerInfos[i];
                                 // TODO: Faction Filter
                             }
+
                             settings.Colors[i] = slots[i].ColorKey;
                             settings.Teams[i] = slots[i].Team;
                             settings.Player[i] = playerTypes[i];
                         }
-                    }
 
                     // Min Playercount check
                     if (count < levelInfo.LevelDescription.MinPlayerCount)
@@ -890,7 +900,7 @@ namespace AntMe.Runtime.Communication
                 paused = true;
 
                 // Inform everybody
-                SendSimulationChanged(this.frames);
+                SendSimulationChanged(frames);
             }
             else
             {
@@ -913,7 +923,7 @@ namespace AntMe.Runtime.Communication
                 paused = false;
 
                 // Inform everybody
-                SendSimulationChanged(this.frames);
+                SendSimulationChanged(frames);
             }
             else
             {
@@ -965,22 +975,22 @@ namespace AntMe.Runtime.Communication
 
         #region Simulation Loop
 
-        private Thread simulationThread = null;
-        private bool running = false;
+        private Thread simulationThread;
+        private bool running;
 
         private void SimulationLoop()
         {
             running = true;
-            Stopwatch watch = new Stopwatch();
+            var watch = new Stopwatch();
             watch.Restart();
 
-            while (running && simulation != null && simulation.State == Runtime.SimulationState.Running)
+            while (running && simulation != null && simulation.State == SimulationState.Running)
             {
                 // Delay
                 Thread.Sleep(1);
 
                 // Check for Framerate
-                if (!paused && watch.ElapsedMilliseconds > (1000 / frames))
+                if (!paused && watch.ElapsedMilliseconds > 1000 / frames)
                 {
                     watch.Restart();
 
@@ -995,7 +1005,7 @@ namespace AntMe.Runtime.Communication
             simulation = null;
 
             // Inform everybody
-            SendSimulationChanged(this.frames);
+            SendSimulationChanged(frames);
 
             // Disconnect Thread
             simulationThread = null;
@@ -1018,7 +1028,7 @@ namespace AntMe.Runtime.Communication
         {
             lock (clients)
             {
-                UserProfile[] profiles = clients.Values.Select(c => c.UserProfile).ToArray();
+                var profiles = clients.Values.Select(c => c.UserProfile).ToArray();
                 RunAsync(receiver, () =>
                 {
                     // Send the Full list of Users
@@ -1034,7 +1044,7 @@ namespace AntMe.Runtime.Communication
                     receiver.CallbackInterface.PlayerReset(slots);
 
                     // Send Simulation State
-                    SimulationState state = SimulationState.Stopped;
+                    var state = SimulationState.Stopped;
                     if (simulation != null)
                         state = paused ? SimulationState.Paused : SimulationState.Running;
                     receiver.CallbackInterface.SimulationChanged(state, frames);
@@ -1114,7 +1124,7 @@ namespace AntMe.Runtime.Communication
             lock (clients)
             {
                 // Send Simulation State
-                SimulationState state = SimulationState.Stopped;
+                var state = SimulationState.Stopped;
                 if (simulation != null)
                     state = paused ? SimulationState.Paused : SimulationState.Running;
 
@@ -1124,7 +1134,7 @@ namespace AntMe.Runtime.Communication
                         // Create Serializer on Simulation Startup
                         if (state != SimulationState.Stopped && receiver.Serializer == null)
                         {
-                            SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                            var context = ExtensionLoader.CreateSimulationContext();
                             receiver.Serializer = new LevelStateByteSerializer(context);
                         }
 
@@ -1149,12 +1159,12 @@ namespace AntMe.Runtime.Communication
                     // Create a new Serializer
                     if (receiver.Serializer == null)
                     {
-                        SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                        var context = ExtensionLoader.CreateSimulationContext();
                         receiver.Serializer = new LevelStateByteSerializer(context);
                     }
 
                     // Serialize
-                    byte[] buffer =  receiver.Serializer.Serialize(state);
+                    var buffer = receiver.Serializer.Serialize(state);
                     RunAsync(receiver, () => receiver.CallbackInterface.SimulationState(buffer));
                 }
             }
@@ -1162,7 +1172,7 @@ namespace AntMe.Runtime.Communication
 
         private void RunAsync(ClientInfo client, Action action)
         {
-            Task t = new Task(() =>
+            var t = new Task(() =>
             {
                 try
                 {

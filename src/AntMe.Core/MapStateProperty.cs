@@ -1,27 +1,29 @@
 ﻿namespace AntMe
 {
     /// <summary>
-    /// Base Class for all Map Property States.
+    ///     Base Class for all Map Property States.
     /// </summary>
     public abstract class MapStateProperty : StateProperty
     {
         /// <summary>
-        /// Reference to the Map.
+        ///     Reference to the Map.
         /// </summary>
         protected readonly Map Map;
 
         /// <summary>
-        /// Reference to the Map Property.
+        ///     Reference to the Map Property.
         /// </summary>
-        protected readonly new MapProperty Property;
+        protected new readonly MapProperty Property;
 
         /// <summary>
-        /// Default Constructor for the Deserializer.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public MapStateProperty() : base() { }
+        public MapStateProperty()
+        {
+        }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="map">Related Map</param>
         /// <param name="property">Related Engine Property</param>

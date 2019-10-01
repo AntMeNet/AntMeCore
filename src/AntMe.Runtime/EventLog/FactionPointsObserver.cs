@@ -3,11 +3,11 @@
 namespace AntMe.Runtime.EventLog
 {
     /// <summary>
-    /// Beobachtet den Punktestand einer Faction.
+    ///     Beobachtet den Punktestand einer Faction.
     /// </summary>
     public sealed class FactionPointsObserver : ILogObserver
     {
-        private bool init = false;
+        private bool init;
         private Dictionary<int, int> Points = new Dictionary<int, int>();
 
         public void Update(LevelState state)
@@ -24,6 +24,7 @@ namespace AntMe.Runtime.EventLog
                     //        Points = faction.Points 
                     //    });
                 }
+
                 init = true;
             }
 

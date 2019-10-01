@@ -1,42 +1,53 @@
-﻿using AntMe;
-using CoreTestClient.Renderer;
+﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using System;
+using AntMe;
+using CoreTestClient.Renderer;
 
 namespace CoreTestClient
 {
     internal abstract class BaseSceneControl : Control
     {
         /// <summary>
-        /// Gets the Size of a cell in Pixel for the Buffer.
+        ///     Gets the Size of a cell in Pixel for the Buffer.
         /// </summary>
         protected const int TILEWIDTH = 64;
 
         /// <summary>
-        /// Gets the Scale Factor for the Buffer.
+        ///     Gets the Scale Factor for the Buffer.
         /// </summary>
         private const float BUFFER_SCALE = Map.CELLSIZE / TILEWIDTH;
 
         /// <summary>
-        /// Amount of Pixel between Control Border and Map Border.
+        ///     Amount of Pixel between Control Border and Map Border.
         /// </summary>
         protected const int BORDER = 20;
 
-        private float minCameraScale = 1f / 50;
-        private float maxCameraScale = 1000f;
-        private float cameraScale = 1f;
+        private Bitmap buffer;
         private Vector2 cameraPosition = Vector2.Zero;
-        private Vector2? hoveredPosition = null;
-        private Index2? hoveredCell = null;
-        private Brush emptyBrush;
+        private float cameraScale = 1f;
+        private bool dirtyBuffer;
+        private readonly Brush emptyBrush;
+        private Index2? hoveredCell;
+        private Vector2? hoveredPosition;
+        private Index2 mapSize;
+        private float maxCameraScale = 1000f;
+
+        private float minCameraScale = 1f / 50;
+
+        public BaseSceneControl()
+        {
+            DoubleBuffered = true;
+            emptyBrush = new SolidBrush(Color.LightGray);
+        }
 
         /// <summary>
-        /// Gets the minimum Scale Level.
+        ///     Gets the minimum Scale Level.
         /// </summary>
         public float MinCameraScale
         {
-            get { return minCameraScale; }
+            get => minCameraScale;
             private set
             {
                 minCameraScale = Math.Max(1f / 50, value);
@@ -45,11 +56,11 @@ namespace CoreTestClient
         }
 
         /// <summary>
-        /// Gets the maximum Scale Level.
+        ///     Gets the maximum Scale Level.
         /// </summary>
         public float MaxCameraScale
         {
-            get { return maxCameraScale; }
+            get => maxCameraScale;
             private set
             {
                 maxCameraScale = Math.Min(1000f, value);
@@ -58,27 +69,24 @@ namespace CoreTestClient
         }
 
         /// <summary>
-        /// Gets the current Scale Level.
+        ///     Gets the current Scale Level.
         /// </summary>
         public float CameraScale
         {
-            get { return cameraScale; }
-            protected set
-            {
-                cameraScale = Math.Min(MaxCameraScale, Math.Max(MinCameraScale, value));
-            }
+            get => cameraScale;
+            protected set => cameraScale = Math.Min(MaxCameraScale, Math.Max(MinCameraScale, value));
         }
 
         /// <summary>
-        /// Gets the Position of the Camera in World Coordinate
+        ///     Gets the Position of the Camera in World Coordinate
         /// </summary>
         public Vector2 CameraPosition
         {
-            get { return cameraPosition; }
+            get => cameraPosition;
             private set
             {
                 // Check against Borders
-                float width = ((ClientRectangle.Width - BORDER) / 2) / CameraScale;
+                var width = (ClientRectangle.Width - BORDER) / 2 / CameraScale;
                 if (width * 2 >= mapSize.X * Map.CELLSIZE)
                 {
                     // Map smaller than the Screen
@@ -91,11 +99,11 @@ namespace CoreTestClient
                         value.X = width;
 
                     // Too far right
-                    if (value.X > (mapSize.X * Map.CELLSIZE) - width)
-                        value.X = (mapSize.X * Map.CELLSIZE) - width;
+                    if (value.X > mapSize.X * Map.CELLSIZE - width)
+                        value.X = mapSize.X * Map.CELLSIZE - width;
                 }
 
-                float height = ((ClientRectangle.Height - BORDER) / 2) / CameraScale;
+                var height = (ClientRectangle.Height - BORDER) / 2 / CameraScale;
                 if (height * 2 >= mapSize.Y * Map.CELLSIZE)
                 {
                     // Map smaller than the Screen
@@ -108,24 +116,20 @@ namespace CoreTestClient
                         value.Y = height;
 
                     // Too far down
-                    if (value.Y > (mapSize.Y * Map.CELLSIZE) - height)
-                        value.Y = (mapSize.Y * Map.CELLSIZE) - height;
+                    if (value.Y > mapSize.Y * Map.CELLSIZE - height)
+                        value.Y = mapSize.Y * Map.CELLSIZE - height;
                 }
 
                 cameraPosition = value;
             }
         }
 
-        private Bitmap buffer;
-        private Index2 mapSize;
-        private bool dirtyBuffer;
-
         /// <summary>
-        /// Gets the current Position of the Mouse in World Coordinates.
+        ///     Gets the current Position of the Mouse in World Coordinates.
         /// </summary>
         public Vector2? HoveredPosition
         {
-            get { return hoveredPosition; }
+            get => hoveredPosition;
             private set
             {
                 hoveredPosition = value;
@@ -134,10 +138,11 @@ namespace CoreTestClient
         }
 
         /// <summary>
-        /// Gets the current Cell of the Mouse Pointer.
+        ///     Gets the current Cell of the Mouse Pointer.
         /// </summary>
-        public Index2? HoveredCell {
-            get { return hoveredCell; }
+        public Index2? HoveredCell
+        {
+            get => hoveredCell;
             private set
             {
                 hoveredCell = value;
@@ -146,17 +151,75 @@ namespace CoreTestClient
             }
         }
 
-        public BaseSceneControl()
+        protected override void OnPaint(PaintEventArgs e)
         {
-            DoubleBuffered = true;
-            emptyBrush = new SolidBrush(Color.LightGray);
+            base.OnPaint(e);
+
+            e.Graphics.Clear(Color.CornflowerBlue);
+
+            if (buffer != null)
+            {
+                // Render Playground
+                if (dirtyBuffer)
+                {
+                    using (var g = Graphics.FromImage(buffer))
+                    {
+                        for (var y = 0; y < mapSize.Y; y++)
+                        for (var x = 0; x < mapSize.X; x++)
+                        {
+                            MapTileOrientation orientation;
+                            var materialRenderer = OnRenderMaterial(x, y, out orientation);
+                            if (materialRenderer != null)
+                                materialRenderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
+                            else
+                                // Fallback on empty Cells
+                                g.FillRectangle(emptyBrush,
+                                    new RectangleF(x * TILEWIDTH, y * TILEWIDTH, TILEWIDTH, TILEWIDTH));
+
+                            var tileRenderer = OnRenderTile(x, y, out orientation);
+                            tileRenderer?.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
+                        }
+
+                        OnBufferDraw(g, mapSize);
+                    }
+
+                    dirtyBuffer = false;
+                }
+
+                e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                // Draw Buffer
+                e.Graphics.ResetTransform();
+                e.Graphics.TranslateTransform(ClientSize.Width / 2, ClientSize.Height / 2);
+                e.Graphics.ScaleTransform(CameraScale, CameraScale);
+                e.Graphics.TranslateTransform(-CameraPosition.X, -CameraPosition.Y);
+                e.Graphics.ScaleTransform(BUFFER_SCALE, BUFFER_SCALE);
+                e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+            }
+
+            // Draw overlaying stuff
+            e.Graphics.ResetTransform();
+            e.Graphics.TranslateTransform(ClientSize.Width / 2, ClientSize.Height / 2);
+            e.Graphics.ScaleTransform(CameraScale, CameraScale);
+            e.Graphics.TranslateTransform(-CameraPosition.X, -CameraPosition.Y);
+            OnDraw(e.Graphics);
         }
+
+        protected virtual void OnBufferDraw(Graphics g, Index2 mapSize)
+        {
+        }
+
+        protected abstract void OnDraw(Graphics g);
+
+        public event ValueUpdate<Index2?> OnHoveredCellChanged;
+
+        public event ValueUpdate<Vector2?> OnHoveredPositionChanged;
 
         #region Scaling and Navigation
 
-        bool mouseDragging = false;
-        Vector2 mousePosition = Vector2.Zero;
-        Vector2 worldPosition = Vector2.Zero;
+        private bool mouseDragging;
+        private Vector2 mousePosition = Vector2.Zero;
+        private Vector2 worldPosition = Vector2.Zero;
 
         protected override void OnResize(EventArgs e)
         {
@@ -206,8 +269,8 @@ namespace CoreTestClient
             if (mouseDragging)
             {
                 // Camera move
-                int deltaX = (int)mousePosition.X - e.X;
-                int deltaY = (int)mousePosition.Y - e.Y;
+                var deltaX = (int) mousePosition.X - e.X;
+                var deltaY = (int) mousePosition.Y - e.Y;
                 CameraPosition += new Vector2(deltaX, deltaY) / CameraScale;
                 Invalidate();
             }
@@ -219,8 +282,8 @@ namespace CoreTestClient
         {
             if (mapSize != Index2.Zero)
             {
-                float scaleX = (ClientSize.Width - BORDER) / (mapSize.X * Map.CELLSIZE);
-                float scaleY = (ClientSize.Height - BORDER) / (mapSize.Y * Map.CELLSIZE);
+                var scaleX = (ClientSize.Width - BORDER) / (mapSize.X * Map.CELLSIZE);
+                var scaleY = (ClientSize.Height - BORDER) / (mapSize.Y * Map.CELLSIZE);
                 MinCameraScale = Math.Min(scaleX, scaleY);
                 CameraPosition = CameraPosition;
             }
@@ -231,27 +294,27 @@ namespace CoreTestClient
         }
 
         /// <summary>
-        /// Converts Screen- to World-Coordinates.
+        ///     Converts Screen- to World-Coordinates.
         /// </summary>
         /// <param name="position">Screen Position</param>
         /// <returns>World Position</returns>
         protected Vector2 ViewToWorld(Vector2 position)
         {
-            Vector2 relativePosition = position -
-                (new Vector2(ClientSize.Width, ClientSize.Height) / 2f);
+            var relativePosition = position -
+                                   new Vector2(ClientSize.Width, ClientSize.Height) / 2f;
 
-            return (relativePosition / CameraScale) + CameraPosition;
+            return relativePosition / CameraScale + CameraPosition;
         }
 
         /// <summary>
-        /// Converts World- to Screen-Coordinates.
+        ///     Converts World- to Screen-Coordinates.
         /// </summary>
         /// <param name="position">World Position</param>
         /// <returns>Screen Position</returns>
         protected Vector2 WorldToView(Vector2 position)
         {
-            Vector2 relativePosition = position - CameraPosition;
-            return (relativePosition * CameraScale) + (new Vector2(ClientSize.Width, ClientSize.Height) / 2f);
+            var relativePosition = position - CameraPosition;
+            return relativePosition * CameraScale + new Vector2(ClientSize.Width, ClientSize.Height) / 2f;
         }
 
         private void SetMousePosition(int x, int y)
@@ -269,73 +332,12 @@ namespace CoreTestClient
             {
                 HoveredPosition = worldPosition;
                 HoveredCell = new Index2(
-                    (int)(worldPosition.X / Map.CELLSIZE),
-                    (int)(worldPosition.Y / Map.CELLSIZE));
+                    (int) (worldPosition.X / Map.CELLSIZE),
+                    (int) (worldPosition.Y / Map.CELLSIZE));
             }
         }
 
         #endregion
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            e.Graphics.Clear(Color.CornflowerBlue);
-
-            if (buffer != null)
-            {
-                // Render Playground
-                if (dirtyBuffer)
-                {
-                    using (Graphics g = Graphics.FromImage(buffer))
-                    {
-                        for (int y = 0; y < mapSize.Y; y++)
-                        {
-                            for (int x = 0; x < mapSize.X; x++)
-                            {
-                                MapTileOrientation orientation;
-                                TileRenderer materialRenderer = OnRenderMaterial(x, y, out orientation);
-                                if (materialRenderer != null)
-                                    materialRenderer.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
-                                else
-                                {
-                                    // Fallback on empty Cells
-                                    g.FillRectangle(emptyBrush, new RectangleF(x * TILEWIDTH, y * TILEWIDTH, TILEWIDTH, TILEWIDTH));
-                                }
-
-                                TileRenderer tileRenderer = OnRenderTile(x, y, out orientation);
-                                tileRenderer?.Draw(g, x * TILEWIDTH, y * TILEWIDTH, orientation);
-                            }
-                        }
-
-                        OnBufferDraw(g, mapSize);
-                    }
-
-                    dirtyBuffer = false;
-                }
-
-                e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-
-                // Draw Buffer
-                e.Graphics.ResetTransform();
-                e.Graphics.TranslateTransform(ClientSize.Width / 2, ClientSize.Height / 2);
-                e.Graphics.ScaleTransform(CameraScale, CameraScale);
-                e.Graphics.TranslateTransform(-CameraPosition.X, -CameraPosition.Y);
-                e.Graphics.ScaleTransform(BUFFER_SCALE, BUFFER_SCALE);
-                e.Graphics.DrawImageUnscaled(buffer, 0, 0);
-            }
-
-            // Draw overlaying stuff
-            e.Graphics.ResetTransform();
-            e.Graphics.TranslateTransform(ClientSize.Width / 2, ClientSize.Height / 2);
-            e.Graphics.ScaleTransform(CameraScale, CameraScale);
-            e.Graphics.TranslateTransform(-CameraPosition.X, -CameraPosition.Y);
-            OnDraw(e.Graphics);
-        }
-
-        protected virtual void OnBufferDraw(Graphics g, Index2 mapSize) { }
-
-        protected abstract void OnDraw(Graphics g);
 
         #region Buffer Generation
 
@@ -363,10 +365,7 @@ namespace CoreTestClient
                 throw new ArgumentOutOfRangeException("size");
 
             // Recreate a new Buffer
-            if (buffer == null)
-            {
-                buffer = new Bitmap(mapSize.X * TILEWIDTH, mapSize.Y * TILEWIDTH);
-            }
+            if (buffer == null) buffer = new Bitmap(mapSize.X * TILEWIDTH, mapSize.Y * TILEWIDTH);
 
             // Redraw Map
             InvalidateMap();
@@ -388,9 +387,5 @@ namespace CoreTestClient
         protected abstract TileRenderer OnRenderTile(int x, int y, out MapTileOrientation orientation);
 
         #endregion
-
-        public event ValueUpdate<Index2?> OnHoveredCellChanged;
-
-        public event ValueUpdate<Vector2?> OnHoveredPositionChanged;
     }
 }

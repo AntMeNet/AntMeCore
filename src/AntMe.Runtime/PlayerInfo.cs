@@ -6,17 +6,17 @@ namespace AntMe.Runtime
     public class PlayerInfo
     {
         /// <summary>
-        /// Eindeutige ID für genau diese KI
+        ///     Eindeutige ID für genau diese KI
         /// </summary>
         public Guid Guid { get; set; }
 
         /// <summary>
-        /// Quelle der KI
+        ///     Quelle der KI
         /// </summary>
         public PlayerSource Source { get; set; }
 
         /// <summary>
-        /// Name der KI
+        ///     Name der KI
         /// </summary>
         public string Name { get; set; }
 
@@ -24,17 +24,17 @@ namespace AntMe.Runtime
         public string Author { get; set; }
 
         /// <summary>
-        /// Typ-Informationen zum Laden der Assembly und des Types.
+        ///     Typ-Informationen zum Laden der Assembly und des Types.
         /// </summary>
         public TypeInfo Type { get; set; }
 
         /// <summary>
-        /// Zugrunde liegende Faction.
+        ///     Zugrunde liegende Faction.
         /// </summary>
         public string FactionType { get; set; }
 
         /// <summary>
-        /// Gibt an, ob diese KI static ist.
+        ///     Gibt an, ob diese KI static ist.
         /// </summary>
         public bool IsStatic { get; set; }
 
@@ -59,33 +59,33 @@ namespace AntMe.Runtime
     }
 
     /// <summary>
-    /// List of possible AI-Sources.
+    ///     List of possible AI-Sources.
     /// </summary>
     [Serializable]
     public enum PlayerSource
     {
         /// <summary>
-        /// Build into an imported extension.
+        ///     Build into an imported extension.
         /// </summary>
         Native = 1,
 
         /// <summary>
-        /// Imported from external dll.
+        ///     Imported from external dll.
         /// </summary>
         Imported = 2,
 
         /// <summary>
-        /// Referenced to an existing Solution file.
+        ///     Referenced to an existing Solution file.
         /// </summary>
         Sourcecode = 3,
 
         /// <summary>
-        /// Referenced to an existing visual Editor file.
+        ///     Referenced to an existing visual Editor file.
         /// </summary>
         Visual = 4,
 
         /// <summary>
-        /// Exists in the AntMe! Online Storage.
+        ///     Exists in the AntMe! Online Storage.
         /// </summary>
         Online = 5
     }

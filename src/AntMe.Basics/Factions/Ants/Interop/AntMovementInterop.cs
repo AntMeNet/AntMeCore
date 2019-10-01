@@ -1,50 +1,50 @@
-﻿using AntMe.Basics.ItemProperties;
-using AntMe.Basics.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AntMe.Basics.ItemProperties;
+using AntMe.Basics.Items;
 
 namespace AntMe.Basics.Factions.Ants.Interop
 {
     /// <summary>
-    /// Physics Interop for Ants.
+    ///     Physics Interop for Ants.
     /// </summary>
     public sealed class AntMovementInterop : UnitInteropProperty
     {
-        private int rotationSpeed;
-
         /// <summary>
-        /// Reference to the Walking Property.
-        /// </summary>
-        private readonly WalkingProperty walking;
-
-        /// <summary>
-        /// Reference to the Collidable Property.
+        ///     Reference to the Collidable Property.
         /// </summary>
         private readonly CollidableProperty collidable;
 
         /// <summary>
-        /// List of Collisions during the last Round.
+        ///     List of Collisions during the last Round.
         /// </summary>
         private readonly HashSet<ItemInfo> collidedItems = new HashSet<ItemInfo>();
 
         /// <summary>
-        /// Angle to Rotate until Wait()
+        ///     Reference to the Walking Property.
+        /// </summary>
+        private readonly WalkingProperty walking;
+
+        /// <summary>
+        ///     Angle to Rotate until Wait()
         /// </summary>
         private int angleToGo;
 
         /// <summary>
-        /// Distance to go until Wait()
-        /// </summary>
-        private float distanceToGo;
-
-        /// <summary>
-        /// Current Destination Item.
+        ///     Current Destination Item.
         /// </summary>
         private ItemInfo destination;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Distance to go until Wait()
+        /// </summary>
+        private float distanceToGo;
+
+        private readonly int rotationSpeed;
+
+        /// <summary>
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
@@ -62,16 +62,24 @@ namespace AntMe.Basics.Factions.Ants.Interop
             if (collidable == null)
                 throw new NotSupportedException("There is no Collidable Property");
 
-            int speedAttribute = 0;
+            var speedAttribute = 0;
             if (item.Attributes != null)
                 item.Attributes.GetValue("speed");
 
             switch (speedAttribute)
             {
-                case -1: rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[-1]").Value; break;
-                case 1: rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[1]").Value; break;
-                case 2: rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[2]").Value; break;
-                default: rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[0]").Value; break;
+                case -1:
+                    rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[-1]").Value;
+                    break;
+                case 1:
+                    rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[1]").Value;
+                    break;
+                case 2:
+                    rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[2]").Value;
+                    break;
+                default:
+                    rotationSpeed = Faction.Settings.GetInt<AntItem>("RotationSpeed[0]").Value;
+                    break;
             }
 
             // Handle Collisions with Walls and Borders.
@@ -106,6 +114,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 else
                     item.Orientation = item.Orientation.InvertX();
             }
+
             OnHitWall?.Invoke(direction);
         }
 
@@ -128,7 +137,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             if (angleToGo != 0)
             {
                 // Drehung
-                int rot = angleToGo > 0 ? Math.Min(angleToGo, rotationSpeed) : Math.Max(angleToGo, -rotationSpeed);
+                var rot = angleToGo > 0 ? Math.Min(angleToGo, rotationSpeed) : Math.Max(angleToGo, -rotationSpeed);
 
                 walking.Speed = 0f;
                 walking.Direction = Item.Orientation.AddDegree(rot);
@@ -152,9 +161,9 @@ namespace AntMe.Basics.Factions.Ants.Interop
             else if (destination != null)
             {
                 // Recalc Direction
-                float distance = destination.Distance + Item.Radius + destination.Radius;
+                var distance = destination.Distance + Item.Radius + destination.Radius;
                 Angle direction = destination.Direction;
-                int angle = Angle.ConvertToDegree(Angle.Diff(Item.Orientation, direction));
+                var angle = Angle.ConvertToDegree(Angle.Diff(Item.Orientation, direction));
 
                 if (distance < Faction.Settings.GetFloat<AntItem>("ZigZagRange").Value)
                 {
@@ -165,7 +174,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
                 else
                 {
                     // ZigZag
-                    int zzAngle = Faction.Settings.GetInt<AntItem>("ZigZagAngle").Value;
+                    var zzAngle = Faction.Settings.GetInt<AntItem>("ZigZagAngle").Value;
                     angleToGo = angle + Faction.Random.Next(-zzAngle, zzAngle);
                     distanceToGo = Faction.Settings.GetFloat<AntItem>("ZigZagRange").Value;
                 }
@@ -178,9 +187,8 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
 
-
         /// <summary>
-        /// Let the Ant walk ahead.
+        ///     Let the Ant walk ahead.
         /// </summary>
         public void Goahead()
         {
@@ -188,7 +196,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Let the Ant walk ahead for a given Distance.
+        ///     Let the Ant walk ahead for a given Distance.
         /// </summary>
         /// <param name="distance">Distance to go</param>
         public void Goahead(float distance)
@@ -198,7 +206,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Turns the Ant.
+        ///     Turns the Ant.
         /// </summary>
         /// <param name="angle">Degrees</param>
         public void Turn(int angle)
@@ -208,7 +216,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Turns the Ant around (180 Degrees).
+        ///     Turns the Ant around (180 Degrees).
         /// </summary>
         public void TurnAround()
         {
@@ -216,7 +224,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Turns the Ant into the given Direction.
+        ///     Turns the Ant into the given Direction.
         /// </summary>
         /// <param name="angle">Direction</param>
         public void TurnTo(int angle)
@@ -225,16 +233,16 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Turns the Ant into the given Direction.
+        ///     Turns the Ant into the given Direction.
         /// </summary>
         /// <param name="direction">Direction</param>
         public void TurnTo(Compass direction)
         {
-            TurnTo((int)direction);
+            TurnTo((int) direction);
         }
 
         /// <summary>
-        /// Turns the Ant toward the given Item.
+        ///     Turns the Ant toward the given Item.
         /// </summary>
         /// <param name="destination">Destination Item</param>
         public void TurnTo(ItemInfo destination)
@@ -243,7 +251,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Clears all navigation Commands and sets the given Destination.
+        ///     Clears all navigation Commands and sets the given Destination.
         /// </summary>
         /// <param name="destination">Destination</param>
         public void GoTo(ItemInfo destination)
@@ -253,7 +261,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Stops everything.
+        ///     Stops everything.
         /// </summary>
         public void Stop()
         {
@@ -263,14 +271,14 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Nimmt den heimatlichen Ameisenhügel als Ziel.
+        ///     Nimmt den heimatlichen Ameisenhügel als Ziel.
         /// </summary>
         public void GoToAnthill()
         {
             Stop();
 
             // Anthill ermitteln
-            AntFaction antFaction = Faction as AntFaction;
+            var antFaction = Faction as AntFaction;
 
             // In Case of wrong Faction
             if (antFaction == null)
@@ -288,7 +296,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         #region Properties
 
         /// <summary>
-        /// Returns the Distance to go.
+        ///     Returns the Distance to go.
         /// </summary>
         public float DistanceToGo
         {
@@ -304,52 +312,46 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Returns the Angle to turn.
+        ///     Returns the Angle to turn.
         /// </summary>
-        public int AngleToGo
-        {
-            get { return angleToGo; }
-        }
+        public int AngleToGo => angleToGo;
 
         /// <summary>
-        /// Returns the current Destination Item.
+        ///     Returns the current Destination Item.
         /// </summary>
-        public ItemInfo CurrentDestination
-        {
-            get { return destination; }
-        }
+        public ItemInfo CurrentDestination => destination;
 
         /// <summary>
-        /// Gibt die maximale Geschwindigkeit der Ameise zurück.
+        ///     Gibt die maximale Geschwindigkeit der Ameise zurück.
         /// </summary>
-        public float MaximumSpeed { get { return walking.MaximumSpeed; } }
+        public float MaximumSpeed => walking.MaximumSpeed;
 
         /// <summary>
-        /// Gibt die Kollisionsmasse der Ameise zurück.
+        ///     Gibt die Kollisionsmasse der Ameise zurück.
         /// </summary>
-        public float Mass { get { return collidable.CollisionFixed ? float.MaxValue : collidable.CollisionMass; } }
+        public float Mass => collidable.CollisionFixed ? float.MaxValue : collidable.CollisionMass;
 
         /// <summary>
-        /// Liefert eine Liste der Elemente, mit der die Ameise gerade kollidiert ist.
+        ///     Liefert eine Liste der Elemente, mit der die Ameise gerade kollidiert ist.
         /// </summary>
-        public IEnumerable<ItemInfo> CollidedItems { get { return collidedItems.AsEnumerable(); } }
+        public IEnumerable<ItemInfo> CollidedItems => collidedItems.AsEnumerable();
 
         #endregion
 
         #region Events
 
         /// <summary>
-        /// Signal to inform about a waiting ant.
+        ///     Signal to inform about a waiting ant.
         /// </summary>
         public event InteropEvent OnWaits;
 
         /// <summary>
-        /// Signals a Collision with a wall (includes Map Borders).
+        ///     Signals a Collision with a wall (includes Map Borders).
         /// </summary>
         public event InteropEvent<Compass> OnHitWall;
 
         /// <summary>
-        /// Signals a Collision with another Item.
+        ///     Signals a Collision with another Item.
         /// </summary>
         public event InteropEvent OnCollision;
 

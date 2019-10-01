@@ -4,7 +4,7 @@ using System.IO;
 namespace AntMe.Serialization
 {
     /// <summary>
-    /// Internal Interface for all Map Serializer
+    ///     Internal Interface for all Map Serializer
     /// </summary>
     internal interface IMapSerializer : IDisposable
     {

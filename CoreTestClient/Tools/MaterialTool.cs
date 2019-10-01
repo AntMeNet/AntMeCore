@@ -1,19 +1,16 @@
 ﻿using System;
+using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using AntMe;
-using AntMe.Runtime;
-using System.IO;
-using System.Drawing;
 
 namespace CoreTestClient.Tools
 {
     public class MaterialTool : EditorTool
     {
-        private ToolStripDropDownButton button;
+        private readonly ToolStripDropDownButton button;
 
         private ToolStripItem selected;
-
-        public override ToolStripItem RootItem { get { return button; } }
 
         public MaterialTool(SimulationContext context) : base(context)
         {
@@ -26,10 +23,10 @@ namespace CoreTestClient.Tools
             // Init Tools
             foreach (var material in Context.Mapper.MapMaterials)
             {
-                string path = Path.Combine(".", "Resources", material.Type.Name + ".png");
-                Image image = Image.FromFile(path);
+                var path = Path.Combine(".", "Resources", material.Type.Name + ".png");
+                var image = Image.FromFile(path);
 
-                ToolStripItem b = button.DropDownItems.Add(material.Name, image);
+                var b = button.DropDownItems.Add(material.Name, image);
                 b.Tag = material;
                 b.Click += (s, e) => { SelectMaterial(b); };
 
@@ -38,6 +35,8 @@ namespace CoreTestClient.Tools
                     SelectMaterial(b);
             }
         }
+
+        public override ToolStripItem RootItem => button;
 
         private void SelectMaterial(ToolStripItem material)
         {
@@ -52,7 +51,7 @@ namespace CoreTestClient.Tools
             if (!cell.HasValue)
                 return false;
 
-            return (map?[cell.Value.X, cell.Value.Y] != null);
+            return map?[cell.Value.X, cell.Value.Y] != null;
         }
 
         protected override void OnApply(Map map, Index2? cell, Vector2? position)
@@ -63,16 +62,19 @@ namespace CoreTestClient.Tools
             if (map[cell.Value.X, cell.Value.Y] == null)
                 throw new NotSupportedException("There is no Map Type at this point");
 
-            MapTile tile = map[cell.Value.X, cell.Value.Y];
+            var tile = map[cell.Value.X, cell.Value.Y];
 
             if (selected != null)
             {
-                ITypeMapperEntry material = selected.Tag as ITypeMapperEntry;
+                var material = selected.Tag as ITypeMapperEntry;
                 if (tile.Material == null || tile.Material.GetType() != material.Type)
-                    map[cell.Value.X, cell.Value.Y].Material = Activator.CreateInstance(material.Type, Context) as MapMaterial;
+                    map[cell.Value.X, cell.Value.Y].Material =
+                        Activator.CreateInstance(material.Type, Context) as MapMaterial;
             }
             else
+            {
                 map[cell.Value.X, cell.Value.Y].Material = null;
+            }
         }
     }
 }

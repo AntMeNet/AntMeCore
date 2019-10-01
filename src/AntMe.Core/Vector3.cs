@@ -9,27 +9,27 @@ namespace AntMe
     public struct Vector3
     {
         /// <summary>
-        /// Minimalste Abweichung bei Vergleichsprüfungen. Soll Rundungsfehlern entgegen wirken.
+        ///     Minimalste Abweichung bei Vergleichsprüfungen. Soll Rundungsfehlern entgegen wirken.
         /// </summary>
         public const float EPS_MIN = 0.001f;
 
         /// <summary>
-        /// X-Anteil der Koordinate.
+        ///     X-Anteil der Koordinate.
         /// </summary>
         public float X;
 
         /// <summary>
-        /// Y-Anteil der Koordinate.
+        ///     Y-Anteil der Koordinate.
         /// </summary>
         public float Y;
 
         /// <summary>
-        /// Z-Anteil der Koordinate.
+        ///     Z-Anteil der Koordinate.
         /// </summary>
         public float Z;
 
         /// <summary>
-        /// Parameterisierter Konstruktor der Vector3-Klasse.
+        ///     Parameterisierter Konstruktor der Vector3-Klasse.
         /// </summary>
         /// <param name="x">X-Anteil</param>
         /// <param name="y">Y-Anteil</param>
@@ -46,10 +46,7 @@ namespace AntMe
         /// <summary>
         ///     Null Vektor.
         /// </summary>
-        public static Vector3 Zero
-        {
-            get { return new Vector3(0, 0, 0); }
-        }
+        public static Vector3 Zero => new Vector3(0, 0, 0);
 
         #endregion
 
@@ -73,14 +70,14 @@ namespace AntMe
         public static Vector3 FromAngleXY(float radian)
         {
             return new Vector3(
-                (float)Math.Cos(radian),
-                (float)Math.Sin(radian), 0f);
+                (float) Math.Cos(radian),
+                (float) Math.Sin(radian), 0f);
         }
 
         #endregion
 
         /// <summary>
-        /// Invertiert die X-Achse des Vektors.
+        ///     Invertiert die X-Achse des Vektors.
         /// </summary>
         /// <returns>Neuer Vektor</returns>
         public Vector3 InvertX()
@@ -89,7 +86,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Invertiert die Y-Achse des Vektors.
+        ///     Invertiert die Y-Achse des Vektors.
         /// </summary>
         /// <returns>Neuer Vektor</returns>
         public Vector3 InvertY()
@@ -98,7 +95,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Invertiert die Z-Achse des Vektors.
+        ///     Invertiert die Z-Achse des Vektors.
         /// </summary>
         /// <returns>Neuer Vektor</returns>
         public Vector3 InvertZ()
@@ -107,7 +104,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Invertiert die X- und Y-Achse des Vektors.
+        ///     Invertiert die X- und Y-Achse des Vektors.
         /// </summary>
         /// <returns>Neuer Vektor</returns>
         public Vector3 InvertXY()
@@ -116,7 +113,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Invertiert die X- und Z-Achse des Vektors.
+        ///     Invertiert die X- und Z-Achse des Vektors.
         /// </summary>
         /// <returns>Neuer Vektor</returns>
         public Vector3 InvertXZ()
@@ -125,7 +122,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Invertiert die Y- und Z-Achse des Vektors.
+        ///     Invertiert die Y- und Z-Achse des Vektors.
         /// </summary>
         /// <returns>Neuer Vektor</returns>
         public Vector3 InvertYZ()
@@ -134,7 +131,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Invertiert die X-, Y- und Z-Achse des Vektors.
+        ///     Invertiert die X-, Y- und Z-Achse des Vektors.
         /// </summary>
         /// <returns>Neuer Vektor</returns>
         public Vector3 InvertXYZ()
@@ -143,12 +140,12 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Berechnet das Quadrat der Länge des Vektors.
+        ///     Berechnet das Quadrat der Länge des Vektors.
         /// </summary>
         /// <returns>Quadrat der Länge des Vektors</returns>
         public float LengthSquared()
         {
-            return ((X * X) + (Y * Y) + (Z * Z));
+            return X * X + Y * Y + Z * Z;
         }
 
         /// <summary>
@@ -157,7 +154,7 @@ namespace AntMe
         /// <returns>Länge des Vektors</returns>
         public float Length()
         {
-            return (float)Math.Sqrt(LengthSquared());
+            return (float) Math.Sqrt(LengthSquared());
         }
 
         /// <summary>
@@ -166,7 +163,7 @@ namespace AntMe
         /// <returns></returns>
         public Angle ToAngleXY()
         {
-            return new Angle((float)Math.Atan2(Y, X));
+            return new Angle((float) Math.Atan2(Y, X));
         }
 
         /// <summary>
@@ -202,7 +199,7 @@ namespace AntMe
         /// <returns></returns>
         public Angle ToAngleXZ()
         {
-            return new Angle((float)Math.Atan2(Z, X));
+            return new Angle((float) Math.Atan2(Z, X));
         }
 
         /// <summary>
@@ -211,7 +208,7 @@ namespace AntMe
         /// <returns></returns>
         public Angle ToAngleYZ()
         {
-            return new Angle((float)Math.Atan2(Z, Y));
+            return new Angle((float) Math.Atan2(Z, Y));
         }
 
         /// <summary>
@@ -224,7 +221,7 @@ namespace AntMe
             if (this == Zero)
                 return Zero;
 
-            float scale = 1 / Length();
+            var scale = 1 / Length();
             return this * scale;
         }
 
@@ -238,8 +235,8 @@ namespace AntMe
             if (!(obj is Vector3))
                 return false;
 
-            var b = (Vector3)obj;
-            return (X == b.X && Y == b.Y && Z == b.Z);
+            var b = (Vector3) obj;
+            return X == b.X && Y == b.Y && Z == b.Z;
         }
 
         /// <summary>
@@ -263,7 +260,7 @@ namespace AntMe
         #region Operatoren
 
         /// <summary>
-        /// Addition zweier Vector3.
+        ///     Addition zweier Vector3.
         /// </summary>
         /// <param name="a">Vektor 1</param>
         /// <param name="b">Vektor 2</param>
@@ -274,7 +271,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Subjtraktion zweier Vektor3.
+        ///     Subjtraktion zweier Vektor3.
         /// </summary>
         /// <param name="a">Vektor 1</param>
         /// <param name="b">Vektor 2</param>
@@ -285,7 +282,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Skalierung eines Vektor3.
+        ///     Skalierung eines Vektor3.
         /// </summary>
         /// <param name="a">Vektor</param>
         /// <param name="scale">Skalierungsfaktor</param>
@@ -296,14 +293,14 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Skalierung eines Vektor3.
+        ///     Skalierung eines Vektor3.
         /// </summary>
         /// <param name="a">Vektor</param>
         /// <param name="scale">Skalierungsfaktor</param>
         /// <returns>Skalierter Vektor.</returns>
         public static Vector3 operator *(Vector3 a, double scale)
         {
-            return a * (float)scale;
+            return a * (float) scale;
         }
 
 
@@ -314,11 +311,11 @@ namespace AntMe
 
         public static Vector3 operator /(Vector3 a, double scale)
         {
-            return a / (float)scale;
+            return a / (float) scale;
         }
 
         /// <summary>
-        /// Wertevergleich zweier Vektoren.
+        ///     Wertevergleich zweier Vektoren.
         /// </summary>
         /// <param name="a">Vektor 1</param>
         /// <param name="b">Vektor 2</param>
@@ -326,11 +323,11 @@ namespace AntMe
         public static bool operator ==(Vector3 a, Vector3 b)
         {
             // TODO: evtl. Epsilon berücksichtigen.
-            return (a.X == b.X && a.Y == b.Y && a.Z == b.Z);
+            return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
         }
 
         /// <summary>
-        /// Wertevergleich zweier Vektoren.
+        ///     Wertevergleich zweier Vektoren.
         /// </summary>
         /// <param name="a">Vektor 1</param>
         /// <param name="b">Vektor 2</param>

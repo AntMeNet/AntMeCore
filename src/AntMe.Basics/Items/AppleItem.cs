@@ -1,17 +1,17 @@
 ﻿namespace AntMe.Basics.Items
 {
     /// <summary>
-    /// Game Item that represents an Apple.
+    ///     Game Item that represents an Apple.
     /// </summary>
     public class AppleItem : Item
     {
         /// <summary>
-        /// Inner Radius of an Apple (Collision-Radius).
+        ///     Inner Radius of an Apple (Collision-Radius).
         /// </summary>
         public const float AppleInnerRadius = 10f;
 
         /// <summary>
-        /// Default Radius of an Apple (Visibility, Portable,...).
+        ///     Default Radius of an Apple (Visibility, Portable,...).
         /// </summary>
         public const float AppleOuterRadius = 15f;
 

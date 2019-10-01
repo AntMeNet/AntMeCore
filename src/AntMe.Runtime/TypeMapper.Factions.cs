@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AntMe.Runtime
 {
@@ -9,7 +8,8 @@ namespace AntMe.Runtime
     {
         #region Factions
 
-        private class FactionTypeMap : StateInfoTypeMap<Func<Faction, FactionState>, Func<Faction, Item, FactionInfo>>, ITypeMapperFactionEntry
+        private class FactionTypeMap : StateInfoTypeMap<Func<Faction, FactionState>, Func<Faction, Item, FactionInfo>>,
+            ITypeMapperFactionEntry
         {
             public Type FactoryType { get; set; }
 
@@ -20,9 +20,9 @@ namespace AntMe.Runtime
             public Type UnitInteropType { get; set; }
         }
 
-        private List<FactionTypeMap> factions = new List<FactionTypeMap>();
+        private readonly List<FactionTypeMap> factions = new List<FactionTypeMap>();
 
-        public IEnumerable<ITypeMapperFactionEntry> Factions { get { return factions; } }
+        public IEnumerable<ITypeMapperFactionEntry> Factions => factions;
 
         public void RegisterFaction<T, S, I, F, FI, U, UI, IT>(IExtensionPack extensionPack, string name,
             Func<Faction, S> createStateDelegate = null,
@@ -39,36 +39,36 @@ namespace AntMe.Runtime
             ValidateDefaults(extensionPack, name);
 
             // Handle Faction Type
-            Type type = typeof(T);
-            ValidateType<Faction>(type, new Type[] { typeof(SimulationContext), typeof(Type), typeof(Level) }, false);
+            var type = typeof(T);
+            ValidateType<Faction>(type, new[] {typeof(SimulationContext), typeof(Type), typeof(Level)});
 
             // TODO: Check Collisions
 
             // Handle Faction State
-            Type stateType = typeof(S);
-            ValidateType<FactionState>(stateType, new Type[] { typeof(T) }, true);
+            var stateType = typeof(S);
+            ValidateType<FactionState>(stateType, new[] {typeof(T)}, true);
 
             // Handle Faction Info
-            Type infoType = typeof(I);
-            ValidateType<FactionInfo>(infoType, new Type[] { typeof(T), typeof(Item) }, false);
+            var infoType = typeof(I);
+            ValidateType<FactionInfo>(infoType, new[] {typeof(T), typeof(Item)});
 
             // Handle Factory
-            Type factoryType = typeof(F);
+            var factoryType = typeof(F);
             // TODO: Anything to check here?
 
             // Handle Factory Interop
-            Type factoryInteropType = typeof(FI);
-            ValidateType<FactoryInterop>(factoryInteropType, new Type[] { typeof(T) }, false);
+            var factoryInteropType = typeof(FI);
+            ValidateType<FactoryInterop>(factoryInteropType, new[] {typeof(T)});
 
             // Handle Unit
-            Type unitType = typeof(U);
+            var unitType = typeof(U);
             // TODO: Anything to check here?
 
             // Handle Unit Interop
-            Type unitInteropType = typeof(UI);
-            ValidateType<UnitInterop>(unitInteropType, new Type[] { typeof(T), typeof(IT) }, false);
+            var unitInteropType = typeof(UI);
+            ValidateType<UnitInterop>(unitInteropType, new[] {typeof(T), typeof(IT)});
 
-            factions.Add(new FactionTypeMap()
+            factions.Add(new FactionTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -85,9 +85,8 @@ namespace AntMe.Runtime
         }
 
 
-
         /// <summary>
-        /// Identifiziert die zugehörige Faction zum übergebenen Player Type.
+        ///     Identifiziert die zugehörige Faction zum übergebenen Player Type.
         /// </summary>
         /// <param name="playerType">Typ des Spielers</param>
         /// <returns>Full Type Name</returns>
@@ -101,36 +100,41 @@ namespace AntMe.Runtime
 
         #region Faction Property
 
-        private class FactionPropertyTypeMap : StateInfoTypeMap<Func<Faction, FactionProperty, FactionStateProperty>, Func<Faction, FactionProperty, Item, FactionInfoProperty>> { }
-
-        private List<FactionPropertyTypeMap> factionProperties = new List<FactionPropertyTypeMap>();
-
-        public IEnumerable<IStateInfoTypeMapperEntry> FactionProperties
+        private class FactionPropertyTypeMap : StateInfoTypeMap<Func<Faction, FactionProperty, FactionStateProperty>,
+            Func<Faction, FactionProperty, Item, FactionInfoProperty>>
         {
-            get { return factionProperties; }
         }
+
+        private readonly List<FactionPropertyTypeMap> factionProperties = new List<FactionPropertyTypeMap>();
+
+        public IEnumerable<IStateInfoTypeMapperEntry> FactionProperties => factionProperties;
 
         public void RegisterFactionProperty<T>(IExtensionPack extensionPack, string name)
             where T : FactionProperty
         {
-            RegisterFactionProperty<T, FactionStateProperty, FactionInfoProperty>(extensionPack, name, false, false, null, null);
+            RegisterFactionProperty<T, FactionStateProperty, FactionInfoProperty>(extensionPack, name, false, false);
         }
 
-        public void RegisterFactionPropertyS<T, S>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null)
+        public void RegisterFactionPropertyS<T, S>(IExtensionPack extensionPack, string name,
+            Func<Faction, FactionProperty, S> createStateDelegate = null)
             where T : FactionProperty
             where S : FactionStateProperty
         {
-            RegisterFactionProperty<T, S, FactionInfoProperty>(extensionPack, name, true, false, createStateDelegate, null);
+            RegisterFactionProperty<T, S, FactionInfoProperty>(extensionPack, name, true, false, createStateDelegate);
         }
 
-        public void RegisterFactionPropertyI<T, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+        public void RegisterFactionPropertyI<T, I>(IExtensionPack extensionPack, string name,
+            Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
             where T : FactionProperty
             where I : FactionInfoProperty
         {
-            RegisterFactionProperty<T, FactionStateProperty, I>(extensionPack, name, false, true, null, createInfoDelegate);
+            RegisterFactionProperty<T, FactionStateProperty, I>(extensionPack, name, false, true, null,
+                createInfoDelegate);
         }
 
-        public void RegisterFactionPropertySI<T, S, I>(IExtensionPack extensionPack, string name, Func<Faction, FactionProperty, S> createStateDelegate = null, Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
+        public void RegisterFactionPropertySI<T, S, I>(IExtensionPack extensionPack, string name,
+            Func<Faction, FactionProperty, S> createStateDelegate = null,
+            Func<Faction, FactionProperty, Item, I> createInfoDelegate = null)
             where T : FactionProperty
             where S : FactionStateProperty
             where I : FactionInfoProperty
@@ -149,8 +153,8 @@ namespace AntMe.Runtime
             ValidateDefaults(extensionPack, name);
 
             // Handle Type
-            Type type = typeof(T);
-            ValidateType<FactionProperty>(type, new Type[] { typeof(Faction) }, false);
+            var type = typeof(T);
+            ValidateType<FactionProperty>(type, new[] {typeof(Faction)});
 
             // Check Registration Collision
             if (factionProperties.Any(p => p.Type == type))
@@ -161,7 +165,7 @@ namespace AntMe.Runtime
             if (stateSet)
             {
                 stateType = typeof(S);
-                ValidateType<FactionStateProperty>(stateType, new Type[] { typeof(Faction), typeof(T) }, true);
+                ValidateType<FactionStateProperty>(stateType, new[] {typeof(Faction), typeof(T)}, true);
             }
 
             // Handle Info Type
@@ -169,10 +173,10 @@ namespace AntMe.Runtime
             if (infoSet)
             {
                 infoType = typeof(I);
-                ValidateType<FactionInfoProperty>(infoType, new Type[] { typeof(Faction), typeof(T), typeof(Item) }, false);
+                ValidateType<FactionInfoProperty>(infoType, new[] {typeof(Faction), typeof(T), typeof(Item)});
             }
 
-            factionProperties.Add(new FactionPropertyTypeMap()
+            factionProperties.Add(new FactionPropertyTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -188,13 +192,16 @@ namespace AntMe.Runtime
 
         #region Faction Attachment Properties
 
-        private class FactionAttachmentTypeMap : AttachmentTypeMap<Func<Faction, FactionProperty>> { }
+        private class FactionAttachmentTypeMap : AttachmentTypeMap<Func<Faction, FactionProperty>>
+        {
+        }
 
-        private List<FactionAttachmentTypeMap> factionAttachments = new List<FactionAttachmentTypeMap>();
+        private readonly List<FactionAttachmentTypeMap> factionAttachments = new List<FactionAttachmentTypeMap>();
 
-        public IEnumerable<IAttachmentTypeMapperEntry> FactionAttachments { get { return factionAttachments; } }
+        public IEnumerable<IAttachmentTypeMapperEntry> FactionAttachments => factionAttachments;
 
-        public void AttachFactionProperty<F, P>(IExtensionPack extensionPack, string name, Func<Faction, P> createPropertyDelegate = null)
+        public void AttachFactionProperty<F, P>(IExtensionPack extensionPack, string name,
+            Func<Faction, P> createPropertyDelegate = null)
             where F : Faction
             where P : FactionProperty
         {
@@ -206,7 +213,7 @@ namespace AntMe.Runtime
             if (factionAttachments.Any(c => c.Type == typeof(F) && c.AttachmentType == typeof(P)))
                 throw new NotSupportedException("Item Property Combination is already reagistered");
 
-            factionAttachments.Add(new FactionAttachmentTypeMap()
+            factionAttachments.Add(new FactionAttachmentTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -220,21 +227,21 @@ namespace AntMe.Runtime
 
         #region Faction Extender
 
-        private class FactionExtenderTypeMap : ExtenderTypeMap<Action<Faction>> { }
-
-        private List<FactionExtenderTypeMap> factionExtender = new List<FactionExtenderTypeMap>();
-
-        public IEnumerable<IRankedTypeMapperEntry> FactionExtender
+        private class FactionExtenderTypeMap : ExtenderTypeMap<Action<Faction>>
         {
-            get { return factionExtender; }
         }
 
-        public void RegisterFactionExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<Faction> extenderDelegate)
+        private readonly List<FactionExtenderTypeMap> factionExtender = new List<FactionExtenderTypeMap>();
+
+        public IEnumerable<IRankedTypeMapperEntry> FactionExtender => factionExtender;
+
+        public void RegisterFactionExtender<T>(IExtensionPack extensionPack, string name, int rank,
+            Action<Faction> extenderDelegate)
         {
             ValidateDefaults(extensionPack, name);
 
             // TODO: Check Stuff
-            factionExtender.Add(new FactionExtenderTypeMap()
+            factionExtender.Add(new FactionExtenderTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -249,8 +256,8 @@ namespace AntMe.Runtime
         #region Faction Resolver
 
         /// <summary>
-        /// Erstellt eine neue Faction auf Basis des übergebenen Factory Types oder null, 
-        /// falls keine passende Faction gefunden werden konnte.
+        ///     Erstellt eine neue Faction auf Basis des übergebenen Factory Types oder null,
+        ///     falls keine passende Faction gefunden werden konnte.
         /// </summary>
         /// <param name="context">Simulation Context</param>
         /// <param name="factoryType">Typ der Spieler Factory</param>
@@ -271,53 +278,45 @@ namespace AntMe.Runtime
 
             // Sicherstellen, dass das Item registriert ist.
             if (!factions.Any(c => c.Type == faction.GetType()))
-            {
                 // TODO: Trace
                 throw new NotSupportedException("Faction is not registered.");
-            }
 
             // Vererbungskette auflösen
-            List<Type> types = new List<Type>();
-            Type current = faction.GetType();
+            var types = new List<Type>();
+            var current = faction.GetType();
             types.Add(current);
             while (current != typeof(Faction))
             {
                 current = current.BaseType;
                 types.Add(current);
             }
-            Type[] factionTypes = types.ToArray();
+
+            var factionTypes = types.ToArray();
             Array.Reverse(factionTypes);
 
             // Attachements
             foreach (var type in factionTypes)
-            {
-                foreach (var attachment in factionAttachments.Where(c => c.Type == type))
+            foreach (var attachment in factionAttachments.Where(c => c.Type == type))
+                if (attachment.CreateDelegate != null)
                 {
-                    if (attachment.CreateDelegate != null)
+                    var property = attachment.CreateDelegate(faction);
+                    if (property != null)
                     {
-                        FactionProperty property = attachment.CreateDelegate(faction);
-                        if (property != null)
-                        {
-                            if (property.GetType() != attachment.AttachmentType)
-                            {
-                                // TODO: Trace
-                                throw new NotSupportedException("Delegate returned wrong Property Type");
-                            }
-                            faction.AddProperty(property);
-                        }
-                    }
-                    else
-                    {
-                        faction.AddProperty(Activator.CreateInstance(attachment.AttachmentType, faction) as FactionProperty);
+                        if (property.GetType() != attachment.AttachmentType)
+                            // TODO: Trace
+                            throw new NotSupportedException("Delegate returned wrong Property Type");
+                        faction.AddProperty(property);
                     }
                 }
-            }
+                else
+                {
+                    faction.AddProperty(
+                        Activator.CreateInstance(attachment.AttachmentType, faction) as FactionProperty);
+                }
 
             // Extender
             foreach (var extender in factionExtender.Where(c => factionTypes.Contains(c.Type)).OrderBy(c => c.Rank))
-            {
                 extender.ExtenderDelegate(faction);
-            }
         }
 
         public FactionState CreateFactionState(Faction faction)
@@ -327,10 +326,8 @@ namespace AntMe.Runtime
 
             var container = factions.FirstOrDefault(g => g.Type == faction.GetType());
             if (container == null)
-            {
                 // TODO: Trace
                 throw new ArgumentException("Faction is not registered");
-            }
 
             FactionState state;
             if (container.CreateStateDelegate != null)
@@ -338,26 +335,20 @@ namespace AntMe.Runtime
                 // Erstellung über Delegat
                 state = container.CreateStateDelegate(faction);
                 if (state == null)
-                {
                     // TODO: Trace
                     throw new NotSupportedException("No state was returned by delegate.");
-                }
 
                 if (state.GetType() != container.StateType)
-                {
                     // TODO: Trace
                     throw new NotSupportedException("delegate returned a wrong State Type");
-                }
             }
             else
             {
                 // Automatische Erstellung
                 state = Activator.CreateInstance(container.StateType) as FactionState;
                 if (state == null)
-                {
                     // TODO: Trace
                     throw new Exception("State could not be created.");
-                }
             }
 
             // Insert static Values
@@ -383,10 +374,8 @@ namespace AntMe.Runtime
                     if (prop != null)
                     {
                         if (prop.GetType() != map.StateType)
-                        {
                             // TODO: Trace
                             throw new NotSupportedException("Delegate returned a wrong Property Type");
-                        }
 
                         state.AddProperty(prop);
                     }
@@ -396,10 +385,8 @@ namespace AntMe.Runtime
                     // Option 2: Dynamische Erzeugung
                     prop = Activator.CreateInstance(map.StateType, faction, property) as FactionStateProperty;
                     if (prop == null)
-                    {
                         // TODO: Trace
                         throw new Exception("Could not create State Property");
-                    }
                     state.AddProperty(prop);
                 }
             }
@@ -417,35 +404,27 @@ namespace AntMe.Runtime
 
             var container = factions.FirstOrDefault(g => g.Type == faction.GetType());
             if (container == null)
-            {
                 // TODO: Trace
                 throw new ArgumentException("Faction is not registered");
-            }
 
             FactionInfo info = null;
             if (container.CreateInfoDelegate != null)
             {
                 info = container.CreateInfoDelegate(faction, observer);
                 if (info == null)
-                {
                     // TODO: Trace
                     throw new NotSupportedException("No info was returned by delegate.");
-                }
 
                 if (info.GetType() != container.StateType)
-                {
                     // TODO: Trace
                     throw new NotSupportedException("delegate returned a wrong Info Type");
-                }
             }
             else
             {
                 info = Activator.CreateInstance(container.InfoType, faction, observer) as FactionInfo;
                 if (info == null)
-                {
                     // TODO: Trace
                     throw new Exception("Info could not be created.");
-                }
             }
 
             // Info-Properties in Abhängigkeit der Item-Props
@@ -464,10 +443,8 @@ namespace AntMe.Runtime
                     if (prop != null)
                     {
                         if (prop.GetType() != map.InfoType)
-                        {
                             // TODO: Tracing
                             throw new NotSupportedException("Create Delegate returned a wrong type");
-                        }
 
                         info.AddProperty(prop);
                     }
@@ -477,10 +454,8 @@ namespace AntMe.Runtime
                     // Option 2: Automatische Erstellung
                     prop = Activator.CreateInstance(map.InfoType, faction, property, observer) as FactionInfoProperty;
                     if (prop == null)
-                    {
                         // TODO: Trace
                         throw new Exception("Could not create Info Property");
-                    }
                     info.AddProperty(prop);
                 }
 

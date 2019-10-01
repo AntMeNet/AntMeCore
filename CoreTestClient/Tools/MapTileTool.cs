@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Windows.Forms;
-using AntMe;
-using AntMe.Runtime;
 using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
+using AntMe;
 
 namespace CoreTestClient.Tools
 {
     public class MapTileTool : EditorTool
     {
-        private ToolStripDropDownButton button;
+        private readonly ToolStripDropDownButton button;
 
         private ToolStripItem selected;
-
-        public override ToolStripItem RootItem { get { return button; } }
 
         public MapTileTool(SimulationContext context) : base(context)
         {
@@ -25,10 +22,10 @@ namespace CoreTestClient.Tools
 
             foreach (var mapTile in Context.Mapper.MapTiles)
             {
-                string path = Path.Combine(".", "Resources", mapTile.Type.Name + ".png");
-                Image image = Image.FromFile(path);
+                var path = Path.Combine(".", "Resources", mapTile.Type.Name + ".png");
+                var image = Image.FromFile(path);
 
-                ToolStripItem b = button.DropDownItems.Add(mapTile.Name, image);
+                var b = button.DropDownItems.Add(mapTile.Name, image);
                 b.Tag = mapTile;
                 b.Click += (s, e) => { SelectMapTile(b); };
 
@@ -41,6 +38,8 @@ namespace CoreTestClient.Tools
             if (selected == null)
                 SelectMapTile(button.DropDownItems[0]);
         }
+
+        public override ToolStripItem RootItem => button;
 
         private void SelectMapTile(ToolStripItem mapTile)
         {
@@ -55,25 +54,25 @@ namespace CoreTestClient.Tools
             if (!cell.HasValue)
                 return;
 
-            MapTile tile = map[cell.Value.X, cell.Value.Y];
-            MapMaterial material = tile?.Material;
+            var tile = map[cell.Value.X, cell.Value.Y];
+            var material = tile?.Material;
 
             if (selected == null)
                 throw new NotSupportedException("No Map Tile selected");
 
-            IStateInfoTypeMapperEntry mapTile = selected.Tag as IStateInfoTypeMapperEntry;
+            var mapTile = selected.Tag as IStateInfoTypeMapperEntry;
 
             if (tile == null || tile.GetType() != mapTile.Type)
             {
                 // Create a new Map Tile
                 map[cell.Value.X, cell.Value.Y] = Activator.CreateInstance(mapTile.Type, Context) as MapTile;
-                map[cell.Value.X, cell.Value.Y].HeightLevel = (tile != null ? tile.HeightLevel : map.BaseLevel);
+                map[cell.Value.X, cell.Value.Y].HeightLevel = tile != null ? tile.HeightLevel : map.BaseLevel;
                 map[cell.Value.X, cell.Value.Y].Material = material;
             }
             else if (tile.GetType() == mapTile.Type)
             {
                 // Rotate 90 Degrees
-                tile.Orientation = (MapTileOrientation)(((int)tile.Orientation + 90) % 360);
+                tile.Orientation = (MapTileOrientation) (((int) tile.Orientation + 90) % 360);
             }
         }
     }

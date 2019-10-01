@@ -4,71 +4,72 @@ using System.Collections.Generic;
 namespace AntMe
 {
     /// <summary>
-    /// Abstract Base Class for all kind of Game Items.
+    ///     Abstract Base Class for all kind of Game Items.
     /// </summary>
     public abstract class Item : PropertyList<ItemProperty>
     {
         /// <summary>
-        /// Reference to the Engine
-        /// </summary>
-        private Engine engine;
-
-        /// <summary>
-        /// Current ID or 0 if not added.
-        /// </summary>
-        private int id;
-
-        /// <summary>
-        /// Cache for Info Items.
+        ///     Cache for Info Items.
         /// </summary>
         private readonly Dictionary<Item, ItemInfo> _itemInfos = new Dictionary<Item, ItemInfo>();
 
         /// <summary>
-        /// Instance of the Item State.
-        /// </summary>
-        private ItemState state;
-
-        /// <summary>
-        /// Current Cell.
+        ///     Current Cell.
         /// </summary>
         private Index2 cell = Index2.Zero;
 
         /// <summary>
-        /// Current Orientation
+        ///     Reference to the Engine
+        /// </summary>
+        private Engine engine;
+
+        /// <summary>
+        ///     Current ID or 0 if not added.
+        /// </summary>
+        private int id;
+
+        /// <summary>
+        ///     Current Orientation
         /// </summary>
         private Angle orientation;
 
         /// <summary>
-        /// Current Position
+        ///     Current Position
         /// </summary>
         private Vector3 position;
 
         /// <summary>
-        /// CUrrent Radius
+        ///     CUrrent Radius
         /// </summary>
         private float radius;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Instance of the Item State.
+        /// </summary>
+        private ItemState state;
+
+        /// <summary>
+        ///     Default Constructor.
         /// </summary>
         /// <param name="context">Current Simulation Context</param>
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public Item(SimulationContext context, Vector2 position, float radius, Angle orientation) 
+        public Item(SimulationContext context, Vector2 position, float radius, Angle orientation)
             : this(context, null, position, radius, orientation)
         {
         }
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="context">Current Simulation Context</param>
         /// <param name="attributes">List of Unit Attributes</param>
         /// <param name="position">First Position of this Item</param>
         /// <param name="radius">Radius of this Item</param>
         /// <param name="orientation">First Orientation of this Item</param>
-        public Item(SimulationContext context, UnitAttributeCollection attributes, Vector2 position, float radius, Angle orientation)
+        public Item(SimulationContext context, UnitAttributeCollection attributes, Vector2 position, float radius,
+            Angle orientation)
         {
             Context = context;
             Orientation = orientation;
@@ -81,44 +82,41 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Reference to the attached Engine.
+        ///     Reference to the attached Engine.
         /// </summary>
-        public Engine Engine { get { return engine; } }
+        public Engine Engine => engine;
 
         /// <summary>
-        /// Current Simulation Context
+        ///     Current Simulation Context
         /// </summary>
-        public SimulationContext Context { get; private set; }
+        public SimulationContext Context { get; }
 
         /// <summary>
-        /// Settings for this Item
+        ///     Settings for this Item
         /// </summary>
-        public KeyValueStore Settings { get { return Context.Settings; } }
+        public KeyValueStore Settings => Context.Settings;
 
         /// <summary>
-        /// Randomizer
+        ///     Randomizer
         /// </summary>
-        public Random Random { get { return Context.Random; } }
+        public Random Random => Context.Random;
 
         /// <summary>
-        /// Collection of Attributes for this Item.
+        ///     Collection of Attributes for this Item.
         /// </summary>
-        public UnitAttributeCollection Attributes { get; private set; }
+        public UnitAttributeCollection Attributes { get; }
 
         /// <summary>
-        /// Id of this Game Item.
+        ///     Id of this Game Item.
         /// </summary>
-        public int Id
-        {
-            get { return id; }
-        }
+        public int Id => id;
 
         /// <summary>
-        /// Current Map Cell.
+        ///     Current Map Cell.
         /// </summary>
         public Index2 Cell
         {
-            get { return cell; }
+            get => cell;
             internal set
             {
                 if (cell != value)
@@ -130,11 +128,11 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Item Orientation.
+        ///     Item Orientation.
         /// </summary>
         public Angle Orientation
         {
-            get { return orientation; }
+            get => orientation;
             set
             {
                 orientation = value;
@@ -143,14 +141,11 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Item Radius.
+        ///     Item Radius.
         /// </summary>
         public float Radius
         {
-            get
-            {
-                return radius;
-            }
+            get => radius;
             set
             {
                 radius = value;
@@ -159,11 +154,11 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Item Position.
+        ///     Item Position.
         /// </summary>
         public Vector3 Position
         {
-            get { return position; }
+            get => position;
             set
             {
                 if (position != value)
@@ -181,7 +176,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Generates an Info Object for the given Observer.
+        ///     Generates an Info Object for the given Observer.
         /// </summary>
         /// <param name="observer">Obsering Item</param>
         /// <returns>Info Object</returns>
@@ -195,7 +190,7 @@ namespace AntMe
                 return _itemInfos[observer];
 
             // Generate new Instance
-            ItemInfo info = Context.Resolver.CreateItemInfo(this, observer);
+            var info = Context.Resolver.CreateItemInfo(this, observer);
             if (info == null)
                 throw new NotSupportedException("Could not create new Game Item Info");
 
@@ -204,7 +199,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Returns the real Item from an Info Object.
+        ///     Returns the real Item from an Info Object.
         /// </summary>
         /// <param name="info">Info Objekt</param>
         /// <returns>Related Item</returns>
@@ -218,7 +213,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Returns the Item State.
+        ///     Returns the Item State.
         /// </summary>
         /// <returns>Item State</returns>
         public ItemState GetState()
@@ -231,93 +226,11 @@ namespace AntMe
             return state;
         }
 
-        #region Events
-
-        /// <summary>
-        /// Signal for a changed Cell.
-        /// </summary>
-        public event ValueChanged<Index2> CellChanged;
-
-        /// <summary>
-        /// Signal for a changed Position.
-        /// </summary>
-        public event ValueChanged<Vector3> PositionChanged;
-
-        /// <summary>
-        /// Signal for a changed Orientation.
-        /// </summary>
-        public event ValueChanged<Angle> OrientationChanged;
-
-        /// <summary>
-        /// Signal for a changed Radius.
-        /// </summary>
-        public event ValueChanged<float> RadiusChanged;
-
-        /// <summary>
-        /// Signal for adding Item to the Engine.
-        /// </summary>
-        public event ChangeItem Inserted;
-
-        /// <summary>
-        /// Signal for removing Item from Engine.
-        /// </summary>
-        public event ChangeItem Removed;
-
-        #endregion
-
-        #region Engine Calls
-
-        /// <summary>
-        /// Internal Call for adding this Item to an Engine. Get called by the Engine.
-        /// </summary>
-        /// <param name="engine">Engine</param>
-        /// <param name="id">New Id</param>
-        internal void InternalInsertEngine(Engine engine, int id)
-        {
-            this.engine = engine;
-            this.id = id;
-
-            OnInsert();
-            Inserted?.Invoke(this);
-        }
-
-        /// <summary>
-        /// Internal Call for removing this Item from its current Engine.
-        /// </summary>
-        internal void InternalRemoveEngine()
-        {
-            OnRemoved();
-            Removed?.Invoke(this);
-
-            engine = null;
-            id = 0;
-
-            // TODO: Cleanup Infos
-        }
-
-        /// <summary>
-        /// Internal Call before the Item gets Updated.
-        /// </summary>
-        internal virtual void BeforeUpdate()
-        {
-            OnUpdate();
-        }
-
-        /// <summary>
-        /// Internal Call after the Item gets updated.
-        /// </summary>
-        internal virtual void AfterUpdate()
-        {
-            OnUpdated();
-        }
-
-        #endregion
-
         #region Property Management
 
         /// <summary>
-        /// Vaidator for new Properties. The default implementation prevents 
-        /// adding new Properties to the Item if it's already part of an Engine.
+        ///     Vaidator for new Properties. The default implementation prevents
+        ///     adding new Properties to the Item if it's already part of an Engine.
         /// </summary>
         /// <param name="property">New Property.</param>
         protected override void ValidateAddProperty(ItemProperty property)
@@ -331,40 +244,141 @@ namespace AntMe
 
         #endregion
 
+        /// <summary>
+        ///     Returns a readable String representation for this Item.
+        /// </summary>
+        /// <returns>Name and ID</returns>
+        public override string ToString()
+        {
+            return string.Format("{0} ({1})", GetType().Name, Id);
+        }
+
+        #region Events
+
+        /// <summary>
+        ///     Signal for a changed Cell.
+        /// </summary>
+        public event ValueChanged<Index2> CellChanged;
+
+        /// <summary>
+        ///     Signal for a changed Position.
+        /// </summary>
+        public event ValueChanged<Vector3> PositionChanged;
+
+        /// <summary>
+        ///     Signal for a changed Orientation.
+        /// </summary>
+        public event ValueChanged<Angle> OrientationChanged;
+
+        /// <summary>
+        ///     Signal for a changed Radius.
+        /// </summary>
+        public event ValueChanged<float> RadiusChanged;
+
+        /// <summary>
+        ///     Signal for adding Item to the Engine.
+        /// </summary>
+        public event ChangeItem Inserted;
+
+        /// <summary>
+        ///     Signal for removing Item from Engine.
+        /// </summary>
+        public event ChangeItem Removed;
+
+        #endregion
+
+        #region Engine Calls
+
+        /// <summary>
+        ///     Internal Call for adding this Item to an Engine. Get called by the Engine.
+        /// </summary>
+        /// <param name="engine">Engine</param>
+        /// <param name="id">New Id</param>
+        internal void InternalInsertEngine(Engine engine, int id)
+        {
+            this.engine = engine;
+            this.id = id;
+
+            OnInsert();
+            Inserted?.Invoke(this);
+        }
+
+        /// <summary>
+        ///     Internal Call for removing this Item from its current Engine.
+        /// </summary>
+        internal void InternalRemoveEngine()
+        {
+            OnRemoved();
+            Removed?.Invoke(this);
+
+            engine = null;
+            id = 0;
+
+            // TODO: Cleanup Infos
+        }
+
+        /// <summary>
+        ///     Internal Call before the Item gets Updated.
+        /// </summary>
+        internal virtual void BeforeUpdate()
+        {
+            OnUpdate();
+        }
+
+        /// <summary>
+        ///     Internal Call after the Item gets updated.
+        /// </summary>
+        internal virtual void AfterUpdate()
+        {
+            OnUpdated();
+        }
+
+        #endregion
+
         #region Virtual Methods
 
         /// <summary>
-        /// Gets called after the Item was added to an Engine.
+        ///     Gets called after the Item was added to an Engine.
         /// </summary>
-        protected virtual void OnInsert() { }
+        protected virtual void OnInsert()
+        {
+        }
 
         /// <summary>
-        /// Gets called before the Engine get the Item State. This gives the 
-        /// change to add additional Information into the State.
+        ///     Gets called before the Engine get the Item State. This gives the
+        ///     change to add additional Information into the State.
         /// </summary>
-        protected virtual void OnBeforeState(ItemState state) { }
+        protected virtual void OnBeforeState(ItemState state)
+        {
+        }
 
         /// <summary>
-        /// Gets Called before the Item gets updated.
+        ///     Gets Called before the Item gets updated.
         /// </summary>
-        protected virtual void OnUpdate() { }
+        protected virtual void OnUpdate()
+        {
+        }
 
         /// <summary>
-        /// Gets called after the Item gets updated.
+        ///     Gets called after the Item gets updated.
         /// </summary>
-        protected virtual void OnUpdated() { }
+        protected virtual void OnUpdated()
+        {
+        }
 
         /// <summary>
-        /// Gets called before the Item will be removed from the Engine.
+        ///     Gets called before the Item will be removed from the Engine.
         /// </summary>
-        protected virtual void OnRemoved() { }
+        protected virtual void OnRemoved()
+        {
+        }
 
         #endregion
 
         #region Static Helper
 
         /// <summary>
-        /// Calculates the Distance between two Items. (Center to Center)
+        ///     Calculates the Distance between two Items. (Center to Center)
         /// </summary>
         /// <param name="item1">Item 1</param>
         /// <param name="item2">Item 2</param>
@@ -375,7 +389,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Calculates the Direction from one Item to another.
+        ///     Calculates the Direction from one Item to another.
         /// </summary>
         /// <param name="item1">Item 1</param>
         /// <param name="item2">Item 2</param>
@@ -386,14 +400,5 @@ namespace AntMe
         }
 
         #endregion
-
-        /// <summary>
-        /// Returns a readable String representation for this Item.
-        /// </summary>
-        /// <returns>Name and ID</returns>
-        public override string ToString()
-        {
-            return string.Format("{0} ({1})", GetType().Name, Id);
-        }
     }
 }

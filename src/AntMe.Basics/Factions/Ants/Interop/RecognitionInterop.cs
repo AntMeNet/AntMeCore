@@ -1,13 +1,12 @@
-﻿using AntMe.Basics.ItemProperties;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
+using AntMe.Basics.ItemProperties;
 
 namespace AntMe.Basics.Factions.Ants.Interop
 {
     /// <summary>
-    /// Recognition Interop for Ants.
+    ///     Recognition Interop for Ants.
     /// </summary>
     public sealed class RecognitionInterop : UnitInteropProperty
     {
@@ -17,7 +16,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         private readonly HashSet<ItemInfo> visibleItems = new HashSet<ItemInfo>();
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
@@ -67,10 +66,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
             };
 
             // Set new Environment on Cell Switch
-            sighting.OnEnvironmentChanged += (i, value) =>
-            {
-                OnEnvironmentChanged?.Invoke(value);
-            };
+            sighting.OnEnvironmentChanged += (i, value) => { OnEnvironmentChanged?.Invoke(value); };
         }
 
         protected override void Update(int round)
@@ -87,41 +83,41 @@ namespace AntMe.Basics.Factions.Ants.Interop
         #region Properties
 
         /// <summary>
-        /// List of visible Items in Range.
+        ///     List of visible Items in Range.
         /// </summary>
-        public IEnumerable<ItemInfo> VisibleItems { get { return visibleItems.AsEnumerable(); } }
+        public IEnumerable<ItemInfo> VisibleItems => visibleItems.AsEnumerable();
 
         /// <summary>
-        /// List of smellable items in Range.
+        ///     List of smellable items in Range.
         /// </summary>
-        public IEnumerable<ItemInfo> SmellableItems { get { return smellableItems.AsEnumerable(); } }
+        public IEnumerable<ItemInfo> SmellableItems => smellableItems.AsEnumerable();
 
         /// <summary>
-        /// Visible Environment.
+        ///     Visible Environment.
         /// </summary>
-        public VisibleEnvironment Environment { get { return sighting.Environment; } }
+        public VisibleEnvironment Environment => sighting.Environment;
 
         /// <summary>
-        /// Gets the current View Range.
+        ///     Gets the current View Range.
         /// </summary>
-        public float ViewRange { get { return sighting.ViewRange; }}
+        public float ViewRange => sighting.ViewRange;
 
         #endregion
 
         #region Events
 
         /// <summary>
-        /// Informiert über eine geänderte Umgebung.
+        ///     Informiert über eine geänderte Umgebung.
         /// </summary>
         public event InteropEvent<VisibleEnvironment> OnEnvironmentChanged;
-        
+
         /// <summary>
-        /// Informiert über gesichtete Objekte.
+        ///     Informiert über gesichtete Objekte.
         /// </summary>
         public event InteropEvent Spots;
 
         /// <summary>
-        /// Informiert über gerochene Objekte.
+        ///     Informiert über gerochene Objekte.
         /// </summary>
         public event InteropEvent Smells;
 

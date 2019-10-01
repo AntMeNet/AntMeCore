@@ -6,31 +6,26 @@ using System.Text;
 namespace AntMe.Serialization
 {
     /// <summary>
-    /// Default Serializer for the AntVideo Format.
+    ///     Default Serializer for the AntVideo Format.
     /// </summary>
     public sealed class LevelStateSerializer
     {
         private const string STREAM_HELLOMESSAGE = "AntMe! Replay";
 
-        private Stream stream;
-
-        private BinaryReader reader;
-
-        private BinaryWriter writer;
-
-        private SimulationContext context;
-
-        private ILevelStateSerializer serializer;
+        private readonly SimulationContext context;
 
         private ILevelStateDeserializer deserializer;
 
-        /// <summary>
-        /// Returns the current Stream Version.
-        /// </summary>
-        public byte? Version { get; private set; }
+        private BinaryReader reader;
+
+        private ILevelStateSerializer serializer;
+
+        private readonly Stream stream;
+
+        private BinaryWriter writer;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="stream">Input- or Output-Stream</param>
         /// <param name="context">Simulation Context</param>
@@ -49,7 +44,12 @@ namespace AntMe.Serialization
         }
 
         /// <summary>
-        /// Serializes the next State.
+        ///     Returns the current Stream Version.
+        /// </summary>
+        public byte? Version { get; private set; }
+
+        /// <summary>
+        ///     Serializes the next State.
         /// </summary>
         /// <param name="state">State</param>
         /// <returns>Frame Data</returns>
@@ -59,7 +59,7 @@ namespace AntMe.Serialization
         }
 
         /// <summary>
-        /// Serializes the next State.
+        ///     Serializes the next State.
         /// </summary>
         /// <param name="state">State</param>
         /// <param name="version">Target Stream Version</param>
@@ -70,7 +70,7 @@ namespace AntMe.Serialization
         }
 
         /// <summary>
-        /// Serializes the next State.
+        ///     Serializes the next State.
         /// </summary>
         /// <param name="state">State</param>
         /// <param name="version">Target Stream Version</param>
@@ -97,15 +97,18 @@ namespace AntMe.Serialization
 
                 switch (version.Value)
                 {
-                    case 2: serializer = new LevelStateSerializerV2(context); break;
+                    case 2:
+                        serializer = new LevelStateSerializerV2(context);
+                        break;
                     default:
                         throw new ArgumentException("Not supported Stream Version");
                 }
+
                 Version = version.Value;
 
                 // Write Intro
-                int count = STREAM_HELLOMESSAGE.Length;
-                stream.WriteByte((byte)count);
+                var count = STREAM_HELLOMESSAGE.Length;
+                stream.WriteByte((byte) count);
                 stream.Write(Encoding.ASCII.GetBytes(STREAM_HELLOMESSAGE), 0, count);
 
                 // Write Version
@@ -117,27 +120,27 @@ namespace AntMe.Serialization
             if (version.HasValue && Version != version.Value)
                 throw new NotSupportedException("Version does not match the initial Version");
 
-            using (MemoryStream mem = new MemoryStream())
+            using (var mem = new MemoryStream())
             {
-                using (GZipStream zip = new GZipStream(mem, CompressionMode.Compress, true))
+                using (var zip = new GZipStream(mem, CompressionMode.Compress, true))
                 {
-                    using (BinaryWriter localWriter = new BinaryWriter(zip))
+                    using (var localWriter = new BinaryWriter(zip))
                     {
                         serializer.Serialize(localWriter, state);
                     }
                 }
 
-                byte[] buffer = mem.GetBuffer();
+                var buffer = mem.GetBuffer();
                 if (mem.Position > ushort.MaxValue)
                     throw new NotSupportedException("Frame is too big");
 
-                writer.Write((ushort)mem.Position);
-                writer.Write(buffer, 0, (ushort)mem.Position);
+                writer.Write((ushort) mem.Position);
+                writer.Write(buffer, 0, (ushort) mem.Position);
             }
         }
 
         /// <summary>
-        /// Deserializes the next Frame of the Stream.
+        ///     Deserializes the next Frame of the Stream.
         /// </summary>
         /// <returns>Deserialized State</returns>
         public LevelState Deserialize()
@@ -152,21 +155,23 @@ namespace AntMe.Serialization
             if (deserializer == null)
             {
                 // Intro Text
-                byte[] intro = Encoding.ASCII.GetBytes("AntMe! Replay");
+                var intro = Encoding.ASCII.GetBytes("AntMe! Replay");
                 if (intro.Length != stream.ReadByte())
                     throw new Exception("This is not a AntMe! Replay");
-                for (int i = 0; i < intro.Length; i++)
+                for (var i = 0; i < intro.Length; i++)
                 {
-                    byte c = (byte)stream.ReadByte();
+                    var c = (byte) stream.ReadByte();
                     if (intro[i] != c)
                         throw new Exception("This is not a AntMe! Map");
                 }
 
                 // Version
-                byte version = (byte)stream.ReadByte();
+                var version = (byte) stream.ReadByte();
                 switch (version)
                 {
-                    case 2: deserializer = new LevelStateDeserializerV2(context); break;
+                    case 2:
+                        deserializer = new LevelStateDeserializerV2(context);
+                        break;
                     default:
                         throw new NotSupportedException("Invalid Version Number");
                 }
@@ -175,12 +180,12 @@ namespace AntMe.Serialization
                 reader = new BinaryReader(stream);
             }
 
-            byte[] buffer = reader.ReadBytes(reader.ReadUInt16());
-            using (MemoryStream mem = new MemoryStream(buffer))
+            var buffer = reader.ReadBytes(reader.ReadUInt16());
+            using (var mem = new MemoryStream(buffer))
             {
-                using (GZipStream zip = new GZipStream(mem, CompressionMode.Decompress))
+                using (var zip = new GZipStream(mem, CompressionMode.Decompress))
                 {
-                    using (BinaryReader localReader = new BinaryReader(zip))
+                    using (var localReader = new BinaryReader(zip))
                     {
                         return deserializer.Deserialize(localReader);
                     }
@@ -189,7 +194,7 @@ namespace AntMe.Serialization
         }
 
         /// <summary>
-        /// Disposed den Serializer.
+        ///     Disposed den Serializer.
         /// </summary>
         public void Dispose()
         {

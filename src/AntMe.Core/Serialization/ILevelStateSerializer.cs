@@ -4,12 +4,12 @@ using System.IO;
 namespace AntMe.Serialization
 {
     /// <summary>
-    /// Interface for all Versions of a LevelState Serializer.
+    ///     Interface for all Versions of a LevelState Serializer.
     /// </summary>
     internal interface ILevelStateSerializer : IDisposable
     {
         /// <summary>
-        /// Serializes the next State.
+        ///     Serializes the next State.
         /// </summary>
         /// <param name="writer">Output Stream</param>
         /// <param name="state">State</param>

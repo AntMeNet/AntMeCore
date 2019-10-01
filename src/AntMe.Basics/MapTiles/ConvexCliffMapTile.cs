@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AntMe.Basics.MapTiles
 {
     /// <summary>
-    /// Map Tile for the convex Part of the Cliff.
+    ///     Map Tile for the convex Part of the Cliff.
     /// </summary>
     public class ConvexCliffMapTile : CliffMapTile
     {
@@ -18,14 +18,14 @@ namespace AntMe.Basics.MapTiles
         //
 
         /// <summary>
-        /// Default Constrcutor.
+        ///     Default Constrcutor.
         /// </summary>
         public ConvexCliffMapTile(SimulationContext context) : base(context)
         {
         }
 
         /// <summary>
-        /// Returns the Level to enter on the East Side.
+        ///     Returns the Level to enter on the East Side.
         /// </summary>
         protected override byte? GetConnectionLevelEast()
         {
@@ -33,7 +33,7 @@ namespace AntMe.Basics.MapTiles
         }
 
         /// <summary>
-        /// Returns the Level to enter on the South Side.
+        ///     Returns the Level to enter on the South Side.
         /// </summary>
         protected override byte? GetConnectionLevelSouth()
         {
@@ -47,6 +47,7 @@ namespace AntMe.Basics.MapTiles
                 exceptions.Add(new NotSupportedException("Map Tile must be a Cliff Tile"));
                 return false;
             }
+
             return true;
         }
 
@@ -57,6 +58,7 @@ namespace AntMe.Basics.MapTiles
                 exceptions.Add(new NotSupportedException("Map Tile must be a Cliff Tile"));
                 return false;
             }
+
             return true;
         }
     }

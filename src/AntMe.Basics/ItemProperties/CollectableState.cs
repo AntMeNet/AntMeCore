@@ -4,12 +4,31 @@ using System.IO;
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Base State for all Collectable Good Properties.
+    ///     Base State for all Collectable Good Properties.
     /// </summary>
     public abstract class CollectableState : GoodsState
     {
         /// <summary>
-        /// Gets the Collectable Radius.
+        ///     Default Constructor for the Deserializer.
+        /// </summary>
+        public CollectableState()
+        {
+        }
+
+        /// <summary>
+        ///     Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="item">Related Engine Item</param>
+        /// <param name="property">Related Engine Property</param>
+        public CollectableState(Item item, CollectableProperty property) : base(item, property)
+        {
+            // Bind Radius
+            CollectableRadius = property.CollectableRadius;
+            property.OnCollectableRadiusChanged += (i, v) => { CollectableRadius = v; };
+        }
+
+        /// <summary>
+        ///     Gets the Collectable Radius.
         /// </summary>
         [DisplayName("Collectable Radius")]
         [Description("The radius inside which a collector can collect this collectable.")]
@@ -18,24 +37,7 @@ namespace AntMe.Basics.ItemProperties
         public float CollectableRadius { get; set; }
 
         /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public CollectableState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
-        /// </summary>
-        /// <param name="item">Related Engine Item</param>
-        /// <param name="property">Related Engine Property</param>
-        public CollectableState(Item item, CollectableProperty property) : base(item, property)
-        {
-            // Bind Radius
-            CollectableRadius = property.CollectableRadius;
-            property.OnCollectableRadiusChanged += (i,v) => { CollectableRadius = v; };
-        }
-
-        /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -46,7 +48,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -56,7 +58,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -67,7 +69,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

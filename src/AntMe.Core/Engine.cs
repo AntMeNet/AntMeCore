@@ -5,32 +5,30 @@ using System.Diagnostics;
 namespace AntMe
 {
     /// <summary>
-    /// Simulation Core Engine.
+    ///     Simulation Core Engine.
     /// </summary>
     public sealed class Engine : PropertyList<EngineProperty>
     {
-        private readonly ITypeResolver typeResolver;
+        private readonly Queue<Item> insertQueue;
 
         private readonly HashSet<Item> items;
         private readonly Dictionary<int, Item> itemsById;
-
-        private readonly Queue<Item> insertQueue;
         private readonly Queue<Item> removeQueue;
-
-        private int nextId = 1;
 
         // Last ID: 2
         private readonly Tracer tracer = new Tracer("AntMe.Engine");
 
+        private int nextId = 1;
+
         /// <summary>
-        /// Default Constructor for Type Mapper
+        ///     Default Constructor for Type Mapper
         /// </summary>
         /// <param name="resolver">Reference to the Type Resolver</param>
         public Engine(ITypeResolver resolver)
         {
             tracer.Trace(TraceEventType.Information, 1, "Engine wird instanziiert");
 
-            typeResolver = resolver;
+            TypeResolver = resolver;
             State = EngineState.Uninitialized;
             Round = -1;
 
@@ -45,27 +43,27 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Reference to the Type Resolver.
+        ///     Reference to the Type Resolver.
         /// </summary>
-        public ITypeResolver TypeResolver { get { return typeResolver; } }
+        public ITypeResolver TypeResolver { get; }
 
         /// <summary>
-        /// Gets the current Simulation Round or -1, of not started.
+        ///     Gets the current Simulation Round or -1, of not started.
         /// </summary>
         public int Round { get; private set; }
 
         /// <summary>
-        /// Gets the current State of the Engine.
+        ///     Gets the current State of the Engine.
         /// </summary>
         public EngineState State { get; private set; }
 
         /// <summary>
-        /// Reference to the current Map.
+        ///     Reference to the current Map.
         /// </summary>
         public Map Map { get; private set; }
 
         /// <summary>
-        /// Initializes the Engine Instance.
+        ///     Initializes the Engine Instance.
         /// </summary>
         /// <param name="map">Map to use</param>
         public void Init(Map map)
@@ -90,7 +88,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Validates the Properties to attach.
+        ///     Validates the Properties to attach.
         /// </summary>
         /// <param name="property">Property</param>
         protected override void ValidateAddProperty(EngineProperty property)
@@ -100,7 +98,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Finishs the current Simulation.
+        ///     Finishs the current Simulation.
         /// </summary>
         public void Finish()
         {
@@ -108,7 +106,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Fails the current Simulation.
+        ///     Fails the current Simulation.
         /// </summary>
         public void Fail()
         {
@@ -116,7 +114,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Updates the current Simulation and simulates another Round.
+        ///     Updates the current Simulation and simulates another Round.
         /// </summary>
         public void Update()
         {
@@ -127,7 +125,7 @@ namespace AntMe
             Round++;
 
             // Pre Update Call for every Item
-            foreach (Item item in items)
+            foreach (var item in items)
                 item.BeforeUpdate();
 
             // Update Calls for the Properties
@@ -135,7 +133,7 @@ namespace AntMe
                 property.Update();
 
             // Post Update Call for all Items
-            foreach (Item item in items)
+            foreach (var item in items)
                 item.AfterUpdate();
 
             // Add new Items
@@ -151,29 +149,29 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Signal for removed Items.
+        ///     Signal for removed Items.
         /// </summary>
         public event ChangeItem OnRemoveItem;
 
         /// <summary>
-        /// Signal for added Items.
+        ///     Signal for added Items.
         /// </summary>
         public event ChangeItem OnInsertItem;
 
         /// <summary>
-        /// Signal for another Round.
+        ///     Signal for another Round.
         /// </summary>
         public event ValueUpdate<int> OnNextRound;
 
         #region Private Helper
 
         /// <summary>
-        /// Internal Method to add an Item to the Simulation.
+        ///     Internal Method to add an Item to the Simulation.
         /// </summary>
         /// <param name="item">New Items</param>
         private void PrivateInsertItem(Item item)
         {
-            int id = nextId++;
+            var id = nextId++;
 
             // Add Item to the internal Item List
             items.Add(item);
@@ -189,7 +187,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Internal Method for removing an Item.
+        ///     Internal Method for removing an Item.
         /// </summary>
         /// <param name="item">Item to remove</param>
         private void PrivateRemoveItem(Item item)
@@ -207,13 +205,13 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Normalizes the Position Information of this Item.
-        /// Bring it back to Map Boundaries.
+        ///     Normalizes the Position Information of this Item.
+        ///     Bring it back to Map Boundaries.
         /// </summary>
         /// <param name="item">Item</param>
         private void NormalizeItemPosition(Item item)
         {
-            Vector2 limit = Map.GetSize();
+            var limit = Map.GetSize();
 
             // X Axis
             if (item.Position.X < 0)
@@ -228,7 +226,7 @@ namespace AntMe
                 item.Position = new Vector3(item.Position.X, limit.Y - Vector3.EPS_MIN, item.Position.Z);
 
             // Z Axis
-            float height = Map.GetHeight(new Vector2(item.Position.X, item.Position.Y));
+            var height = Map.GetHeight(new Vector2(item.Position.X, item.Position.Y));
             if (item.Position.Z < Map.MIN_Z || item.Position.Z < height)
                 item.Position = new Vector3(item.Position.X, item.Position.Y, Math.Max(Map.MIN_Z, height));
             if (item.Position.Z > Map.MAX_Z)
@@ -242,15 +240,12 @@ namespace AntMe
         #region Item Management
 
         /// <summary>
-        /// List of all Items.
+        ///     List of all Items.
         /// </summary>
-        public IEnumerable<Item> Items
-        {
-            get { return items; }
-        }
+        public IEnumerable<Item> Items => items;
 
         /// <summary>
-        /// Adds the given Item to the Simulation.
+        ///     Adds the given Item to the Simulation.
         /// </summary>
         /// <param name="item">New Item</param>
         public void InsertItem(Item item)
@@ -267,11 +262,11 @@ namespace AntMe
                 throw new InvalidOperationException("Item is already part of the Simulation");
 
             // Queue to insert
-            insertQueue.Enqueue(item);                
+            insertQueue.Enqueue(item);
         }
 
         /// <summary>
-        /// Removes the given Item from the Simulation.
+        ///     Removes the given Item from the Simulation.
         /// </summary>
         /// <param name="item">Item to remove</param>
         public void RemoveItem(Item item)

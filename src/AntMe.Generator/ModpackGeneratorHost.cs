@@ -4,11 +4,9 @@ namespace AntMe.Generator
 {
     internal sealed class ModpackGeneratorHost : MarshalByRefObject
     {
-        public ModpackGeneratorHost() { }
-
         public string Generate(string[] inportPathes, string outputPath)
         {
-            string result = outputPath + "summary.dll";
+            var result = outputPath + "summary.dll";
 
             #region Generate Basic-Types
 

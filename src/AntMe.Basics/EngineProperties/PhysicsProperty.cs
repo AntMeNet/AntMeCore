@@ -1,21 +1,21 @@
-﻿using AntMe.Basics.ItemProperties;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AntMe.Basics.ItemProperties;
 
 namespace AntMe.Basics.EngineProperties
 {
     /// <summary>
-    /// Engine Property for handling all physical stuff like Movement, Collision and Grouping
+    ///     Engine Property for handling all physical stuff like Movement, Collision and Grouping
     /// </summary>
     public sealed class PhysicsProperty : EngineProperty
     {
-        private Dictionary<int, PhysicsGroup> groups;
-        private HashSet<PhysicsGroup> collidables;
+        private readonly HashSet<PhysicsGroup> collidables;
+        private readonly Dictionary<int, PhysicsGroup> groups;
 
         private Map map;
         private MipMap<PhysicsGroup> mipmap;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="engine">Engine Reference</param>
         public PhysicsProperty(Engine engine) : base(engine)
@@ -25,18 +25,18 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call after Engine Initialization.
+        ///     Gets a call after Engine Initialization.
         /// </summary>
         public override void Init()
         {
             map = Engine.Map;
 
-            Vector2 size = map.GetSize();
+            var size = map.GetSize();
             mipmap = new MipMap<PhysicsGroup>(size.X, size.Y);
         }
 
         /// <summary>
-        /// Gets a call after adding a new Item to the Engine.
+        ///     Gets a call after adding a new Item to the Engine.
         /// </summary>
         /// <param name="item">New Item</param>
         protected override void Insert(Item item)
@@ -58,14 +58,14 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call before removing an item from Engine.
+        ///     Gets a call before removing an item from Engine.
         /// </summary>
         /// <param name="item">Removed Item</param>
         protected override void Remove(Item item)
         {
             if (groups.ContainsKey(item.Id))
             {
-                PhysicsGroup group = groups[item.Id];
+                var group = groups[item.Id];
 
                 // Remove from Collidable List
                 if (group.CanCollide)
@@ -77,29 +77,25 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call after every Engine Update.
+        ///     Gets a call after every Engine Update.
         /// </summary>
         public override void Update()
         {
             // Update Position
-            foreach (PhysicsGroup item in groups.Values)
-            {
+            foreach (var item in groups.Values)
                 if (!item.Update())
                     KillUnit(item);
-            }
 
             // Collisions
             mipmap.Clear();
-            foreach (PhysicsGroup item in collidables)
-            {
+            foreach (var item in collidables)
                 if (item.CanCollide)
                     mipmap.Add(item, item.Position, item.Radius);
-            }
 
-            foreach (PhysicsGroup collidable1 in collidables)
+            foreach (var collidable1 in collidables)
             {
-                HashSet<PhysicsGroup> hits = mipmap.FindAll(collidable1.Position, collidable1.Radius);
-                foreach (PhysicsGroup collidable2 in hits)
+                var hits = mipmap.FindAll(collidable1.Position, collidable1.Radius);
+                foreach (var collidable2 in hits)
                 {
                     // Kollision mit sich selbst überspringen
                     if (collidable2 == collidable1)
@@ -117,23 +113,16 @@ namespace AntMe.Basics.EngineProperties
             }
 
             // Handle Map-Drops
-            Vector2 size = Engine.Map.GetSize();
-            foreach (PhysicsGroup item in collidables)
-            {
+            var size = Engine.Map.GetSize();
+            foreach (var item in collidables)
                 if (item.Position.X < 0 ||
                     item.Position.Y < 0 ||
                     item.Position.X > size.X ||
                     item.Position.Y > size.Y)
-                {
                     KillUnit(item);
-                }
-            }
 
             // Check Carrier/Portable Distance
-            foreach (PhysicsGroup item in groups.Values)
-            {
-                item.CheckPortableDistance();
-            }
+            foreach (var item in groups.Values) item.CheckPortableDistance();
         }
 
         private void KillUnit(PhysicsGroup unit)

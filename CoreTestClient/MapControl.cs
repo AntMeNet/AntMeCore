@@ -1,36 +1,36 @@
-﻿using AntMe;
-using CoreTestClient.Renderer;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using AntMe.Runtime;
 using System.IO;
-using System;
+using AntMe;
+using AntMe.Runtime;
+using CoreTestClient.Renderer;
 
 namespace CoreTestClient
 {
-    internal partial class MapControl : BaseSceneControl
+    internal class MapControl : BaseSceneControl
     {
         private Map map;
 
-        private Dictionary<string, TileRenderer> materials;
+        private readonly Dictionary<string, TileRenderer> materials;
 
-        private Dictionary<string, TileRenderer> tiles;
+        private readonly Dictionary<string, TileRenderer> tiles;
 
         public MapControl()
         {
             materials = new Dictionary<string, TileRenderer>();
             foreach (var material in ExtensionLoader.DefaultTypeMapper.MapMaterials)
             {
-                string path = Path.Combine(".", "Resources", material.Type.Name + ".png");
-                Bitmap bitmap = new Bitmap(Image.FromFile(path));
+                var path = Path.Combine(".", "Resources", material.Type.Name + ".png");
+                var bitmap = new Bitmap(Image.FromFile(path));
                 materials.Add(material.Type.FullName, new TileRenderer(bitmap));
             }
 
             tiles = new Dictionary<string, TileRenderer>();
             foreach (var mapTile in ExtensionLoader.DefaultTypeMapper.MapTiles)
             {
-                string path = Path.Combine(".", "Resources", mapTile.Type.Name + ".png");
-                Bitmap bitmap = new Bitmap(Image.FromFile(path));
+                var path = Path.Combine(".", "Resources", mapTile.Type.Name + ".png");
+                var bitmap = new Bitmap(Image.FromFile(path));
                 tiles.Add(mapTile.Type.FullName, new TileRenderer(bitmap));
             }
         }
@@ -64,7 +64,7 @@ namespace CoreTestClient
             if (map == null)
                 return null;
 
-            MapTile tile = map[x, y];
+            var tile = map[x, y];
 
             // No Tile or Material - no Renderer
             if (tile == null || tile.Material == null)
@@ -86,7 +86,7 @@ namespace CoreTestClient
             if (map == null)
                 return null;
 
-            MapTile tile = map[x, y];
+            var tile = map[x, y];
 
             // No Tile - no Renderer
             if (tile == null)

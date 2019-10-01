@@ -1,11 +1,11 @@
-﻿using AntMe.Basics.ItemProperties;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using AntMe.Basics.ItemProperties;
 
 namespace AntMe.Basics.EngineProperties
 {
     /// <summary>
-    /// Engine Extension to handle all Interactions
+    ///     Engine Extension to handle all Interactions
     /// </summary>
     public sealed class InteractionProperty : EngineProperty
     {
@@ -13,7 +13,7 @@ namespace AntMe.Basics.EngineProperties
         private readonly Dictionary<int, AttackerProperty> attackers;
 
         /// <summary>
-        /// Default Constructor for Type Mapper.
+        ///     Default Constructor for Type Mapper.
         /// </summary>
         /// <param name="engine">Reference to the Engine</param>
         public InteractionProperty(Engine engine) : base(engine)
@@ -23,7 +23,7 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call after Engine Initialization.
+        ///     Gets a call after Engine Initialization.
         /// </summary>
         public override void Init()
         {
@@ -31,7 +31,7 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call after adding a new Item to the Engine.
+        ///     Gets a call after adding a new Item to the Engine.
         /// </summary>
         /// <param name="item">New Item</param>
         protected override void Insert(Item item)
@@ -43,6 +43,7 @@ namespace AntMe.Basics.EngineProperties
                 var prop = item.GetProperty<AttackableProperty>();
                 attackables.Add(item.Id, prop);
             }
+
             // Track attacking Items.
             if (item.ContainsProperty<AttackerProperty>() &&
                 !attackers.ContainsKey(item.Id))
@@ -53,7 +54,7 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call before removing an item from Engine.
+        ///     Gets a call before removing an item from Engine.
         /// </summary>
         /// <param name="item">Removed Item</param>
         protected override void Remove(Item item)
@@ -63,8 +64,8 @@ namespace AntMe.Basics.EngineProperties
                 attackables.ContainsKey(item.Id))
             {
                 // Stop all running Fights.
-                AttackableProperty attackable = attackables[item.Id];
-                foreach (AttackerProperty attacker in attackers.Values)
+                var attackable = attackables[item.Id];
+                foreach (var attacker in attackers.Values)
                     if (attacker.AttackTarget == attackable)
                         attacker.StopAttack();
 
@@ -76,7 +77,7 @@ namespace AntMe.Basics.EngineProperties
                 attackers.ContainsKey(item.Id))
             {
                 // Stop all running Fights.
-                AttackerProperty attacker = attackers[item.Id];
+                var attacker = attackers[item.Id];
                 attacker.StopAttack();
 
                 attackers.Remove(item.Id);
@@ -84,17 +85,17 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call after every Engine Update.
+        ///     Gets a call after every Engine Update.
         /// </summary>
         public override void Update()
         {
-            foreach (AttackerProperty attacker in attackers.Values)
+            foreach (var attacker in attackers.Values)
             {
                 // Check for existing Targets
                 if (attacker.AttackTarget == null)
                     continue;
 
-                AttackableProperty attackable = attacker.AttackTarget;
+                var attackable = attacker.AttackTarget;
 
                 if (Item.GetDistance(attacker.Item, attackable.Item) <=
                     attacker.AttackRange + attackable.AttackableRadius)
@@ -117,7 +118,7 @@ namespace AntMe.Basics.EngineProperties
                     // Fight
                     if (attacker.RecoveryCounter >= attacker.AttackRecoveryTime)
                     {
-                        int hitpoints = attacker.AttackStrength;
+                        var hitpoints = attacker.AttackStrength;
                         attackable.AttackableHealth -= hitpoints;
                         attackable.AttackerHit(attacker, hitpoints);
                         attacker.AttackHit(attackable, hitpoints);
@@ -127,22 +128,17 @@ namespace AntMe.Basics.EngineProperties
                 else
                 {
                     // Left Attack Range
-                    if (attackable.AttackerItems.Contains(attacker))
-                    {
-                        attackable.RemoveAttackerItem(attacker);
-                    }
+                    if (attackable.AttackerItems.Contains(attacker)) attackable.RemoveAttackerItem(attacker);
                 }
             }
 
             // Remove dead Items
-            foreach (AttackableProperty attackable in attackables.Values)
-            {
+            foreach (var attackable in attackables.Values)
                 if (attackable.AttackableHealth <= 0)
                 {
                     attackable.Kill();
                     Engine.RemoveItem(attackable.Item);
                 }
-            }
         }
     }
 }

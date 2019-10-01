@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-namespace AntMe.Core
+﻿namespace AntMe.Core
 {
     public class Vector2Test
     {

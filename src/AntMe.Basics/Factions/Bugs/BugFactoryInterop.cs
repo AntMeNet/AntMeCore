@@ -4,10 +4,11 @@ namespace AntMe.Basics.Factions.Bugs
 {
     public sealed class BugFactoryInterop : FactoryInterop
     {
-        public BugFactoryInterop(BugFaction faction) 
+        public delegate Type CreateMember();
+
+        public BugFactoryInterop(BugFaction faction)
             : base(faction)
         {
-
         }
 
         internal Type RequestCreateMember()
@@ -16,7 +17,5 @@ namespace AntMe.Basics.Factions.Bugs
         }
 
         public event CreateMember OnCreateMember;
-
-        public delegate Type CreateMember();
     }
 }

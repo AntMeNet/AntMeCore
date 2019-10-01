@@ -1,9 +1,5 @@
-﻿using Microsoft.CSharp;
-using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.CodeDom.Compiler;
+using Microsoft.CSharp;
 
 namespace AntMe.Generator
 {
@@ -17,10 +13,10 @@ namespace AntMe.Generator
             // 3) Basis-Klassen für Factory und Unit inkl. Interop-Properties
             // 4) Wrapper für Faction-Spezifische Attribute (Caste)
 
-            CSharpCodeProvider provider = new CSharpCodeProvider();
-            CompilerParameters parameter = new CompilerParameters();
+            var provider = new CSharpCodeProvider();
+            var parameter = new CompilerParameters();
 
-            string file = @"";
+            var file = @"";
 
             parameter.GenerateExecutable = false;
             parameter.GenerateInMemory = false;
@@ -30,6 +26,5 @@ namespace AntMe.Generator
 
             provider.CompileAssemblyFromSource(parameter, file);
         }
-
     }
 }

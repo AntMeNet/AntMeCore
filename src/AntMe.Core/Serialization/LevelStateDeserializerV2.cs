@@ -9,19 +9,19 @@ namespace AntMe.Serialization
     {
         private const byte VERSION = 2;
 
-        private SimulationContext context;
+        private readonly SimulationContext context;
+        private readonly List<Type> factionPropertyTypes = new List<Type>();
+        private readonly List<Type> factionTypes = new List<Type>();
+        private readonly List<Type> itemPropertyTypes = new List<Type>();
+        private readonly List<Type> itemTypes = new List<Type>();
 
         private LevelState latest;
 
-        private List<Type> levelPropertyTypes = new List<Type>();
-        private List<Type> mapPropertyTypes = new List<Type>();
-        private List<Type> mapTileTypes = new List<Type>();
-        private List<Type> mapTilePropertyTypes = new List<Type>();
-        private List<Type> materialTypes = new List<Type>();
-        private List<Type> factionTypes = new List<Type>();
-        private List<Type> factionPropertyTypes = new List<Type>();
-        private List<Type> itemTypes = new List<Type>();
-        private List<Type> itemPropertyTypes = new List<Type>();
+        private readonly List<Type> levelPropertyTypes = new List<Type>();
+        private readonly List<Type> mapPropertyTypes = new List<Type>();
+        private readonly List<Type> mapTilePropertyTypes = new List<Type>();
+        private readonly List<Type> mapTileTypes = new List<Type>();
+        private readonly List<Type> materialTypes = new List<Type>();
 
         public LevelStateDeserializerV2(SimulationContext context)
         {
@@ -30,56 +30,126 @@ namespace AntMe.Serialization
 
         public LevelState Deserialize(BinaryReader reader)
         {
-            bool keyframe = reader.ReadBoolean();
+            var keyframe = reader.ReadBoolean();
 
             // In case of a Keyframe Delete known Stuff
             if (keyframe) DoKeyframe();
 
-            LevelStateSerializerPackageV2 next = (LevelStateSerializerPackageV2)reader.ReadByte();
+            var next = (LevelStateSerializerPackageV2) reader.ReadByte();
             while (next != LevelStateSerializerPackageV2.FrameEnd)
             {
                 switch (next)
                 {
-                    case LevelStateSerializerPackageV2.LevelInsert: DoLevelInsert(reader); break;
-                    case LevelStateSerializerPackageV2.LevelUpdate: DoLevelUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.LevelPropertyInsert: DoLevelPropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.LevelPropertyUpdate: DoLevelPropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.LevelPropertyTypeInsert: DoLevelPropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapInsert: DoMapInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapUpdate: DoMapUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MapPropertyInsert: DoMapPropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapPropertyUpdate: DoMapPropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MapPropertyTypeInsert: DoMapPropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapTileInsert: DoMapTileInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapTileUpdate: DoMapTileUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MapTileTypeInsert: DoMapTileTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapTilePropertyInsert: DoMapTilePropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MapTilePropertyUpdate: DoMapTilePropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MapTilePropertyTypeInsert: DoMapTilePropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MaterialInsert: DoMaterialInsert(reader); break;
-                    case LevelStateSerializerPackageV2.MaterialUpdate: DoMaterialUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.MaterialTypeInsert: DoMaterialTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionInsert: DoFactionInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionUpdate: DoFactionUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.FactionTypeInsert: DoFactionTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionPropertyInsert: DoFactionPropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionPropertyUpdate: DoFactionPropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.FactionPropertyTypeInsert: DoFactionPropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.ItemInsert: DoItemInsert(reader); break;
-                    case LevelStateSerializerPackageV2.ItemUpdate: DoItemUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.ItemDelete: DoItemDelete(reader); break;
-                    case LevelStateSerializerPackageV2.ItemTypeInsert: DoItemTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.ItemPropertyInsert: DoItemPropertyInsert(reader); break;
-                    case LevelStateSerializerPackageV2.ItemPropertyUpdate: DoItemPropertyUpdate(reader); break;
-                    case LevelStateSerializerPackageV2.ItemPropertyTypeInsert: DoItemPropertyTypeInsert(reader); break;
-                    case LevelStateSerializerPackageV2.FactionItemInsert: DoFactionItemInsert(reader); break;
+                    case LevelStateSerializerPackageV2.LevelInsert:
+                        DoLevelInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.LevelUpdate:
+                        DoLevelUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.LevelPropertyInsert:
+                        DoLevelPropertyInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.LevelPropertyUpdate:
+                        DoLevelPropertyUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.LevelPropertyTypeInsert:
+                        DoLevelPropertyTypeInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapInsert:
+                        DoMapInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapUpdate:
+                        DoMapUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapPropertyInsert:
+                        DoMapPropertyInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapPropertyUpdate:
+                        DoMapPropertyUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapPropertyTypeInsert:
+                        DoMapPropertyTypeInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapTileInsert:
+                        DoMapTileInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapTileUpdate:
+                        DoMapTileUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapTileTypeInsert:
+                        DoMapTileTypeInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapTilePropertyInsert:
+                        DoMapTilePropertyInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapTilePropertyUpdate:
+                        DoMapTilePropertyUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MapTilePropertyTypeInsert:
+                        DoMapTilePropertyTypeInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MaterialInsert:
+                        DoMaterialInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MaterialUpdate:
+                        DoMaterialUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.MaterialTypeInsert:
+                        DoMaterialTypeInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.FactionInsert:
+                        DoFactionInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.FactionUpdate:
+                        DoFactionUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.FactionTypeInsert:
+                        DoFactionTypeInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.FactionPropertyInsert:
+                        DoFactionPropertyInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.FactionPropertyUpdate:
+                        DoFactionPropertyUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.FactionPropertyTypeInsert:
+                        DoFactionPropertyTypeInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.ItemInsert:
+                        DoItemInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.ItemUpdate:
+                        DoItemUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.ItemDelete:
+                        DoItemDelete(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.ItemTypeInsert:
+                        DoItemTypeInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.ItemPropertyInsert:
+                        DoItemPropertyInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.ItemPropertyUpdate:
+                        DoItemPropertyUpdate(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.ItemPropertyTypeInsert:
+                        DoItemPropertyTypeInsert(reader);
+                        break;
+                    case LevelStateSerializerPackageV2.FactionItemInsert:
+                        DoFactionItemInsert(reader);
+                        break;
                     default: throw new NotSupportedException("Invalid Package Type");
                 }
 
-                next = (LevelStateSerializerPackageV2)reader.ReadByte();
+                next = (LevelStateSerializerPackageV2) reader.ReadByte();
             }
 
             return latest;
+        }
+
+        public void Dispose()
+        {
         }
 
         private void DoKeyframe()
@@ -100,9 +170,9 @@ namespace AntMe.Serialization
 
         private void DoFactionItemInsert(BinaryReader reader)
         {
-            int id = reader.ReadInt32();
-            ushort typeIndex = reader.ReadUInt16();
-            Type type = itemTypes[typeIndex];
+            var id = reader.ReadInt32();
+            var typeIndex = reader.ReadUInt16();
+            var type = itemTypes[typeIndex];
 
             FactionItemState item;
             if (type != null) item = Activator.CreateInstance(type) as FactionItemState;
@@ -115,17 +185,16 @@ namespace AntMe.Serialization
 
         private void DoItemPropertyTypeInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
-            string name = reader.ReadString();
+            var index = reader.ReadUInt16();
+            var name = reader.ReadString();
 
             // Make sure its the next index in line
             if (index != itemPropertyTypes.Count)
                 throw new NotSupportedException("New Type Index does not match the current List");
 
             // Identify Type
-            var map = context.Mapper.ItemProperties.
-                Where(m => m.StateType != null).
-                FirstOrDefault(m => m.StateType.FullName.Equals(name));
+            var map = context.Mapper.ItemProperties.Where(m => m.StateType != null)
+                .FirstOrDefault(m => m.StateType.FullName.Equals(name));
 
             // Insert into List
             if (map != null) itemPropertyTypes.Add(map.StateType);
@@ -134,14 +203,14 @@ namespace AntMe.Serialization
 
         private void DoItemPropertyUpdate(BinaryReader reader)
         {
-            int id = reader.ReadInt32();
-            ushort typeIndex = reader.ReadUInt16();
-            Type type = itemPropertyTypes[typeIndex];
+            var id = reader.ReadInt32();
+            var typeIndex = reader.ReadUInt16();
+            var type = itemPropertyTypes[typeIndex];
 
             ItemStateProperty property = null;
             if (type != null)
             {
-                ItemState item = latest.Items.Single(i => i.Id == id);
+                var item = latest.Items.Single(i => i.Id == id);
                 if (item != null && item.ContainsProperty(type))
                     property = item.GetProperty(type);
             }
@@ -152,9 +221,9 @@ namespace AntMe.Serialization
 
         private void DoItemPropertyInsert(BinaryReader reader)
         {
-            int id = reader.ReadInt32();
-            ushort typeIndex = reader.ReadUInt16();
-            Type type = itemPropertyTypes[typeIndex];
+            var id = reader.ReadInt32();
+            var typeIndex = reader.ReadUInt16();
+            var type = itemPropertyTypes[typeIndex];
 
             ItemStateProperty property = null;
             if (type != null)
@@ -170,13 +239,12 @@ namespace AntMe.Serialization
 
         private void DoItemTypeInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
-            string name = reader.ReadString();
+            var index = reader.ReadUInt16();
+            var name = reader.ReadString();
 
             // Identify Type
-            var map = context.Mapper.Items.
-                Where(m => m.StateType != null).
-                FirstOrDefault(m => m.StateType.FullName.Equals(name));
+            var map = context.Mapper.Items.Where(m => m.StateType != null)
+                .FirstOrDefault(m => m.StateType.FullName.Equals(name));
 
             // Insert into List
             if (map != null) itemTypes.Add(map.StateType);
@@ -185,23 +253,23 @@ namespace AntMe.Serialization
 
         private void DoItemDelete(BinaryReader reader)
         {
-            int id = reader.ReadInt32();
-            ItemState item = latest.Items.Single(i => i.Id == id);
+            var id = reader.ReadInt32();
+            var item = latest.Items.Single(i => i.Id == id);
             latest.Items.Remove(item);
         }
 
         private void DoItemUpdate(BinaryReader reader)
         {
-            int id = reader.ReadInt32();
-            ItemState item = latest.Items.Single(i => i.Id == id);
+            var id = reader.ReadInt32();
+            var item = latest.Items.Single(i => i.Id == id);
             DeserializeUpdate(reader, item);
         }
 
         private void DoItemInsert(BinaryReader reader)
         {
-            int id = reader.ReadInt32();
-            ushort typeIndex = reader.ReadUInt16();
-            Type type = itemTypes[typeIndex];
+            var id = reader.ReadInt32();
+            var typeIndex = reader.ReadUInt16();
+            var type = itemTypes[typeIndex];
 
             ItemState item;
             if (type != null) item = Activator.CreateInstance(type) as ItemState;
@@ -214,13 +282,12 @@ namespace AntMe.Serialization
 
         private void DoFactionPropertyTypeInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
-            string name = reader.ReadString();
+            var index = reader.ReadUInt16();
+            var name = reader.ReadString();
 
             // Identify Type
-            var map = context.Mapper.FactionProperties.
-                Where(m => m.StateType != null).
-                FirstOrDefault(m => m.StateType.FullName.Equals(name));
+            var map = context.Mapper.FactionProperties.Where(m => m.StateType != null)
+                .FirstOrDefault(m => m.StateType.FullName.Equals(name));
 
             // Insert into List
             if (map != null) factionPropertyTypes.Add(map.StateType);
@@ -230,15 +297,15 @@ namespace AntMe.Serialization
         private void DoFactionPropertyUpdate(BinaryReader reader)
         {
             // Read Stuff
-            byte slotIndex = reader.ReadByte();
-            ushort typeIndex = reader.ReadUInt16();
-            Type type = factionPropertyTypes[typeIndex];
+            var slotIndex = reader.ReadByte();
+            var typeIndex = reader.ReadUInt16();
+            var type = factionPropertyTypes[typeIndex];
 
             // Get Property
             FactionStateProperty property = null;
             if (type != null)
             {
-                FactionState faction = latest.Factions.Single(f => f.SlotIndex == slotIndex);
+                var faction = latest.Factions.Single(f => f.SlotIndex == slotIndex);
                 if (faction != null && faction.ContainsProperty(type))
                     property = faction.GetProperty(type);
             }
@@ -250,30 +317,29 @@ namespace AntMe.Serialization
 
         private void DoFactionPropertyInsert(BinaryReader reader)
         {
-            byte slotIndex = reader.ReadByte();
-            ushort typeIndex = reader.ReadUInt16();
-            Type type = factionPropertyTypes[typeIndex];
+            var slotIndex = reader.ReadByte();
+            var typeIndex = reader.ReadUInt16();
+            var type = factionPropertyTypes[typeIndex];
 
             FactionStateProperty property = null;
             if (type != null)
             {
-                FactionState faction = latest.Factions.First(f => f.SlotIndex == slotIndex);
+                var faction = latest.Factions.First(f => f.SlotIndex == slotIndex);
                 property = Activator.CreateInstance(type) as FactionStateProperty;
                 faction.AddProperty(property);
             }
 
-            DeserializeFirst(reader, property);            
+            DeserializeFirst(reader, property);
         }
 
         private void DoFactionTypeInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
-            string name = reader.ReadString();
+            var index = reader.ReadUInt16();
+            var name = reader.ReadString();
 
             // Identify Type
-            var map = context.Mapper.Factions.
-                Where(m => m.StateType != null).
-                FirstOrDefault(m => m.StateType.FullName.Equals(name));
+            var map = context.Mapper.Factions.Where(m => m.StateType != null)
+                .FirstOrDefault(m => m.StateType.FullName.Equals(name));
 
             // Insert into List
             if (map != null) factionTypes.Add(map.StateType);
@@ -282,16 +348,16 @@ namespace AntMe.Serialization
 
         private void DoFactionUpdate(BinaryReader reader)
         {
-            byte slotIndex = reader.ReadByte();
-            FactionState faction = latest.Factions.First(f => f.SlotIndex == slotIndex);
+            var slotIndex = reader.ReadByte();
+            var faction = latest.Factions.First(f => f.SlotIndex == slotIndex);
             DeserializeUpdate(reader, faction);
         }
 
         private void DoFactionInsert(BinaryReader reader)
         {
-            byte slotIndex = reader.ReadByte();
-            ushort typeIndex = reader.ReadUInt16();
-            Type type = factionTypes[typeIndex];
+            var slotIndex = reader.ReadByte();
+            var typeIndex = reader.ReadUInt16();
+            var type = factionTypes[typeIndex];
 
             FactionState faction;
             if (type != null) faction = Activator.CreateInstance(type) as FactionState;
@@ -304,13 +370,12 @@ namespace AntMe.Serialization
 
         private void DoMaterialTypeInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
-            string name = reader.ReadString();
+            var index = reader.ReadUInt16();
+            var name = reader.ReadString();
 
             // Identify Type
-            var map = context.Mapper.MapMaterials.
-                Where(m => m.Type != null).
-                FirstOrDefault(m => m.Type.FullName.Equals(name));
+            var map = context.Mapper.MapMaterials.Where(m => m.Type != null)
+                .FirstOrDefault(m => m.Type.FullName.Equals(name));
 
             // Insert into List
             if (map != null) materialTypes.Add(map.Type);
@@ -319,20 +384,20 @@ namespace AntMe.Serialization
 
         private void DoMaterialUpdate(BinaryReader reader)
         {
-            byte x = reader.ReadByte();
-            byte y = reader.ReadByte();
+            var x = reader.ReadByte();
+            var y = reader.ReadByte();
 
-            MapMaterial material = latest.Map.Tiles[x, y].Material;
+            var material = latest.Map.Tiles[x, y].Material;
             DeserializeUpdate(reader, material);
         }
 
         private void DoMaterialInsert(BinaryReader reader)
         {
-            byte x = reader.ReadByte();
-            byte y = reader.ReadByte();
-            ushort typeIndex = reader.ReadUInt16();
+            var x = reader.ReadByte();
+            var y = reader.ReadByte();
+            var typeIndex = reader.ReadUInt16();
 
-            Type type = materialTypes[typeIndex];
+            var type = materialTypes[typeIndex];
             MapMaterial material;
             if (type != null) material = Activator.CreateInstance(type, context) as MapMaterial;
             else material = new UnknownMaterial(context);
@@ -343,13 +408,12 @@ namespace AntMe.Serialization
 
         private void DoMapTilePropertyTypeInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
-            string name = reader.ReadString();
+            var index = reader.ReadUInt16();
+            var name = reader.ReadString();
 
             // Identify Type
-            var map = context.Mapper.MapTileProperties.
-                Where(m => m.StateType != null).
-                FirstOrDefault(m => m.StateType.FullName.Equals(name));
+            var map = context.Mapper.MapTileProperties.Where(m => m.StateType != null)
+                .FirstOrDefault(m => m.StateType.FullName.Equals(name));
 
             // Insert into List
             if (map != null) mapTilePropertyTypes.Add(map.StateType);
@@ -358,11 +422,11 @@ namespace AntMe.Serialization
 
         private void DoMapTilePropertyUpdate(BinaryReader reader)
         {
-            byte x = reader.ReadByte();
-            byte y = reader.ReadByte();
-            ushort typeIndex = reader.ReadUInt16();
+            var x = reader.ReadByte();
+            var y = reader.ReadByte();
+            var typeIndex = reader.ReadUInt16();
 
-            Type type = mapTilePropertyTypes[typeIndex];
+            var type = mapTilePropertyTypes[typeIndex];
             MapTileStateProperty property = null;
             if (type != null)
                 property = latest.Map.Tiles[x, y].GetProperty(type);
@@ -373,11 +437,11 @@ namespace AntMe.Serialization
 
         private void DoMapTilePropertyInsert(BinaryReader reader)
         {
-            byte x = reader.ReadByte();
-            byte y = reader.ReadByte();
-            ushort typeIndex = reader.ReadUInt16();
+            var x = reader.ReadByte();
+            var y = reader.ReadByte();
+            var typeIndex = reader.ReadUInt16();
 
-            Type type = mapTilePropertyTypes[typeIndex];
+            var type = mapTilePropertyTypes[typeIndex];
             MapTileStateProperty property = null;
             if (type != null)
             {
@@ -391,13 +455,12 @@ namespace AntMe.Serialization
 
         private void DoMapTileTypeInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
-            string name = reader.ReadString();
+            var index = reader.ReadUInt16();
+            var name = reader.ReadString();
 
             // Identify Type
-            var map = context.Mapper.MapTiles.
-                Where(m => m.StateType != null).
-                FirstOrDefault(m => m.StateType.FullName.Equals(name));
+            var map = context.Mapper.MapTiles.Where(m => m.StateType != null)
+                .FirstOrDefault(m => m.StateType.FullName.Equals(name));
 
             // Insert into List
             if (map != null) mapTileTypes.Add(map.StateType);
@@ -406,19 +469,19 @@ namespace AntMe.Serialization
 
         private void DoMapTileUpdate(BinaryReader reader)
         {
-            byte x = reader.ReadByte();
-            byte y = reader.ReadByte();
+            var x = reader.ReadByte();
+            var y = reader.ReadByte();
 
             DeserializeUpdate(reader, latest.Map.Tiles[x, y]);
         }
 
         private void DoMapTileInsert(BinaryReader reader)
         {
-            byte x = reader.ReadByte();
-            byte y = reader.ReadByte();
-            ushort typeIndex = reader.ReadUInt16();
+            var x = reader.ReadByte();
+            var y = reader.ReadByte();
+            var typeIndex = reader.ReadUInt16();
 
-            Type type = mapTileTypes[typeIndex];
+            var type = mapTileTypes[typeIndex];
             MapTileState tile;
             if (type != null) tile = Activator.CreateInstance(type) as MapTileState;
             else tile = new UnknownMapTileState();
@@ -429,13 +492,12 @@ namespace AntMe.Serialization
 
         private void DoMapPropertyTypeInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
-            string name = reader.ReadString();
+            var index = reader.ReadUInt16();
+            var name = reader.ReadString();
 
             // Identify Type
-            var map = context.Mapper.MapProperties.
-                Where(m => m.StateType != null).
-                FirstOrDefault(m => m.StateType.FullName.Equals(name));
+            var map = context.Mapper.MapProperties.Where(m => m.StateType != null)
+                .FirstOrDefault(m => m.StateType.FullName.Equals(name));
 
             // Insert into List
             if (map != null) mapPropertyTypes.Add(map.StateType);
@@ -444,10 +506,10 @@ namespace AntMe.Serialization
 
         private void DoMapPropertyUpdate(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
+            var index = reader.ReadUInt16();
 
             // Identify Property
-            Type propertyType = mapPropertyTypes[index];
+            var propertyType = mapPropertyTypes[index];
             MapStateProperty property = null;
             if (propertyType != null)
                 property = latest.Map.GetProperty(propertyType);
@@ -459,10 +521,10 @@ namespace AntMe.Serialization
 
         private void DoMapPropertyInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
+            var index = reader.ReadUInt16();
 
             // Identify Type
-            Type propertyType = mapPropertyTypes[index];
+            var propertyType = mapPropertyTypes[index];
             MapStateProperty property = null;
             if (propertyType != null)
             {
@@ -488,13 +550,12 @@ namespace AntMe.Serialization
 
         private void DoLevelPropertyTypeInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
-            string name = reader.ReadString();
+            var index = reader.ReadUInt16();
+            var name = reader.ReadString();
 
             // Identify Type
-            var map = context.Mapper.LevelProperties.
-                Where(m => m.StateType != null).
-                FirstOrDefault(m => m.StateType.FullName.Equals(name));
+            var map = context.Mapper.LevelProperties.Where(m => m.StateType != null)
+                .FirstOrDefault(m => m.StateType.FullName.Equals(name));
 
             // Insert into List
             if (map != null) levelPropertyTypes.Add(map.StateType);
@@ -503,10 +564,10 @@ namespace AntMe.Serialization
 
         private void DoLevelPropertyUpdate(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
+            var index = reader.ReadUInt16();
 
             // Identify Property
-            Type propertyType = levelPropertyTypes[index];
+            var propertyType = levelPropertyTypes[index];
             LevelStateProperty property = null;
             if (propertyType != null)
                 property = latest.GetProperty(propertyType);
@@ -518,10 +579,10 @@ namespace AntMe.Serialization
 
         private void DoLevelPropertyInsert(BinaryReader reader)
         {
-            ushort index = reader.ReadUInt16();
+            var index = reader.ReadUInt16();
 
             // Identify Type
-            Type propertyType = levelPropertyTypes[index];
+            var propertyType = levelPropertyTypes[index];
             LevelStateProperty property = null;
             if (propertyType != null)
             {
@@ -548,11 +609,11 @@ namespace AntMe.Serialization
         private void DeserializeFirst(BinaryReader reader, ISerializableState state)
         {
             int dumpCount = reader.ReadUInt16();
-            byte[] dump = reader.ReadBytes(dumpCount);
+            var dump = reader.ReadBytes(dumpCount);
 
-            using (MemoryStream mem = new MemoryStream(dump))
+            using (var mem = new MemoryStream(dump))
             {
-                using (BinaryReader memReader = new BinaryReader(mem))
+                using (var memReader = new BinaryReader(mem))
                 {
                     state.DeserializeFirst(memReader, VERSION);
                 }
@@ -562,25 +623,21 @@ namespace AntMe.Serialization
         private void DeserializeUnknown(BinaryReader reader)
         {
             int dumpCount = reader.ReadUInt16();
-            byte[] dump = reader.ReadBytes(dumpCount);
+            var dump = reader.ReadBytes(dumpCount);
         }
 
         private void DeserializeUpdate(BinaryReader reader, ISerializableState state)
         {
             int dumpCount = reader.ReadUInt16();
-            byte[] dump = reader.ReadBytes(dumpCount);
+            var dump = reader.ReadBytes(dumpCount);
 
-            using (MemoryStream mem = new MemoryStream(dump))
+            using (var mem = new MemoryStream(dump))
             {
-                using (BinaryReader memReader = new BinaryReader(mem))
+                using (var memReader = new BinaryReader(mem))
                 {
                     state.DeserializeUpdate(memReader, VERSION);
                 }
             }
-        }
-
-        public void Dispose()
-        {
         }
     }
 }

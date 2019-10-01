@@ -1,24 +1,24 @@
-﻿using AntMe.Basics.ItemProperties;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using AntMe.Basics.ItemProperties;
 
 namespace AntMe.Basics.Factions
 {
     /// <summary>
-    /// Faction Property to count own dead Items.
+    ///     Faction Property to count own dead Items.
     /// </summary>
     public abstract class DeathCountProperty<T> : FactionProperty, IPointsCollector where T : Item
     {
-        private bool enabled;
-        private int points;
-        private HashSet<T> observedItems;
-        private HashSet<AttackableProperty> observedAttackables;
-        private int removedItemsCount;
-        private int killedItemsCount;
         private int damageCount;
+        private bool enabled;
+        private int killedItemsCount;
+        private readonly HashSet<AttackableProperty> observedAttackables;
+        private readonly HashSet<T> observedItems;
+        private int points;
+        private int removedItemsCount;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Reference to the related Faction</param>
         public DeathCountProperty(Faction faction) : base(faction)
@@ -28,7 +28,92 @@ namespace AntMe.Basics.Factions
         }
 
         /// <summary>
-        /// Gets called by the Engine during Faction Initialization.
+        ///     Counts the Number of removed Items.
+        /// </summary>
+        public int RemovedItemsCount
+        {
+            get => removedItemsCount;
+            set
+            {
+                removedItemsCount = value;
+                OnRemovedItemCountChanged?.Invoke(value);
+            }
+        }
+
+        /// <summary>
+        ///     Counts the Number of Items killed by Attack.
+        /// </summary>
+        public int KilledItemsCount
+        {
+            get => killedItemsCount;
+            set
+            {
+                killedItemsCount = value;
+                OnKilledItemCountChanged?.Invoke(value);
+            }
+        }
+
+        /// <summary>
+        ///     Counts the Number of Hitpoints lost by other Attackers.
+        /// </summary>
+        public int DamageCount
+        {
+            get => damageCount;
+            set
+            {
+                damageCount = value;
+                OnDamageCountChanged?.Invoke(value);
+            }
+        }
+
+        /// <summary>
+        ///     Defines if the Points should count.
+        /// </summary>
+        public bool EnablePoints
+        {
+            get => enabled;
+            set
+            {
+                enabled = value;
+                OnEnablePointsChanged?.Invoke(this, value);
+            }
+        }
+
+        /// <summary>
+        ///     Defines of the Counter will be removed after Item Death.
+        /// </summary>
+        public bool PermanentPoints => true;
+
+        /// <summary>
+        ///     Returns the current Amount of Points.
+        /// </summary>
+        public int Points
+        {
+            get => points;
+            private set
+            {
+                points = value;
+                OnPointsChanged?.Invoke(this, value);
+            }
+        }
+
+        /// <summary>
+        ///     Returns the Points Category.
+        /// </summary>
+        public abstract string PointsCategory { get; }
+
+        /// <summary>
+        ///     Signal for changed Enable Flag.
+        /// </summary>
+        public event ValueUpdate<IPointsCollector, bool> OnEnablePointsChanged;
+
+        /// <summary>
+        ///     Signal for a changed Point Counter.
+        /// </summary>
+        public event ValueUpdate<IPointsCollector, int> OnPointsChanged;
+
+        /// <summary>
+        ///     Gets called by the Engine during Faction Initialization.
         /// </summary>
         public override void Init()
         {
@@ -48,7 +133,7 @@ namespace AntMe.Basics.Factions
             RemovedItemsCount++;
             observedItems.Remove(item as T);
 
-            AttackableProperty property = item.GetProperty<AttackableProperty>();
+            var property = item.GetProperty<AttackableProperty>();
             if (property == null || !observedAttackables.Contains(property))
                 return;
 
@@ -62,7 +147,7 @@ namespace AntMe.Basics.Factions
 
         private void InsertItem(Item item)
         {
-            FactionItem factionItem = item as FactionItem;
+            var factionItem = item as FactionItem;
 
             // Ignore non-faction Items.
             if (factionItem == null)
@@ -73,14 +158,14 @@ namespace AntMe.Basics.Factions
                 return;
 
             // Ignore Items from other types than T
-            T specialItem = factionItem as T;
+            var specialItem = factionItem as T;
             if (!factionItem.GetType().Equals(typeof(T)))
                 return;
 
             observedItems.Add(specialItem);
 
             // Ignore Items without Attackable Property
-            AttackableProperty property = factionItem.GetProperty<AttackableProperty>();
+            var property = factionItem.GetProperty<AttackableProperty>();
             if (property == null)
                 return;
 
@@ -102,108 +187,23 @@ namespace AntMe.Basics.Factions
         }
 
         /// <summary>
-        /// Calculates the Points for the current Counter States.
+        ///     Calculates the Points for the current Counter States.
         /// </summary>
         /// <returns>Points</returns>
         protected abstract int RecalculatePoints();
 
         /// <summary>
-        /// Defines if the Points should count.
-        /// </summary>
-        public bool EnablePoints
-        {
-            get { return enabled; }
-            set
-            {
-                enabled = value;
-                OnEnablePointsChanged?.Invoke(this, value);
-            }
-        }
-
-        /// <summary>
-        /// Defines of the Counter will be removed after Item Death.
-        /// </summary>
-        public bool PermanentPoints { get { return true; } }
-
-        /// <summary>
-        /// Returns the current Amount of Points.
-        /// </summary>
-        public int Points
-        {
-            get { return points; }
-            private set
-            {
-                points = value;
-                OnPointsChanged?.Invoke(this, value);
-            }
-        }
-
-        /// <summary>
-        /// Counts the Number of removed Items.
-        /// </summary>
-        public int RemovedItemsCount
-        {
-            get { return removedItemsCount; }
-            set
-            {
-                removedItemsCount = value;
-                OnRemovedItemCountChanged?.Invoke(value);
-            }
-        }
-
-        /// <summary>
-        /// Counts the Number of Items killed by Attack.
-        /// </summary>
-        public int KilledItemsCount
-        {
-            get { return killedItemsCount; }
-            set
-            {
-                killedItemsCount = value;
-                OnKilledItemCountChanged?.Invoke(value);
-            }
-        }
-
-        /// <summary>
-        /// Counts the Number of Hitpoints lost by other Attackers.
-        /// </summary>
-        public int DamageCount
-        {
-            get { return damageCount; }
-            set
-            {
-                damageCount = value;
-                OnDamageCountChanged?.Invoke(value);
-            }
-        }
-
-        /// <summary>
-        /// Returns the Points Category.
-        /// </summary>
-        public abstract string PointsCategory { get; }
-
-        /// <summary>
-        /// Signal for changed Enable Flag.
-        /// </summary>
-        public event ValueUpdate<IPointsCollector, bool> OnEnablePointsChanged;
-
-        /// <summary>
-        /// Signal for a changed Point Counter.
-        /// </summary>
-        public event ValueUpdate<IPointsCollector, int> OnPointsChanged;
-
-        /// <summary>
-        /// Signal for a changed Removed Items Counter.
+        ///     Signal for a changed Removed Items Counter.
         /// </summary>
         public event ValueUpdate<int> OnRemovedItemCountChanged;
 
         /// <summary>
-        /// Signal for a changed Killed Items Counter.
+        ///     Signal for a changed Killed Items Counter.
         /// </summary>
         public event ValueUpdate<int> OnKilledItemCountChanged;
 
         /// <summary>
-        /// Signal for a changed Damage Counter.
+        ///     Signal for a changed Damage Counter.
         /// </summary>
         public event ValueUpdate<int> OnDamageCountChanged;
     }

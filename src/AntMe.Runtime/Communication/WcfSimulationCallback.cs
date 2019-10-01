@@ -8,6 +8,10 @@ namespace AntMe.Runtime.Communication
     )]
     internal sealed class WcfSimulationCallback : ISimulationCallback
     {
+        public delegate void CallbackDelegate<T>(T parameter);
+
+        public delegate void CallbackDelegate<T, V>(T parameter1, V parameter2);
+
         public void MasterChanged(int id)
         {
             OnMasterChanged?.Invoke(id);
@@ -84,8 +88,5 @@ namespace AntMe.Runtime.Communication
         public event CallbackDelegate<SimulationState, byte> OnSimulationChanged;
 
         public event CallbackDelegate<byte[]> OnSimulationState;
-
-        public delegate void CallbackDelegate<T>(T parameter);
-        public delegate void CallbackDelegate<T, V>(T parameter1, V parameter2);
     }
 }

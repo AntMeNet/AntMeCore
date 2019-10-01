@@ -4,26 +4,19 @@ using System.IO;
 namespace AntMe.Basics.Items
 {
     /// <summary>
-    /// State for a Marker.
+    ///     State for a Marker.
     /// </summary>
     public sealed class MarkerState : FactionItemState
     {
         /// <summary>
-        /// Containing Marker Information.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        [DisplayName("Information")]
-        [Description("Containing Marker Information")]
-        [ReadOnly(true)]
-        [Category("Static")]
-        public int Information { get; set; }
+        public MarkerState()
+        {
+        }
 
         /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public MarkerState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         public MarkerState(MarkerItem item) : base(item)
@@ -33,7 +26,16 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Containing Marker Information.
+        /// </summary>
+        [DisplayName("Information")]
+        [Description("Containing Marker Information")]
+        [ReadOnly(true)]
+        [Category("Static")]
+        public int Information { get; set; }
+
+        /// <summary>
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -45,7 +47,7 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -55,7 +57,7 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -67,7 +69,7 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

@@ -1,49 +1,38 @@
-﻿using AntMe;
-using AntMe.Runtime;
-using CoreTestClient.Tools;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
+using AntMe;
+using AntMe.Runtime;
 using AntMe.Serialization;
+using CoreTestClient.Tools;
 
 namespace CoreTestClient
 {
     public partial class MapEditorForm : Form
     {
-        SimulationContext context;
+        private EditorTool activeTool;
+
+        private readonly TreeNode cellNode;
+        private readonly SimulationContext context;
 
         private string filename;
 
-        private bool mapChanged = false;
-
         private Map map;
 
-        private Map Map
-        {
-            get { return map; }
-            set
-            {
-                map = value;
-                SetMap(value);
-            }
-        }
+        private bool mapChanged;
 
-        private TreeNode mapNode;
+        private readonly TreeNode mapNode;
 
-        private TreeNode cellNode;
+        private bool mouseDown;
 
-        private List<EditorTool> tools;
+        private readonly SelectionTool selectionTool;
 
-        private SelectionTool selectionTool;
+        private readonly StartPointTool startPointTool;
 
-        private StartPointTool startPointTool;
-
-        private EditorTool activeTool;
-
-        private bool mouseDown = false;
+        private readonly List<EditorTool> tools;
 
         public MapEditorForm()
         {
@@ -83,6 +72,16 @@ namespace CoreTestClient
             timer.Enabled = true;
         }
 
+        private Map Map
+        {
+            get => map;
+            set
+            {
+                map = value;
+                SetMap(value);
+            }
+        }
+
         private void Scene_MouseLeave(object sender, EventArgs e)
         {
             mouseDown = false;
@@ -102,7 +101,7 @@ namespace CoreTestClient
                 return;
             }
 
-            MapTile tile = map[newValue.Value.X, newValue.Value.Y];
+            var tile = map[newValue.Value.X, newValue.Value.Y];
             SetTile(newValue, tile);
         }
 
@@ -151,7 +150,7 @@ namespace CoreTestClient
         {
             activeTool = sender as EditorTool;
             foreach (var tool in tools)
-                tool.RootItem.BackColor = (activeTool == tool ? Color.LightBlue : Color.Transparent);
+                tool.RootItem.BackColor = activeTool == tool ? Color.LightBlue : Color.Transparent;
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -161,24 +160,16 @@ namespace CoreTestClient
             saveMenu.Enabled = !string.IsNullOrEmpty(filename);
 
             if (scene.HoveredCell.HasValue)
-            {
                 hoverLabel.Text = string.Format("{0}/{1}", scene.HoveredCell.Value.X, scene.HoveredCell.Value.Y);
-            }
             else
-            {
                 hoverLabel.Text = string.Empty;
-            }
 
             if (map != null)
             {
                 if (!string.IsNullOrEmpty(filename))
-                {
                     Text = string.Format("Map Editor ({0}){1}", filename, mapChanged ? "*" : "");
-                }
                 else
-                {
                     Text = "Map Editor (New Map)*";
-                }
             }
             else
             {
@@ -194,7 +185,6 @@ namespace CoreTestClient
         private void loadMenu_Click(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
-            {
                 try
                 {
                     using (Stream stream = File.Open(openFileDialog.FileName, FileMode.Open))
@@ -208,7 +198,6 @@ namespace CoreTestClient
                 {
                     MessageBox.Show(ex.Message);
                 }
-            }
         }
 
         private void saveAsMenu_Click(object sender, EventArgs e)
@@ -218,7 +207,6 @@ namespace CoreTestClient
                 saveFileDialog.FileName = filename;
 
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
-            {
                 try
                 {
                     using (Stream stream = File.Open(saveFileDialog.FileName, FileMode.Create))
@@ -232,18 +220,15 @@ namespace CoreTestClient
                 {
                     MessageBox.Show(string.Format("Could not save: {0}", ex.Message));
                 }
-            }
         }
 
         private void SetMap(Map map)
         {
-            for (int i = 0; i < startPointTool.StartPoints.Length; i++)
-            {
+            for (var i = 0; i < startPointTool.StartPoints.Length; i++)
                 if (map != null && map.StartPoints.Length >= i + 1)
                     startPointTool.StartPoints[i] = map.StartPoints[i];
                 else
                     startPointTool.StartPoints[i] = null;
-            }
 
             scene.SetMap(map);
             RevalidateMap();
@@ -259,6 +244,7 @@ namespace CoreTestClient
                     node.Tag = property;
                 }
             }
+
             mapNode.Expand();
         }
 
@@ -269,20 +255,21 @@ namespace CoreTestClient
             errorsList.Items.Clear();
             foreach (var error in scene.ValidationExceptions)
             {
-                List<string> messages = new List<string>();
-                Exception ex = error;
+                var messages = new List<string>();
+                var ex = error;
                 do
                 {
                     messages.Add(ex.Message);
                     ex = ex.InnerException;
                 } while (ex != null);
 
-                ListViewItem item = errorsList.Items.Add("");
+                var item = errorsList.Items.Add("");
                 if (error is InvalidMapTileException)
                 {
-                    InvalidMapTileException mapTileError = error as InvalidMapTileException;
+                    var mapTileError = error as InvalidMapTileException;
                     item.Text = mapTileError.CellIndex.ToString();
                 }
+
                 item.Tag = error;
                 item.SubItems.Add(string.Join(" => ", messages));
             }
@@ -334,7 +321,6 @@ namespace CoreTestClient
         private bool Save()
         {
             if (map != null && !string.IsNullOrEmpty(filename))
-            {
                 try
                 {
                     using (Stream stream = File.Open(filename, FileMode.Create))
@@ -348,7 +334,6 @@ namespace CoreTestClient
                     MessageBox.Show(string.Format("Could not save: {0}", ex.Message));
                     return false;
                 }
-            }
 
             return true;
         }
@@ -359,8 +344,9 @@ namespace CoreTestClient
                 errorsList.SelectedItems.Count > 0 &&
                 errorsList.SelectedItems[0].Tag is InvalidMapTileException)
             {
-                InvalidMapTileException ex = errorsList.SelectedItems[0].Tag as InvalidMapTileException;
-                selectionTool.Apply(map, ex.CellIndex, new Vector2((ex.CellIndex.X + 0.5f) * Map.CELLSIZE, (ex.CellIndex.Y + 0.5f) * Map.CELLSIZE));
+                var ex = errorsList.SelectedItems[0].Tag as InvalidMapTileException;
+                selectionTool.Apply(map, ex.CellIndex,
+                    new Vector2((ex.CellIndex.X + 0.5f) * Map.CELLSIZE, (ex.CellIndex.Y + 0.5f) * Map.CELLSIZE));
             }
         }
 
@@ -373,11 +359,11 @@ namespace CoreTestClient
 
         private void newMenu_Click(object sender, EventArgs e)
         {
-            using (NewMapDialog dialog = new NewMapDialog())
+            using (var dialog = new NewMapDialog())
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    Map m = new Map(context, dialog.MapSize.X, dialog.MapSize.Y);
+                    var m = new Map(context, dialog.MapSize.X, dialog.MapSize.Y);
                     m.BlockBorder = dialog.BlockedBorder;
                     m.BaseLevel = dialog.DefaultHeightLevel;
 
@@ -389,14 +375,12 @@ namespace CoreTestClient
                         return;
                     }
 
-                    Index2 size = m.GetCellCount();
-                    for (int y = 0; y < size.Y; y++)
+                    var size = m.GetCellCount();
+                    for (var y = 0; y < size.Y; y++)
+                    for (var x = 0; x < size.X; x++)
                     {
-                        for (int x = 0; x < size.X; x++)
-                        {
-                            m[x, y] = Activator.CreateInstance(flatTile.Type, context) as MapTile;
-                            m[x, y].HeightLevel = m.BaseLevel;
-                        }
+                        m[x, y] = Activator.CreateInstance(flatTile.Type, context) as MapTile;
+                        m[x, y].HeightLevel = m.BaseLevel;
                     }
 
                     Map = m;
@@ -413,13 +397,17 @@ namespace CoreTestClient
                 if (string.IsNullOrEmpty(filename))
                 {
                     // Unsaved Changes in a new Map
-                    if (MessageBox.Show(this, "There are some unsaved Changes. Are you sure you want to close the Editor?", "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                    if (MessageBox.Show(this,
+                            "There are some unsaved Changes. Are you sure you want to close the Editor?",
+                            "Unsaved Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                         e.Cancel = true;
                 }
                 else
                 {
                     // Unsaved Changes in an existing Map
-                    switch (MessageBox.Show(this, "There are some unsaved Changes. Do you want to save before close the Editor?", "Unsaved Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+                    switch (MessageBox.Show(this,
+                        "There are some unsaved Changes. Do you want to save before close the Editor?",
+                        "Unsaved Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
                     {
                         case DialogResult.Cancel:
                             e.Cancel = true;
@@ -430,8 +418,6 @@ namespace CoreTestClient
                             break;
                     }
                 }
-
-                
             }
         }
     }

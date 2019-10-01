@@ -3,27 +3,28 @@
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// State Property for all smellable Items.
+    ///     State Property for all smellable Items.
     /// </summary>
     public sealed class SmellableState : ItemStateProperty
     {
         /// <summary>
-        /// Default Constructor for the Deserializer.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public SmellableState() : base() { }
+        public SmellableState()
+        {
+        }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         /// <param name="property">Related Engine Property</param>
         public SmellableState(Item item, SmellableProperty property) : base(item, property)
         {
-
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -32,7 +33,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -41,7 +42,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -50,7 +51,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

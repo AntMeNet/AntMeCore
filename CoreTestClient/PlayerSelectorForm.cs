@@ -1,15 +1,13 @@
-﻿using AntMe.Runtime;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using AntMe.Runtime;
 
 namespace CoreTestClient
 {
     public partial class PlayerSelectorForm : Form
     {
-        public PlayerInfo SelectedPlayer { get; private set; }
-
         public PlayerSelectorForm()
         {
             InitializeComponent();
@@ -23,7 +21,9 @@ namespace CoreTestClient
             }
         }
 
-        private void playerList_SelectedIndexChanged(object sender, System.EventArgs e)
+        public PlayerInfo SelectedPlayer { get; private set; }
+
+        private void playerList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (playerList.SelectedItems.Count > 0)
             {
@@ -40,17 +40,18 @@ namespace CoreTestClient
             }
         }
 
-        private void loadButton_Click(object sender, System.EventArgs e)
+        private void loadButton_Click(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                string[] extensionPaths = new string[] {
+                string[] extensionPaths =
+                {
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions",
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
                 };
 
-                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
+                var file = File.ReadAllBytes(openFileDialog.FileName);
                 var result = ExtensionLoader.SecureAnalyseExtension(extensionPaths, file, false, true);
 
                 foreach (var player in result.Players)
@@ -67,7 +68,7 @@ namespace CoreTestClient
         {
             if (playerList.SelectedItems.Count > 0)
             {
-                PlayerInfo player = playerList.SelectedItems[0].Tag as PlayerInfo;
+                var player = playerList.SelectedItems[0].Tag as PlayerInfo;
                 SelectedPlayer = player;
                 DialogResult = DialogResult.OK;
                 Close();

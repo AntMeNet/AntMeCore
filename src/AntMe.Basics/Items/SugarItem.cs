@@ -1,17 +1,17 @@
 ﻿namespace AntMe.Basics.Items
 {
     /// <summary>
-    /// Represents an Sugar Hill.
+    ///     Represents an Sugar Hill.
     /// </summary>
     public class SugarItem : Item
     {
         /// <summary>
-        /// Default Radius for a Sugar Hill.
+        ///     Default Radius for a Sugar Hill.
         /// </summary>
         public const float SugarRadius = 10f;
 
         /// <summary>
-        /// Maximale Ladung eines Zuckerberges.
+        ///     Maximale Ladung eines Zuckerberges.
         /// </summary>
         public const int SugarMaxCapacity = 1000;
 

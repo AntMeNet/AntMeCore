@@ -3,7 +3,7 @@
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Property for Carrier Items.
+    ///     Property for Carrier Items.
     /// </summary>
     public sealed class CarrierProperty : ItemProperty
     {
@@ -11,17 +11,19 @@ namespace AntMe.Basics.ItemProperties
         private float carrierStrength;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="item">Item</param>
-        public CarrierProperty(Item item) : base(item) { }
+        public CarrierProperty(Item item) : base(item)
+        {
+        }
 
         /// <summary>
-        /// Gets or sets the Strength of this Item.
+        ///     Gets or sets the Strength of this Item.
         /// </summary>
         public float CarrierStrength
         {
-            get { return carrierStrength; }
+            get => carrierStrength;
             set
             {
                 carrierStrength = Math.Max(value, 0f);
@@ -30,11 +32,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets the current Load of this Ant.
+        ///     Gets the current Load of this Ant.
         /// </summary>
         public PortableProperty CarrierLoad
         {
-            get { return carrierLoad; }
+            get => carrierLoad;
             private set
             {
                 carrierLoad = value;
@@ -43,7 +45,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Pick up a new Item.
+        ///     Pick up a new Item.
         /// </summary>
         /// <param name="item">Portable Item</param>
         public bool Carry(PortableProperty item)
@@ -89,7 +91,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Drops the current Load.
+        ///     Drops the current Load.
         /// </summary>
         public void Drop()
         {
@@ -98,12 +100,12 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Signal for a changed Strength.
+        ///     Signal for a changed Strength.
         /// </summary>
         public event ValueChanged<float> OnCarrierStrengthChanged;
 
         /// <summary>
-        /// Signal for a changed Load.
+        ///     Signal for a changed Load.
         /// </summary>
         public event ValueChanged<PortableProperty> OnCarrierLoadChanged;
     }

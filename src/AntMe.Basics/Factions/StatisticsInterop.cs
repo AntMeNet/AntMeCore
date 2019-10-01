@@ -4,44 +4,33 @@ using System.Collections.Generic;
 namespace AntMe.Basics.Factions
 {
     /// <summary>
-    /// Statistical Interop Extension for the Factory Interop.
+    ///     Statistical Interop Extension for the Factory Interop.
     /// </summary>
     public abstract class StatisticsInterop : FactoryInteropProperty
     {
         /// <summary>
-        /// Default Definition for the "recent" Time Range.
+        ///     Default Definition for the "recent" Time Range.
         /// </summary>
         public const int RecentCenturiesDefault = 10;
 
         /// <summary>
-        /// Defines a Base Type that limits the counting Items.
+        ///     Defines a Base Type that limits the counting Items.
         /// </summary>
         protected readonly Type FilterType;
 
         private int recentCenturies;
 
         /// <summary>
-        /// Gets or sets the Number of Centuries that defines "recent".
-        /// </summary>
-        public int RecentCenturies
-        {
-            get { return recentCenturies; }
-            set
-            {
-                value = Math.Max(1, value);
-                recentCenturies = value;
-            }
-        }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="interop">Related Interop</param>
-        public StatisticsInterop(Faction faction, FactoryInterop interop) : this(faction, interop, null) { }
+        public StatisticsInterop(Faction faction, FactoryInterop interop) : this(faction, interop, null)
+        {
+        }
 
         /// <summary>
-        /// Specialized Constructor with an additional Filter Type Definition.
+        ///     Specialized Constructor with an additional Filter Type Definition.
         /// </summary>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="interop">Related Interop</param>
@@ -54,10 +43,23 @@ namespace AntMe.Basics.Factions
             faction.Level.Engine.OnRemoveItem += Engine_OnRemoveItem;
         }
 
+        /// <summary>
+        ///     Gets or sets the Number of Centuries that defines "recent".
+        /// </summary>
+        public int RecentCenturies
+        {
+            get => recentCenturies;
+            set
+            {
+                value = Math.Max(1, value);
+                recentCenturies = value;
+            }
+        }
+
         private void Engine_OnInsertItem(Item item)
         {
             // Count only Faction Items
-            FactionItem factionItem = item as FactionItem;
+            var factionItem = item as FactionItem;
             if (factionItem == null)
                 return;
 
@@ -76,7 +78,7 @@ namespace AntMe.Basics.Factions
         private void Engine_OnRemoveItem(Item item)
         {
             // Count only Faction Items
-            FactionItem factionItem = item as FactionItem;
+            var factionItem = item as FactionItem;
             if (factionItem == null)
                 return;
 
@@ -93,37 +95,25 @@ namespace AntMe.Basics.Factions
         }
 
         /// <summary>
-        /// Gets a call on new Items (filtered by FilterType, FactionItem and right Faction)
+        ///     Gets a call on new Items (filtered by FilterType, FactionItem and right Faction)
         /// </summary>
         /// <param name="item">New Item</param>
         protected abstract void OnInsert(FactionItem item);
 
         /// <summary>
-        /// Gets a call on removed Items (filtered by FilterType, FactionItem and right Faction)
+        ///     Gets a call on removed Items (filtered by FilterType, FactionItem and right Faction)
         /// </summary>
         /// <param name="item">Removed Item</param>
         protected abstract void OnRemove(FactionItem item);
     }
 
     /// <summary>
-    /// Statistical Interop Extension for the Factory Interop.
+    ///     Statistical Interop Extension for the Factory Interop.
     /// </summary>
     public abstract class StatisticsInterop<T> : StatisticsInterop
     {
-        private Dictionary<T, int> totalItems;
-        private Dictionary<T, int> currentItems;
-        //private List<Dictionary<T, int>> recentItemsCache;
-        //private Dictionary<T, int> recentItems;
-
-        /// <summary>
-        /// Total Number of created Ants grouped by Type.
-        /// </summary>
-        public ReadOnlyDictionary<T, int> TotalItems { get; private set; }
-
-        /// <summary>
-        /// Current Number of created Ants grouped by Type.
-        /// </summary>
-        public ReadOnlyDictionary<T, int> CurrentItems { get; private set; }
+        private readonly Dictionary<T, int> currentItems;
+        private readonly Dictionary<T, int> totalItems;
 
         ///// <summary>
         ///// Number of recently created Ants grouped by Type.
@@ -132,19 +122,22 @@ namespace AntMe.Basics.Factions
 
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="interop">Related Interop</param>
-        public StatisticsInterop(Faction faction, FactoryInterop interop) : base(faction, interop, null) { }
+        public StatisticsInterop(Faction faction, FactoryInterop interop) : base(faction, interop, null)
+        {
+        }
 
         /// <summary>
-        /// Specialized Constructor with an additional Filter Type Definition.
+        ///     Specialized Constructor with an additional Filter Type Definition.
         /// </summary>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="interop">Related Interop</param>
         /// <param name="filterType">Required Base Type</param>
-        public StatisticsInterop(Faction faction, FactoryInterop interop, Type filterType) : base(faction, interop, filterType)
+        public StatisticsInterop(Faction faction, FactoryInterop interop, Type filterType) : base(faction, interop,
+            filterType)
         {
             RecentCenturies = RecentCenturiesDefault;
 
@@ -158,6 +151,18 @@ namespace AntMe.Basics.Factions
             //recentItems = new Dictionary<T, int>();
             //RecentItems = new ReadOnlyDictionary<T, int>(recentItems);
         }
+        //private List<Dictionary<T, int>> recentItemsCache;
+        //private Dictionary<T, int> recentItems;
+
+        /// <summary>
+        ///     Total Number of created Ants grouped by Type.
+        /// </summary>
+        public ReadOnlyDictionary<T, int> TotalItems { get; }
+
+        /// <summary>
+        ///     Current Number of created Ants grouped by Type.
+        /// </summary>
+        public ReadOnlyDictionary<T, int> CurrentItems { get; }
 
         protected override void Update(int round)
         {
@@ -210,7 +215,7 @@ namespace AntMe.Basics.Factions
         }
 
         /// <summary>
-        /// Gets a call on new Items (filtered by FilterType, FactionItem and right Faction)
+        ///     Gets a call on new Items (filtered by FilterType, FactionItem and right Faction)
         /// </summary>
         /// <param name="item">New Item</param>
         protected override void OnInsert(FactionItem item)
@@ -234,7 +239,7 @@ namespace AntMe.Basics.Factions
         }
 
         /// <summary>
-        /// Gets a call on removed Items (filtered by FilterType, FactionItem and right Faction)
+        ///     Gets a call on removed Items (filtered by FilterType, FactionItem and right Faction)
         /// </summary>
         /// <param name="item">Removed Item</param>
         protected override void OnRemove(FactionItem item)
@@ -268,7 +273,7 @@ namespace AntMe.Basics.Factions
         }
 
         /// <summary>
-        /// Callback to identify the group key.
+        ///     Callback to identify the group key.
         /// </summary>
         /// <param name="item">Item</param>
         /// <param name="group">Group Key</param>

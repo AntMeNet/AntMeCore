@@ -4,44 +4,19 @@ using System.IO;
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// State Property for all walking Items.
+    ///     State Property for all walking Items.
     /// </summary>
     public sealed class WalkingState : ItemStateProperty
     {
         /// <summary>
-        /// Maximum Speed.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        [DisplayName("Maximum Speed")]
-        [Description("Maximum Speed")]
-        [ReadOnly(true)]
-        [Category("Static")]
-        public float MaximumSpeed { get; set; }
+        public WalkingState()
+        {
+        }
 
         /// <summary>
-        /// Current Speed.
-        /// </summary>
-        [DisplayName("Speed")]
-        [Description("Current Speed.")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public float Speed { get; set; }
-
-        /// <summary>
-        /// Current Direction.
-        /// </summary>
-        [DisplayName("Direction")]
-        [Description("Current Direction.")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public short Direction { get; set; }
-
-        /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public WalkingState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         /// <param name="property">Related Engine Property</param>
@@ -56,12 +31,39 @@ namespace AntMe.Basics.ItemProperties
             property.OnMaximumMoveSpeedChanged += (i, v) => { MaximumSpeed = v; };
 
             // Bind Direction to the Item Direction
-            Direction = (short)property.Direction.Degree;
-            property.OnMoveDirectionChanged += (i, v) => { Direction = (short)v.Degree; };
+            Direction = (short) property.Direction.Degree;
+            property.OnMoveDirectionChanged += (i, v) => { Direction = (short) v.Degree; };
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Maximum Speed.
+        /// </summary>
+        [DisplayName("Maximum Speed")]
+        [Description("Maximum Speed")]
+        [ReadOnly(true)]
+        [Category("Static")]
+        public float MaximumSpeed { get; set; }
+
+        /// <summary>
+        ///     Current Speed.
+        /// </summary>
+        [DisplayName("Speed")]
+        [Description("Current Speed.")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public float Speed { get; set; }
+
+        /// <summary>
+        ///     Current Direction.
+        /// </summary>
+        [DisplayName("Direction")]
+        [Description("Current Direction.")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public short Direction { get; set; }
+
+        /// <summary>
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -73,7 +75,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -85,7 +87,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -97,7 +99,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

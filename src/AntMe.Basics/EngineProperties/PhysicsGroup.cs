@@ -1,20 +1,19 @@
-﻿using AntMe.Basics.ItemProperties;
-using AntMe.Basics.MapTileProperties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AntMe.Basics.ItemProperties;
+using AntMe.Basics.MapTileProperties;
 
 namespace AntMe.Basics.EngineProperties
 {
     /// <summary>
-    /// Groups Items from a Carrier/Portable-Connection.
+    ///     Groups Items from a Carrier/Portable-Connection.
     /// </summary>
     internal sealed class PhysicsGroup : IDisposable
     {
         private readonly CarrierProperty carrier;
         private readonly HashSet<PhysicsGroup> clusterUnits;
         private readonly CollidableProperty collidable;
-        private readonly Item item;
         private readonly Dictionary<int, PhysicsGroup> items;
         private readonly Map map;
         private readonly Vector2 mapSize;
@@ -29,11 +28,319 @@ namespace AntMe.Basics.EngineProperties
         private float ownMass;
         private Vector3 ownVelocity = Vector3.Zero;
 
+        #region Item Events
+
+        /// <summary>
+        ///     Zelle wechselt - Fortbewegung muss neu berechnet werden
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="newValue"></param>
+        private void item_CellChanged(Item item, Index2 newValue)
+        {
+            Recalc();
+        }
+
+        #endregion
+
+        /// <summary>
+        ///     Berechnet die resultierende Geschwindigkeit des lokalen Elementes
+        ///     neu. Berücksichtigt werden die move Parameter Speed, Direction, CellSpeed.
+        /// </summary>
+        private void Recalc()
+        {
+            #region Berechnung lokaler Variablen
+
+            // Zelle berücksichtigen
+            var cell = map.GetCellIndex(Item.Position);
+            var cellspeed = map[cell.X, cell.Y].Material.Speed;
+
+            // Eigenständige Bewegung
+            if (moving != null)
+            {
+                var speed = Math.Min(moving.MaximumSpeed, moving.Speed);
+                ownVelocity = Vector3.FromAngleXY(moving.Direction) * speed * cellspeed;
+            }
+
+            ownMass = collidable != null ? collidable.CollisionMass : 0f;
+
+            #endregion
+
+            #region Berechnung der Cluster Variablen
+
+            // Portable Stuff
+            if (portable != null)
+            {
+                // Sammeln der Daten
+                var tempVelocity = ownVelocity;
+                var tempMass = ownMass;
+                var tempStrength = 0f;
+                var itemCount = 1;
+                foreach (var unit in clusterUnits)
+                {
+                    tempVelocity += unit.clusterVelocity;
+                    tempMass += unit.clusterMass;
+                    tempStrength += unit.carrier != null ? unit.carrier.CarrierStrength : 0f;
+                    itemCount++;
+                }
+
+                clusterMass = tempMass;
+
+                // Trägerkraft berücksichtigen
+                // (Geschwindigkeit verhält sich antiproportional zur Summe der Stärken)
+                // Übersteigt die Summe der Stärken das Gewicht, ist die maximal mögliche Geschwindigkeit erreicht
+                var speedFactor = Weight > 0f ? tempStrength / Weight : 1f;
+                speedFactor = Math.Min(1f, Math.Max(0f, speedFactor));
+
+                // Geschwindigkeit des Portables nur berüchsichtigen, wenn es ebenso Moving ist
+                itemCount -= moving != null ? 0 : 1;
+
+                // Resultierende Geschwindigkeit berechnen
+                clusterVelocity = itemCount > 0 ? tempVelocity / itemCount * speedFactor : Vector3.Zero;
+            }
+            else
+            {
+                clusterVelocity = ownVelocity;
+                clusterMass = ownMass;
+            }
+
+            #endregion
+
+            // Änderungen weiter geben
+            load?.Recalc();
+        }
+
+        /// <summary>
+        ///     Führt ein Positionsupdate durch. Die Kollisionsauflösung muss aber später passieren. Gibt zurück, ob das Element
+        ///     weiter existiert.
+        /// </summary>
+        /// <returns>Existiert das Element weiter</returns>
+        public bool Update()
+        {
+            var bounce = Vector3.Zero;
+            var result = SetPosition(Position + AppliedVelocity, ref bounce, false);
+            if (moving != null) moving.MoveMalus = 1;
+            return result != PositionResult.Dropped;
+        }
+
+        /// <summary>
+        ///     Prüft, ob ein eventuell getragenes Element immernoch in Tragreichweite ist und lässt es gegebenenfalls fallen.
+        /// </summary>
+        public void CheckPortableDistance()
+        {
+            if (load != null)
+                if (load.portable.PortableRadius <= Item.GetDistance(Item, load.Item))
+                    carrier.Drop();
+        }
+
+        /// <summary>
+        ///     Kümmert sich um eine Kollision zweier Elemente.
+        /// </summary>
+        /// <param name="cluster"></param>
+        public void Collide(PhysicsGroup cluster)
+        {
+            var max = Radius + cluster.Radius;
+            var dist = (Position - cluster.Position).Length();
+
+            // Auflösung
+            if (!IsFixed || !cluster.IsFixed)
+            {
+                // Richtungsvektor Item1->Item2
+                var direction = cluster.Position - Position;
+
+                // Fallback 1, falls direction == [0,0]:
+                // vorherige Positionen zum Diff verwenden
+                if (direction.LengthSquared() < Vector3.EPS_MIN)
+                    direction = cluster.Position - cluster.AppliedVelocity - (Position - AppliedVelocity);
+
+                // Fallback 2, falls direction == [0,0];
+                // fixe Achse
+                if (direction.LengthSquared() < Vector3.EPS_MIN)
+                    direction = new Vector3(1, 0, 0);
+
+                // Richtungsvektor Normalisieren
+                direction = direction.Normalize();
+
+
+                var diff = max - dist;
+                var bounce = new Vector3();
+
+                // Item1 fixed, item2 not fixed
+                if (IsFixed)
+                {
+                    // Nur Item2 bewegen
+                    // Ignore Result, da eh nix zu retten ist
+                    cluster.SetPosition(cluster.Position + direction * diff, ref bounce, true);
+                }
+                // Item1 not fixed, item2 fixed
+                else if (cluster.IsFixed)
+                {
+                    // Nur Item1 bewegen
+                    // Result unwichtig, da eh nichts zu retten ist
+                    SetPosition(Position + direction.InvertXYZ() * diff, ref bounce, true);
+                }
+                else
+                {
+                    // Über Masse auflösen
+                    var totalmass = AppliedMass + cluster.AppliedMass;
+                    var spanItem1 = diff * (cluster.AppliedMass / totalmass);
+                    var spanItem2 = diff * (AppliedMass / totalmass);
+                    var diffItem1 = direction.InvertXYZ() * spanItem1;
+                    var diffItem2 = direction * spanItem2;
+
+                    // Apply
+                    // Im Falle eines Blocks wird der Bounce auf das andere Element übertragen.
+                    bounce = Vector3.Zero;
+                    if (SetPosition(Position + diffItem1, ref bounce, true) == PositionResult.Blocked)
+                        diffItem2 += bounce;
+
+                    // Im Falle eines Bounce beim zweiten Element wird der Bounce ein letztes mal an Element 1 weiter gegeben.
+                    bounce = Vector3.Zero;
+                    if (cluster.SetPosition(cluster.Position + diffItem2, ref bounce, true) == PositionResult.Blocked)
+                        SetPosition(Position + bounce, ref bounce, true);
+                }
+            }
+
+            // Kollision melden
+            collidable?.CollideItem(cluster.Item);
+            cluster.collidable?.CollideItem(Item);
+        }
+
+        /// <summary>
+        ///     Setzt die neue Position des Elementes (
+        /// </summary>
+        /// <param name="position">Neue Position des Elements</param>
+        /// <param name="bounce">
+        ///     Der Abprallvektor, falls das Element
+        ///     gegen eine Wand stößt
+        /// </param>
+        /// <param name="forced">
+        ///     Legt fest, ob das Element freiwillig
+        ///     (normales Update) oder mit Gewalt (Kollision) bewegt wird.
+        /// </param>
+        /// <returns>Gibt das Ergebnis der Bewegung zurück</returns>
+        private PositionResult SetPosition(Vector3 position,
+            ref Vector3 bounce, bool forced)
+        {
+            var dropped = false;
+            var blocked = false;
+
+            var temp = PositionResult.Done;
+            var posTemp = position;
+
+            #region Rand
+
+            // Randverhalten
+            // X-Achse
+            if (position.X < Radius)
+                temp = HandleLeftBorder(ref position, forced);
+            else if (position.X >= mapSize.X - Radius)
+                temp = HandleRightBorder(ref position, forced);
+            else temp = PositionResult.Done;
+
+            if (temp == PositionResult.Blocked)
+            {
+                bounce += position - posTemp;
+                posTemp = position;
+            }
+
+            dropped |= temp == PositionResult.Dropped;
+            blocked |= temp == PositionResult.Blocked;
+
+            // Y-Achse
+            if (position.Y < Radius)
+                temp = HandleTopBorder(ref position, forced);
+            else if (position.Y >= mapSize.Y - Radius)
+                temp = HandleBottomBorder(ref position, forced);
+            else temp = PositionResult.Done;
+
+            if (temp == PositionResult.Blocked)
+            {
+                bounce += position - posTemp;
+                posTemp = position;
+            }
+
+            dropped |= temp == PositionResult.Dropped;
+            blocked |= temp == PositionResult.Blocked;
+
+            // Z-Achse
+            position.Z = map.GetHeight(new Vector2(position.X, position.Y));
+
+            // TODO: Bei fliegenden Einheiten die freie Bewegbarkeit prüfen
+            // Z-Achse
+            //float height = map.GetHeight(new Vector2(position.X, position.Y));
+            //if (position.Z < Map.MIN_Z || position.Z < height)
+            //    temp = HandleFloorBorder(ref position, height);
+            //else if (position.Z >= Map.MAX_Z - Radius)
+            //    temp = HandleCeilingBorder(ref position);
+            //else temp = PositionResult.Done;
+
+            //if (temp == PositionResult.Blocked)
+            //{
+            //    bounce += (position - posTemp);
+            //    posTemp = position;
+            //}
+
+            dropped |= temp == PositionResult.Dropped;
+            blocked |= temp == PositionResult.Blocked;
+
+            #endregion
+
+            #region Zelle
+
+            // Zellenrand
+            var diff = position - Item.Position;
+
+            // X-Achse
+            if (diff.X < 0)
+                temp = HandleLeftCell(ref position, forced);
+            else if (diff.X > 0)
+                temp = HandleRightCell(ref position, forced);
+            else temp = PositionResult.Done;
+
+            if (temp == PositionResult.Blocked)
+            {
+                bounce += position - posTemp;
+                posTemp = position;
+            }
+
+            blocked |= temp == PositionResult.Blocked;
+
+            // Y-Achse
+            if (diff.Y < 0)
+                temp = HandleTopCell(ref position, forced);
+            else if (diff.Y > 0)
+                temp = HandleBottomCell(ref position, forced);
+            else temp = PositionResult.Done;
+
+            if (temp == PositionResult.Blocked)
+            {
+                bounce += position - posTemp;
+                posTemp = position;
+            }
+
+            blocked |= temp == PositionResult.Blocked;
+
+            #endregion
+
+            Item.Position = position;
+
+            // Falls das Element gedropped wurde
+            if (dropped)
+                return PositionResult.Dropped;
+
+            // Falls geblockt wurde
+            if (blocked)
+                return PositionResult.Blocked;
+
+            // Falls alles gut ging
+            return PositionResult.Done;
+        }
+
         #region Connect und Disconnect
 
         public PhysicsGroup(Item item, Dictionary<int, PhysicsGroup> items)
         {
-            this.item = item;
+            Item = item;
             this.items = items;
             moving = item.GetProperty<WalkingProperty>();
             collidable = item.GetProperty<CollidableProperty>();
@@ -91,7 +398,7 @@ namespace AntMe.Basics.EngineProperties
             if (portable != null)
             {
                 // Drop all Carriers
-                foreach (CarrierProperty carrierItem in portable.CarrierItems.ToArray())
+                foreach (var carrierItem in portable.CarrierItems.ToArray())
                     carrierItem.Drop();
 
                 portable.OnPortableWeightChanged -= portable_OnPortableMassChanged;
@@ -125,21 +432,7 @@ namespace AntMe.Basics.EngineProperties
             }
 
             // Detach Item Stuff
-            item.CellChanged -= item_CellChanged;
-        }
-
-        #endregion
-
-        #region Item Events
-
-        /// <summary>
-        ///     Zelle wechselt - Fortbewegung muss neu berechnet werden
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="newValue"></param>
-        private void item_CellChanged(Item item, Index2 newValue)
-        {
-            Recalc();
+            Item.CellChanged -= item_CellChanged;
         }
 
         #endregion
@@ -154,7 +447,7 @@ namespace AntMe.Basics.EngineProperties
         private void portable_OnNewCarrierItem(CarrierProperty item)
         {
             // Fügt den Träger hinzu
-            int id = item.Item.Id;
+            var id = item.Item.Id;
             if (!items.ContainsKey(id))
                 throw new IndexOutOfRangeException("Item does not exist");
             clusterUnits.Add(items[id]);
@@ -165,7 +458,7 @@ namespace AntMe.Basics.EngineProperties
         private void portable_OnLostCarrierItem(CarrierProperty item)
         {
             // Entfernt den Träger
-            int id = item.Item.Id;
+            var id = item.Item.Id;
             if (!items.ContainsKey(id))
                 throw new IndexOutOfRangeException("Item does not exist");
             clusterUnits.Remove(items[id]);
@@ -186,14 +479,16 @@ namespace AntMe.Basics.EngineProperties
         {
             if (newValue != null)
             {
-                int id = newValue.Item.Id;
+                var id = newValue.Item.Id;
                 if (!items.ContainsKey(id))
                     throw new IndexOutOfRangeException("Item does not exist");
 
                 load = items[id];
             }
             else
+            {
                 load = null;
+            }
 
             Recalc();
         }
@@ -252,302 +547,6 @@ namespace AntMe.Basics.EngineProperties
         }
 
         #endregion
-
-        /// <summary>
-        ///     Berechnet die resultierende Geschwindigkeit des lokalen Elementes
-        ///     neu. Berücksichtigt werden die move Parameter Speed, Direction, CellSpeed.
-        /// </summary>
-        private void Recalc()
-        {
-            #region Berechnung lokaler Variablen
-
-            // Zelle berücksichtigen
-            Index2 cell = map.GetCellIndex(item.Position);
-            float cellspeed = map[cell.X, cell.Y].Material.Speed;
-
-            // Eigenständige Bewegung
-            if (moving != null)
-            {
-                float speed = Math.Min(moving.MaximumSpeed, moving.Speed);
-                ownVelocity = Vector3.FromAngleXY(moving.Direction)*speed*cellspeed;
-            }
-
-            ownMass = (collidable != null ? collidable.CollisionMass : 0f);
-
-            #endregion
-
-            #region Berechnung der Cluster Variablen
-
-            // Portable Stuff
-            if (portable != null)
-            {
-                // Sammeln der Daten
-                Vector3 tempVelocity = ownVelocity;
-                float tempMass = ownMass;
-                float tempStrength = 0f;
-                int itemCount = 1;
-                foreach (PhysicsGroup unit in clusterUnits)
-                {
-                    tempVelocity += unit.clusterVelocity;
-                    tempMass += unit.clusterMass;
-                    tempStrength += (unit.carrier != null ? unit.carrier.CarrierStrength : 0f);
-                    itemCount++;
-                }
-
-                clusterMass = tempMass;
-
-                // Trägerkraft berücksichtigen
-                // (Geschwindigkeit verhält sich antiproportional zur Summe der Stärken)
-                // Übersteigt die Summe der Stärken das Gewicht, ist die maximal mögliche Geschwindigkeit erreicht
-                float speedFactor = (Weight > 0f ? tempStrength/Weight : 1f);
-                speedFactor = Math.Min(1f, Math.Max(0f, speedFactor));
-
-                // Geschwindigkeit des Portables nur berüchsichtigen, wenn es ebenso Moving ist
-                itemCount -= (moving != null ? 0 : 1);
-
-                // Resultierende Geschwindigkeit berechnen
-                clusterVelocity = (itemCount > 0 ? (tempVelocity/itemCount)*speedFactor : Vector3.Zero);
-            }
-            else
-            {
-                clusterVelocity = ownVelocity;
-                clusterMass = ownMass;
-            }
-
-            #endregion
-
-            // Änderungen weiter geben
-            load?.Recalc();
-        }
-
-        /// <summary>
-        ///     Führt ein Positionsupdate durch. Die Kollisionsauflösung muss aber später passieren. Gibt zurück, ob das Element
-        ///     weiter existiert.
-        /// </summary>
-        /// <returns>Existiert das Element weiter</returns>
-        public bool Update()
-        {
-            Vector3 bounce = Vector3.Zero;
-            PositionResult result = SetPosition(Position + AppliedVelocity, ref bounce, false);
-            if (moving != null) moving.MoveMalus = 1;
-            return result != PositionResult.Dropped;
-        }
-
-        /// <summary>
-        ///     Prüft, ob ein eventuell getragenes Element immernoch in Tragreichweite ist und lässt es gegebenenfalls fallen.
-        /// </summary>
-        public void CheckPortableDistance()
-        {
-            if (load != null)
-            {
-                if (load.portable.PortableRadius <= Item.GetDistance(Item, load.Item))
-                    carrier.Drop();
-            }
-        }
-
-        /// <summary>
-        ///     Kümmert sich um eine Kollision zweier Elemente.
-        /// </summary>
-        /// <param name="cluster"></param>
-        public void Collide(PhysicsGroup cluster)
-        {
-            float max = Radius + cluster.Radius;
-            float dist = (Position - cluster.Position).Length();
-
-            // Auflösung
-            if (!IsFixed || !cluster.IsFixed)
-            {
-                // Richtungsvektor Item1->Item2
-                Vector3 direction = (cluster.Position - Position);
-
-                // Fallback 1, falls direction == [0,0]:
-                // vorherige Positionen zum Diff verwenden
-                if (direction.LengthSquared() < Vector3.EPS_MIN)
-                    direction = ((cluster.Position - cluster.AppliedVelocity) - (Position - AppliedVelocity));
-
-                // Fallback 2, falls direction == [0,0];
-                // fixe Achse
-                if (direction.LengthSquared() < Vector3.EPS_MIN)
-                    direction = new Vector3(1, 0, 0);
-
-                // Richtungsvektor Normalisieren
-                direction = direction.Normalize();
-
-
-                float diff = max - dist;
-                var bounce = new Vector3();
-
-                // Item1 fixed, item2 not fixed
-                if (IsFixed)
-                {
-                    // Nur Item2 bewegen
-                    // Ignore Result, da eh nix zu retten ist
-                    cluster.SetPosition(cluster.Position + (direction*diff), ref bounce, true);
-                }
-                    // Item1 not fixed, item2 fixed
-                else if (cluster.IsFixed)
-                {
-                    // Nur Item1 bewegen
-                    // Result unwichtig, da eh nichts zu retten ist
-                    SetPosition(Position + (direction.InvertXYZ()*diff), ref bounce, true);
-                }
-                else
-                {
-                    // Über Masse auflösen
-                    float totalmass = AppliedMass + cluster.AppliedMass;
-                    float spanItem1 = diff*(cluster.AppliedMass/totalmass);
-                    float spanItem2 = diff*(AppliedMass/totalmass);
-                    Vector3 diffItem1 = direction.InvertXYZ()*spanItem1;
-                    Vector3 diffItem2 = direction*spanItem2;
-
-                    // Apply
-                    // Im Falle eines Blocks wird der Bounce auf das andere Element übertragen.
-                    bounce = Vector3.Zero;
-                    if (SetPosition(Position + diffItem1, ref bounce, true) == PositionResult.Blocked)
-                        diffItem2 += bounce;
-
-                    // Im Falle eines Bounce beim zweiten Element wird der Bounce ein letztes mal an Element 1 weiter gegeben.
-                    bounce = Vector3.Zero;
-                    if (cluster.SetPosition(cluster.Position + diffItem2, ref bounce, true) == PositionResult.Blocked)
-                        SetPosition(Position + bounce, ref bounce, true);
-                }
-            }
-
-            // Kollision melden
-            collidable?.CollideItem(cluster.Item);
-            cluster.collidable?.CollideItem(Item);
-        }
-
-        /// <summary>
-        ///     Setzt die neue Position des Elementes (
-        /// </summary>
-        /// <param name="position">Neue Position des Elements</param>
-        /// <param name="bounce">
-        ///     Der Abprallvektor, falls das Element
-        ///     gegen eine Wand stößt
-        /// </param>
-        /// <param name="forced">
-        ///     Legt fest, ob das Element freiwillig
-        ///     (normales Update) oder mit Gewalt (Kollision) bewegt wird.
-        /// </param>
-        /// <returns>Gibt das Ergebnis der Bewegung zurück</returns>
-        private PositionResult SetPosition(Vector3 position,
-            ref Vector3 bounce, bool forced)
-        {
-            bool dropped = false;
-            bool blocked = false;
-
-            var temp = PositionResult.Done;
-            Vector3 posTemp = position;
-
-            #region Rand
-
-            // Randverhalten
-            // X-Achse
-            if (position.X < Radius)
-                temp = HandleLeftBorder(ref position, forced);
-            else if (position.X >= mapSize.X - Radius)
-                temp = HandleRightBorder(ref position, forced);
-            else temp = PositionResult.Done;
-
-            if (temp == PositionResult.Blocked)
-            {
-                bounce += (position - posTemp);
-                posTemp = position;
-            }
-
-            dropped |= temp == PositionResult.Dropped;
-            blocked |= temp == PositionResult.Blocked;
-
-            // Y-Achse
-            if (position.Y < Radius)
-                temp = HandleTopBorder(ref position, forced);
-            else if (position.Y >= mapSize.Y - Radius)
-                temp = HandleBottomBorder(ref position, forced);
-            else temp = PositionResult.Done;
-
-            if (temp == PositionResult.Blocked)
-            {
-                bounce += (position - posTemp);
-                posTemp = position;
-            }
-
-            dropped |= temp == PositionResult.Dropped;
-            blocked |= temp == PositionResult.Blocked;
-
-            // Z-Achse
-            position.Z = map.GetHeight(new Vector2(position.X, position.Y));
-
-            // TODO: Bei fliegenden Einheiten die freie Bewegbarkeit prüfen
-            // Z-Achse
-            //float height = map.GetHeight(new Vector2(position.X, position.Y));
-            //if (position.Z < Map.MIN_Z || position.Z < height)
-            //    temp = HandleFloorBorder(ref position, height);
-            //else if (position.Z >= Map.MAX_Z - Radius)
-            //    temp = HandleCeilingBorder(ref position);
-            //else temp = PositionResult.Done;
-
-            //if (temp == PositionResult.Blocked)
-            //{
-            //    bounce += (position - posTemp);
-            //    posTemp = position;
-            //}
-
-            dropped |= temp == PositionResult.Dropped;
-            blocked |= temp == PositionResult.Blocked;
-
-            #endregion
-
-            #region Zelle
-
-            // Zellenrand
-            Vector3 diff = position - item.Position;
-
-            // X-Achse
-            if (diff.X < 0)
-                temp = HandleLeftCell(ref position, forced);
-            else if (diff.X > 0)
-                temp = HandleRightCell(ref position, forced);
-            else temp = PositionResult.Done;
-
-            if (temp == PositionResult.Blocked)
-            {
-                bounce += (position - posTemp);
-                posTemp = position;
-            }
-
-            blocked |= temp == PositionResult.Blocked;
-
-            // Y-Achse
-            if (diff.Y < 0)
-                temp = HandleTopCell(ref position, forced);
-            else if (diff.Y > 0)
-                temp = HandleBottomCell(ref position, forced);
-            else temp = PositionResult.Done;
-
-            if (temp == PositionResult.Blocked)
-            {
-                bounce += (position - posTemp);
-                posTemp = position;
-            }
-
-            blocked |= temp == PositionResult.Blocked;
-
-            #endregion
-
-            item.Position = position;
-
-            // Falls das Element gedropped wurde
-            if (dropped)
-                return PositionResult.Dropped;
-
-            // Falls geblockt wurde
-            if (blocked)
-                return PositionResult.Blocked;
-
-            // Falls alles gut ging
-            return PositionResult.Done;
-        }
 
         #region Border Handling
 
@@ -702,19 +701,17 @@ namespace AntMe.Basics.EngineProperties
         /// <returns></returns>
         private PositionResult HandleLeftCell(ref Vector3 position, bool forced)
         {
-            Index2 cell = map.GetCellIndex(new Vector3(
-                position.X - Radius, item.Position.Y, item.Position.Z));
-            if (cell != item.Cell)
-            {
+            var cell = map.GetCellIndex(new Vector3(
+                position.X - Radius, Item.Position.Y, Item.Position.Z));
+            if (cell != Item.Cell)
                 // Prüft, ob die neue Zelle begehbar ist.
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    position.X = ((cell.X + 1)*Map.CELLSIZE) + Radius;
+                    position.X = (cell.X + 1) * Map.CELLSIZE + Radius;
                     if (!forced) TriggerCellEvent(Compass.West);
                     return PositionResult.Blocked;
                 }
-            }
 
             return PositionResult.Done;
         }
@@ -727,19 +724,17 @@ namespace AntMe.Basics.EngineProperties
         /// <returns></returns>
         private PositionResult HandleRightCell(ref Vector3 position, bool forced)
         {
-            Index2 cell = map.GetCellIndex(new Vector3(
-                position.X + Radius, item.Position.Y, item.Position.Z));
-            if (cell != item.Cell)
-            {
+            var cell = map.GetCellIndex(new Vector3(
+                position.X + Radius, Item.Position.Y, Item.Position.Z));
+            if (cell != Item.Cell)
                 // Prüft, ob die neue Zelle begehbar ist.
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    position.X = (cell.X*Map.CELLSIZE) - Radius;
+                    position.X = cell.X * Map.CELLSIZE - Radius;
                     if (!forced) TriggerCellEvent(Compass.East);
                     return PositionResult.Blocked;
                 }
-            }
 
             return PositionResult.Done;
         }
@@ -752,19 +747,17 @@ namespace AntMe.Basics.EngineProperties
         /// <returns></returns>
         private PositionResult HandleTopCell(ref Vector3 position, bool forced)
         {
-            Index2 cell = map.GetCellIndex(new Vector3(
-                item.Position.X, position.Y - Radius, position.Z));
-            if (cell != item.Cell)
-            {
+            var cell = map.GetCellIndex(new Vector3(
+                Item.Position.X, position.Y - Radius, position.Z));
+            if (cell != Item.Cell)
                 // Prüft, ob die neue Zelle begehbar ist.
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    position.Y = ((cell.Y + 1)*Map.CELLSIZE) + Radius;
+                    position.Y = (cell.Y + 1) * Map.CELLSIZE + Radius;
                     if (!forced) TriggerCellEvent(Compass.North);
                     return PositionResult.Blocked;
                 }
-            }
 
             return PositionResult.Done;
         }
@@ -777,19 +770,17 @@ namespace AntMe.Basics.EngineProperties
         /// <returns></returns>
         private PositionResult HandleBottomCell(ref Vector3 position, bool forced)
         {
-            Index2 cell = map.GetCellIndex(new Vector3(
-                item.Position.X, position.Y + Radius, item.Position.Z));
-            if (cell != item.Cell)
-            {
+            var cell = map.GetCellIndex(new Vector3(
+                Item.Position.X, position.Y + Radius, Item.Position.Z));
+            if (cell != Item.Cell)
                 // Prüft, ob die neue Zelle begehbar ist.
                 if (!map[cell.X, cell.Y].ContainsProperty<WalkableTileProperty>())
                 {
                     // Position korrigieren
-                    position.Y = (cell.Y*Map.CELLSIZE) - Radius;
+                    position.Y = cell.Y * Map.CELLSIZE - Radius;
                     if (!forced) TriggerCellEvent(Compass.South);
                     return PositionResult.Blocked;
                 }
-            }
 
             return PositionResult.Done;
         }
@@ -810,80 +801,47 @@ namespace AntMe.Basics.EngineProperties
         /// <summary>
         ///     Gibt die Referenz auf das Item zurück.
         /// </summary>
-        public Item Item
-        {
-            get { return item; }
-        }
+        public Item Item { get; }
 
         /// <summary>
         ///     Gibt die Position des Items zurück.
         /// </summary>
-        public Vector3 Position
-        {
-            get { return item.Position; }
-        }
+        public Vector3 Position => Item.Position;
 
         /// <summary>
         ///     Gibt den Radius des Körpers zurück.
         /// </summary>
-        public float Radius
-        {
-            get { return collidable?.CollisionRadius ?? 0; }
-        }
+        public float Radius => collidable?.CollisionRadius ?? 0;
 
         /// <summary>
         ///     Gibt zurück, ob der Cluster bei den Kollisionen berücksichtigt werden soll.
         /// </summary>
-        public bool CanCollide
-        {
-            get { return (collidable != null); }
-        }
+        public bool CanCollide => collidable != null;
 
         /// <summary>
         ///     Gibt zurück, ob das Element fixiert ist oder bewegt werden kann.
         /// </summary>
-        public bool IsFixed
-        {
-            get { return collidable?.CollisionFixed ?? false; }
-        }
+        public bool IsFixed => collidable?.CollisionFixed ?? false;
 
         /// <summary>
         ///     Gibt das Gewicht des Elementes an.
         /// </summary>
-        private float Weight
-        {
-            get { return portable?.PortableWeight ?? 0f; }
-        }
+        private float Weight => portable?.PortableWeight ?? 0f;
 
         /// <summary>
         ///     Gibt die Stärke dieser Einheit zurück.
         /// </summary>
-        private float Strength
-        {
-            get { return carrier?.CarrierStrength ?? 0f; }
-        }
+        private float Strength => carrier?.CarrierStrength ?? 0f;
 
         /// <summary>
         ///     Effektiv anzuwendende Geschwindigkeit bei der Bewegungsberechnung.
         /// </summary>
-        public Vector3 AppliedVelocity
-        {
-            get
-            {
-                return load?.AppliedVelocity ?? clusterVelocity;
-            }
-        }
+        public Vector3 AppliedVelocity => load?.AppliedVelocity ?? clusterVelocity;
 
         /// <summary>
         ///     Effektiv anzuwendende Masse bei Kollisionsberechnungen.
         /// </summary>
-        public float AppliedMass
-        {
-            get
-            {
-                return load?.AppliedMass ?? clusterMass;
-            }
-        }
+        public float AppliedMass => load?.AppliedMass ?? clusterMass;
 
         #endregion
     }

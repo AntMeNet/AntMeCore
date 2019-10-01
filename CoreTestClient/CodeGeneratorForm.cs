@@ -1,17 +1,15 @@
-﻿using AntMe.Generator;
-using AntMe.Runtime;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using AntMe.Generator;
 
 namespace CoreTestClient
 {
     public partial class CodeGeneratorForm : Form
     {
-        private TemplateGenerator templateGenerator;
+        private readonly TemplateGenerator templateGenerator;
 
         public CodeGeneratorForm()
         {
@@ -43,24 +41,21 @@ namespace CoreTestClient
         private void browseButton_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
-            {
                 outputTextBox.Text = folderBrowserDialog.SelectedPath;
-            }
         }
 
         private void CodeGeneratorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (DialogResult == DialogResult.OK)
-            {
                 try
                 {
                     templateGenerator.Generate(
                         nameTextBox.Text,
                         authorTextBox.Text,
-                        (string)factionCombo.SelectedItem,
-                        (string)languageCombo.SelectedItem,
-                        (string)programmingLanguageCombo.SelectedItem,
-                        (string)environmentComboBox.SelectedItem,
+                        (string) factionCombo.SelectedItem,
+                        (string) languageCombo.SelectedItem,
+                        (string) programmingLanguageCombo.SelectedItem,
+                        (string) environmentComboBox.SelectedItem,
                         outputTextBox.Text);
                 }
                 catch (Exception ex)
@@ -68,22 +63,22 @@ namespace CoreTestClient
                     MessageBox.Show(ex.Message);
                     e.Cancel = true;
                 }
-            }
         }
 
         private void regenerateButton_Click(object sender, EventArgs e)
         {
-            string outputFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions";
+            var outputFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions";
 
-            string[] importPaths = new string[] {
-                    Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                    outputFolder,
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
-                };
+            string[] importPaths =
+            {
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                outputFolder,
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
+            };
 
             try
             {
-                string output = ModpackGenerator.Generate(importPaths, outputFolder, null);
+                var output = ModpackGenerator.Generate(importPaths, outputFolder, null);
             }
             catch (Exception ex)
             {

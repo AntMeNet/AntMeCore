@@ -5,20 +5,20 @@ using System.IO;
 namespace AntMe.Basics.FactionProperties
 {
     /// <summary>
-    /// Property State for the Faction Property for Points.
+    ///     Property State for the Faction Property for Points.
     /// </summary>
     public sealed class PointsState : FactionStateProperty
     {
         /// <summary>
-        /// Default Constructor for the Deserializer.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public PointsState() : base()
+        public PointsState()
         {
             PointsPerCategory = new Dictionary<string, int>();
         }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Related Faction</param>
         /// <param name="property">Related Faction Property</param>
@@ -28,7 +28,7 @@ namespace AntMe.Basics.FactionProperties
 
             // Bind Points
             Points = property.Points;
-            property.OnPointsChanged += (v) => { Points = v; };
+            property.OnPointsChanged += v => { Points = v; };
 
             // Bind Categories
             foreach (var key in property.PointsPerCategory.Keys)
@@ -37,7 +37,7 @@ namespace AntMe.Basics.FactionProperties
         }
 
         /// <summary>
-        /// Total Amount of Points.
+        ///     Total Amount of Points.
         /// </summary>
         [DisplayName("Points")]
         [Description("Total Amount of Points")]
@@ -46,7 +46,7 @@ namespace AntMe.Basics.FactionProperties
         public int Points { get; set; }
 
         /// <summary>
-        /// Points per Category
+        ///     Points per Category
         /// </summary>
         [DisplayName("Points per Category")]
         [Description("Points per Category")]
@@ -59,10 +59,10 @@ namespace AntMe.Basics.FactionProperties
             Points = stream.ReadInt32();
             var count = stream.ReadInt32();
             PointsPerCategory.Clear();
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                string key = stream.ReadString();
-                int value = stream.ReadInt32();
+                var key = stream.ReadString();
+                var value = stream.ReadInt32();
                 PointsPerCategory.Add(key, value);
             }
         }
@@ -72,10 +72,10 @@ namespace AntMe.Basics.FactionProperties
             Points = stream.ReadInt32();
             var count = stream.ReadInt32();
             PointsPerCategory.Clear();
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                string key = stream.ReadString();
-                int value = stream.ReadInt32();
+                var key = stream.ReadString();
+                var value = stream.ReadInt32();
                 PointsPerCategory.Add(key, value);
             }
         }

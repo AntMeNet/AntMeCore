@@ -1,5 +1,4 @@
-﻿using AntMe;
-using System;
+﻿using System;
 using System.ServiceModel;
 
 namespace AntMe.Runtime.Communication
@@ -11,15 +10,20 @@ namespace AntMe.Runtime.Communication
     )]
     internal sealed class SimulationService : ISimulationService, IDisposable
     {
-        private ISimulationCallback callback;
-        private SimulationServer server;
+        private readonly ISimulationCallback callback;
 
-        private int id;
+        private readonly int id;
+        private readonly SimulationServer server;
 
         public SimulationService()
         {
             callback = OperationContext.Current.GetCallbackChannel<ISimulationCallback>();
             id = SimulationServer.Register(this, callback, out server);
+        }
+
+        public void Dispose()
+        {
+            SimulationServer.Unregister(this);
         }
 
         [OperationBehavior(
@@ -35,7 +39,7 @@ namespace AntMe.Runtime.Communication
             {
                 throw new FaultException<AntMeFault>(new AntMeFault(), ex.Message);
             }
-            
+
             return id;
         }
 
@@ -204,7 +208,8 @@ namespace AntMe.Runtime.Communication
 
         public void StopSimulation()
         {
-            try {
+            try
+            {
                 server.StopSimulation(this);
             }
             catch (Exception ex)
@@ -223,11 +228,6 @@ namespace AntMe.Runtime.Communication
             {
                 throw new FaultException<AntMeFault>(new AntMeFault(), ex.Message);
             }
-        }
-
-        public void Dispose()
-        {
-            SimulationServer.Unregister(this);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
-    /// Dialog Highlight
+    ///     Dialog Highlight
     /// </summary>
     public sealed class DialogHighlight : Highlight
     {

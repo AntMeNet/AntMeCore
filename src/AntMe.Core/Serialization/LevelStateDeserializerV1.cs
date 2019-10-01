@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
 using static AntMe.Serialization.LevelStateSerializerV1;
 
 namespace AntMe.Serialization
@@ -10,25 +9,24 @@ namespace AntMe.Serialization
     [Obsolete]
     internal sealed class LevelStateDeserializerV1 : ILevelStateDeserializer
     {
-        private readonly MemoryStream _stream;
-        private readonly BinaryReader _reader;
-        private object _lockObject = new object();
-
-        private bool _streamOpen = false;
-        private bool _frameOpen = false;
-        private int _frameNumber = 0;
-        private byte _version = 0;
-        private bool _disposed = false;
-
-        private LevelState _currentState;
-
         private readonly Dictionary<byte, FactionState> _factions = new Dictionary<byte, FactionState>();
         private readonly Dictionary<int, ItemState> _items = new Dictionary<int, ItemState>();
         private readonly Dictionary<byte, Type> _knownFactionTypes = new Dictionary<byte, Type>();
         private readonly Dictionary<byte, Type> _knownItemTypes = new Dictionary<byte, Type>();
+        private readonly BinaryReader _reader;
+        private readonly MemoryStream _stream;
+
+        private LevelState _currentState;
+        private readonly bool _disposed = false;
+        private int _frameNumber;
+        private bool _frameOpen;
+        private readonly object _lockObject = new object();
+
+        private bool _streamOpen;
+        private byte _version;
 
         /// <summary>
-        /// Neue Instanz eines State Deserializers.
+        ///     Neue Instanz eines State Deserializers.
         /// </summary>
         public LevelStateDeserializerV1()
         {
@@ -37,7 +35,31 @@ namespace AntMe.Serialization
         }
 
         /// <summary>
-        /// Deserialisiert den gegebenen Byte Array.
+        ///     Disposed den Deserializer.
+        /// </summary>
+        public void Dispose()
+        {
+            lock (_lockObject)
+            {
+                // Deserializer ist bereits disposed.
+                if (_disposed) return;
+
+                _reader.Dispose();
+                _stream.Dispose();
+                _factions.Clear();
+                _items.Clear();
+                _knownFactionTypes.Clear();
+                _knownItemTypes.Clear();
+            }
+        }
+
+        public LevelState Deserialize(BinaryReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Deserialisiert den gegebenen Byte Array.
         /// </summary>
         /// <param name="input">Input Array</param>
         /// <returns>Aktuelle Instanz des Main States</returns>
@@ -61,13 +83,16 @@ namespace AntMe.Serialization
 
         private LevelState InternalDeserialize()
         {
-            while (ReadNext()) { }
+            while (ReadNext())
+            {
+            }
+
             return _currentState;
         }
 
         private bool ReadNext()
         {
-            SerializerPackage package = (SerializerPackage)_reader.ReadByte();
+            var package = (SerializerPackage) _reader.ReadByte();
             switch (package)
             {
                 #region Infrastruktur
@@ -127,6 +152,39 @@ namespace AntMe.Serialization
             }
         }
 
+        /// <summary>
+        ///     Deserialisiert mit Hilfe der angegebenen Methode, checkt aber mit der Checksumme gegen.
+        /// </summary>
+        /// <param name="deserializer">Methode zur Deserialisierung</param>
+        private void ValidatedDeserialisation(Action<BinaryReader, byte> deserializer)
+        {
+            var size = _reader.ReadInt16();
+            var pos = _stream.Position;
+            deserializer(_reader, _version);
+            if (_stream.Position - pos != size)
+                throw new InvalidOperationException("Size and Position don't match");
+        }
+
+        /// <summary>
+        ///     Liest die ersten beiden Bytes aus, um die Länge des Restblocks zu ermitteln und liest
+        ///     den Block vollständig aus.
+        /// </summary>
+        private void SkipBlock()
+        {
+            var size = _reader.ReadInt16();
+            _reader.ReadBytes(size);
+        }
+
+        private void CheckBasics()
+        {
+            if (!_streamOpen)
+                throw new NotSupportedException("No open Stream available");
+            if (!_frameOpen)
+                throw new NotSupportedException("No open Frame avaible");
+            if (_currentState == null)
+                throw new NotSupportedException("No MainState available");
+        }
+
         #region Infrastruktur
 
         private bool ReadStreamVersion()
@@ -162,7 +220,6 @@ namespace AntMe.Serialization
         #endregion
 
         #region Main und Map
-
 
         private bool ReadMainFirst()
         {
@@ -247,14 +304,14 @@ namespace AntMe.Serialization
         {
             CheckBasics();
 
-            byte index = _reader.ReadByte();
-            byte typeIndex = _reader.ReadByte();
+            var index = _reader.ReadByte();
+            var typeIndex = _reader.ReadByte();
 
             if (!_knownFactionTypes.ContainsKey(typeIndex))
                 throw new NotSupportedException("Type is not registered");
 
             // Neue Instanz erzeugen
-            Type factionType = _knownFactionTypes[typeIndex];
+            var factionType = _knownFactionTypes[typeIndex];
             FactionState state = null;
             if (factionType != null)
             {
@@ -278,7 +335,7 @@ namespace AntMe.Serialization
         {
             CheckBasics();
 
-            byte index = _reader.ReadByte();
+            var index = _reader.ReadByte();
 
             FactionState state;
             if (_factions.TryGetValue(index, out state))
@@ -289,7 +346,9 @@ namespace AntMe.Serialization
                     ValidatedDeserialisation(state.DeserializeUpdate);
             }
             else
+            {
                 throw new NotSupportedException("No FactionState available");
+            }
 
             return true;
         }
@@ -298,7 +357,7 @@ namespace AntMe.Serialization
         {
             CheckBasics();
 
-            byte index = _reader.ReadByte();
+            var index = _reader.ReadByte();
             FactionState state;
             if (_factions.TryGetValue(index, out state))
             {
@@ -317,8 +376,8 @@ namespace AntMe.Serialization
         {
             CheckBasics();
 
-            byte index = _reader.ReadByte();
-            string name = _reader.ReadString();
+            var index = _reader.ReadByte();
+            var name = _reader.ReadString();
 
             if (_knownItemTypes.ContainsKey(index))
                 throw new NotSupportedException("Type is already known");
@@ -346,8 +405,8 @@ namespace AntMe.Serialization
         {
             CheckBasics();
 
-            int id = _reader.ReadInt32();
-            byte type = _reader.ReadByte();
+            var id = _reader.ReadInt32();
+            var type = _reader.ReadByte();
 
             ItemState state;
             if (_knownItemTypes.ContainsKey(type))
@@ -373,9 +432,9 @@ namespace AntMe.Serialization
         {
             CheckBasics();
 
-            int id = _reader.ReadInt32();
-            byte faction = _reader.ReadByte();
-            byte type = _reader.ReadByte();
+            var id = _reader.ReadInt32();
+            var faction = _reader.ReadByte();
+            var type = _reader.ReadByte();
 
             FactionItemState state;
             if (_knownItemTypes.ContainsKey(type))
@@ -403,7 +462,7 @@ namespace AntMe.Serialization
         {
             CheckBasics();
 
-            int id = _reader.ReadInt32();
+            var id = _reader.ReadInt32();
 
             ItemState state;
             if (_items.TryGetValue(id, out state))
@@ -414,7 +473,9 @@ namespace AntMe.Serialization
                     ValidatedDeserialisation(state.DeserializeUpdate);
             }
             else
+            {
                 throw new NotSupportedException("Item with the given ID not found");
+            }
 
             return true;
         }
@@ -423,7 +484,7 @@ namespace AntMe.Serialization
         {
             CheckBasics();
 
-            int id = _reader.ReadInt32();
+            var id = _reader.ReadInt32();
 
             ItemState state;
             if (_items.TryGetValue(id, out state))
@@ -432,68 +493,13 @@ namespace AntMe.Serialization
                 _items.Remove(id);
             }
             else
+            {
                 throw new NotSupportedException("Item with the given ID not found");
+            }
 
             return true;
         }
 
         #endregion
-
-        /// <summary>
-        /// Deserialisiert mit Hilfe der angegebenen Methode, checkt aber mit der Checksumme gegen.
-        /// </summary>
-        /// <param name="deserializer">Methode zur Deserialisierung</param>
-        private void ValidatedDeserialisation(Action<BinaryReader, byte> deserializer)
-        {
-            short size = _reader.ReadInt16();
-            long pos = _stream.Position;
-            deserializer(_reader, _version);
-            if (_stream.Position - pos != size)
-                throw new InvalidOperationException("Size and Position don't match");
-        }
-
-        /// <summary>
-        /// Liest die ersten beiden Bytes aus, um die Länge des Restblocks zu ermitteln und liest 
-        /// den Block vollständig aus.
-        /// </summary>
-        private void SkipBlock()
-        {
-            short size = _reader.ReadInt16();
-            _reader.ReadBytes(size);
-        }
-
-        private void CheckBasics()
-        {
-            if (!_streamOpen)
-                throw new NotSupportedException("No open Stream available");
-            if (!_frameOpen)
-                throw new NotSupportedException("No open Frame avaible");
-            if (_currentState == null)
-                throw new NotSupportedException("No MainState available");
-        }
-
-        /// <summary>
-        /// Disposed den Deserializer.
-        /// </summary>
-        public void Dispose()
-        {
-            lock (_lockObject)
-            {
-                // Deserializer ist bereits disposed.
-                if (_disposed) return;
-
-                _reader.Dispose();
-                _stream.Dispose();
-                _factions.Clear();
-                _items.Clear();
-                _knownFactionTypes.Clear();
-                _knownItemTypes.Clear();
-            }
-        }
-
-        public LevelState Deserialize(BinaryReader reader)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

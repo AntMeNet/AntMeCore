@@ -3,30 +3,32 @@
 namespace AntMe.Basics.Factions
 {
     /// <summary>
-    /// Statistical Factory Interop Property to count and group Items by Type
+    ///     Statistical Factory Interop Property to count and group Items by Type
     /// </summary>
     public sealed class ByTypeStatisticsInterop : StatisticsInterop<Type>
     {
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="interop">Related Interop</param>
-        public ByTypeStatisticsInterop(Faction faction, FactoryInterop interop) : this(faction, interop, null) { }
+        public ByTypeStatisticsInterop(Faction faction, FactoryInterop interop) : this(faction, interop, null)
+        {
+        }
 
         /// <summary>
-        /// Specialized Constructor with an additional Filter Type Definition.
+        ///     Specialized Constructor with an additional Filter Type Definition.
         /// </summary>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="interop">Related Interop</param>
         /// <param name="filterType">Required Base Type</param>
-        public ByTypeStatisticsInterop(Faction faction, FactoryInterop interop, Type filterType) : base(faction, interop, filterType)
+        public ByTypeStatisticsInterop(Faction faction, FactoryInterop interop, Type filterType) : base(faction,
+            interop, filterType)
         {
-
         }
 
         /// <summary>
-        /// Callback to identify the group key.
+        ///     Callback to identify the group key.
         /// </summary>
         /// <param name="item">Item</param>
         /// <param name="group">Group Key</param>

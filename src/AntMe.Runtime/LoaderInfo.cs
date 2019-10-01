@@ -4,34 +4,14 @@ using System.Collections.Generic;
 namespace AntMe.Runtime
 {
     /// <summary>
-    /// Result Set for the individual Extension Loader. 
-    /// Contains all discovered Elements and a list of occured errors.
+    ///     Result Set for the individual Extension Loader.
+    ///     Contains all discovered Elements and a list of occured errors.
     /// </summary>
     [Serializable]
     public sealed class LoaderInfo
     {
         /// <summary>
-        /// List of discovered Levels.
-        /// </summary>
-        public List<LevelInfo> Levels { get; private set; }
-
-        /// <summary>
-        /// List of discovered Campaigns.
-        /// </summary>
-        public List<CampaignInfo> Campaigns { get; private set; }
-
-        /// <summary>
-        /// List of occured errors.
-        /// </summary>
-        public List<Exception> Errors { get; private set; }
-
-        /// <summary>
-        /// List of discovered Players.
-        /// </summary>
-        public List<PlayerInfo> Players { get; set; }
-
-        /// <summary>
-        /// Creates a new instance of LoaderInfo.
+        ///     Creates a new instance of LoaderInfo.
         /// </summary>
         public LoaderInfo()
         {
@@ -42,7 +22,27 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Adds another LoaderInfo to the current result set.
+        ///     List of discovered Levels.
+        /// </summary>
+        public List<LevelInfo> Levels { get; }
+
+        /// <summary>
+        ///     List of discovered Campaigns.
+        /// </summary>
+        public List<CampaignInfo> Campaigns { get; }
+
+        /// <summary>
+        ///     List of occured errors.
+        /// </summary>
+        public List<Exception> Errors { get; }
+
+        /// <summary>
+        ///     List of discovered Players.
+        /// </summary>
+        public List<PlayerInfo> Players { get; set; }
+
+        /// <summary>
+        ///     Adds another LoaderInfo to the current result set.
         /// </summary>
         /// <param name="info">Additional LoaderInfo</param>
         public void AddRange(LoaderInfo info)

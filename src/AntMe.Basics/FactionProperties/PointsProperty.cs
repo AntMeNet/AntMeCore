@@ -1,31 +1,31 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace AntMe.Basics.FactionProperties
 {
     /// <summary>
-    /// Faction Property that is responsible for counting the Points.
+    ///     Faction Property that is responsible for counting the Points.
     /// </summary>
     public sealed class PointsProperty : FactionProperty
     {
         /// <summary>
-        /// Total Points Counter
+        ///     List of all Point-Relevant Elements.
+        ///     (including Factions, FactionProperties, Items and ItemProperties)
         /// </summary>
-        private int points = 0;
+        private readonly HashSet<IPointsCollector> collectors;
 
         /// <summary>
-        /// Category based Points Counter
+        ///     Total Points Counter
         /// </summary>
-        private Dictionary<string, int> pointsPerCategory;
+        private int points;
 
         /// <summary>
-        /// List of all Point-Relevant Elements.
-        /// (including Factions, FactionProperties, Items and ItemProperties)
+        ///     Category based Points Counter
         /// </summary>
-        private HashSet<IPointsCollector> collectors;
+        private readonly Dictionary<string, int> pointsPerCategory;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="faction">Reference to the related Faction</param>
         public PointsProperty(Faction faction) : base(faction)
@@ -36,12 +36,30 @@ namespace AntMe.Basics.FactionProperties
         }
 
         /// <summary>
-        /// Initializer. Should be called by the Faction.
+        ///     List of Points, ordered by Category.
+        /// </summary>
+        public ReadOnlyDictionary<string, int> PointsPerCategory { get; }
+
+        /// <summary>
+        ///     Total Points.
+        /// </summary>
+        public int Points
+        {
+            get => points;
+            private set
+            {
+                points = value;
+                OnPointsChanged?.Invoke(value);
+            }
+        }
+
+        /// <summary>
+        ///     Initializer. Should be called by the Faction.
         /// </summary>
         public override void Init()
         {
             // Store Faction if relevant
-            IPointsCollector collectorFaction = Faction as IPointsCollector;
+            var collectorFaction = Faction as IPointsCollector;
             if (collectorFaction != null)
             {
                 collectors.Add(collectorFaction);
@@ -76,7 +94,7 @@ namespace AntMe.Basics.FactionProperties
 
         private void InsertItem(Item item)
         {
-            FactionItem factionItem = item as FactionItem;
+            var factionItem = item as FactionItem;
 
             // Ignore non Faction Items
             if (factionItem == null)
@@ -108,7 +126,7 @@ namespace AntMe.Basics.FactionProperties
 
         private void RemoveItem(Item item)
         {
-            FactionItem factionItem = item as FactionItem;
+            var factionItem = item as FactionItem;
 
             // Ignore non Faction Items
             if (factionItem == null)
@@ -119,8 +137,8 @@ namespace AntMe.Basics.FactionProperties
                 return;
 
             // Remove Item
-            IPointsCollector collectorItem = factionItem as IPointsCollector;
-            if (collectorItem != null && 
+            var collectorItem = factionItem as IPointsCollector;
+            if (collectorItem != null &&
                 !collectorItem.PermanentPoints &&
                 collectors.Contains(collectorItem))
             {
@@ -131,9 +149,8 @@ namespace AntMe.Basics.FactionProperties
             }
 
             // Remove all relevant and not permanent Properties
-            foreach (var collectorProperty in factionItem.Properties.
-                OfType<IPointsCollector>().
-                Where(p => !p.PermanentPoints && collectors.Contains(p)))
+            foreach (var collectorProperty in factionItem.Properties.OfType<IPointsCollector>()
+                .Where(p => !p.PermanentPoints && collectors.Contains(p)))
             {
                 collectors.Remove(collectorProperty);
                 collectorProperty.OnEnablePointsChanged -= EnablePointsChanged;
@@ -144,47 +161,25 @@ namespace AntMe.Basics.FactionProperties
 
         private void Recalc(IPointsCollector item)
         {
-            Points = collectors.
-                Where(p => p.EnablePoints).
-                Sum(p => p.Points);
+            Points = collectors.Where(p => p.EnablePoints).Sum(p => p.Points);
 
             // Generate Key if not available
-            string category = item.PointsCategory;
+            var category = item.PointsCategory;
             if (!pointsPerCategory.ContainsKey(category))
                 pointsPerCategory.Add(category, 0);
 
-            int value = collectors.
-                Where(p => p.EnablePoints && p.PointsCategory.Equals(category)).
-                Sum(p => p.Points);
+            var value = collectors.Where(p => p.EnablePoints && p.PointsCategory.Equals(category)).Sum(p => p.Points);
             pointsPerCategory[category] = value;
             OnCategoryPointsChanged?.Invoke(category, value);
         }
 
         /// <summary>
-        /// List of Points, ordered by Category.
-        /// </summary>
-        public ReadOnlyDictionary<string, int> PointsPerCategory { get; private set; }
-
-        /// <summary>
-        /// Total Points.
-        /// </summary>
-        public int Points
-        {
-            get { return points; }
-            private set
-            {
-                points = value;
-                OnPointsChanged?.Invoke(value);
-            }
-        }
-
-        /// <summary>
-        /// Signal for a changed Point Counter.
+        ///     Signal for a changed Point Counter.
         /// </summary>
         public event ValueUpdate<int> OnPointsChanged;
 
         /// <summary>
-        /// Signal for a changed Point Counter in a specific Category.
+        ///     Signal for a changed Point Counter in a specific Category.
         /// </summary>
         public event ValueUpdate<string, int> OnCategoryPointsChanged;
     }

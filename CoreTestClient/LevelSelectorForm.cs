@@ -1,15 +1,13 @@
-﻿using AntMe.Runtime;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using AntMe.Runtime;
 
 namespace CoreTestClient
 {
     public partial class LevelSelectorForm : Form
     {
-        public LevelInfo SelectedLevel { get; private set; }
-
         public LevelSelectorForm()
         {
             InitializeComponent();
@@ -23,17 +21,20 @@ namespace CoreTestClient
             }
         }
 
-        private void loadButton_Click(object sender, System.EventArgs e)
+        public LevelInfo SelectedLevel { get; private set; }
+
+        private void loadButton_Click(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                string[] extensionPaths = new string[] {
+                string[] extensionPaths =
+                {
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Extensions",
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\AntMe\\Extensions"
                 };
 
-                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
+                var file = File.ReadAllBytes(openFileDialog.FileName);
                 var result = ExtensionLoader.SecureAnalyseExtension(extensionPaths, file, true, false);
 
                 foreach (var level in result.Levels)
@@ -46,7 +47,7 @@ namespace CoreTestClient
             }
         }
 
-        private void levelList_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void levelList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (levelList.SelectedItems.Count > 0)
             {
@@ -67,7 +68,7 @@ namespace CoreTestClient
         {
             if (levelList.SelectedItems.Count > 0)
             {
-                LevelInfo level = levelList.SelectedItems[0].Tag as LevelInfo;
+                var level = levelList.SelectedItems[0].Tag as LevelInfo;
                 SelectedLevel = level;
                 DialogResult = DialogResult.OK;
                 Close();

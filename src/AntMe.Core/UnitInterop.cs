@@ -3,22 +3,22 @@
 namespace AntMe
 {
     /// <summary>
-    /// Base Class for all Faction Unit Interops.
+    ///     Base Class for all Faction Unit Interops.
     /// </summary>
     public abstract class UnitInterop : Interop
     {
         /// <summary>
-        /// Reference to the own Faction.
+        ///     Reference to the own Faction.
         /// </summary>
         protected readonly Faction Faction;
 
         /// <summary>
-        /// Reference to the related Item.
+        ///     Reference to the related Item.
         /// </summary>
         protected readonly FactionItem Item;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="context">Simulation Context</param>
         /// <param name="faction">Reference to the Faction</param>
@@ -43,24 +43,24 @@ namespace AntMe
         #region Properties
 
         /// <summary>
-        /// Gets the Faction Randomizer.
+        ///     Gets the Faction Randomizer.
         /// </summary>
-        public Random Random { get { return Faction.Context.Random; } }
+        public Random Random => Faction.Context.Random;
 
         /// <summary>
-        /// Gets the Id of the related Item.
+        ///     Gets the Id of the related Item.
         /// </summary>
-        public int Id { get { return Item.Id; } }
+        public int Id => Item.Id;
 
         /// <summary>
-        /// Gets the current Orientation.
+        ///     Gets the current Orientation.
         /// </summary>
-        public Angle Orientation { get { return Item.Orientation; } }
+        public Angle Orientation => Item.Orientation;
 
         /// <summary>
-        /// Gets the Radius of the Item.
+        ///     Gets the Radius of the Item.
         /// </summary>
-        public float Radius { get { return Item.Radius; } }
+        public float Radius => Item.Radius;
 
         #endregion
     }

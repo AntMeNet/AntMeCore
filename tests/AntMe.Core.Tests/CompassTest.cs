@@ -3,12 +3,12 @@
 namespace AntMe.Core
 {
     /// <summary>
-    /// Tests the Values of the Compass Enum.
+    ///     Tests the Values of the Compass Enum.
     /// </summary>
     public class CompassTest
     {
         /// <summary>
-        /// Tests the Cast to Int of Compass Values.
+        ///     Tests the Cast to Int of Compass Values.
         /// </summary>
         [Theory]
         [InlineData(Compass.East, 0)]
@@ -24,11 +24,11 @@ namespace AntMe.Core
             // Arrange
             // Act
             // Assert
-            Assert.Equal(expectation, (int)input);
+            Assert.Equal(expectation, (int) input);
         }
 
         /// <summary>
-        /// Tests the Cast to Compass from an Int Value.
+        ///     Tests the Cast to Compass from an Int Value.
         /// </summary>
         [Theory]
         [InlineData(Compass.East, 0)]
@@ -41,7 +41,7 @@ namespace AntMe.Core
         [InlineData(Compass.NorthEast, 315)]
         public void IntToCompassCast(Compass expectation, int input)
         {
-            Assert.Equal((Compass)input, expectation);
+            Assert.Equal((Compass) input, expectation);
         }
     }
 }

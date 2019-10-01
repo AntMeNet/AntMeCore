@@ -1,27 +1,26 @@
-﻿using AntMe.Basics.ItemProperties;
-using AntMe.Basics.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using AntMe.Basics.ItemProperties;
+using AntMe.Basics.Items;
 
 namespace AntMe.Basics.Factions.Ants.Interop
 {
     /// <summary>
-    /// Interaction Interop for Ants.
+    ///     Interaction Interop for Ants.
     /// </summary>
     public sealed class InteractionInterop : UnitInteropProperty
     {
-        private readonly CarrierProperty carrier;
+        private readonly AppleCollectorProperty apple;
         private readonly AttackableProperty attackable;
         private readonly AttackerProperty attacker;
-        private readonly SugarCollectorProperty sugar;
-        private readonly AppleCollectorProperty apple;
 
         private readonly HashSet<ItemInfo> attackerItems = new HashSet<ItemInfo>();
+        private readonly CarrierProperty carrier;
+        private readonly SugarCollectorProperty sugar;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
@@ -54,15 +53,9 @@ namespace AntMe.Basics.Factions.Ants.Interop
             if (attackable == null)
                 throw new ArgumentException("Item does not contain AttackableProperty");
 
-            attackable.OnKill += i =>
-            {
-                OnKill?.Invoke();
-            };
+            attackable.OnKill += i => { OnKill?.Invoke(); };
 
-            attackable.OnAttackerHit += (i, value) =>
-            {
-                OnHit?.Invoke(value);
-            };
+            attackable.OnAttackerHit += (i, value) => { OnHit?.Invoke(value); };
 
             attackable.OnNewAttackerItem += i =>
             {
@@ -113,7 +106,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         #region Methods
 
         /// <summary>
-        /// Takes as much as possible Food from the Item.
+        ///     Takes as much as possible Food from the Item.
         /// </summary>
         /// <param name="food">Item to take from</param>
         public int Collect(ItemInfo food)
@@ -128,12 +121,12 @@ namespace AntMe.Basics.Factions.Ants.Interop
             foreach (var property in i.Properties.OfType<CollectableProperty>())
             {
                 // Search for a Collector Property fitting to the Collectable
-                var hit = Item.Properties.OfType<CollectorProperty>().
-                    FirstOrDefault(p => p.GetType() == property.AcceptedCollectorType);
+                var hit = Item.Properties.OfType<CollectorProperty>()
+                    .FirstOrDefault(p => p.GetType() == property.AcceptedCollectorType);
                 if (hit != null)
                 {
                     // Try to Take as much as possible
-                    int amount = hit.Take(property, int.MaxValue);
+                    var amount = hit.Take(property, int.MaxValue);
                     if (amount > 0) return amount;
                 }
             }
@@ -142,7 +135,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Drops all stuff
+        ///     Drops all stuff
         /// </summary>
         public void Drop()
         {
@@ -153,15 +146,13 @@ namespace AntMe.Basics.Factions.Ants.Interop
             apple.Amount = 0;
 
             // Drop Sugar
-            int amount = sugar.Amount;
+            var amount = sugar.Amount;
             if (Item.Settings.GetBool<AntItem>("DropSugar").Value)
-            {
                 Item.Engine.InsertItem(new SugarItem(Item.Faction.Level.Context, Item.Position.ToVector2XY(), amount));
-            }
         }
 
         /// <summary>
-        /// Transfers all Collectable Ressources to the Destination.
+        ///     Transfers all Collectable Ressources to the Destination.
         /// </summary>
         /// <param name="item">Destination</param>
         /// <returns>Transfered Amount</returns>
@@ -172,27 +163,25 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Transfers all Collectable Ressources to the Destination.
+        ///     Transfers all Collectable Ressources to the Destination.
         /// </summary>
         /// <param name="item">Destination</param>
         /// <returns>Transfered Amount</returns>
         private int Give(Item item)
         {
-            int result = 0;
+            var result = 0;
             foreach (var property in item.Properties.OfType<CollectableProperty>())
             {
-                var hit = Item.Properties.OfType<CollectorProperty>().
-                    FirstOrDefault(p => p.GetType() == property.AcceptedCollectorType);
-                if (hit != null)
-                {
-                    result += hit.Give(property, int.MaxValue);
-                }
+                var hit = Item.Properties.OfType<CollectorProperty>()
+                    .FirstOrDefault(p => p.GetType() == property.AcceptedCollectorType);
+                if (hit != null) result += hit.Give(property, int.MaxValue);
             }
+
             return result;
         }
 
         /// <summary>
-        /// Tries to pick up the target item.
+        ///     Tries to pick up the target item.
         /// </summary>
         /// <param name="info">Item to pick up</param>
         /// <returns>Success</returns>
@@ -213,7 +202,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Starts to attack the target Item.
+        ///     Starts to attack the target Item.
         /// </summary>
         /// <param name="info">Enemy</param>
         public void Attack(ItemInfo info)
@@ -229,7 +218,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         }
 
         /// <summary>
-        /// Stop to attack Items.
+        ///     Stop to attack Items.
         /// </summary>
         public void StopAttack()
         {
@@ -241,84 +230,72 @@ namespace AntMe.Basics.Factions.Ants.Interop
         #region Properties
 
         /// <summary>
-        /// List of attacking Items.
+        ///     List of attacking Items.
         /// </summary>
-        public IEnumerable<ItemInfo> AttackingItems { get { return attackerItems.AsEnumerable(); } }
+        public IEnumerable<ItemInfo> AttackingItems => attackerItems.AsEnumerable();
 
         /// <summary>
-        /// Gets the current Health state.
+        ///     Gets the current Health state.
         /// </summary>
-        public int Health { get { return attackable.AttackableHealth; } }
+        public int Health => attackable.AttackableHealth;
 
         /// <summary>
-        /// Gets the maximum possible Health.
+        ///     Gets the maximum possible Health.
         /// </summary>
-        public int MaximumHealth { get { return attackable.AttackableMaximumHealth; } }
+        public int MaximumHealth => attackable.AttackableMaximumHealth;
 
         /// <summary>
-        /// Returns the own Attack Range.
+        ///     Returns the own Attack Range.
         /// </summary>
-        public float AttackRange { get { return attacker.AttackRange; } }
+        public float AttackRange => attacker.AttackRange;
 
         /// <summary>
-        /// Returns the own Attack Strength.
+        ///     Returns the own Attack Strength.
         /// </summary>
-        public int AttackStrength { get { return attacker.AttackStrength; } }
+        public int AttackStrength => attacker.AttackStrength;
 
         /// <summary>
-        /// Returns the Recovery Time per Hit.
+        ///     Returns the Recovery Time per Hit.
         /// </summary>
-        public int AttackRecovery { get { return attacker.AttackRecoveryTime; } }
+        public int AttackRecovery => attacker.AttackRecoveryTime;
 
         /// <summary>
-        /// Returns the current Target.
+        ///     Returns the current Target.
         /// </summary>
-        public ItemInfo AttackTarget
-        {
-            get
-            {
-                return attacker.AttackTarget?.Item.GetItemInfo(Item);
-            }
-        }
+        public ItemInfo AttackTarget => attacker.AttackTarget?.Item.GetItemInfo(Item);
 
         /// <summary>
-        /// Returns the own Carrier Strength.
+        ///     Returns the own Carrier Strength.
         /// </summary>
-        public float Strength { get { return carrier.CarrierStrength; } }
+        public float Strength => carrier.CarrierStrength;
 
         /// <summary>
-        /// Returns the current Sugar Load.
+        ///     Returns the current Sugar Load.
         /// </summary>
-        public int SugarLoad { get { return sugar.Amount; } }
+        public int SugarLoad => sugar.Amount;
 
         /// <summary>
-        /// Returns the total Sugar Capacity.
+        ///     Returns the total Sugar Capacity.
         /// </summary>
-        public int MaximumSugarLoad { get { return sugar.Capacity; } }
+        public int MaximumSugarLoad => sugar.Capacity;
 
         /// <summary>
-        /// Returns the current Load of Apple Parts.
+        ///     Returns the current Load of Apple Parts.
         /// </summary>
-        public int AppleLoad { get { return apple.Amount; } }
+        public int AppleLoad => apple.Amount;
 
         /// <summary>
-        /// Returns the total Apple Capacity.
+        ///     Returns the total Apple Capacity.
         /// </summary>
-        public int MaximumAppleLoad { get { return apple.Capacity; } }
+        public int MaximumAppleLoad => apple.Capacity;
 
         /// <summary>
-        /// Returns the current Load.
+        ///     Returns the current Load.
         /// </summary>
-        public ItemInfo CurrentLoad
-        {
-            get
-            {
-                return carrier.CarrierLoad?.Item.GetItemInfo(Item);
-            }
-        }
+        public ItemInfo CurrentLoad => carrier.CarrierLoad?.Item.GetItemInfo(Item);
 
         /// <summary>
-        /// Returns whenever the Item carries anything.
+        ///     Returns whenever the Item carries anything.
         /// </summary>
         public bool IsLoaded
         {
@@ -334,12 +311,12 @@ namespace AntMe.Basics.Factions.Ants.Interop
         #region Events
 
         /// <summary>
-        /// Signals a Hit by an Enemy.
+        ///     Signals a Hit by an Enemy.
         /// </summary>
         public event InteropEvent<int> OnHit;
 
         /// <summary>
-        /// Signals the death of the Ant.
+        ///     Signals the death of the Ant.
         /// </summary>
         public event InteropEvent OnKill;
 

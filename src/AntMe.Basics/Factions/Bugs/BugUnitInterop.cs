@@ -9,13 +9,13 @@ namespace AntMe.Basics.Factions.Bugs
         {
         }
 
-        #region Event Handler
-
-        #endregion
-
         internal void Update()
         {
         }
+
+        #region Event Handler
+
+        #endregion
 
         #region Spieler Eigenschaften
 

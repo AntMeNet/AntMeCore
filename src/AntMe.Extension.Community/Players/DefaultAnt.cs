@@ -1,9 +1,9 @@
-﻿using AntMe.Basics.Factions.Ants;
+﻿using System;
+using System.Linq;
+using AntMe.Basics.Factions.Ants;
 using AntMe.Basics.Factions.Ants.Interop;
 using AntMe.Basics.ItemProperties;
 using AntMe.Basics.Items;
-using System;
-using System.Linq;
 
 namespace AntMe.Extension.Community.Players
 {
@@ -15,10 +15,10 @@ namespace AntMe.Extension.Community.Players
     [Defense(-1)]
     public class DefaultAnt : AntUnit
     {
+        private InteractionInterop interaction;
         private AntUnitInterop interop;
         private AntMovementInterop movement;
         private RecognitionInterop recognition;
-        private InteractionInterop interaction;
 
         public override void Init(UnitInterop interop)
         {
@@ -61,7 +61,6 @@ namespace AntMe.Extension.Community.Players
 
         private void Interaction_OnHit(int parameter)
         {
-            
         }
 
         private void Recognition_Spots()
@@ -87,25 +86,19 @@ namespace AntMe.Extension.Community.Players
         private void Recognition_Smells()
         {
             var mark = recognition.SmellableItems.OfType<MarkerInfo>().FirstOrDefault();
-            if (mark != null && movement.CurrentDestination == null)
-            {
-                movement.GoTo(mark);
-            }
+            if (mark != null && movement.CurrentDestination == null) movement.GoTo(mark);
         }
 
         private void Recognition_OnEnvironmentChanged(VisibleEnvironment environment)
         {
-            
         }
 
         private void Movement_OnTargetReched(ItemInfo target)
         {
-            
         }
 
         private void Movement_OnCollision()
         {
-            
         }
 
         private void Movement_OnHitWall(Compass parameter)

@@ -4,35 +4,19 @@ using System.IO;
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// State for all attackable Items.
+    ///     State for all attackable Items.
     /// </summary>
     public sealed class AttackableState : ItemStateProperty
     {
         /// <summary>
-        /// Current Health.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        [DisplayName("Health")]
-        [Description("Current Health")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public int Health { get; set; }
+        public AttackableState()
+        {
+        }
 
         /// <summary>
-        /// Maximum Health.
-        /// </summary>
-        [DisplayName("Maximum Health")]
-        [Description("Maximum Health")]
-        [ReadOnly(true)]
-        [Category("Static")]
-        public int MaximumHealth { get; set; }
-
-        /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public AttackableState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         /// <param name="property">Related Engine Property</param>
@@ -45,7 +29,25 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Current Health.
+        /// </summary>
+        [DisplayName("Health")]
+        [Description("Current Health")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public int Health { get; set; }
+
+        /// <summary>
+        ///     Maximum Health.
+        /// </summary>
+        [DisplayName("Maximum Health")]
+        [Description("Maximum Health")]
+        [ReadOnly(true)]
+        [Category("Static")]
+        public int MaximumHealth { get; set; }
+
+        /// <summary>
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -56,7 +58,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -67,7 +69,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -78,7 +80,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

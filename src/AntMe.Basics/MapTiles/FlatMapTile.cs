@@ -1,19 +1,19 @@
 ﻿namespace AntMe.Basics.MapTiles
 {
     /// <summary>
-    /// Represents a flat Map Tile.
+    ///     Represents a flat Map Tile.
     /// </summary>
     public class FlatMapTile : MapTile
     {
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         public FlatMapTile(SimulationContext context) : base(context)
         {
         }
 
         /// <summary>
-        /// Returns the Level to enter on the East Side.
+        ///     Returns the Level to enter on the East Side.
         /// </summary>
         protected override byte? GetConnectionLevelEast()
         {
@@ -21,7 +21,7 @@
         }
 
         /// <summary>
-        /// Returns the Level to enter on the South Side.
+        ///     Returns the Level to enter on the South Side.
         /// </summary>
         protected override byte? GetConnectionLevelNorth()
         {
@@ -29,7 +29,7 @@
         }
 
         /// <summary>
-        /// Returns the Level to enter on the West Side.
+        ///     Returns the Level to enter on the West Side.
         /// </summary>
         protected override byte? GetConnectionLevelSouth()
         {
@@ -37,16 +37,15 @@
         }
 
         /// <summary>
-        /// Returns the Level to enter on the North Side.
+        ///     Returns the Level to enter on the North Side.
         /// </summary>
         protected override byte? GetConnectionLevelWest()
         {
             return HeightLevel;
-
         }
 
         /// <summary>
-        /// Returns the Height at the given Position.
+        ///     Returns the Height at the given Position.
         /// </summary>
         /// <param name="position">relative Position</param>
         /// <returns>Map Height</returns>

@@ -8,20 +8,24 @@ namespace AntMe.Runtime
     {
         #region Interop Attachment Properties
 
-        private class FactoryAttchmentTypeMap : AttachmentTypeMap<Func<Faction, FactoryInterop, FactoryInteropProperty>> { }
+        private class FactoryAttchmentTypeMap : AttachmentTypeMap<Func<Faction, FactoryInterop, FactoryInteropProperty>>
+        {
+        }
 
-        private class UnitAttchmentTypeMap : AttachmentTypeMap<Func<UnitInterop, UnitInteropProperty>> { }
+        private class UnitAttchmentTypeMap : AttachmentTypeMap<Func<UnitInterop, UnitInteropProperty>>
+        {
+        }
 
-        private List<FactoryAttchmentTypeMap> factoryInteropAttachments = new List<FactoryAttchmentTypeMap>();
+        private readonly List<FactoryAttchmentTypeMap> factoryInteropAttachments = new List<FactoryAttchmentTypeMap>();
 
-        private List<UnitAttchmentTypeMap> unitInteropAttachments = new List<UnitAttchmentTypeMap>();
+        private readonly List<UnitAttchmentTypeMap> unitInteropAttachments = new List<UnitAttchmentTypeMap>();
 
-        public IEnumerable<IAttachmentTypeMapperEntry> FactoryInteropAttachments { get { return factoryInteropAttachments; } }
+        public IEnumerable<IAttachmentTypeMapperEntry> FactoryInteropAttachments => factoryInteropAttachments;
 
-        public IEnumerable<IAttachmentTypeMapperEntry> UnitInteropAttachments { get { return unitInteropAttachments; } }
+        public IEnumerable<IAttachmentTypeMapperEntry> UnitInteropAttachments => unitInteropAttachments;
 
         /// <summary>
-        /// Hängt ein Property an eine gegebene Factory Interop an.
+        ///     Hängt ein Property an eine gegebene Factory Interop an.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="P"></typeparam>
@@ -34,7 +38,7 @@ namespace AntMe.Runtime
             where P : FactoryInteropProperty
         {
             // TODO: Prüfungen
-            factoryInteropAttachments.Add(new FactoryAttchmentTypeMap()
+            factoryInteropAttachments.Add(new FactoryAttchmentTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -45,7 +49,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Hängt ein Property an eine gegebene Unit Interop an.
+        ///     Hängt ein Property an eine gegebene Unit Interop an.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="P"></typeparam>
@@ -58,7 +62,7 @@ namespace AntMe.Runtime
             where P : UnitInteropProperty
         {
             // TODO: Prüfungen
-            unitInteropAttachments.Add(new UnitAttchmentTypeMap()
+            unitInteropAttachments.Add(new UnitAttchmentTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -72,37 +76,42 @@ namespace AntMe.Runtime
 
         #region Interop Extender
 
-        private class FactoryExtenderTypeMap : ExtenderTypeMap<Action<FactoryInterop>> { }
+        private class FactoryExtenderTypeMap : ExtenderTypeMap<Action<FactoryInterop>>
+        {
+        }
 
-        private class UnitExtenderTypeMap : ExtenderTypeMap<Action<UnitInterop>> { }
+        private class UnitExtenderTypeMap : ExtenderTypeMap<Action<UnitInterop>>
+        {
+        }
 
-        private List<FactoryExtenderTypeMap> factoryInteropExtender = new List<FactoryExtenderTypeMap>();
+        private readonly List<FactoryExtenderTypeMap> factoryInteropExtender = new List<FactoryExtenderTypeMap>();
 
-        private List<UnitExtenderTypeMap> unitInteropExtender = new List<UnitExtenderTypeMap>();
+        private readonly List<UnitExtenderTypeMap> unitInteropExtender = new List<UnitExtenderTypeMap>();
 
         /// <summary>
-        /// List of all available Factory Interop Extender.
+        ///     List of all available Factory Interop Extender.
         /// </summary>
-        public IEnumerable<IRankedTypeMapperEntry> FactoryInteropExtender { get { return factoryInteropExtender; } }
+        public IEnumerable<IRankedTypeMapperEntry> FactoryInteropExtender => factoryInteropExtender;
 
         /// <summary>
-        /// List of all available Unit Interop Extender.
+        ///     List of all available Unit Interop Extender.
         /// </summary>
-        public IEnumerable<IRankedTypeMapperEntry> UnitInteropExtender { get { return unitInteropExtender; } }
+        public IEnumerable<IRankedTypeMapperEntry> UnitInteropExtender => unitInteropExtender;
 
         /// <summary>
-        /// Registriert einen Extender für das gegebene Factory Interop
+        ///     Registriert einen Extender für das gegebene Factory Interop
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="extensionPack"></param>
         /// <param name="name"></param>
         /// <param name="rank"></param>
         /// <param name="extenderDelegate"></param>
-        public void RegisterFactoryInteropExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<FactoryInterop> extenderDelegate)
+        public void RegisterFactoryInteropExtender<T>(IExtensionPack extensionPack, string name, int rank,
+            Action<FactoryInterop> extenderDelegate)
             where T : FactoryInterop
         {
             // TODO: Prüfungen
-            factoryInteropExtender.Add(new FactoryExtenderTypeMap()
+            factoryInteropExtender.Add(new FactoryExtenderTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -113,18 +122,19 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Registriert einen Extender für das gegebene Unit Interop
+        ///     Registriert einen Extender für das gegebene Unit Interop
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="extensionPack"></param>
         /// <param name="name"></param>
         /// <param name="rank"></param>
         /// <param name="extenderDelegate"></param>
-        public void RegisterUnitInteropExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<UnitInterop> extenderDelegate)
+        public void RegisterUnitInteropExtender<T>(IExtensionPack extensionPack, string name, int rank,
+            Action<UnitInterop> extenderDelegate)
             where T : UnitInterop
         {
             // TODO: prüfungen
-            unitInteropExtender.Add(new UnitExtenderTypeMap()
+            unitInteropExtender.Add(new UnitExtenderTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -139,8 +149,8 @@ namespace AntMe.Runtime
         #region Interop Resolver
 
         /// <summary>
-        /// Creates a filled Factory Interop (all registered Properties and applied Extender) 
-        /// for the given Faction.
+        ///     Creates a filled Factory Interop (all registered Properties and applied Extender)
+        ///     for the given Faction.
         /// </summary>
         /// <param name="faction">Reference to the Faction</param>
         /// <returns>New Instance of a full filled Factory Interop</returns>
@@ -155,7 +165,7 @@ namespace AntMe.Runtime
                 throw new ArgumentException("Faction is not registered");
 
             // Creates a new Instance of the registered Interop Type
-            FactoryInterop result = Activator.CreateInstance(factionDefintion.FactoryInteropType, faction) as FactoryInterop;
+            var result = Activator.CreateInstance(factionDefintion.FactoryInteropType, faction) as FactoryInterop;
             if (result == null)
                 throw new Exception("Error during Factory Interop Creation.");
 
@@ -183,15 +193,13 @@ namespace AntMe.Runtime
 
             // Execute all Extender for the selected Interop Type.
             foreach (var extender in factoryInteropExtender.Where(e => e.Type == result.GetType()).OrderBy(e => e.Rank))
-            {
                 extender.ExtenderDelegate(result);
-            }
 
             return result;
         }
 
         /// <summary>
-        /// Erzeugt eine neue Instanz eines passenden Unit Interop.
+        ///     Erzeugt eine neue Instanz eines passenden Unit Interop.
         /// </summary>
         /// <param name="faction"></param>
         /// <param name="item"></param>
@@ -207,7 +215,7 @@ namespace AntMe.Runtime
                 throw new ArgumentException("Faction is not registered");
 
             // Creates a new Instance of the registered Interop Type
-            UnitInterop result = Activator.CreateInstance(factionDefintion.UnitInteropType, faction, item) as UnitInterop;
+            var result = Activator.CreateInstance(factionDefintion.UnitInteropType, faction, item) as UnitInterop;
             if (result == null)
                 throw new Exception("Error during Factory Interop Creation.");
 
@@ -223,7 +231,9 @@ namespace AntMe.Runtime
                 else
                 {
                     // Create by Default
-                    property = Activator.CreateInstance(attachment.AttachmentType, faction, item, result) as UnitInteropProperty;
+                    property =
+                        Activator.CreateInstance(attachment.AttachmentType, faction, item, result) as
+                            UnitInteropProperty;
                     if (property == null)
                         throw new Exception("Error during Factory Interop Property Creation.");
                 }
@@ -235,9 +245,7 @@ namespace AntMe.Runtime
 
             // Execute all Extender for the selected Interop Type.
             foreach (var extender in unitInteropExtender.Where(e => e.Type == result.GetType()).OrderBy(e => e.Rank))
-            {
                 extender.ExtenderDelegate(result);
-            }
 
             return result;
         }

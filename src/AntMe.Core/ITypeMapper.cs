@@ -4,14 +4,14 @@ using System.Collections.Generic;
 namespace AntMe
 {
     /// <summary>
-    /// Type Repository for all dynamic Elements within the Game Simulation.
+    ///     Type Repository for all dynamic Elements within the Game Simulation.
     /// </summary>
     public interface ITypeMapper
     {
         #region Management
 
         /// <summary>
-        /// Removes all Extension Elements with the given Extension Pack Source.
+        ///     Removes all Extension Elements with the given Extension Pack Source.
         /// </summary>
         /// <param name="extensionPack">Extension Pack to remove</param>
         void RemoveExtensionPack(IExtensionPack extensionPack);
@@ -21,17 +21,18 @@ namespace AntMe
         #region Engine Properties
 
         /// <summary>
-        /// Registriert eine Engine Extension.
+        ///     Registriert eine Engine Extension.
         /// </summary>
         /// <param name="extensionPack">Referenz Extension</param>
         /// <param name="name">Name der Extension</param>
         /// <param name="rank">Rang der Extension</param>
         /// <param name="createExtensionDelegate">Delegat zum Erstellen einer neuen Instanz</param>
         /// <typeparam name="T">Extension Type</typeparam>
-        void RegisterEngineProperty<T>(IExtensionPack extensionPack, string name, int rank, Func<Engine, T> createExtensionDelegate = null) where T : EngineProperty;
+        void RegisterEngineProperty<T>(IExtensionPack extensionPack, string name, int rank,
+            Func<Engine, T> createExtensionDelegate = null) where T : EngineProperty;
 
         /// <summary>
-        /// Listet alle registrierten Extensions auf.
+        ///     Listet alle registrierten Extensions auf.
         /// </summary>
         IEnumerable<IRankedTypeMapperEntry> EngineProperties { get; }
 
@@ -40,18 +41,18 @@ namespace AntMe
         #region Map Properties
 
         /// <summary>
-        /// Registers additional Map Properties.
+        ///     Registers additional Map Properties.
         /// </summary>
         /// <typeparam name="T">Type of Map Property</typeparam>
         /// <param name="extensionPack"></param>
         /// <param name="name"></param>
         /// <param name="createPropertyDelegate"></param>
-        void RegisterMapProperty<T>(IExtensionPack extensionPack, string name, 
+        void RegisterMapProperty<T>(IExtensionPack extensionPack, string name,
             Func<Map, T> createPropertyDelegate = null)
             where T : MapProperty;
 
         /// <summary>
-        /// Registers additional Map Properties.
+        ///     Registers additional Map Properties.
         /// </summary>
         /// <typeparam name="T">Type of Map Property</typeparam>
         /// <typeparam name="S">Type of State for the Map Property</typeparam>
@@ -59,14 +60,14 @@ namespace AntMe
         /// <param name="name"></param>
         /// <param name="createPropertyDelegate"></param>
         /// <param name="createStateDelegate"></param>
-        void RegisterMapProperty<T, S>(IExtensionPack extensionPack, string name, 
-            Func<Map, T> createPropertyDelegate = null, 
+        void RegisterMapProperty<T, S>(IExtensionPack extensionPack, string name,
+            Func<Map, T> createPropertyDelegate = null,
             Func<Map, MapProperty, S> createStateDelegate = null)
             where T : MapProperty
             where S : MapStateProperty;
 
         /// <summary>
-        /// List all Map Properties.
+        ///     List all Map Properties.
         /// </summary>
         IEnumerable<IStateInfoTypeMapperEntry> MapProperties { get; }
 
@@ -75,7 +76,7 @@ namespace AntMe
         #region Map Extender
 
         /// <summary>
-        /// Registeres a Delegate to extend a Map.
+        ///     Registeres a Delegate to extend a Map.
         /// </summary>
         /// <param name="extensionPack">Extension Pack</param>
         /// <param name="name">Name</param>
@@ -84,7 +85,7 @@ namespace AntMe
         void RegisterMapExtender(IExtensionPack extensionPack, string name, Action<Map> extenderDelegate, int priority);
 
         /// <summary>
-        /// List of all Map Extender.
+        ///     List of all Map Extender.
         /// </summary>
         IEnumerable<IRankedTypeMapperEntry> MapExtender { get; }
 
@@ -93,16 +94,16 @@ namespace AntMe
         #region Map Material
 
         /// <summary>
-        /// Registers a new Material.
+        ///     Registers a new Material.
         /// </summary>
         /// <typeparam name="T">Material Type</typeparam>
         /// <param name="extensionPack">Extension Pack</param>
         /// <param name="name">Material Name</param>
-        void RegisterMapMaterial<T>(IExtensionPack extensionPack, string name) 
+        void RegisterMapMaterial<T>(IExtensionPack extensionPack, string name)
             where T : MapMaterial;
 
         /// <summary>
-        /// List of all available Materials.
+        ///     List of all available Materials.
         /// </summary>
         IEnumerable<ITypeMapperEntry> MapMaterials { get; }
 
@@ -111,7 +112,7 @@ namespace AntMe
         #region Map Tiles
 
         /// <summary>
-        /// Registeres a Map Tile.
+        ///     Registeres a Map Tile.
         /// </summary>
         /// <typeparam name="T">Map Tile Type</typeparam>
         /// <typeparam name="S">Map Tile State Type</typeparam>
@@ -128,7 +129,7 @@ namespace AntMe
             where I : MapTileInfo;
 
         /// <summary>
-        /// List of all Map Tiles
+        ///     List of all Map Tiles
         /// </summary>
         IEnumerable<IStateInfoTypeMapperEntry> MapTiles { get; }
 
@@ -157,7 +158,7 @@ namespace AntMe
             where I : MapTileInfoProperty;
 
         /// <summary>
-        /// List of all Map Tile Properties.
+        ///     List of all Map Tile Properties.
         /// </summary>
         IEnumerable<IStateInfoTypeMapperEntry> MapTileProperties { get; }
 
@@ -165,7 +166,8 @@ namespace AntMe
 
         #region Map Tile Attachments
 
-        void AttachMapTileProperty<I, P>(IExtensionPack extensionPack, string name, Func<MapTile, P> createPropertyDelegate = null)
+        void AttachMapTileProperty<I, P>(IExtensionPack extensionPack, string name,
+            Func<MapTile, P> createPropertyDelegate = null)
             where I : MapTile
             where P : MapTileProperty;
 
@@ -175,7 +177,8 @@ namespace AntMe
 
         #region Map Tile Extender
 
-        void RegisterMapTileExtender<T>(IExtensionPack extensionPack, string name, Action<MapTile> extenderDelegate, int priority)
+        void RegisterMapTileExtender<T>(IExtensionPack extensionPack, string name, Action<MapTile> extenderDelegate,
+            int priority)
             where T : MapTile;
 
         IEnumerable<IRankedTypeMapperEntry> MapTileExtender { get; }
@@ -185,7 +188,7 @@ namespace AntMe
         #region Items
 
         /// <summary>
-        /// Registriert einen Game Type beim Type Mapper.
+        ///     Registriert einen Game Type beim Type Mapper.
         /// </summary>
         /// <param name="extensionPack">Referenz auf den Extension Pack.</param>
         /// <param name="name">Name des Game Items</param>
@@ -202,7 +205,7 @@ namespace AntMe
             where I : ItemInfo;
 
         /// <summary>
-        /// Liefert eine Liste registrierter Game Items.
+        ///     Liefert eine Liste registrierter Game Items.
         /// </summary>
         IEnumerable<IStateInfoTypeMapperEntry> Items { get; }
 
@@ -211,7 +214,7 @@ namespace AntMe
         #region Item Properties
 
         /// <summary>
-        /// Registriert ein Item Property das keine State- oder Info-Properties besitzt.
+        ///     Registriert ein Item Property das keine State- oder Info-Properties besitzt.
         /// </summary>
         /// <typeparam name="T">Type des Property</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
@@ -219,7 +222,7 @@ namespace AntMe
         void RegisterItemProperty<T>(IExtensionPack extensionPack, string name) where T : ItemProperty;
 
         /// <summary>
-        /// Registriert ein Item Property das nur ein State Property hat.
+        ///     Registriert ein Item Property das nur ein State Property hat.
         /// </summary>
         /// <typeparam name="T">Type des Property</typeparam>
         /// <typeparam name="S">Type des State Properties</typeparam>
@@ -232,7 +235,7 @@ namespace AntMe
             where S : ItemStateProperty;
 
         /// <summary>
-        /// Registriert ein Item Property das nur ein Info Property hat.
+        ///     Registriert ein Item Property das nur ein Info Property hat.
         /// </summary>
         /// <typeparam name="T">Type des Property</typeparam>
         /// <typeparam name="I">Type des Info Property</typeparam>
@@ -245,7 +248,7 @@ namespace AntMe
             where I : ItemInfoProperty;
 
         /// <summary>
-        /// Registriert ein Item Property mit samt den State- und Info-Properties
+        ///     Registriert ein Item Property mit samt den State- und Info-Properties
         /// </summary>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties</param>
@@ -262,7 +265,7 @@ namespace AntMe
             where I : ItemInfoProperty;
 
         /// <summary>
-        /// Liefert eine Liste aller registrierten Properties zurück.
+        ///     Liefert eine Liste aller registrierten Properties zurück.
         /// </summary>
         IEnumerable<IStateInfoTypeMapperEntry> ItemProperties { get; }
 
@@ -271,19 +274,20 @@ namespace AntMe
         #region Item Attachment Properties
 
         /// <summary>
-        /// Hängt ein definiertes Property an ein Item an.
+        ///     Hängt ein definiertes Property an ein Item an.
         /// </summary>
         /// <typeparam name="I">Item</typeparam>
         /// <typeparam name="P">Property</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Attachments</param>
         /// <param name="createPropertyDelegate">Erstellungsdelegat</param>
-        void AttachItemProperty<I, P>(IExtensionPack extensionPack, string name, Func<Item, P> createPropertyDelegate = null)
+        void AttachItemProperty<I, P>(IExtensionPack extensionPack, string name,
+            Func<Item, P> createPropertyDelegate = null)
             where I : Item
             where P : ItemProperty;
 
         /// <summary>
-        /// Auflistung aller registrierten Item Attachments.
+        ///     Auflistung aller registrierten Item Attachments.
         /// </summary>
         IEnumerable<IAttachmentTypeMapperEntry> ItemAttachments { get; }
 
@@ -292,18 +296,19 @@ namespace AntMe
         #region Item Extender
 
         /// <summary>
-        /// Registriert einen Delegaten zur Erweiterung des angegebenen Item Types.
+        ///     Registriert einen Delegaten zur Erweiterung des angegebenen Item Types.
         /// </summary>
         /// <param name="extensionPack">Extension Pack</param>
         /// <param name="name">Name der Erweiterung</param>
         /// <param name="priority">Priorität</param>
         /// <typeparam name="T">Item Type für den der Extender gilt</typeparam>
         /// <param name="extenderDelegate">Delegat</param>
-        void RegisterItemExtender<T>(IExtensionPack extensionPack, string name, Action<Item> extenderDelegate, int priority)
+        void RegisterItemExtender<T>(IExtensionPack extensionPack, string name, Action<Item> extenderDelegate,
+            int priority)
             where T : Item;
 
         /// <summary>
-        /// Listet alle Item Extender auf.
+        ///     Listet alle Item Extender auf.
         /// </summary>
         IEnumerable<IRankedTypeMapperEntry> ItemExtender { get; }
 
@@ -312,7 +317,7 @@ namespace AntMe
         #region Factions
 
         /// <summary>
-        /// Registriert eine neue Faciton.
+        ///     Registriert eine neue Faciton.
         /// </summary>
         /// <typeparam name="T">Typ der Faction</typeparam>
         /// <typeparam name="S">Typ des Faction States</typeparam>
@@ -339,7 +344,7 @@ namespace AntMe
             where IT : FactionItem;
 
         /// <summary>
-        /// Liefert eine Liste der registrierten Factions.
+        ///     Liefert eine Liste der registrierten Factions.
         /// </summary>
         IEnumerable<ITypeMapperFactionEntry> Factions { get; }
 
@@ -348,7 +353,7 @@ namespace AntMe
         #region Faction Properties
 
         /// <summary>
-        /// Registriert ein Faction Property.
+        ///     Registriert ein Faction Property.
         /// </summary>
         /// <typeparam name="T">Typ des Properties.</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
@@ -357,7 +362,7 @@ namespace AntMe
             where T : FactionProperty;
 
         /// <summary>
-        /// Registriert ein Faction Property mit zugehörigem State Property.
+        ///     Registriert ein Faction Property mit zugehörigem State Property.
         /// </summary>
         /// <typeparam name="T">Typ des Properties.</typeparam>
         /// <typeparam name="S">Typ des State Properties.</typeparam>
@@ -370,7 +375,7 @@ namespace AntMe
             where S : FactionStateProperty;
 
         /// <summary>
-        /// Registriert ein Faction Property mit zugehörigem Info Property.
+        ///     Registriert ein Faction Property mit zugehörigem Info Property.
         /// </summary>
         /// <typeparam name="T">Typ des Properties.</typeparam>
         /// <typeparam name="I">Typ des Info Properties.</typeparam>
@@ -383,7 +388,7 @@ namespace AntMe
             where I : FactionInfoProperty;
 
         /// <summary>
-        /// Registriert ein Faction Property mit zugehörigem State- und Info-Property.
+        ///     Registriert ein Faction Property mit zugehörigem State- und Info-Property.
         /// </summary>
         /// <typeparam name="T">Typ des Properties.</typeparam>
         /// <typeparam name="S">Typ des State Properties.</typeparam>
@@ -400,7 +405,7 @@ namespace AntMe
             where I : FactionInfoProperty;
 
         /// <summary>
-        /// Auflistung aller registrierten Faction Properties.
+        ///     Auflistung aller registrierten Faction Properties.
         /// </summary>
         IEnumerable<IStateInfoTypeMapperEntry> FactionProperties { get; }
 
@@ -408,7 +413,8 @@ namespace AntMe
 
         #region Faction Attachment Properties
 
-        void AttachFactionProperty<F, P>(IExtensionPack extensionPack, string name, Func<Faction, P> createPropertyDelegate = null)
+        void AttachFactionProperty<F, P>(IExtensionPack extensionPack, string name,
+            Func<Faction, P> createPropertyDelegate = null)
             where F : Faction
             where P : FactionProperty;
 
@@ -419,17 +425,18 @@ namespace AntMe
         #region Faction Extender
 
         /// <summary>
-        /// Registriert einen neuen Faction Extender.
+        ///     Registriert einen neuen Faction Extender.
         /// </summary>
         /// <typeparam name="T">Typ der zu erweiternden Faction</typeparam>
         /// <param name="extensionPack">Referenz auf den verantwortlichen Extension Pack.</param>
         /// <param name="name">Name der Erweiterung</param>
         /// <param name="rank">Priorität</param>
         /// <param name="extenderDelegate">Erweiterungsdelegat der beim Erstellen aufgerufen wird.</param>
-        void RegisterFactionExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<Faction> extenderDelegate);
+        void RegisterFactionExtender<T>(IExtensionPack extensionPack, string name, int rank,
+            Action<Faction> extenderDelegate);
 
         /// <summary>
-        /// Auflistung aller registrierten Faction Extender.
+        ///     Auflistung aller registrierten Faction Extender.
         /// </summary>
         IEnumerable<IRankedTypeMapperEntry> FactionExtender { get; }
 
@@ -442,7 +449,7 @@ namespace AntMe
         IEnumerable<IAttachmentTypeMapperEntry> UnitInteropAttachments { get; }
 
         /// <summary>
-        /// Hängt ein Property an eine gegebene Factory Interop an.
+        ///     Hängt ein Property an eine gegebene Factory Interop an.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="P"></typeparam>
@@ -455,7 +462,7 @@ namespace AntMe
             where P : FactoryInteropProperty;
 
         /// <summary>
-        /// Hängt ein Property an eine gegebene Unit Interop an.
+        ///     Hängt ein Property an eine gegebene Unit Interop an.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="P"></typeparam>
@@ -472,36 +479,38 @@ namespace AntMe
         #region Interop Extender
 
         /// <summary>
-        /// Auflistung aller Factory Interop Extender.
+        ///     Auflistung aller Factory Interop Extender.
         /// </summary>
         IEnumerable<IRankedTypeMapperEntry> FactoryInteropExtender { get; }
 
         /// <summary>
-        /// Auflistung aller Unit Interop Extender.
+        ///     Auflistung aller Unit Interop Extender.
         /// </summary>
         IEnumerable<IRankedTypeMapperEntry> UnitInteropExtender { get; }
 
 
         /// <summary>
-        /// Registriert einen Extender für das gegebene Factory Interop
+        ///     Registriert einen Extender für das gegebene Factory Interop
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="extensionPack"></param>
         /// <param name="name"></param>
         /// <param name="rank"></param>
         /// <param name="extenderDelegate"></param>
-        void RegisterFactoryInteropExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<FactoryInterop> extenderDelegate)
+        void RegisterFactoryInteropExtender<T>(IExtensionPack extensionPack, string name, int rank,
+            Action<FactoryInterop> extenderDelegate)
             where T : FactoryInterop;
 
         /// <summary>
-        /// Registriert einen Extender für das gegebene Unit Interop
+        ///     Registriert einen Extender für das gegebene Unit Interop
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="extensionPack"></param>
         /// <param name="name"></param>
         /// <param name="rank"></param>
         /// <param name="extenderDelegate"></param>
-        void RegisterUnitInteropExtender<T>(IExtensionPack extensionPack, string name, int rank, Action<UnitInterop> extenderDelegate)
+        void RegisterUnitInteropExtender<T>(IExtensionPack extensionPack, string name, int rank,
+            Action<UnitInterop> extenderDelegate)
             where T : UnitInterop;
 
         #endregion
@@ -509,22 +518,23 @@ namespace AntMe
         #region Level Properties
 
         /// <summary>
-        /// Auflistung aller verfügbaren Level Properties.
+        ///     Auflistung aller verfügbaren Level Properties.
         /// </summary>
         IEnumerable<IStateInfoTypeMapperEntry> LevelProperties { get; }
 
         /// <summary>
-        /// Registriert ein Level Property
+        ///     Registriert ein Level Property
         /// </summary>
         /// <typeparam name="P">Typ des Properties</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties</param>
         /// <param name="createPropertyDelegate">Optionaler Erstellungs-Delegat</param>
-        void RegisterLevelProperty<P>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null)
+        void RegisterLevelProperty<P>(IExtensionPack extensionPack, string name,
+            Func<Level, LevelProperty> createPropertyDelegate = null)
             where P : LevelProperty;
 
         /// <summary>
-        /// Registriert ein Level Property mit State Property.
+        ///     Registriert ein Level Property mit State Property.
         /// </summary>
         /// <typeparam name="P">Typ des Properties</typeparam>
         /// <typeparam name="S">Typ des State Properties</typeparam>
@@ -532,7 +542,9 @@ namespace AntMe
         /// <param name="name">Name des Properties</param>
         /// <param name="createPropertyDelegate">Optionaler Erstellungs-Delegat</param>
         /// <param name="createStatePropertyDelegate">Optionaler Delegat zur Erstellung des States</param>
-        void RegisterLevelProperty<P, S>(IExtensionPack extensionPack, string name, Func<Level, LevelProperty> createPropertyDelegate = null, Func<Level, LevelProperty, LevelStateProperty> createStatePropertyDelegate = null)
+        void RegisterLevelProperty<P, S>(IExtensionPack extensionPack, string name,
+            Func<Level, LevelProperty> createPropertyDelegate = null,
+            Func<Level, LevelProperty, LevelStateProperty> createStatePropertyDelegate = null)
             where P : LevelProperty
             where S : LevelStateProperty;
 
@@ -541,19 +553,20 @@ namespace AntMe
         #region Level Extender
 
         /// <summary>
-        /// Auflistung aller Level Extender.
+        ///     Auflistung aller Level Extender.
         /// </summary>
         IEnumerable<IRankedTypeMapperEntry> LevelExtender { get; }
 
         /// <summary>
-        /// Registriert eine Extender-Methode für einen bestimmten Level Type
+        ///     Registriert eine Extender-Methode für einen bestimmten Level Type
         /// </summary>
         /// <typeparam name="L">Typ des Levels</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name</param>
         /// <param name="extenderDelegate">Methode</param>
         /// <param name="rank">Aufruf-Ranking</param>
-        void RegisterLevelExtender<L>(IExtensionPack extensionPack, string name, int rank, Action<Level> extenderDelegate)
+        void RegisterLevelExtender<L>(IExtensionPack extensionPack, string name, int rank,
+            Action<Level> extenderDelegate)
             where L : Level;
 
         #endregion

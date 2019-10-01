@@ -4,35 +4,19 @@ using System.IO;
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Base State for all Goods related Properties.
+    ///     Base State for all Goods related Properties.
     /// </summary>
     public abstract class GoodsState : ItemStateProperty
     {
         /// <summary>
-        /// Gets the current Amount of the good.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        [DisplayName("Current Amount")]
-        [Description("Gets the current Amount of the good.")]
-        [ReadOnly(true)]
-        [Category("dynamic")]
-        public int Amount { get; set; }
+        public GoodsState()
+        {
+        }
 
         /// <summary>
-        /// Gets the Maximum Capacity for this Good.
-        /// </summary>
-        [DisplayName("Maximum Capacity")]
-        [Description("Gets the Maximum Capacity for this Good.")]
-        [ReadOnly(true)]
-        [Category("static")]
-        public int Capacity { get; set; }
-
-        /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public GoodsState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         /// <param name="property">Related Engine Property</param>
@@ -48,7 +32,25 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Gets the current Amount of the good.
+        /// </summary>
+        [DisplayName("Current Amount")]
+        [Description("Gets the current Amount of the good.")]
+        [ReadOnly(true)]
+        [Category("dynamic")]
+        public int Amount { get; set; }
+
+        /// <summary>
+        ///     Gets the Maximum Capacity for this Good.
+        /// </summary>
+        [DisplayName("Maximum Capacity")]
+        [Description("Gets the Maximum Capacity for this Good.")]
+        [ReadOnly(true)]
+        [Category("static")]
+        public int Capacity { get; set; }
+
+        /// <summary>
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -59,7 +61,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -69,7 +71,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -80,7 +82,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

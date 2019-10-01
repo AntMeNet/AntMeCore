@@ -4,16 +4,27 @@ using System.Collections.ObjectModel;
 namespace AntMe.Runtime.EventLog
 {
     /// <summary>
-    /// Klasse zur Beobachtung aller wichtigen Events innerhalb der Simulation.
+    ///     Klasse zur Beobachtung aller wichtigen Events innerhalb der Simulation.
     /// </summary>
     public sealed class Log
     {
-        private List<ILogObserver> observers = new List<ILogObserver>();
-        private List<Entry> entries = new List<Entry>();
+        public delegate void LogEntry(Entry entry);
+
+        private readonly List<Entry> entries = new List<Entry>();
+        private readonly List<ILogObserver> observers = new List<ILogObserver>();
+
+        private Log()
+        {
+        }
+
+        /// <summary>
+        ///     Gibt alle bisher angefallenen Events zurück.
+        /// </summary>
+        public ReadOnlyCollection<Entry> Entries => entries.AsReadOnly();
 
         public static Log CreateLog(bool autoregister)
         {
-            Log result = new Log();
+            var result = new Log();
 
             if (autoregister)
             {
@@ -25,20 +36,8 @@ namespace AntMe.Runtime.EventLog
             return result;
         }
 
-        private Log()
-        {
-        }
-
         /// <summary>
-        /// Gibt alle bisher angefallenen Events zurück.
-        /// </summary>
-        public ReadOnlyCollection<Entry> Entries 
-        { 
-            get { return entries.AsReadOnly(); } 
-        }
-
-        /// <summary>
-        /// Registriert neue Observer im Event-Log.
+        ///     Registriert neue Observer im Event-Log.
         /// </summary>
         /// <param name="observer"></param>
         public void Register(ILogObserver observer)
@@ -55,7 +54,7 @@ namespace AntMe.Runtime.EventLog
         }
 
         /// <summary>
-        /// Führt ein Update des Logs durch.
+        ///     Führt ein Update des Logs durch.
         /// </summary>
         /// <param name="state"></param>
         public void Update(LevelState state)
@@ -65,10 +64,8 @@ namespace AntMe.Runtime.EventLog
         }
 
         /// <summary>
-        /// Informiert über neue Events.
+        ///     Informiert über neue Events.
         /// </summary>
         public event LogEntry OnLogEvent;
-
-        public delegate void LogEntry(Entry entry);
     }
 }

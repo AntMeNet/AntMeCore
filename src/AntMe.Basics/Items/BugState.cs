@@ -3,35 +3,35 @@
 namespace AntMe.Basics.Items
 {
     /// <summary>
-    /// State for a Bug.
+    ///     State for a Bug.
     /// </summary>
     public sealed class BugState : ItemState
     {
         /// <summary>
-        /// Default Constructor for the Deserializer.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public BugState() : base() { }
+        public BugState()
+        {
+        }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper (Faction Bug).
+        ///     Default Constructor for the Type Mapper (Faction Bug).
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         public BugState(BugItem item) : base(item)
         {
-
         }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper (Classic Bug).
+        ///     Default Constructor for the Type Mapper (Classic Bug).
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         public BugState(ClassicBugItem item) : base(item)
         {
-
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -41,7 +41,7 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -51,7 +51,7 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -61,7 +61,7 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

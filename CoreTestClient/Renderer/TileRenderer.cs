@@ -1,6 +1,6 @@
-﻿using AntMe;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using AntMe;
 
 namespace CoreTestClient.Renderer
 {
@@ -8,7 +8,7 @@ namespace CoreTestClient.Renderer
     {
         private Bitmap bitmap;
 
-        private Dictionary<MapTileOrientation, Bitmap> bitmaps;
+        private readonly Dictionary<MapTileOrientation, Bitmap> bitmaps;
 
         public TileRenderer(Bitmap bitmap)
         {
@@ -22,27 +22,25 @@ namespace CoreTestClient.Renderer
 
         private Bitmap Rotate(Bitmap input, MapTileOrientation orientation)
         {
-            Bitmap result = new Bitmap(input.Height, input.Width);
-            for (int y = 0; y < input.Height; y++)
+            var result = new Bitmap(input.Height, input.Width);
+            for (var y = 0; y < input.Height; y++)
+            for (var x = 0; x < input.Width; x++)
             {
-                for (int x = 0; x < input.Width; x++)
+                var pixel = input.GetPixel(x, y);
+                switch (orientation)
                 {
-                    Color pixel = input.GetPixel(x, y);
-                    switch (orientation)
-                    {
-                        case MapTileOrientation.NotRotated:
-                            result.SetPixel(x, y, pixel);
-                            break;
-                        case MapTileOrientation.RotBy90Degrees:
-                            result.SetPixel(result.Width - 1 - y, x, pixel);
-                            break;
-                        case MapTileOrientation.RotBy180Degrees:
-                            result.SetPixel(result.Width - 1 - x, result.Height - 1 - y, pixel);
-                            break;
-                        case MapTileOrientation.RotBy270Degrees:
-                            result.SetPixel(y, result.Height - 1 - x, pixel);
-                            break;
-                    }
+                    case MapTileOrientation.NotRotated:
+                        result.SetPixel(x, y, pixel);
+                        break;
+                    case MapTileOrientation.RotBy90Degrees:
+                        result.SetPixel(result.Width - 1 - y, x, pixel);
+                        break;
+                    case MapTileOrientation.RotBy180Degrees:
+                        result.SetPixel(result.Width - 1 - x, result.Height - 1 - y, pixel);
+                        break;
+                    case MapTileOrientation.RotBy270Degrees:
+                        result.SetPixel(y, result.Height - 1 - x, pixel);
+                        break;
                 }
             }
 

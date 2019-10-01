@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Property of all attackable Items.
+    ///     Property of all attackable Items.
     /// </summary>
     public sealed class AttackableProperty : ItemProperty
     {
@@ -16,7 +15,7 @@ namespace AntMe.Basics.ItemProperties
         private float attackableRadius;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="item">Item</param>
         public AttackableProperty(Item item) : base(item)
@@ -25,11 +24,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the current Health.
+        ///     Gets or sets the current Health.
         /// </summary>
         public int AttackableHealth
         {
-            get { return attackableHealth; }
+            get => attackableHealth;
             set
             {
                 attackableHealth = Math.Max(0, value);
@@ -38,11 +37,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the maximum Health.
+        ///     Gets or sets the maximum Health.
         /// </summary>
         public int AttackableMaximumHealth
         {
-            get { return attackableMaximumHealth; }
+            get => attackableMaximumHealth;
             set
             {
                 attackableMaximumHealth = Math.Max(0, value);
@@ -51,19 +50,16 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// List of all attacking Items.
+        ///     List of all attacking Items.
         /// </summary>
-        public IEnumerable<AttackerProperty> AttackerItems
-        {
-            get { return attackerItems.AsEnumerable(); }
-        }
+        public IEnumerable<AttackerProperty> AttackerItems => attackerItems.AsEnumerable();
 
         /// <summary>
-        /// Gets or sets the attackable Radius.
+        ///     Gets or sets the attackable Radius.
         /// </summary>
         public float AttackableRadius
         {
-            get { return attackableRadius; }
+            get => attackableRadius;
             set
             {
                 attackableRadius = Math.Max(value, 0f);
@@ -74,7 +70,7 @@ namespace AntMe.Basics.ItemProperties
         #region Internal Calls
 
         /// <summary>
-        /// Internal Call to add another Attacker to the List.
+        ///     Internal Call to add another Attacker to the List.
         /// </summary>
         /// <param name="item">New Attacker</param>
         internal void AddAttackerItem(AttackerProperty item)
@@ -87,19 +83,16 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Internal Call to remove an Attacker from the List.
+        ///     Internal Call to remove an Attacker from the List.
         /// </summary>
         /// <param name="item">Lost Attacker</param>
         internal void RemoveAttackerItem(AttackerProperty item)
         {
-            if (attackerItems.Remove(item))
-            {
-                OnLostAttackerItem?.Invoke(item);
-            }
+            if (attackerItems.Remove(item)) OnLostAttackerItem?.Invoke(item);
         }
 
         /// <summary>
-        /// Internal Call for every Attacker per Round.
+        ///     Internal Call for every Attacker per Round.
         /// </summary>
         /// <param name="item">Attacker</param>
         internal void NoteAttackerItem(AttackerProperty item)
@@ -108,7 +101,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Internal Call for a Attacker Hit.
+        ///     Internal Call for a Attacker Hit.
         /// </summary>
         /// <param name="item">Attacker</param>
         /// <param name="hitpoints">Hitpoints</param>
@@ -118,7 +111,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Internal Call to Kill the Item.
+        ///     Internal Call to Kill the Item.
         /// </summary>
         internal void Kill()
         {
@@ -130,42 +123,42 @@ namespace AntMe.Basics.ItemProperties
         #region Events
 
         /// <summary>
-        /// Signal for a changed Health.
+        ///     Signal for a changed Health.
         /// </summary>
         public event ValueChanged<int> OnAttackableHealthChanged;
 
         /// <summary>
-        /// Signal for a changed maximum Health.
+        ///     Signal for a changed maximum Health.
         /// </summary>
         public event ValueChanged<int> OnAttackableMaximumHealthChanged;
 
         /// <summary>
-        /// Signal for a changed Attackable Radius.
+        ///     Signal for a changed Attackable Radius.
         /// </summary>
         public event ValueChanged<float> OnAttackableRadiusChanged;
 
         /// <summary>
-        /// Signal for a new Attacker.
+        ///     Signal for a new Attacker.
         /// </summary>
         public event ChangeItem<AttackerProperty> OnNewAttackerItem;
 
         /// <summary>
-        /// Signal for a lost Attacker.
+        ///     Signal for a lost Attacker.
         /// </summary>
         public event ChangeItem<AttackerProperty> OnLostAttackerItem;
 
         /// <summary>
-        /// Signal for every Attacker per Round.
+        ///     Signal for every Attacker per Round.
         /// </summary>
         public event ChangeItem<AttackerProperty> OnAttackerItem;
 
         /// <summary>
-        /// Signal for a Hit.
+        ///     Signal for a Hit.
         /// </summary>
         public event ValueChanged<int> OnAttackerHit;
 
         /// <summary>
-        /// Signal for a Kill.
+        ///     Signal for a Kill.
         /// </summary>
         public event ChangeItem OnKill;
 

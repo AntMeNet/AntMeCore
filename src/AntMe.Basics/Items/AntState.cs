@@ -4,44 +4,19 @@ using System.IO;
 namespace AntMe.Basics.Items
 {
     /// <summary>
-    /// State for the Ant Item.
+    ///     State for the Ant Item.
     /// </summary>
     public sealed class AntState : FactionItemState
     {
         /// <summary>
-        /// Current Ant Mode.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        [DisplayName("Mode")]
-        [Description("Current Ant Mode")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public AntStateMode Mode { get; set; }
+        public AntState()
+        {
+        }
 
         /// <summary>
-        /// Ant Name
-        /// </summary>
-        [DisplayName("Name")]
-        [Description("Ant Name")]
-        [ReadOnly(true)]
-        [Category("Static")]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Ant Caste.
-        /// </summary>
-        [DisplayName("Caste")]
-        [Description("Ant Caste")]
-        [ReadOnly(true)]
-        [Category("Static")]
-        public string Caste { get; set; }
-
-        /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public AntState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         public AntState(AntItem item) : base(item)
@@ -52,7 +27,34 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Current Ant Mode.
+        /// </summary>
+        [DisplayName("Mode")]
+        [Description("Current Ant Mode")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public AntStateMode Mode { get; set; }
+
+        /// <summary>
+        ///     Ant Name
+        /// </summary>
+        [DisplayName("Name")]
+        [Description("Ant Name")]
+        [ReadOnly(true)]
+        [Category("Static")]
+        public string Name { get; set; }
+
+        /// <summary>
+        ///     Ant Caste.
+        /// </summary>
+        [DisplayName("Caste")]
+        [Description("Ant Caste")]
+        [ReadOnly(true)]
+        [Category("Static")]
+        public string Caste { get; set; }
+
+        /// <summary>
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -62,11 +64,11 @@ namespace AntMe.Basics.Items
 
             stream.Write(Caste);
             stream.Write(Name);
-            stream.Write((byte)Mode);
+            stream.Write((byte) Mode);
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -74,11 +76,11 @@ namespace AntMe.Basics.Items
         {
             base.SerializeUpdate(stream, version);
 
-            stream.Write((byte)Mode);
+            stream.Write((byte) Mode);
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -88,11 +90,11 @@ namespace AntMe.Basics.Items
 
             Caste = stream.ReadString();
             Name = stream.ReadString();
-            Mode = (AntStateMode)stream.ReadByte();
+            Mode = (AntStateMode) stream.ReadByte();
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -100,32 +102,32 @@ namespace AntMe.Basics.Items
         {
             base.DeserializeUpdate(stream, version);
 
-            Mode = (AntStateMode)stream.ReadByte();
+            Mode = (AntStateMode) stream.ReadByte();
         }
     }
 
     /// <summary>
-    /// List of possible Ant Modes.
+    ///     List of possible Ant Modes.
     /// </summary>
     public enum AntStateMode
     {
         /// <summary>
-        /// Ant is in Idle Mode.
+        ///     Ant is in Idle Mode.
         /// </summary>
         Idle = 0,
 
         /// <summary>
-        /// Ant walks.
+        ///     Ant walks.
         /// </summary>
         Walk = 1,
 
         /// <summary>
-        /// Ant Fights.
+        ///     Ant Fights.
         /// </summary>
         Fight = 2,
 
         /// <summary>
-        /// Ant carries something.
+        ///     Ant carries something.
         /// </summary>
         Carry = 3
     }

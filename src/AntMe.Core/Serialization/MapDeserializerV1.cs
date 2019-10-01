@@ -5,24 +5,24 @@ using System.Linq;
 namespace AntMe.Serialization
 {
     /// <summary>
-    /// Deserializer for the old Map Format from the Beta Version.
+    ///     Deserializer for the old Map Format from the Beta Version.
     /// </summary>
     internal sealed class MapDeserializerV1 : IMapDeserializer
     {
         /// <summary>
-        /// Deserializes the Map Format in Version 1 (Beta Version).
+        ///     Deserializes the Map Format in Version 1 (Beta Version).
         /// </summary>
         /// <param name="context">Current Simulation Context</param>
         /// <param name="stream">Input Stream</param>
         /// <returns>Map Instance</returns>
         public Map Deserialize(SimulationContext context, Stream stream)
         {
-            using (BinaryReader reader = new BinaryReader(stream))
+            using (var reader = new BinaryReader(stream))
             {
                 // Globale Infos (Border, Width, Height)
-                bool blockBorder = reader.ReadBoolean();
-                int width = reader.ReadInt32();
-                int height = reader.ReadInt32();
+                var blockBorder = reader.ReadBoolean();
+                var width = reader.ReadInt32();
+                var height = reader.ReadInt32();
                 int playercount = reader.ReadByte();
 
                 var map = new Map(context, width, height);
@@ -36,134 +36,142 @@ namespace AntMe.Serialization
 
                 // Startpunkte einlesen
                 map.StartPoints = new Index2[playercount];
-                for (int i = 0; i < playercount; i++)
-                {
+                for (var i = 0; i < playercount; i++)
                     map.StartPoints[i] = new Index2(
                         reader.ReadInt32(),
                         reader.ReadInt32());
-                }
 
                 if (width < Map.MIN_WIDTH || width > Map.MAX_WIDTH)
-                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", Map.MIN_WIDTH,
+                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})",
+                        Map.MIN_WIDTH,
                         Map.MAX_WIDTH));
                 if (height < Map.MIN_HEIGHT || height > Map.MAX_HEIGHT)
-                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})", Map.MIN_HEIGHT,
+                    throw new Exception(string.Format("Dimensions (Width) are out of valid values ({0}...{1})",
+                        Map.MIN_HEIGHT,
                         Map.MAX_HEIGHT));
 
                 // Zellen einlesen
                 // map.Tiles = new MapTile[width, height];
-                for (int y = 0; y < height; y++)
+                for (var y = 0; y < height; y++)
+                for (var x = 0; x < width; x++)
                 {
-                    for (int x = 0; x < width; x++)
+                    var shape = reader.ReadByte();
+                    var speed = reader.ReadByte();
+                    var level = reader.ReadByte();
+
+                    var typeName = string.Empty;
+                    var materialName = string.Empty;
+                    var orientation = MapTileOrientation.NotRotated;
+
+                    switch (speed)
                     {
-                        byte shape = reader.ReadByte();
-                        byte speed = reader.ReadByte();
-                        byte level = reader.ReadByte();
-
-                        string typeName = string.Empty;
-                        string materialName = string.Empty;
-                        MapTileOrientation orientation = MapTileOrientation.NotRotated;
-
-                        switch (speed)
-                        {
-                            case 1: materialName = "AntMe.Basics.MapTiles.LavaMaterial"; break;
-                            case 2: materialName = "AntMe.Basics.MapTiles.MudMaterial"; break;
-                            case 3: materialName = "AntMe.Basics.MapTiles.SandMaterial"; break;
-                            case 4: materialName = "AntMe.Basics.MapTiles.GrasMaterial"; break;
-                            case 5: materialName = "AntMe.Basics.MapTiles.StoneMaterial"; break;
-                        }
-
-                        switch (shape)
-                        {
-                            // Flat Map Tile
-                            case 0x00:
-                                typeName = "AntMe.Basics.MapTiles.FlatMapTile";
-                                orientation = MapTileOrientation.NotRotated;
-                                break;
-
-                            // Ramp
-                            case 0x10:
-                                typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                                orientation = MapTileOrientation.NotRotated;
-                                break;
-                            case 0x11:
-                                typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                                orientation = MapTileOrientation.RotBy270Degrees;
-                                break;
-                            case 0x12:
-                                typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                                orientation = MapTileOrientation.RotBy180Degrees;
-                                break;
-                            case 0x13:
-                                typeName = "AntMe.Basics.MapTiles.RampMapTile";
-                                orientation = MapTileOrientation.RotBy90Degrees;
-                                break;
-
-                            // Wall
-                            case 0x20:
-                                typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                                orientation = MapTileOrientation.NotRotated;
-                                break;
-                            case 0x21:
-                                typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                                orientation = MapTileOrientation.RotBy270Degrees;
-                                break;
-                            case 0x22:
-                                typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                                orientation = MapTileOrientation.RotBy180Degrees;
-                                break;
-                            case 0x23:
-                                typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
-                                orientation = MapTileOrientation.RotBy90Degrees;
-                                break;
-
-                            // Concave Corners
-                            case 0x30:
-                                typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                                orientation = MapTileOrientation.RotBy90Degrees;
-                                break;
-                            case 0x31:
-                                typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                                orientation = MapTileOrientation.NotRotated;
-                                break;
-                            case 0x32:
-                                typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                                orientation = MapTileOrientation.RotBy270Degrees;
-                                break;
-                            case 0x33:
-                                typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
-                                orientation = MapTileOrientation.RotBy180Degrees;
-                                break;
-
-                            // Convex Cordners
-                            case 0x40:
-                                typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                                orientation = MapTileOrientation.RotBy90Degrees;
-                                break;
-                            case 0x41:
-                                typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                                orientation = MapTileOrientation.NotRotated;
-                                break;
-                            case 0x42:
-                                typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                                orientation = MapTileOrientation.RotBy270Degrees;
-                                break;
-                            case 0x43:
-                                typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
-                                orientation = MapTileOrientation.RotBy180Degrees;
-                                break;
-                        }
-
-                        // Lookup Map Tile
-                        var tileMap = context.Mapper.MapTiles.First(t => t.Type.FullName.Equals(typeName));
-                        MapTile tile = Activator.CreateInstance(tileMap.Type, context) as MapTile;
-                        tile.HeightLevel = level;
-                        tile.Orientation = orientation;
-
-                        var materialMap = context.Mapper.MapMaterials.First(m => m.Type.FullName.Equals(materialName));
-                        tile.Material = Activator.CreateInstance(materialMap.Type, context) as MapMaterial;
-                        map[x, y] = tile;
+                        case 1:
+                            materialName = "AntMe.Basics.MapTiles.LavaMaterial";
+                            break;
+                        case 2:
+                            materialName = "AntMe.Basics.MapTiles.MudMaterial";
+                            break;
+                        case 3:
+                            materialName = "AntMe.Basics.MapTiles.SandMaterial";
+                            break;
+                        case 4:
+                            materialName = "AntMe.Basics.MapTiles.GrasMaterial";
+                            break;
+                        case 5:
+                            materialName = "AntMe.Basics.MapTiles.StoneMaterial";
+                            break;
                     }
+
+                    switch (shape)
+                    {
+                        // Flat Map Tile
+                        case 0x00:
+                            typeName = "AntMe.Basics.MapTiles.FlatMapTile";
+                            orientation = MapTileOrientation.NotRotated;
+                            break;
+
+                        // Ramp
+                        case 0x10:
+                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                            orientation = MapTileOrientation.NotRotated;
+                            break;
+                        case 0x11:
+                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                            orientation = MapTileOrientation.RotBy270Degrees;
+                            break;
+                        case 0x12:
+                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                            orientation = MapTileOrientation.RotBy180Degrees;
+                            break;
+                        case 0x13:
+                            typeName = "AntMe.Basics.MapTiles.RampMapTile";
+                            orientation = MapTileOrientation.RotBy90Degrees;
+                            break;
+
+                        // Wall
+                        case 0x20:
+                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                            orientation = MapTileOrientation.NotRotated;
+                            break;
+                        case 0x21:
+                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                            orientation = MapTileOrientation.RotBy270Degrees;
+                            break;
+                        case 0x22:
+                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                            orientation = MapTileOrientation.RotBy180Degrees;
+                            break;
+                        case 0x23:
+                            typeName = "AntMe.Basics.MapTiles.WallCliffMapTile";
+                            orientation = MapTileOrientation.RotBy90Degrees;
+                            break;
+
+                        // Concave Corners
+                        case 0x30:
+                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                            orientation = MapTileOrientation.RotBy90Degrees;
+                            break;
+                        case 0x31:
+                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                            orientation = MapTileOrientation.NotRotated;
+                            break;
+                        case 0x32:
+                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                            orientation = MapTileOrientation.RotBy270Degrees;
+                            break;
+                        case 0x33:
+                            typeName = "AntMe.Basics.MapTiles.ConcaveCliffMapTile";
+                            orientation = MapTileOrientation.RotBy180Degrees;
+                            break;
+
+                        // Convex Cordners
+                        case 0x40:
+                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                            orientation = MapTileOrientation.RotBy90Degrees;
+                            break;
+                        case 0x41:
+                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                            orientation = MapTileOrientation.NotRotated;
+                            break;
+                        case 0x42:
+                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                            orientation = MapTileOrientation.RotBy270Degrees;
+                            break;
+                        case 0x43:
+                            typeName = "AntMe.Basics.MapTiles.ConvexCliffMapTile";
+                            orientation = MapTileOrientation.RotBy180Degrees;
+                            break;
+                    }
+
+                    // Lookup Map Tile
+                    var tileMap = context.Mapper.MapTiles.First(t => t.Type.FullName.Equals(typeName));
+                    var tile = Activator.CreateInstance(tileMap.Type, context) as MapTile;
+                    tile.HeightLevel = level;
+                    tile.Orientation = orientation;
+
+                    var materialMap = context.Mapper.MapMaterials.First(m => m.Type.FullName.Equals(materialName));
+                    tile.Material = Activator.CreateInstance(materialMap.Type, context) as MapMaterial;
+                    map[x, y] = tile;
                 }
 
                 return map;

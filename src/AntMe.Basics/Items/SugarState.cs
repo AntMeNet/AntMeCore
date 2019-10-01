@@ -3,23 +3,27 @@
 namespace AntMe.Basics.Items
 {
     /// <summary>
-    /// State for Sugar.
+    ///     State for Sugar.
     /// </summary>
     public sealed class SugarState : ItemState
     {
         /// <summary>
-        /// Default Constructor for the Deserializer.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public SugarState() : base() { }
+        public SugarState()
+        {
+        }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
-        public SugarState(SugarItem item) : base(item) { }
+        public SugarState(SugarItem item) : base(item)
+        {
+        }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -29,7 +33,7 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -39,7 +43,7 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -49,7 +53,7 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

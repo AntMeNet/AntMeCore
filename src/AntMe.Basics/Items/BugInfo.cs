@@ -1,5 +1,4 @@
-﻿
-namespace AntMe.Basics.Items
+﻿namespace AntMe.Basics.Items
 {
     public class BugInfo : ItemInfo
     {

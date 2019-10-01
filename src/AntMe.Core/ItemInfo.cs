@@ -3,22 +3,22 @@
 namespace AntMe
 {
     /// <summary>
-    /// Base Class for all Info Objects.
+    ///     Base Class for all Info Objects.
     /// </summary>
     public class ItemInfo : PropertyList<ItemInfoProperty>
     {
         /// <summary>
-        /// Reference to the observed Item.
+        ///     Reference to the observed Item.
         /// </summary>
         protected readonly Item Item;
 
         /// <summary>
-        /// Reference to the observing Item.
+        ///     Reference to the observing Item.
         /// </summary>
         protected readonly Item Observer;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Reference to the observed Item.</param>
         /// <param name="observer">Reference to the observing Item.</param>
@@ -29,39 +29,27 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gets the real Distance (Radius to Radius) to the Item.
+        ///     Gets the real Distance (Radius to Radius) to the Item.
         /// </summary>
-        public float Distance
-        {
-            get { return Math.Max(0, GetDistance(Observer, Item) - Radius - Observer.Radius); }
-        }
+        public float Distance => Math.Max(0, GetDistance(Observer, Item) - Radius - Observer.Radius);
 
         /// <summary>
-        /// Gets the direction to the Item.
+        ///     Gets the direction to the Item.
         /// </summary>
-        public int Direction
-        {
-            get { return GetDirection(Observer, Item); }
-        }
+        public int Direction => GetDirection(Observer, Item);
 
         /// <summary>
-        /// Returns the Item Radius.
+        ///     Returns the Item Radius.
         /// </summary>
-        public float Radius
-        {
-            get { return Item.Radius; }
-        }
+        public float Radius => Item.Radius;
 
         /// <summary>
-        /// Returns true of the Item is still alive.
+        ///     Returns true of the Item is still alive.
         /// </summary>
-        public bool IsAlive
-        {
-            get { return Item.Id > 0; }
-        }
+        public bool IsAlive => Item.Id > 0;
 
         /// <summary>
-        /// Internal call to get the related Item.
+        ///     Internal call to get the related Item.
         /// </summary>
         /// <returns>Related Item</returns>
         internal Item GetItem()
@@ -70,17 +58,17 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Generates a unique Hash Code for this Info.
+        ///     Generates a unique Hash Code for this Info.
         /// </summary>
         /// <returns>Hash Code</returns>
         public override int GetHashCode()
         {
-            return Item.Id.GetHashCode() + 
-                Observer.Id.GetHashCode();
+            return Item.Id.GetHashCode() +
+                   Observer.Id.GetHashCode();
         }
 
         /// <summary>
-        /// Compares two Info Items.
+        ///     Compares two Info Items.
         /// </summary>
         /// <param name="obj">Other Item</param>
         /// <returns>Is this the same Info?</returns>
@@ -93,14 +81,14 @@ namespace AntMe
                 return false;
 
             var other = obj as ItemInfo;
-            return Item == other.Item && 
-                Observer == other.Observer;
+            return Item == other.Item &&
+                   Observer == other.Observer;
         }
-        
+
         #region Static Helper
 
         /// <summary>
-        /// Calculates the Distance between two Items.
+        ///     Calculates the Distance between two Items.
         /// </summary>
         /// <param name="item1">Item Info 1</param>
         /// <param name="item2">Item Info 2</param>
@@ -111,7 +99,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Calculates the Distance between two Items.
+        ///     Calculates the Distance between two Items.
         /// </summary>
         /// <param name="item1">Item 1</param>
         /// <param name="item2">Item 2</param>
@@ -122,7 +110,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Calculates the Direction from Item 1 to Item 2.
+        ///     Calculates the Direction from Item 1 to Item 2.
         /// </summary>
         /// <param name="source">Item Info 1</param>
         /// <param name="target">Item Info 2</param>
@@ -133,7 +121,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Calculates the Direction from Item 1 to Item 2.
+        ///     Calculates the Direction from Item 1 to Item 2.
         /// </summary>
         /// <param name="source">Item 1</param>
         /// <param name="target">Item 2</param>
@@ -144,6 +132,5 @@ namespace AntMe
         }
 
         #endregion
-        
     }
 }

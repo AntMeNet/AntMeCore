@@ -4,27 +4,27 @@ using System.Collections.Generic;
 namespace AntMe
 {
     /// <summary>
-    /// Base Class to all Factions.
+    ///     Base Class to all Factions.
     /// </summary>
     public abstract class Faction : PropertyList<FactionProperty>
     {
         /// <summary>
-        /// Type of the Players Factory Class.
-        /// </summary>
-        private Type factoryType;
-
-        /// <summary>
-        /// Local Faction Info Cache.
+        ///     Local Faction Info Cache.
         /// </summary>
         private readonly Dictionary<Item, FactionInfo> factionInfos = new Dictionary<Item, FactionInfo>();
 
         /// <summary>
-        /// Local Instance of the Faction State.
+        ///     Type of the Players Factory Class.
+        /// </summary>
+        private readonly Type factoryType;
+
+        /// <summary>
+        ///     Local Instance of the Faction State.
         /// </summary>
         private FactionState state;
 
         /// <summary>
-        /// Default Constructor for Type Mapper.
+        ///     Default Constructor for Type Mapper.
         /// </summary>
         /// <param name="context">Simulation Context</param>
         /// <param name="factoryType">Type of Factory Class</param>
@@ -40,62 +40,62 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Slot Index.
+        ///     Slot Index.
         /// </summary>
         public byte SlotIndex { get; private set; }
 
         /// <summary>
-        /// Team Index.
+        ///     Team Index.
         /// </summary>
         public byte TeamIndex { get; private set; }
 
         /// <summary>
-        /// Player Name.
+        ///     Player Name.
         /// </summary>
         public string Name { get; private set; }
 
         /// <summary>
-        /// Player Color.
+        ///     Player Color.
         /// </summary>
         public PlayerColor PlayerColor { get; private set; }
 
         /// <summary>
-        /// Reference to the Level.
+        ///     Reference to the Level.
         /// </summary>
-        public Level Level { get; private set; }
+        public Level Level { get; }
 
         /// <summary>
-        /// Gets the default Start Point.
+        ///     Gets the default Start Point.
         /// </summary>
         public Vector2 Home { get; private set; }
 
         /// <summary>
-        /// Factory-specific Settings.
+        ///     Factory-specific Settings.
         /// </summary>
-        public KeyValueStore Settings { get { return Context.Settings; } }
+        public KeyValueStore Settings => Context.Settings;
 
         /// <summary>
-        /// Current Simulation Context for this Faction.
+        ///     Current Simulation Context for this Faction.
         /// </summary>
         public SimulationContext Context { get; private set; }
 
         /// <summary>
-        /// Gets the Randomizer for this Faction.
+        ///     Gets the Randomizer for this Faction.
         /// </summary>
-        public Random Random { get { return Context.Random; } }
+        public Random Random => Context.Random;
 
         /// <summary>
-        /// Group of Factory Interop-Instances.
+        ///     Group of Factory Interop-Instances.
         /// </summary>
         public FactoryGroup Factory { get; private set; }
 
         /// <summary>
-        /// List of all Groups for Unit Interop-Instances.
+        ///     List of all Groups for Unit Interop-Instances.
         /// </summary>
-        public Dictionary<Item, UnitGroup> Units { get; private set; }
+        public Dictionary<Item, UnitGroup> Units { get; }
 
         /// <summary>
-        /// Initializes the Faction.
+        ///     Initializes the Faction.
         /// </summary>
         public void Init(byte slotIndex, byte teamIndex, string name, PlayerColor color, Random random, Vector2 home)
         {
@@ -113,9 +113,9 @@ namespace AntMe
                 property.Init();
 
             // Factory für Ameisen erzeugen
-            Factory = new FactoryGroup()
+            Factory = new FactoryGroup
             {
-                Factory = (FactionFactory)Activator.CreateInstance(factoryType),
+                Factory = (FactionFactory) Activator.CreateInstance(factoryType),
                 Interop = Context.Resolver.CreateFactoryInterop(this)
             };
             Factory.Factory.Init(Factory.Interop);
@@ -126,31 +126,36 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Scans the given Type for Unit Attributes.
+        ///     Scans the given Type for Unit Attributes.
         /// </summary>
         /// <param name="unitType">Type to scan</param>
         /// <returns>Collected Attributes</returns>
         protected UnitAttributeCollection GetAttributes(Type unitType)
         {
             // Try to find the Caste Name
-            string categoryName = string.Empty;
+            var categoryName = string.Empty;
             var unitCategoryNames = unitType.GetCustomAttributes(typeof(UnitGroupAttribute), true);
             if (unitCategoryNames.Length > 0)
                 categoryName = (unitCategoryNames[0] as UnitGroupAttribute).Name;
 
             // Collect Attributes
-            Dictionary<string, sbyte> attributesValues = new Dictionary<string, sbyte>();
+            var attributesValues = new Dictionary<string, sbyte>();
             foreach (UnitAttribute unitAttribute in unitType.GetCustomAttributes(typeof(UnitAttribute), true))
             {
                 // Check for Attributes with the same Key
                 if (attributesValues.ContainsKey(unitAttribute.Key))
-                    throw new NotSupportedException(string.Format("Attribute Key {0} from {1} is already in the list.", unitAttribute.Key, unitType.FullName));
+                    throw new NotSupportedException(string.Format("Attribute Key {0} from {1} is already in the list.",
+                        unitAttribute.Key, unitType.FullName));
 
                 // Check Min-Max-Values
                 if (unitAttribute.Value < unitAttribute.MinValue)
-                    throw new NotSupportedException(string.Format("Attribute {0} from {1} has a Value smaller than MinValue", unitAttribute.Key, unitType.FullName));
+                    throw new NotSupportedException(string.Format(
+                        "Attribute {0} from {1} has a Value smaller than MinValue", unitAttribute.Key,
+                        unitType.FullName));
                 if (unitAttribute.Value > unitAttribute.MaxValue)
-                    throw new NotSupportedException(string.Format("Attribute {0} from {1} has a Value greater than MaxValue", unitAttribute.Key, unitType.FullName));
+                    throw new NotSupportedException(string.Format(
+                        "Attribute {0} from {1} has a Value greater than MaxValue", unitAttribute.Key,
+                        unitType.FullName));
 
                 // Add
                 attributesValues.Add(unitAttribute.Key, unitAttribute.Value);
@@ -160,7 +165,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Generate a Unit/Item/Interop Combination based on the Unit and Item
+        ///     Generate a Unit/Item/Interop Combination based on the Unit and Item
         /// </summary>
         /// <param name="unit">Unit Instance</param>
         /// <param name="item">Item Instance</param>
@@ -169,10 +174,10 @@ namespace AntMe
         {
             // TODO: Check valid Types
 
-            UnitInterop unitInterop = Context.Resolver.CreateUnitInterop(this, item) as UnitInterop;
+            var unitInterop = Context.Resolver.CreateUnitInterop(this, item);
             unit.Init(unitInterop);
 
-            var group = new UnitGroup()
+            var group = new UnitGroup
             {
                 Item = item,
                 Interop = unitInterop,
@@ -185,12 +190,12 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Method will be called after Initializing the Faction.
+        ///     Method will be called after Initializing the Faction.
         /// </summary>
         protected abstract void OnInit();
 
         /// <summary>
-        /// Updates the Faction and all the including Properties.
+        ///     Updates the Faction and all the including Properties.
         /// </summary>
         public void Update(int round)
         {
@@ -206,19 +211,19 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gets a call before the Faction updates itself.
+        ///     Gets a call before the Faction updates itself.
         /// </summary>
         /// <param name="round">Current Round</param>
         protected abstract void OnUpdate(int round);
 
         /// <summary>
-        /// Gets a call after Faction Update.
+        ///     Gets a call after Faction Update.
         /// </summary>
         /// <param name="round">Current Round</param>
         protected abstract void OnUpdated(int round);
 
         /// <summary>
-        /// Generates Faction Info.
+        ///     Generates Faction Info.
         /// </summary>
         /// <param name="observer">Reference to the observing Item.</param>
         /// <returns></returns>
@@ -231,7 +236,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Generates the Faction State.
+        ///     Generates the Faction State.
         /// </summary>
         /// <returns>Updated Faction State</returns>
         public FactionState GetFactionState()
@@ -242,7 +247,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gets a call before <see cref="GetFactionState"/> returns the State Reference.
+        ///     Gets a call before <see cref="GetFactionState" /> returns the State Reference.
         /// </summary>
         /// <param name="state">Instanz des zu füllenden States</param>
         protected void PrefillState(FactionState state)
@@ -259,38 +264,38 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Class to hold the group of relating Interop- and Factory-Instances.
+        ///     Class to hold the group of relating Interop- and Factory-Instances.
         /// </summary>
         public sealed class FactoryGroup
         {
             /// <summary>
-            /// Reference to the Interop Instance.
+            ///     Reference to the Interop Instance.
             /// </summary>
             public FactoryInterop Interop { get; set; }
 
             /// <summary>
-            /// Reference to the Factory Instance.
+            ///     Reference to the Factory Instance.
             /// </summary>
             public FactionFactory Factory { get; set; }
         }
 
         /// <summary>
-        /// Class to hold the group of relating Interop-, Item- and Unit-Instances.
+        ///     Class to hold the group of relating Interop-, Item- and Unit-Instances.
         /// </summary>
         public sealed class UnitGroup
         {
             /// <summary>
-            /// Reference to the Interop Instance.
+            ///     Reference to the Interop Instance.
             /// </summary>
             public UnitInterop Interop { get; set; }
 
             /// <summary>
-            /// Refernce to the Unit Instance.
+            ///     Refernce to the Unit Instance.
             /// </summary>
             public FactionUnit Unit { get; set; }
 
             /// <summary>
-            /// Reference to the Item Instance.
+            ///     Reference to the Item Instance.
             /// </summary>
             public FactionItem Item { get; set; }
         }

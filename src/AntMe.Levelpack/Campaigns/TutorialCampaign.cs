@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AntMe.Levelpack.Campaigns
+﻿namespace AntMe.Levelpack.Campaigns
 {
     //[CampaignDescription()]
     //public sealed class TutorialCampaign : Campaign

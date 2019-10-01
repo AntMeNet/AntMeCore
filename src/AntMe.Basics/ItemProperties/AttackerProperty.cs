@@ -3,7 +3,7 @@
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Property for all attacking Items.
+    ///     Property for all attacking Items.
     /// </summary>
     public sealed class AttackerProperty : ItemProperty, IPointsCollector
     {
@@ -12,40 +12,24 @@ namespace AntMe.Basics.ItemProperties
         private int attackStrength;
         private AttackableProperty attackTarget;
         private int damageCounter;
-        private int killCounter;
         private bool enablePoints;
+        private int killCounter;
         private int points;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="item">Item</param>
-        public AttackerProperty(Item item) : base(item) { }
-
-        /// <summary>
-        /// Returns the Points Category.
-        /// </summary>
-        public string PointsCategory { get { return "Attacker"; } }
-
-        /// <summary>
-        /// Defines of the Counter will be removed after Item Death.
-        /// </summary>
-        public bool PermanentPoints
+        public AttackerProperty(Item item) : base(item)
         {
-            get
-            {
-                // TODO: Maybe Settings? 
-                // ("Keep Damage Points only for living items?")
-                return true;
-            }
         }
 
         /// <summary>
-        /// Gets or sets the Attack Range.
+        ///     Gets or sets the Attack Range.
         /// </summary>
         public float AttackRange
         {
-            get { return attackRange; }
+            get => attackRange;
             set
             {
                 attackRange = Math.Max(value, 0f);
@@ -54,11 +38,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the recovery time.
+        ///     Gets or sets the recovery time.
         /// </summary>
         public int AttackRecoveryTime
         {
-            get { return attackRecoveryTime; }
+            get => attackRecoveryTime;
             set
             {
                 attackRecoveryTime = Math.Max(value, 0);
@@ -67,11 +51,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the Attack Strength.
+        ///     Gets or sets the Attack Strength.
         /// </summary>
         public int AttackStrength
         {
-            get { return attackStrength; }
+            get => attackStrength;
             set
             {
                 attackStrength = Math.Max(value, 0);
@@ -80,11 +64,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Returns the current Target.
+        ///     Returns the current Target.
         /// </summary>
         public AttackableProperty AttackTarget
         {
-            get { return attackTarget; }
+            get => attackTarget;
             private set
             {
                 attackTarget = value;
@@ -93,11 +77,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Counts the Damage made by this Item.
+        ///     Counts the Damage made by this Item.
         /// </summary>
         public int AttackDamageCounter
         {
-            get { return damageCounter; }
+            get => damageCounter;
             set
             {
                 damageCounter = value;
@@ -106,11 +90,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Counts the Number of Items killed by this Item. (Last Hit counts)
+        ///     Counts the Number of Items killed by this Item. (Last Hit counts)
         /// </summary>
         public int AttackKillCounter
         {
-            get { return killCounter; }
+            get => killCounter;
             set
             {
                 killCounter = value;
@@ -119,11 +103,21 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Returns the current Amount of Points.
+        ///     Returns the Points Category.
+        /// </summary>
+        public string PointsCategory => "Attacker";
+
+        /// <summary>
+        ///     Defines of the Counter will be removed after Item Death.
+        /// </summary>
+        public bool PermanentPoints => true;
+
+        /// <summary>
+        ///     Returns the current Amount of Points.
         /// </summary>
         public int Points
         {
-            get { return points; }
+            get => points;
             set
             {
                 points = value;
@@ -132,11 +126,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Defines if the Points should count.
+        ///     Defines if the Points should count.
         /// </summary>
         public bool EnablePoints
         {
-            get { return enablePoints; }
+            get => enablePoints;
             set
             {
                 enablePoints = value;
@@ -144,88 +138,8 @@ namespace AntMe.Basics.ItemProperties
             }
         }
 
-        #region Internal Methods
-
         /// <summary>
-        /// Internal Property to hold the Recovery time. It starts at 0 after a hit or a 
-        /// Target Change and counts up every round. If it is equal RecoveryTime a hit happens.
-        /// </summary>
-        internal int RecoveryCounter { get; set; }
-
-
-
-        /// <summary>
-        /// Internal call to perform a hit.
-        /// </summary>
-        /// <param name="item">Attacked Item</param>
-        /// <param name="hitpoints">Hitpoints</param>
-        internal void AttackHit(AttackableProperty item, int hitpoints)
-        {
-            // Count Points
-            AttackDamageCounter += hitpoints;
-            if (item.AttackableHealth <= 0 && hitpoints > 0)
-                AttackKillCounter++;
-
-            // Calculate Points
-            // TODO: Create Settings
-            Points = AttackDamageCounter + (100 * AttackKillCounter);
-
-            OnAttackHit?.Invoke(item.Item, hitpoints);
-        }
-
-        #endregion
-
-        #region Events
-
-        /// <summary>
-        /// Signal for a changed Attack Range.
-        /// </summary>
-        public event ValueChanged<float> OnAttackRangeChanged;
-
-        /// <summary>
-        /// Signal for a changed Target.
-        /// </summary>
-        public event ValueChanged<AttackableProperty> OnAttackTargetChanged;
-
-        /// <summary>
-        /// Signal for a changed Recovery Time.
-        /// </summary>
-        public event ValueChanged<int> OnAttackRecoveryTimeChanged;
-
-        /// <summary>
-        /// Signal for a changed Attack Strength.
-        /// </summary>
-        public event ValueChanged<int> OnAttackStrengthChanged;
-
-        /// <summary>
-        /// Signal for a succeeded hit.
-        /// </summary>
-        public event ValueChanged<int> OnAttackHit;
-
-        /// <summary>
-        /// Signal for a changed Damage Counter.
-        /// </summary>
-        public event ValueChanged<int> OnDamageCounterChanged;
-
-        /// <summary>
-        /// Signal for a changed Kill Counter.
-        /// </summary>
-        public event ValueChanged<int> OnKillCounterChanged;
-
-        /// <summary>
-        /// Signal for changed Enable Flag.
-        /// </summary>
-        public event ValueUpdate<IPointsCollector, bool> OnEnablePointsChanged;
-
-        /// <summary>
-        /// Signal for a changed Point Counter.
-        /// </summary>
-        public event ValueUpdate<IPointsCollector, int> OnPointsChanged;
-
-        #endregion
-
-        /// <summary>
-        /// Attacks the given Item.
+        ///     Attacks the given Item.
         /// </summary>
         /// <param name="item">Item</param>
         public void Attack(AttackableProperty item)
@@ -261,7 +175,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Stops fighting.
+        ///     Stops fighting.
         /// </summary>
         public void StopAttack()
         {
@@ -274,6 +188,83 @@ namespace AntMe.Basics.ItemProperties
             }
         }
 
+        #region Internal Methods
 
+        /// <summary>
+        ///     Internal Property to hold the Recovery time. It starts at 0 after a hit or a
+        ///     Target Change and counts up every round. If it is equal RecoveryTime a hit happens.
+        /// </summary>
+        internal int RecoveryCounter { get; set; }
+
+
+        /// <summary>
+        ///     Internal call to perform a hit.
+        /// </summary>
+        /// <param name="item">Attacked Item</param>
+        /// <param name="hitpoints">Hitpoints</param>
+        internal void AttackHit(AttackableProperty item, int hitpoints)
+        {
+            // Count Points
+            AttackDamageCounter += hitpoints;
+            if (item.AttackableHealth <= 0 && hitpoints > 0)
+                AttackKillCounter++;
+
+            // Calculate Points
+            // TODO: Create Settings
+            Points = AttackDamageCounter + 100 * AttackKillCounter;
+
+            OnAttackHit?.Invoke(item.Item, hitpoints);
+        }
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        ///     Signal for a changed Attack Range.
+        /// </summary>
+        public event ValueChanged<float> OnAttackRangeChanged;
+
+        /// <summary>
+        ///     Signal for a changed Target.
+        /// </summary>
+        public event ValueChanged<AttackableProperty> OnAttackTargetChanged;
+
+        /// <summary>
+        ///     Signal for a changed Recovery Time.
+        /// </summary>
+        public event ValueChanged<int> OnAttackRecoveryTimeChanged;
+
+        /// <summary>
+        ///     Signal for a changed Attack Strength.
+        /// </summary>
+        public event ValueChanged<int> OnAttackStrengthChanged;
+
+        /// <summary>
+        ///     Signal for a succeeded hit.
+        /// </summary>
+        public event ValueChanged<int> OnAttackHit;
+
+        /// <summary>
+        ///     Signal for a changed Damage Counter.
+        /// </summary>
+        public event ValueChanged<int> OnDamageCounterChanged;
+
+        /// <summary>
+        ///     Signal for a changed Kill Counter.
+        /// </summary>
+        public event ValueChanged<int> OnKillCounterChanged;
+
+        /// <summary>
+        ///     Signal for changed Enable Flag.
+        /// </summary>
+        public event ValueUpdate<IPointsCollector, bool> OnEnablePointsChanged;
+
+        /// <summary>
+        ///     Signal for a changed Point Counter.
+        /// </summary>
+        public event ValueUpdate<IPointsCollector, int> OnPointsChanged;
+
+        #endregion
     }
 }

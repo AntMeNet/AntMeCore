@@ -3,15 +3,15 @@
 namespace AntMe.Runtime.EventLog
 {
     /// <summary>
-    /// Überwacht den Stream auf neue oder entfernte Items.
+    ///     Überwacht den Stream auf neue oder entfernte Items.
     /// </summary>
     public sealed class ItemCountObserver : ILogObserver
     {
-        private List<int> ids = new List<int>();
+        private readonly List<int> ids = new List<int>();
 
         public void Update(LevelState state)
         {
-            List<int> updated = new List<int>();
+            var updated = new List<int>();
 
             // Neue Items finden
             foreach (var item in state.Items)
@@ -23,7 +23,7 @@ namespace AntMe.Runtime.EventLog
                     {
                         // Faction-Item
                         var fi = item as FactionItemState;
-                        OnNewEvent?.Invoke(new AddFactionItemEntry()
+                        OnNewEvent?.Invoke(new AddFactionItemEntry
                         {
                             Round = state.Round,
                             Id = fi.Id,
@@ -33,7 +33,7 @@ namespace AntMe.Runtime.EventLog
                     else
                     {
                         // Factionloses Item
-                        OnNewEvent?.Invoke(new AddItemEntry()
+                        OnNewEvent?.Invoke(new AddItemEntry
                         {
                             Round = state.Round,
                             Id = item.Id
@@ -48,17 +48,13 @@ namespace AntMe.Runtime.EventLog
 
             // Entfernte Items identifizieren
             foreach (var id in ids)
-            {
                 if (!updated.Contains(id))
-                {
                     // Item nicht mehr vorhanden
-                    OnNewEvent?.Invoke(new RemoveItemEntry()
+                    OnNewEvent?.Invoke(new RemoveItemEntry
                     {
                         Round = state.Round,
                         Id = id
                     });
-                }
-            }
         }
 
         public event Log.LogEntry OnNewEvent;

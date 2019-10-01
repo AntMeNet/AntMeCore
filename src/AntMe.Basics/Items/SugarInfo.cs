@@ -1,5 +1,4 @@
-﻿
-using AntMe.Basics.ItemProperties;
+﻿using AntMe.Basics.ItemProperties;
 
 namespace AntMe.Basics.Items
 {
@@ -18,19 +17,13 @@ namespace AntMe.Basics.Items
         }
 
         /// <summary>
-        /// Gibt die verfügbare Zuckermenge zurück.
+        ///     Gibt die verfügbare Zuckermenge zurück.
         /// </summary>
-        public int Amount
-        {
-            get { return _sugar.Amount; }
-        }
+        public int Amount => _sugar.Amount;
 
         /// <summary>
-        /// Gibt die Größe des Zuckerberges an.
+        ///     Gibt die Größe des Zuckerberges an.
         /// </summary>
-        public new float Radius
-        {
-            get { return _item.Radius; }
-        }
+        public new float Radius => _item.Radius;
     }
 }

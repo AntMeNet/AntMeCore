@@ -3,52 +3,52 @@
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Set of visible Environment Information.
+    ///     Set of visible Environment Information.
     /// </summary>
     public sealed class VisibleEnvironment
     {
         /// <summary>
-        /// Information about the current Cell.
+        ///     Information about the current Cell.
         /// </summary>
         public MapTileInfo Center { get; private set; }
 
         /// <summary>
-        /// Cell Information in North Direction.
+        ///     Cell Information in North Direction.
         /// </summary>
         public MapTileInfo North { get; private set; }
 
         /// <summary>
-        /// Cell Information in South Direction.
+        ///     Cell Information in South Direction.
         /// </summary>
         public MapTileInfo South { get; private set; }
 
         /// <summary>
-        /// Cell Information in West Direction.
+        ///     Cell Information in West Direction.
         /// </summary>
         public MapTileInfo West { get; private set; }
 
         /// <summary>
-        /// Cell Information in East Direction.
+        ///     Cell Information in East Direction.
         /// </summary>
         public MapTileInfo East { get; private set; }
 
         /// <summary>
-        /// Cell Information in Northwest Direction.
+        ///     Cell Information in Northwest Direction.
         /// </summary>
         public MapTileInfo NorthWest { get; private set; }
 
         /// <summary>
-        /// Cell Information in Northeast Direction.
+        ///     Cell Information in Northeast Direction.
         /// </summary>
         public MapTileInfo NorthEast { get; private set; }
 
         /// <summary>
-        /// Cell Information in Southwest Direction.
+        ///     Cell Information in Southwest Direction.
         /// </summary>
         public MapTileInfo SouthWest { get; private set; }
 
         /// <summary>
-        /// Cell Information in Southeast Direction.
+        ///     Cell Information in Southeast Direction.
         /// </summary>
         public MapTileInfo SouthEast { get; private set; }
 
@@ -78,8 +78,8 @@ namespace AntMe.Basics.ItemProperties
 
         internal MapTileInfo this[Index2 coordinate]
         {
-            get { return this[coordinate.X, coordinate.Y]; }
-            set { this[coordinate.X, coordinate.Y] = value; }
+            get => this[coordinate.X, coordinate.Y];
+            set => this[coordinate.X, coordinate.Y] = value;
         }
 
         /// <summary>
@@ -105,6 +105,7 @@ namespace AntMe.Basics.ItemProperties
                             case 1: return NorthEast;
                             default: throw new Exception("Unknown Y Parameter");
                         }
+
                     case 0:
                         switch (x)
                         {
@@ -113,6 +114,7 @@ namespace AntMe.Basics.ItemProperties
                             case 1: return East;
                             default: throw new Exception("Unknown Y Parameter");
                         }
+
                     case 1:
                         switch (x)
                         {
@@ -121,6 +123,7 @@ namespace AntMe.Basics.ItemProperties
                             case 1: return SouthEast;
                             default: throw new Exception("Unknown Y Parameter");
                         }
+
                     default: throw new Exception("Unknown X Parameter");
                 }
             }
@@ -146,6 +149,7 @@ namespace AntMe.Basics.ItemProperties
                             default:
                                 throw new Exception("Unknown Y Parameter");
                         }
+
                         break;
                     case 0:
                         switch (x)
@@ -162,6 +166,7 @@ namespace AntMe.Basics.ItemProperties
                             default:
                                 throw new Exception("Unknown Y Parameter");
                         }
+
                         break;
                     case 1:
                         switch (x)
@@ -178,6 +183,7 @@ namespace AntMe.Basics.ItemProperties
                             default:
                                 throw new Exception("Unknown Y Parameter");
                         }
+
                         break;
                     default:
                         throw new Exception("Unknown X Parameter");

@@ -1,13 +1,13 @@
-﻿using AntMe.Generator;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using AntMe.Generator;
 
 namespace CoreTestClient
 {
     public partial class LocalizationForm : Form
     {
-        private Dictionary<Type, List<string>> dictionary;
+        private readonly Dictionary<Type, List<string>> dictionary;
 
         public LocalizationForm()
         {
@@ -26,12 +26,8 @@ namespace CoreTestClient
         {
             itemList.Items.Clear();
             if (typeList.SelectedItems.Count > 0)
-            {
                 foreach (var item in dictionary[typeList.SelectedItems[0].Tag as Type])
-                {
                     itemList.Items.Add(item);
-                }
-            }
         }
     }
 }

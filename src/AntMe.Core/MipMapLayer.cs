@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AntMe
 {
     /// <summary>
-    /// Repräsentiert einen Layer innerhalb eines MipMap-Containers.
+    ///     Repräsentiert einen Layer innerhalb eines MipMap-Containers.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public sealed class MipMapLayer<T>
@@ -16,7 +16,7 @@ namespace AntMe
         private List<ExpandedObject<T>>[,] _grid;
 
         /// <summary>
-        /// Neue Instanz eines MipMap Layers.
+        ///     Neue Instanz eines MipMap Layers.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -34,37 +34,31 @@ namespace AntMe
         /// <summary>
         ///     The radius above which this layer rejects objects because they are too big for the cells.
         /// </summary>
-        public float MaxRadius { get; private set; }
+        public float MaxRadius { get; }
 
         /// <summary>
         ///     Height of the layer.
         /// </summary>
-        public float Height { get; private set; }
+        public float Height { get; }
 
         public int HeightCells { get; private set; }
 
         /// <summary>
         ///     Width of the layer.
         /// </summary>
-        public float Width { get; private set; }
+        public float Width { get; }
 
         public int WidthCells { get; private set; }
 
         /// <summary>
         ///     Width of one cell in this layer.
         /// </summary>
-        public float CellWidth
-        {
-            get { return Width / WidthCells; }
-        }
+        public float CellWidth => Width / WidthCells;
 
         /// <summary>
         ///     Height of one cell in this layer.
         /// </summary>
-        public float CellHeight
-        {
-            get { return Height / HeightCells; }
-        }
+        public float CellHeight => Height / HeightCells;
 
         /// <summary>
         ///     Checks the dimensions of the layer and throws an ArgumentException if they are not positive.
@@ -82,19 +76,15 @@ namespace AntMe
         /// </summary>
         private void Initialize()
         {
-            HeightCells = (int)Math.Max(1.0, Height / Math.Min(Height, Math.Max(1.0, MaxRadius)));
-            WidthCells = (int)Math.Max(1.0, Width / Math.Min(Width, Math.Max(1.0, MaxRadius)));
+            HeightCells = (int) Math.Max(1.0, Height / Math.Min(Height, Math.Max(1.0, MaxRadius)));
+            WidthCells = (int) Math.Max(1.0, Width / Math.Min(Width, Math.Max(1.0, MaxRadius)));
 
             _grid = new List<ExpandedObject<T>>[HeightCells, WidthCells];
             // initialize the cells with an empty list each
 
-            for (int row = 0; row < HeightCells; row++)
-            {
-                for (int col = 0; col < WidthCells; col++)
-                {
-                    _grid[row, col] = new List<ExpandedObject<T>>();
-                }
-            }
+            for (var row = 0; row < HeightCells; row++)
+            for (var col = 0; col < WidthCells; col++)
+                _grid[row, col] = new List<ExpandedObject<T>>();
         }
 
         /// <summary>
@@ -102,13 +92,9 @@ namespace AntMe
         /// </summary>
         public void Clear()
         {
-            for (int row = 0; row < HeightCells; row++)
-            {
-                for (int col = 0; col < WidthCells; col++)
-                {
-                    _grid[row, col].Clear();
-                }
-            }
+            for (var row = 0; row < HeightCells; row++)
+            for (var col = 0; col < WidthCells; col++)
+                _grid[row, col].Clear();
         }
 
         /// <summary>
@@ -119,9 +105,9 @@ namespace AntMe
         /// <param name="radius"></param>
         public void Add(T obj, Vector3 pos, float radius)
         {
-            int col = FloatToCellIndex(pos.X, Width, WidthCells);
-            int row = FloatToCellIndex(pos.Y, Height, HeightCells);
-            var cells = (int)Math.Ceiling(radius / CellWidth);
+            var col = FloatToCellIndex(pos.X, Width, WidthCells);
+            var row = FloatToCellIndex(pos.Y, Height, HeightCells);
+            var cells = (int) Math.Ceiling(radius / CellWidth);
 
             // Run through all cells in the vincinity of the given position, add the object in every one of these cells
             /*for (int runrow = row - cells; runrow < row + cells; runrow++)
@@ -145,30 +131,24 @@ namespace AntMe
         public HashSet<T> FindAll(Vector3 pos, float radius)
         {
             var result = new HashSet<T>();
-            int col = FloatToCellIndex(pos.X, Width, WidthCells);
-            int row = FloatToCellIndex(pos.Y, Height, HeightCells);
-            var cells = (int)Math.Min(int.MaxValue, Math.Ceiling((radius + MaxRadius) / CellWidth));
+            var col = FloatToCellIndex(pos.X, Width, WidthCells);
+            var row = FloatToCellIndex(pos.Y, Height, HeightCells);
+            var cells = (int) Math.Min(int.MaxValue, Math.Ceiling((radius + MaxRadius) / CellWidth));
 
             // Run through all cells in the vincinity of the given position
-            for (int runrow = Math.Max(0, row - cells); runrow < Math.Min(row + cells, HeightCells); runrow++)
-            {
-                for (int runcol = Math.Max(0, col - cells); runcol < Math.Min(col + cells, WidthCells); runcol++)
+            for (var runrow = Math.Max(0, row - cells); runrow < Math.Min(row + cells, HeightCells); runrow++)
+            for (var runcol = Math.Max(0, col - cells); runcol < Math.Min(col + cells, WidthCells); runcol++)
+                foreach (var item in (List<ExpandedObject<T>>) _grid.GetValue(runrow, runcol))
                 {
-                    foreach (var item in (List<ExpandedObject<T>>)_grid.GetValue(runrow, runcol))
-                    {
-                        // Check the intersection with every object in this cell
-                        float radiuses = radius + item.radius;
-                        float x = item.pos.X - pos.X;
-                        float y = item.pos.Y - pos.Y;
-                        float z = item.pos.Z - pos.Z;
-                        float distance = (x * x) + (y * y) + (z * z);
-                        if (distance <= radiuses * radiuses)
-                        {
-                            result.Add(item.obj);
-                        }
-                    }
+                    // Check the intersection with every object in this cell
+                    var radiuses = radius + item.radius;
+                    var x = item.pos.X - pos.X;
+                    var y = item.pos.Y - pos.Y;
+                    var z = item.pos.Z - pos.Z;
+                    var distance = x * x + y * y + z * z;
+                    if (distance <= radiuses * radiuses) result.Add(item.obj);
                 }
-            }
+
             return result;
         }
 
@@ -181,7 +161,7 @@ namespace AntMe
         /// <returns></returns>
         private int FloatToCellIndex(float f, float length, int cells)
         {
-            var index = (int)(f / length * cells);
+            var index = (int) (f / length * cells);
             index = Math.Max(0, index);
             index = Math.Min(cells - 1, index);
 
@@ -195,8 +175,8 @@ namespace AntMe
         /// <param name="pos"></param>
         internal void Remove(T obj, Vector3 pos)
         {
-            int col = FloatToCellIndex(pos.X, Width, WidthCells);
-            int row = FloatToCellIndex(pos.Y, Height, HeightCells);
+            var col = FloatToCellIndex(pos.X, Width, WidthCells);
+            var row = FloatToCellIndex(pos.Y, Height, HeightCells);
 
             // try to find the radius of the given object and remove all linked objects in the adjacent cells
             /*List<ExpandedObject<T>> objs = _grid[row, col];

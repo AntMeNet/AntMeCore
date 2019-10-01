@@ -1,33 +1,33 @@
-﻿using AntMe.Basics.ItemProperties;
-using System;
+﻿using System;
+using AntMe.Basics.ItemProperties;
 
 namespace AntMe.Basics.Items
 {
     /// <summary>
-    /// Represents a Classic Bug (like in AntMe! 1.0)
+    ///     Represents a Classic Bug (like in AntMe! 1.0)
     /// </summary>
     public class ClassicBugItem : Item
     {
         /// <summary>
-        /// Default Radius of a Bug.
+        ///     Default Radius of a Bug.
         /// </summary>
         public const float BugRadius = 4f;
 
         /// <summary>
-        /// Default Rotation Speed of a Bug (Degrees per Round).
+        ///     Default Rotation Speed of a Bug (Degrees per Round).
         /// </summary>
         public const int BugRotationSpeed = 10;
 
-        private WalkingProperty walking;
+        private readonly CollidableProperty collidable;
 
-        private CollidableProperty collidable;
+        private int roundsToTurn;
 
-        private int roundsToTurn = 0;
+        private int roundsToWalk;
 
-        private int roundsToWalk = 0;
+        private readonly WalkingProperty walking;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="context">Simulation Context</param>
         /// <param name="position">Position for the new Bug</param>
@@ -80,13 +80,9 @@ namespace AntMe.Basics.Items
             if (walking != null)
             {
                 if (roundsToTurn == 0 && roundsToWalk > 0)
-                {
                     walking.Speed = walking.MaximumSpeed;
-                }
                 else
-                {
                     walking.Speed = 0;
-                }
             }
         }
     }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AntMe
+﻿namespace AntMe
 {
     /// <summary>
     ///     State of the simulation engine.
@@ -21,13 +16,13 @@ namespace AntMe
         Simulating,
 
         /// <summary>
-        /// Engine got an error and exit.
+        ///     Engine got an error and exit.
         /// </summary>
         Failed,
 
         /// <summary>
-        /// Simulation is over.
+        ///     Simulation is over.
         /// </summary>
-        Finished,
+        Finished
     }
 }

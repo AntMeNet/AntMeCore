@@ -1,30 +1,35 @@
-﻿using AntMe.Basics.Items;
-using System;
+﻿using System;
+using AntMe.Basics.Items;
 
 namespace AntMe.Basics.Factions.Ants.Interop
 {
     /// <summary>
-    /// Statistical Factory Interop Property to count and group Items by Caste
+    ///     Statistical Factory Interop Property to count and group Items by Caste
     /// </summary>
     public sealed class ByCasteStatisticsInterop : StatisticsInterop<string>
     {
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="interop">Related Interop</param>
-        public ByCasteStatisticsInterop(Faction faction, FactoryInterop interop) : this(faction, interop, null) { }
+        public ByCasteStatisticsInterop(Faction faction, FactoryInterop interop) : this(faction, interop, null)
+        {
+        }
 
         /// <summary>
-        /// Specialized Constructor with an additional Filter Type Definition.
+        ///     Specialized Constructor with an additional Filter Type Definition.
         /// </summary>
         /// <param name="faction">Reference to the Faction</param>
         /// <param name="interop">Related Interop</param>
         /// <param name="filterType">Required Base Type</param>
-        public ByCasteStatisticsInterop(Faction faction, FactoryInterop interop, Type filterType) : base(faction, interop, filterType) { }
+        public ByCasteStatisticsInterop(Faction faction, FactoryInterop interop, Type filterType) : base(faction,
+            interop, filterType)
+        {
+        }
 
         /// <summary>
-        /// Callback to identify the group key.
+        ///     Callback to identify the group key.
         /// </summary>
         /// <param name="item">Item</param>
         /// <param name="group">Group Key</param>
@@ -32,7 +37,7 @@ namespace AntMe.Basics.Factions.Ants.Interop
         protected override bool CategorizeItem(Item item, out string group)
         {
             // Only Ant Items are relevant.
-            AntItem antItem = item as AntItem;
+            var antItem = item as AntItem;
             if (antItem != null)
             {
                 // TODO: Fix this as soon Ants get Castes back

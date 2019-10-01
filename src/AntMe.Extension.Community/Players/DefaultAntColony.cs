@@ -1,17 +1,17 @@
-﻿using AntMe.Basics.Factions;
+﻿using System;
+using AntMe.Basics.Factions;
 using AntMe.Basics.Factions.Ants;
 using AntMe.Basics.Factions.Ants.Interop;
-using System;
 
 namespace AntMe.Extension.Community.Players
 {
     [Player(Hidden = false, Name = "Default Ants", Author = "Random Dude")]
     public class DefaultAntColony : AntFactory
     {
+        private ByCasteStatisticsInterop byCasteStatistics;
+        private ByTypeStatisticsInterop byTypeStatistics;
         private AntFactoryInterop interop;
         private TotalStatisticsInterop totalStatistics;
-        private ByTypeStatisticsInterop byTypeStatistics;
-        private ByCasteStatisticsInterop byCasteStatistics;
 
         public override void Init(FactoryInterop interop)
         {

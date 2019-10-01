@@ -4,26 +4,21 @@ using System.IO;
 namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
-    /// Base Class for all Highlighting Properties.
+    ///     Base Class for all Highlighting Properties.
     /// </summary>
     /// <typeparam name="T">Type of Highlight</typeparam>
     public abstract class HighlightsStateProperty<T> : LevelStateProperty
     {
         /// <summary>
-        /// List of Highlights
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public IList<T> Highlights { get; private set; }
-
-        /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public HighlightsStateProperty() : base()
+        public HighlightsStateProperty()
         {
             Highlights = new List<T>();
         }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="level">Related Level</param>
         /// <param name="property">Related Level Property</param>
@@ -33,7 +28,12 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     List of Highlights
+        /// </summary>
+        public IList<T> Highlights { get; }
+
+        /// <summary>
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -42,7 +42,7 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -51,7 +51,7 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -60,7 +60,7 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>

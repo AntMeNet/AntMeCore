@@ -3,18 +3,20 @@
 namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
-    /// Level Property for switching Player Classes (Factory and Unit) during a running Simulation.
+    ///     Level Property for switching Player Classes (Factory and Unit) during a running Simulation.
     /// </summary>
     public sealed class HotSwapLevelProperty : LevelProperty
     {
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="level">Reference to the Level</param>
-        public HotSwapLevelProperty(Level level) : base(level) { }
+        public HotSwapLevelProperty(Level level) : base(level)
+        {
+        }
 
         /// <summary>
-        /// Swaps the Factory Class during Simulation.
+        ///     Swaps the Factory Class during Simulation.
         /// </summary>
         /// <param name="slot">Affected Player Slot</param>
         /// <param name="factoryType">Type of new Factory Class</param>
@@ -25,7 +27,7 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Swaps the Unit Classes during Simulation.
+        ///     Swaps the Unit Classes during Simulation.
         /// </summary>
         /// <param name="slot">Affected Player Slot</param>
         /// <param name="oldUnitType">Type of new Factory Class</param>

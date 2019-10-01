@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
-    /// Level Property that allows to register Trigger for the Simulation.
+    ///     Level Property that allows to register Trigger for the Simulation.
     /// </summary>
     public sealed class TriggerLevelProperty : LevelProperty
     {
-        private List<ITrigger> triggers = null;
+        private readonly List<ITrigger> triggers;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="level">Related Level</param>
         public TriggerLevelProperty(Level level) : base(level)
@@ -22,7 +21,7 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Registeres a new Trigger.
+        ///     Registeres a new Trigger.
         /// </summary>
         /// <param name="trigger">Trigger</param>
         public void RegisterTrigger(ITrigger trigger)
@@ -36,7 +35,7 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Removes a Trigger from the List.
+        ///     Removes a Trigger from the List.
         /// </summary>
         /// <param name="trigger">Trigger to remove</param>
         public void UnregisterTrigger(ITrigger trigger)
@@ -50,7 +49,7 @@ namespace AntMe.Basics.LevelProperties
         }
 
         /// <summary>
-        /// Gets called every Round to regulate the Situation.
+        ///     Gets called every Round to regulate the Situation.
         /// </summary>
         public override void OnUpdate()
         {

@@ -5,31 +5,33 @@ using System.IO;
 namespace AntMe
 {
     /// <summary>
-    /// Map State.
+    ///     Map State.
     /// </summary>
     public sealed class MapState : PropertyList<MapStateProperty>, ISerializableState
     {
         private readonly Map Map;
 
         /// <summary>
-        /// Default Constructor for the Deserializer.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public MapState() : base() { }
+        public MapState()
+        {
+        }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="map">Reference to the related Map</param>
-        public MapState(Map map) : base()
+        public MapState(Map map)
         {
             Map = map;
 
-            Index2 size = Map.GetCellCount();
+            var size = Map.GetCellCount();
             Tiles = new MapTileState[size.X, size.Y];
         }
 
         /// <summary>
-        /// Is Border blocked.
+        ///     Is Border blocked.
         /// </summary>
         [DisplayName("Border Block")]
         [Description("Is Border blocked.")]
@@ -38,34 +40,13 @@ namespace AntMe
         public bool BlockBorder { get; set; }
 
         /// <summary>
-        /// Cell Description for the Map as a 2D Array of Map Tiles.
+        ///     Cell Description for the Map as a 2D Array of Map Tiles.
         /// </summary>
         [Browsable(false)]
         public MapTileState[,] Tiles { get; set; }
 
         /// <summary>
-        /// Returns the Cell Count of this Map.
-        /// </summary>
-        /// <returns>Cell Count</returns>
-        public Index2 GetCellCount()
-        {
-            if (Tiles != null)
-                return new Index2(Tiles.GetLength(0), Tiles.GetLength(1));
-            return Index2.Zero;
-        }
-
-        /// <summary>
-        /// Calculcates the real Map Size in World Units.
-        /// </summary>
-        /// <returns>Size of tha Map in World Units</returns>
-        public Vector2 GetSize()
-        {
-            Index2 cells = GetCellCount();
-            return new Vector2(cells.X * Map.CELLSIZE, cells.Y * Map.CELLSIZE);
-        }
-
-        /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -75,14 +56,14 @@ namespace AntMe
                 throw new NotSupportedException("Stream Version not supported");
 
             // Serialize basics
-            Index2 cells = GetCellCount();
+            var cells = GetCellCount();
             stream.Write(BlockBorder);
-            stream.Write((byte)cells.X);
-            stream.Write((byte)cells.Y);
+            stream.Write((byte) cells.X);
+            stream.Write((byte) cells.Y);
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -91,7 +72,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -102,17 +83,38 @@ namespace AntMe
 
             BlockBorder = stream.ReadBoolean();
             Tiles = new MapTileState[
-                stream.ReadByte(), 
+                stream.ReadByte(),
                 stream.ReadByte()];
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
         public void DeserializeUpdate(BinaryReader stream, byte version)
         {
+        }
+
+        /// <summary>
+        ///     Returns the Cell Count of this Map.
+        /// </summary>
+        /// <returns>Cell Count</returns>
+        public Index2 GetCellCount()
+        {
+            if (Tiles != null)
+                return new Index2(Tiles.GetLength(0), Tiles.GetLength(1));
+            return Index2.Zero;
+        }
+
+        /// <summary>
+        ///     Calculcates the real Map Size in World Units.
+        /// </summary>
+        /// <returns>Size of tha Map in World Units</returns>
+        public Vector2 GetSize()
+        {
+            var cells = GetCellCount();
+            return new Vector2(cells.X * Map.CELLSIZE, cells.Y * Map.CELLSIZE);
         }
     }
 }

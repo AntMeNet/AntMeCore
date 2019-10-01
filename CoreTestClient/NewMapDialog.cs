@@ -1,33 +1,11 @@
-﻿using AntMe;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
+using AntMe;
 
 namespace CoreTestClient
 {
     public partial class NewMapDialog : Form
     {
-        /// <summary>
-        /// Returns the selected Map Size for the new Map.
-        /// </summary>
-        public Index2 MapSize { get; set; }
-
-        /// <summary>
-        /// Returns the Border Behavior for the new Map.
-        /// </summary>
-        public bool BlockedBorder { get; set; }
-
-        /// <summary>
-        /// Returns the 
-        /// </summary>
-        public byte DefaultHeightLevel { get; set; }
-
         public NewMapDialog()
         {
             InitializeComponent();
@@ -42,13 +20,28 @@ namespace CoreTestClient
             DefaultHeightLevel = 10;
         }
 
+        /// <summary>
+        ///     Returns the selected Map Size for the new Map.
+        /// </summary>
+        public Index2 MapSize { get; set; }
+
+        /// <summary>
+        ///     Returns the Border Behavior for the new Map.
+        /// </summary>
+        public bool BlockedBorder { get; set; }
+
+        /// <summary>
+        ///     Returns the
+        /// </summary>
+        public byte DefaultHeightLevel { get; set; }
+
         private void NewMapDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (DialogResult == DialogResult.OK)
             {
-                MapSize = new Index2((int)mapSizeXNumberic.Value, (int)mapSizeYNumberic.Value);
+                MapSize = new Index2((int) mapSizeXNumberic.Value, (int) mapSizeYNumberic.Value);
                 BlockedBorder = blockedCheckbox.Checked;
-                DefaultHeightLevel = (byte)HeightNumeric.Value;
+                DefaultHeightLevel = (byte) HeightNumeric.Value;
             }
         }
 

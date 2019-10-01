@@ -4,11 +4,13 @@ using System.Collections.Generic;
 namespace AntMe.Basics.MapTiles
 {
     /// <summary>
-    /// Represents the part beween a Cliff and a Ramp (Left Side).
+    ///     Represents the part beween a Cliff and a Ramp (Left Side).
     /// </summary>
     public class LeftRampToCliffMapTile : WallCliffMapTile
     {
-        public LeftRampToCliffMapTile(SimulationContext context) : base(context) { }
+        public LeftRampToCliffMapTile(SimulationContext context) : base(context)
+        {
+        }
 
         protected override bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions)
         {
@@ -17,6 +19,7 @@ namespace AntMe.Basics.MapTiles
                 exceptions.Add(new NotSupportedException("Map Tile must be a Ramp Tile"));
                 return false;
             }
+
             return true;
         }
 
@@ -27,6 +30,7 @@ namespace AntMe.Basics.MapTiles
                 exceptions.Add(new NotSupportedException("Map Tile must be a Cliff Tile"));
                 return false;
             }
+
             return true;
         }
     }

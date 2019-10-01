@@ -1,12 +1,12 @@
 ﻿namespace AntMe.Basics.LevelProperties
 {
     /// <summary>
-    /// Level Trigger to get informed about a specific Time / Round.
+    ///     Level Trigger to get informed about a specific Time / Round.
     /// </summary>
     public sealed class TimerTrigger : ITrigger
     {
         /// <summary>
-        /// Default Constructor without Parameter.
+        ///     Default Constructor without Parameter.
         /// </summary>
         public TimerTrigger()
         {
@@ -15,7 +15,7 @@
         }
 
         /// <summary>
-        /// Initialize this Trigger with the given Time.
+        ///     Initialize this Trigger with the given Time.
         /// </summary>
         /// <param name="targetTime">Trigger Time</param>
         public TimerTrigger(int targetTime)
@@ -25,17 +25,17 @@
         }
 
         /// <summary>
-        /// Gets or sets the Time when the Trigger should throw the Event.
+        ///     Gets or sets the Time when the Trigger should throw the Event.
         /// </summary>
         public int TargetTime { get; set; }
 
         /// <summary>
-        /// Gets or sets if the Trigger is active and should be triggered.
+        ///     Gets or sets if the Trigger is active and should be triggered.
         /// </summary>
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// Gets called in every Round to check Trigger Condition.
+        ///     Gets called in every Round to check Trigger Condition.
         /// </summary>
         /// <param name="level">Reference to the Engine</param>
         /// <returns>Triggered?</returns>
@@ -46,11 +46,12 @@
                 OnTimeReached?.Invoke(this);
                 return true;
             }
+
             return false;
         }
 
         /// <summary>
-        /// Event to inform about reaching Trigger Time.
+        ///     Event to inform about reaching Trigger Time.
         /// </summary>
         public event TriggerEvent OnTimeReached;
     }

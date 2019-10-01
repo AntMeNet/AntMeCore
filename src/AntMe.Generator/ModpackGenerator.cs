@@ -1,17 +1,17 @@
-﻿using AntMe.Runtime;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using AntMe.Runtime;
 
 namespace AntMe.Generator
 {
     /// <summary>
-    /// Code Generator to build a localization- and summarization-Assembly.
+    ///     Code Generator to build a localization- and summarization-Assembly.
     /// </summary>
     public static class ModpackGenerator
     {
         /// <summary>
-        /// Generates the Summary-Assembly.
+        ///     Generates the Summary-Assembly.
         /// </summary>
         /// <param name="paths">Import Pathes for Extensions</param>
         /// <param name="output">Output Path for the File</param>
@@ -23,12 +23,11 @@ namespace AntMe.Generator
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         public static Dictionary<Type, List<string>> GetLocaKeys()
         {
-            Dictionary<Type, List<string>> dictionary = new Dictionary<Type, List<string>>();
+            var dictionary = new Dictionary<Type, List<string>>();
 
             // Collect all Item Infos
             foreach (var item in ExtensionLoader.DefaultTypeMapper.Items)
@@ -62,17 +61,13 @@ namespace AntMe.Generator
             }
 
             foreach (var item in ExtensionLoader.DefaultTypeMapper.FactoryInteropAttachments)
-            {
                 // TODO: Ingnoriere Vererbungsstack
                 AnalyseType<FactoryInteropProperty>(item.AttachmentType, dictionary);
-            }
 
             foreach (var item in ExtensionLoader.DefaultTypeMapper.UnitInteropAttachments)
-            {
                 // TODO: Ingnoriere Vererbungsstack
                 AnalyseType<UnitInteropProperty>(item.AttachmentType, dictionary);
-            }
-            
+
 
             // Collect all Factory Interops
             foreach (var item in ExtensionLoader.DefaultTypeMapper.FactionProperties)
@@ -86,11 +81,11 @@ namespace AntMe.Generator
 
         private static void AnalyseType<T>(Type type, Dictionary<Type, List<string>> dict)
         {
-            Type t = type;
+            var t = type;
             AnalyseType(t, dict);
 
             while (t != typeof(T) && t != null)
-            {   
+            {
                 t = t.BaseType;
                 AnalyseType(t, dict);
             }
@@ -102,11 +97,11 @@ namespace AntMe.Generator
 
             if (type.IsGenericType) return;
 
-            List<string> result = new List<string>();
+            var result = new List<string>();
             dict.Add(type, result);
 
             // Name
-            string name = type.Name;
+            var name = type.Name;
             if (!result.Contains(type.Name))
                 result.Add(type.Name);
 
@@ -152,12 +147,10 @@ namespace AntMe.Generator
 
             // Events
             foreach (var e in type.GetEvents(BindingFlags.Instance | BindingFlags.Public))
-            {
                 // TODO: Check Parameter
 
                 if (!result.Contains(e.Name))
                     result.Add(e.Name);
-            }
         }
     }
 }

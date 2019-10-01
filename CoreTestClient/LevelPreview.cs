@@ -1,13 +1,13 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using AntMe.Runtime;
-using System;
 using AntMe.Serialization;
 
 namespace AntMe.Simulation.Debug
 {
     public partial class LevelPreview : UserControl
     {
-        LevelInfo level;
+        private LevelInfo level;
 
         public LevelPreview()
         {
@@ -25,14 +25,15 @@ namespace AntMe.Simulation.Debug
 
                 try
                 {
-                    byte[] mapBuffer = level.Map;
+                    var mapBuffer = level.Map;
                     if (mapBuffer == null) return;
 
-                    Map map = MapSerializer.Deserialize(ExtensionLoader.CreateSimulationContext(), level.Map);
+                    var map = MapSerializer.Deserialize(ExtensionLoader.CreateSimulationContext(), level.Map);
                     mapPreview.SetMap(map);
                 }
-                catch (Exception) { }
-
+                catch (Exception)
+                {
+                }
             }
             else
             {
@@ -40,7 +41,6 @@ namespace AntMe.Simulation.Debug
                 descriptionLabel.Text = string.Empty;
                 mapPreview.SetMap(null);
             }
-
         }
     }
 }

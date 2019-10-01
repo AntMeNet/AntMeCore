@@ -9,18 +9,20 @@ namespace AntMe.Runtime
     {
         #region Items
 
-        private class ItemTypeMap : StateInfoTypeMap<Func<Item, ItemState>, Func<Item, Item, ItemInfo>> { }
+        private class ItemTypeMap : StateInfoTypeMap<Func<Item, ItemState>, Func<Item, Item, ItemInfo>>
+        {
+        }
 
-        private List<ItemTypeMap> itemsContainer =
+        private readonly List<ItemTypeMap> itemsContainer =
             new List<ItemTypeMap>();
 
         /// <summary>
-        /// Liefert eine Liste registrierter Game Items.
+        ///     Liefert eine Liste registrierter Game Items.
         /// </summary>
-        public IEnumerable<IStateInfoTypeMapperEntry> Items { get { return itemsContainer; } }
+        public IEnumerable<IStateInfoTypeMapperEntry> Items => itemsContainer;
 
         /// <summary>
-        /// Registriert einen Game Type beim Type Mapper.
+        ///     Registriert einen Game Type beim Type Mapper.
         /// </summary>
         /// <param name="extensionPack">Extension Pack</param>
         /// <param name="name">Name des Game Items</param>
@@ -36,11 +38,12 @@ namespace AntMe.Runtime
             where S : ItemState
             where I : ItemInfo
         {
-            Type itemType = typeof(T);
-            Type stateType = typeof(S);
-            Type infoType = typeof(I);
+            var itemType = typeof(T);
+            var stateType = typeof(S);
+            var infoType = typeof(I);
 
-            tracer.Trace(TraceEventType.Information, 30, string.Format("Register new Item Type '{0}'", itemType.FullName));
+            tracer.Trace(TraceEventType.Information, 30,
+                string.Format("Register new Item Type '{0}'", itemType.FullName));
 
             // Extension Pack darf nicht null sein
             if (extensionPack == null)
@@ -56,51 +59,59 @@ namespace AntMe.Runtime
             // Prüft auf abstract
             if (itemType.IsAbstract)
             {
-                string msg = string.Format("Item Type '{0}' from Extension Pack '{1}' is abstract", itemType.FullName, extensionPack.Name);
+                var msg = string.Format("Item Type '{0}' from Extension Pack '{1}' is abstract", itemType.FullName,
+                    extensionPack.Name);
                 throw new NotSupportedException(msg);
             }
 
             // Prüfen ob dieser Type bereits registriert ist
             if (itemsContainer.Any(c => c.Type == itemType))
             {
-                string msg = string.Format("Item '{0}' from Extension Pack '{1}' is already registered", itemType.FullName, extensionPack.Name);
+                var msg = string.Format("Item '{0}' from Extension Pack '{1}' is already registered", itemType.FullName,
+                    extensionPack.Name);
                 throw new NotSupportedException(msg);
             }
 
             if (stateType.IsAbstract)
             {
-                string msg = string.Format("State Type '{0}' from Extension Pack '{1}' is abstract", stateType.FullName, extensionPack.Name);
+                var msg = string.Format("State Type '{0}' from Extension Pack '{1}' is abstract", stateType.FullName,
+                    extensionPack.Name);
                 throw new NotSupportedException(msg);
             }
 
             // Check for Parameterless Constructor
             if (stateType.GetConstructor(new Type[] { }) == null)
             {
-                string msg = string.Format("The State '{0}' from Extension Pack '{1}' has no parameterless Constructor", stateType.FullName, extensionPack.Name);
+                var msg = string.Format("The State '{0}' from Extension Pack '{1}' has no parameterless Constructor",
+                    stateType.FullName, extensionPack.Name);
                 throw new NotSupportedException(msg);
             }
 
             // Check for Constructor with T
-            if (stateType.GetConstructor(new Type[] { typeof(T) }) == null)
+            if (stateType.GetConstructor(new[] {typeof(T)}) == null)
             {
-                string msg = string.Format("The State '{0}' from Extension Pack '{1}' has no Constructor with Item", stateType.FullName, extensionPack.Name);
+                var msg = string.Format("The State '{0}' from Extension Pack '{1}' has no Constructor with Item",
+                    stateType.FullName, extensionPack.Name);
                 throw new NotSupportedException(msg);
             }
 
             if (infoType.IsAbstract)
             {
-                string msg = string.Format("Info Type '{0}' from Extension Pack '{1}' is abstract", infoType.FullName, extensionPack.Name);
+                var msg = string.Format("Info Type '{0}' from Extension Pack '{1}' is abstract", infoType.FullName,
+                    extensionPack.Name);
                 throw new NotSupportedException(msg);
             }
 
             // Check for Item/Item Constructor
-            if (infoType.GetConstructor(new Type[] { typeof(T), typeof(Item) }) == null)
+            if (infoType.GetConstructor(new[] {typeof(T), typeof(Item)}) == null)
             {
-                string msg = string.Format("The Info Type '{0}' from Extension Pack '{1}' has no Constructor with T and Item", infoType.FullName, extensionPack.Name);
+                var msg = string.Format(
+                    "The Info Type '{0}' from Extension Pack '{1}' has no Constructor with T and Item",
+                    infoType.FullName, extensionPack.Name);
                 throw new NotSupportedException(msg);
             }
 
-            itemsContainer.Add(new ItemTypeMap()
+            itemsContainer.Add(new ItemTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -116,12 +127,15 @@ namespace AntMe.Runtime
 
         #region Item Properties
 
-        private class ItemPropertyTypeMap : StateInfoTypeMap<Func<Item, ItemProperty, ItemStateProperty>, Func<Item, ItemProperty, Item, ItemInfoProperty>> { }
+        private class ItemPropertyTypeMap : StateInfoTypeMap<Func<Item, ItemProperty, ItemStateProperty>,
+            Func<Item, ItemProperty, Item, ItemInfoProperty>>
+        {
+        }
 
-        private List<ItemPropertyTypeMap> itemProperties = new List<ItemPropertyTypeMap>();
+        private readonly List<ItemPropertyTypeMap> itemProperties = new List<ItemPropertyTypeMap>();
 
         /// <summary>
-        /// Liefert eine Liste aller registrierten Properties zurück.
+        ///     Liefert eine Liste aller registrierten Properties zurück.
         /// </summary>
         public IEnumerable<IStateInfoTypeMapperEntry> ItemProperties
         {
@@ -133,7 +147,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Registriert ein Item Property das keine State- oder Info-Properties besitzt.
+        ///     Registriert ein Item Property das keine State- oder Info-Properties besitzt.
         /// </summary>
         /// <typeparam name="T">Type des Property</typeparam>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
@@ -141,11 +155,11 @@ namespace AntMe.Runtime
         public void RegisterItemProperty<T>(IExtensionPack extensionPack, string name)
             where T : ItemProperty
         {
-            RegisterItemProperty<T, ItemStateProperty, ItemInfoProperty>(extensionPack, name, false, false, null, null);
+            RegisterItemProperty<T, ItemStateProperty, ItemInfoProperty>(extensionPack, name, false, false);
         }
 
         /// <summary>
-        /// Registriert ein Item Property das nur ein State Property hat.
+        ///     Registriert ein Item Property das nur ein State Property hat.
         /// </summary>
         /// <typeparam name="T">Type des Property</typeparam>
         /// <typeparam name="S">Type des State Properties</typeparam>
@@ -157,11 +171,11 @@ namespace AntMe.Runtime
             where T : ItemProperty
             where S : ItemStateProperty
         {
-            RegisterItemProperty<T, S, ItemInfoProperty>(extensionPack, name, true, false, createStateDelegate, null);
+            RegisterItemProperty<T, S, ItemInfoProperty>(extensionPack, name, true, false, createStateDelegate);
         }
 
         /// <summary>
-        /// Registriert ein Item Property das nur ein Info Property hat.
+        ///     Registriert ein Item Property das nur ein Info Property hat.
         /// </summary>
         /// <typeparam name="T">Type des Property</typeparam>
         /// <typeparam name="I">Type des Info Property</typeparam>
@@ -177,12 +191,15 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Registriert ein Item Property mit samt den State- und Info-Properties
+        ///     Registriert ein Item Property mit samt den State- und Info-Properties
         /// </summary>
         /// <param name="extensionPack">Referenz auf den Extension Pack</param>
         /// <param name="name">Name des Properties</param>
         /// <param name="createStateDelegate">Delegate zum Erstellen eines neuen State Properties</param>
-        /// <param name="createInfoDelegate">Delegate zum Erstellen eines neuen Info Properties. Parameter sind das eigentliche Game Item, das Property und der Observer</param>
+        /// <param name="createInfoDelegate">
+        ///     Delegate zum Erstellen eines neuen Info Properties. Parameter sind das eigentliche
+        ///     Game Item, das Property und der Observer
+        /// </param>
         /// <typeparam name="T">Type des Property</typeparam>
         /// <typeparam name="S">Type des State Property</typeparam>
         /// <typeparam name="I">Type des Info Property</typeparam>
@@ -219,7 +236,7 @@ namespace AntMe.Runtime
             }
 
             // Type
-            Type type = typeof(T);
+            var type = typeof(T);
             if (type.IsAbstract)
             {
                 tracer.Trace(TraceEventType.Critical, 20, "Property is abstract '{0}' ({1})", name, type.FullName);
@@ -229,14 +246,15 @@ namespace AntMe.Runtime
             // Kollisionen prüfen
             if (itemProperties.Any(p => p.Type == type))
             {
-                tracer.Trace(TraceEventType.Critical, 21, "Property is already registered. '{0}' ({1})", name, type.FullName);
+                tracer.Trace(TraceEventType.Critical, 21, "Property is already registered. '{0}' ({1})", name,
+                    type.FullName);
                 throw new NotSupportedException("Property is already registered");
             }
 
             // Konstruktoren prüfen
-            if (type.GetConstructor(new Type[] { typeof(Item) }) == null)
+            if (type.GetConstructor(new[] {typeof(Item)}) == null)
             {
-                string msg = string.Format("Property contains no Constructor with Item. '{0}' ({1})", name, type.FullName);
+                var msg = string.Format("Property contains no Constructor with Item. '{0}' ({1})", name, type.FullName);
                 tracer.Trace(TraceEventType.Critical, 23, msg);
                 throw new NotSupportedException(msg);
             }
@@ -247,28 +265,32 @@ namespace AntMe.Runtime
             if (stateSet)
             {
                 stateType = typeof(S);
-                tracer.Trace(TraceEventType.Information, 22, "Property contains State Property. '{0}' ({1})", name, stateType.FullName);
+                tracer.Trace(TraceEventType.Information, 22, "Property contains State Property. '{0}' ({1})", name,
+                    stateType.FullName);
 
                 // Abstract
                 if (stateType.IsAbstract)
                 {
                     // TODO: Tracer
-                    string msg = string.Format("State Type '{0}' from Extension Pack '{1}' is abstract", stateType.FullName, extensionPack.Name);
+                    var msg = string.Format("State Type '{0}' from Extension Pack '{1}' is abstract",
+                        stateType.FullName, extensionPack.Name);
                     throw new ArgumentException(msg);
                 }
 
                 // Braucht einen parameterlosen Konstruktor
                 if (stateType.GetConstructor(new Type[] { }) == null)
                 {
-                    string msg = string.Format("State Property contains no parameterless Constructor. '{0}' ({1})", name, stateType.FullName);
+                    var msg = string.Format("State Property contains no parameterless Constructor. '{0}' ({1})", name,
+                        stateType.FullName);
                     tracer.Trace(TraceEventType.Critical, 23, msg);
                     throw new NotSupportedException(msg);
                 }
 
                 // Braucht einen Konstruktor der das Item und das Item Property entgegen nimmt.
-                if (stateType.GetConstructor(new Type[] { typeof(Item), typeof(T) }) == null)
+                if (stateType.GetConstructor(new[] {typeof(Item), typeof(T)}) == null)
                 {
-                    string msg = string.Format("State Property contains no Constructor with Property Type. '{0}' ({1})", name, stateType.FullName);
+                    var msg = string.Format("State Property contains no Constructor with Property Type. '{0}' ({1})",
+                        name, stateType.FullName);
                     tracer.Trace(TraceEventType.Critical, 24, msg);
                     throw new NotSupportedException(msg);
                 }
@@ -285,20 +307,24 @@ namespace AntMe.Runtime
             if (infoSet)
             {
                 infoType = typeof(I);
-                tracer.Trace(TraceEventType.Information, 25, "Property contains Info Property. '{0}' ({1})", name, infoType.FullName);
+                tracer.Trace(TraceEventType.Information, 25, "Property contains Info Property. '{0}' ({1})", name,
+                    infoType.FullName);
 
                 // Auf Abstract prüfen
                 if (infoType.IsAbstract)
                 {
                     // TODO: Tracer
-                    string msg = string.Format("Info Type '{0}' from Extension Pack '{1}' is abstract", infoType.FullName, extensionPack.Name);
+                    var msg = string.Format("Info Type '{0}' from Extension Pack '{1}' is abstract", infoType.FullName,
+                        extensionPack.Name);
                     throw new ArgumentException(msg);
                 }
 
                 // Braucht einen Konstruktor mit Item Property 
-                if (infoType.GetConstructor(new Type[] { typeof(Item), typeof(T), typeof(Item) }) == null)
+                if (infoType.GetConstructor(new[] {typeof(Item), typeof(T), typeof(Item)}) == null)
                 {
-                    string msg = string.Format("Info Property does not contain a Constructor with Property Type and Observer Item. '{0}' ({1})", name, infoType.FullName);
+                    var msg = string.Format(
+                        "Info Property does not contain a Constructor with Property Type and Observer Item. '{0}' ({1})",
+                        name, infoType.FullName);
                     tracer.Trace(TraceEventType.Critical, 28, msg);
                     throw new NotSupportedException(msg);
                 }
@@ -308,7 +334,7 @@ namespace AntMe.Runtime
                 tracer.Trace(TraceEventType.Information, 27, "Property contains no Info Property. '{0}'", name);
             }
 
-            itemProperties.Add(new ItemPropertyTypeMap()
+            itemProperties.Add(new ItemPropertyTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -326,69 +352,62 @@ namespace AntMe.Runtime
 
         #region Item Attachment Properties
 
-        private class ItemAttchmentTypeMap : AttachmentTypeMap<Func<Item, ItemProperty>> { }
-
-        private List<ItemAttchmentTypeMap> itemAttachments = new List<ItemAttchmentTypeMap>();
-
-        /// <summary>
-        /// Auflistung aller registrierten Item Attachments.
-        /// </summary>
-        public IEnumerable<IAttachmentTypeMapperEntry> ItemAttachments
+        private class ItemAttchmentTypeMap : AttachmentTypeMap<Func<Item, ItemProperty>>
         {
-            get { return itemAttachments; }
         }
 
+        private readonly List<ItemAttchmentTypeMap> itemAttachments = new List<ItemAttchmentTypeMap>();
+
         /// <summary>
-        /// Hängt ein definiertes Property an ein Item an.
+        ///     Auflistung aller registrierten Item Attachments.
+        /// </summary>
+        public IEnumerable<IAttachmentTypeMapperEntry> ItemAttachments => itemAttachments;
+
+        /// <summary>
+        ///     Hängt ein definiertes Property an ein Item an.
         /// </summary>
         /// <typeparam name="I">Item</typeparam>
         /// <typeparam name="P">Property</typeparam>
         /// <param name="extensionPack"></param>
         /// <param name="name"></param>
         /// <param name="createPropertyDelegate"></param>
-        public void AttachItemProperty<I, P>(IExtensionPack extensionPack, string name, Func<Item, P> createPropertyDelegate = null)
+        public void AttachItemProperty<I, P>(IExtensionPack extensionPack, string name,
+            Func<Item, P> createPropertyDelegate = null)
             where I : Item
             where P : ItemProperty
         {
             // Extension prüfen
             if (extensionPack == null)
-            {
                 // TODO: Tracer
                 throw new ArgumentNullException("extensionPack");
-            }
 
             // Name prüfen
             if (string.IsNullOrEmpty(name))
-            {
                 // TODO: Tracer
                 throw new ArgumentNullException("name");
-            }
 
             if (!itemProperties.Any(c => c.Type == typeof(P)))
-            {
                 // TODO: Tracer
                 throw new ArgumentException("Property is not registered");
-            }
 
             if (itemAttachments.Any(c => c.Type == typeof(I) && c.AttachmentType == typeof(P)))
             {
                 // TODO: Tracer
-                string msg = string.Format("Item Property Combination '{0}'/'{1}' is already reagistered", typeof(I).FullName, typeof(P).FullName);
+                var msg = string.Format("Item Property Combination '{0}'/'{1}' is already reagistered",
+                    typeof(I).FullName, typeof(P).FullName);
                 throw new NotSupportedException(msg);
             }
 
             if (createPropertyDelegate == null)
-            {
                 // TODO: Construktor prüfen
-                if (typeof(P).GetConstructor(new Type[] { typeof(Item) }) == null)
+                if (typeof(P).GetConstructor(new[] {typeof(Item)}) == null)
                 {
                     // TODO: Tracer
-                    string msg = string.Format("Property '{0}' has no fitting Constructor.", typeof(P).FullName);
+                    var msg = string.Format("Property '{0}' has no fitting Constructor.", typeof(P).FullName);
                     throw new NotSupportedException(msg);
                 }
-            }
 
-            itemAttachments.Add(new ItemAttchmentTypeMap()
+            itemAttachments.Add(new ItemAttchmentTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -402,32 +421,32 @@ namespace AntMe.Runtime
 
         #region Item Extender
 
-        private class ItemExtenderTypeMap : ExtenderTypeMap<Action<Item>> { }
+        private class ItemExtenderTypeMap : ExtenderTypeMap<Action<Item>>
+        {
+        }
 
-        private List<ItemExtenderTypeMap> itemExtender = new List<ItemExtenderTypeMap>();
+        private readonly List<ItemExtenderTypeMap> itemExtender = new List<ItemExtenderTypeMap>();
 
         /// <summary>
-        /// Liefert eine priorisierte Liste der Extender zum angegebenen Game Item Type zurück.
+        ///     Liefert eine priorisierte Liste der Extender zum angegebenen Game Item Type zurück.
         /// </summary>
         /// <typeparam name="T">Game Item Type</typeparam>
         /// <returns>Liste der Extender</returns>
         public IEnumerable<IRankedTypeMapperEntry> ItemExtender
         {
-            get
-            {
-                return itemExtender.OrderBy(g => g.Rank);
-            }
+            get { return itemExtender.OrderBy(g => g.Rank); }
         }
 
         /// <summary>
-        /// Registriert einen Delegaten zur Erweiterung des angegebenen Item Types.
+        ///     Registriert einen Delegaten zur Erweiterung des angegebenen Item Types.
         /// </summary>
         /// <param name="extensionPack"></param>
         /// <param name="name">Name der Erweiterung</param>
         /// <param name="rank">Priorität</param>
         /// <typeparam name="T">Item Type für den der Extender gilt</typeparam>
         /// <param name="extenderDelegate">Delegat</param>
-        public void RegisterItemExtender<T>(IExtensionPack extensionPack, string name, Action<Item> extenderDelegate, int rank)
+        public void RegisterItemExtender<T>(IExtensionPack extensionPack, string name, Action<Item> extenderDelegate,
+            int rank)
             where T : Item
         {
             // Kein Name angegeben
@@ -438,7 +457,7 @@ namespace AntMe.Runtime
             if (extenderDelegate == null)
                 throw new ArgumentNullException("extenderDelegate");
 
-            itemExtender.Add(new ItemExtenderTypeMap()
+            itemExtender.Add(new ItemExtenderTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -453,7 +472,7 @@ namespace AntMe.Runtime
         #region Item Resolver
 
         /// <summary>
-        /// Hängt alle Properties an und startet Extender.
+        ///     Hängt alle Properties an und startet Extender.
         /// </summary>
         /// <param name="item">Neues Game Item</param>
         public void ResolveItem(Item item)
@@ -463,57 +482,48 @@ namespace AntMe.Runtime
 
             // Sicherstellen, dass das Item registriert ist.
             if (!itemsContainer.Any(c => c.Type == item.GetType()))
-            {
                 // TODO: Trace
                 throw new NotSupportedException("Item is not registered.");
-            }
 
             // Vererbungskette auflösen
-            List<Type> types = new List<Type>();
-            Type current = item.GetType();
+            var types = new List<Type>();
+            var current = item.GetType();
             types.Add(current);
             while (current != typeof(Item))
             {
                 current = current.BaseType;
                 types.Add(current);
             }
-            Type[] itemTypes = types.ToArray();
+
+            var itemTypes = types.ToArray();
             Array.Reverse(itemTypes);
 
             // Attachements
             foreach (var type in itemTypes)
-            {
-                foreach (var attachment in itemAttachments.Where(c => c.Type == type))
+            foreach (var attachment in itemAttachments.Where(c => c.Type == type))
+                if (attachment.CreateDelegate != null)
                 {
-                    if (attachment.CreateDelegate != null)
+                    var property = attachment.CreateDelegate(item);
+                    if (property != null)
                     {
-                        ItemProperty property = attachment.CreateDelegate(item);
-                        if (property != null)
-                        {
-                            if (property.GetType() != attachment.AttachmentType)
-                            {
-                                // TODO: Trace
-                                throw new NotSupportedException("Delegate returned wrong Property Type");
-                            }
-                            item.AddProperty(property);
-                        }
-                    }
-                    else
-                    {
-                        item.AddProperty(Activator.CreateInstance(attachment.AttachmentType, item) as ItemProperty);
+                        if (property.GetType() != attachment.AttachmentType)
+                            // TODO: Trace
+                            throw new NotSupportedException("Delegate returned wrong Property Type");
+                        item.AddProperty(property);
                     }
                 }
-            }
+                else
+                {
+                    item.AddProperty(Activator.CreateInstance(attachment.AttachmentType, item) as ItemProperty);
+                }
 
             // Extender
             foreach (var extender in itemExtender.Where(c => itemTypes.Contains(c.Type)).OrderBy(c => c.Rank))
-            {
                 extender.ExtenderDelegate(item);
-            }
         }
 
         /// <summary>
-        /// Instanziert einen State inkl. Properties.
+        ///     Instanziert einen State inkl. Properties.
         /// </summary>
         /// <param name="item">Item Instanz</param>
         /// <returns>Neue Instanz des passenden States</returns>
@@ -524,10 +534,8 @@ namespace AntMe.Runtime
 
             var container = itemsContainer.FirstOrDefault(g => g.Type == item.GetType());
             if (container == null)
-            {
                 // TODO: Trace
                 throw new ArgumentException("Item is not registered");
-            }
 
             ItemState state;
             if (container.CreateStateDelegate != null)
@@ -535,26 +543,20 @@ namespace AntMe.Runtime
                 // Erstellung über Delegat
                 state = container.CreateStateDelegate(item);
                 if (state == null)
-                {
                     // TODO: Trace
                     throw new NotSupportedException("No state was returned by delegate.");
-                }
 
                 if (state.GetType() != container.StateType)
-                {
                     // TODO: Trace
                     throw new NotSupportedException("delegate returned a wrong State Type");
-                }
             }
             else
             {
                 // Automatische Erstellung
                 state = Activator.CreateInstance(container.StateType, item) as ItemState;
                 if (state == null)
-                {
                     // TODO: Trace
                     throw new Exception("State could not be created.");
-                }
             }
 
 
@@ -574,10 +576,8 @@ namespace AntMe.Runtime
                     if (prop != null)
                     {
                         if (prop.GetType() != map.StateType)
-                        {
                             // TODO: Trace
                             throw new NotSupportedException("Delegate returned a wrong Property Type");
-                        }
 
                         state.AddProperty(prop);
                     }
@@ -587,10 +587,8 @@ namespace AntMe.Runtime
                     // Option 2: Dynamische Erzeugung
                     prop = Activator.CreateInstance(map.StateType, item, property) as ItemStateProperty;
                     if (prop == null)
-                    {
                         // TODO: Trace
                         throw new Exception("Could not create State Property");
-                    }
                     state.AddProperty(prop);
                 }
             }
@@ -599,7 +597,7 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// Instanziert eine Info zum dazugehörigen Item.
+        ///     Instanziert eine Info zum dazugehörigen Item.
         /// </summary>
         /// <param name="item">Item Instanz</param>
         /// <param name="observer">Beobachtendes Game Item</param>
@@ -614,10 +612,8 @@ namespace AntMe.Runtime
 
             var container = itemsContainer.FirstOrDefault(g => g.Type == item.GetType());
             if (container == null)
-            {
                 // TODO: Trace
                 throw new ArgumentException("Item is not registered");
-            }
 
             // Keine Info
             if (container.InfoType == null)
@@ -643,10 +639,8 @@ namespace AntMe.Runtime
                         if (prop != null)
                         {
                             if (prop.GetType() != map.InfoType)
-                            {
                                 // TODO: Tracing
                                 throw new NotSupportedException("Create Delegate returned a wrong type");
-                            }
 
                             info.AddProperty(prop);
                         }
@@ -656,10 +650,8 @@ namespace AntMe.Runtime
                         // Option 2: Automatische Erstellung
                         prop = Activator.CreateInstance(map.InfoType, item, property, observer) as ItemInfoProperty;
                         if (prop == null)
-                        {
                             // TODO: Trace
                             throw new Exception("Could not create Info Property");
-                        }
                         info.AddProperty(prop);
                     }
 

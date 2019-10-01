@@ -3,16 +3,20 @@
 namespace AntMe.Basics.Factions.Bugs
 {
     /// <summary>
-    /// State for the Bug Faction.
+    ///     State for the Bug Faction.
     /// </summary>
     public sealed class BugFactionState : FactionState
     {
-        public BugFactionState() : base() { }
+        public BugFactionState()
+        {
+        }
 
-        public BugFactionState(BugFaction faction) : base(faction) { }
+        public BugFactionState(BugFaction faction) : base(faction)
+        {
+        }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -22,7 +26,7 @@ namespace AntMe.Basics.Factions.Bugs
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -32,7 +36,7 @@ namespace AntMe.Basics.Factions.Bugs
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -42,7 +46,7 @@ namespace AntMe.Basics.Factions.Bugs
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

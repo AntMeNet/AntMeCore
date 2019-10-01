@@ -1,32 +1,21 @@
-﻿using AntMe.Serialization;
-using System;
+﻿using System;
 using System.Security.Policy;
+using AntMe.Serialization;
 
 namespace AntMe.Runtime
 {
     /// <summary>
-    /// Der sichere AppDomain Host für eine laufende Simulation. Mit Hilfe der 
-    /// AppDomain kann sowohl unsicherer Code geladen, als auch die Libraries 
-    /// nach Ende der Simulation wieder aus dem Prozessraum entfernt werden.
+    ///     Der sichere AppDomain Host für eine laufende Simulation. Mit Hilfe der
+    ///     AppDomain kann sowohl unsicherer Code geladen, als auch die Libraries
+    ///     nach Ende der Simulation wieder aus dem Prozessraum entfernt werden.
     /// </summary>
     public sealed class SecureSimulation : IDisposable
     {
         private AppDomain _appDomain;
-        private SecureHost _host;
         private LevelStateByteSerializer _deserializer;
+        private SecureHost _host;
         private LevelState _lastState;
-        private string[] extensionPaths;
-
-
-        /// <summary>
-        /// Status der Simulationsinstanz
-        /// </summary>
-        public SimulationState State { get; private set; }
-
-        /// <summary>
-        /// Gibt die Exception zurück, die zum Abbruch der Simulation geführt hat.
-        /// </summary>
-        public Exception LastException { get; private set; }
+        private readonly string[] extensionPaths;
 
         public SecureSimulation(string[] extensionPaths)
         {
@@ -34,8 +23,24 @@ namespace AntMe.Runtime
             State = SimulationState.Stopped;
         }
 
+
         /// <summary>
-        /// Initialisiert und startet die Simulation.
+        ///     Status der Simulationsinstanz
+        /// </summary>
+        public SimulationState State { get; private set; }
+
+        /// <summary>
+        ///     Gibt die Exception zurück, die zum Abbruch der Simulation geführt hat.
+        /// </summary>
+        public Exception LastException { get; private set; }
+
+        public void Dispose()
+        {
+            Stop();
+        }
+
+        /// <summary>
+        ///     Initialisiert und startet die Simulation.
         /// </summary>
         /// <param name="settings">Simulationseinstellungen</param>
         public void Start(Setup settings)
@@ -44,11 +49,11 @@ namespace AntMe.Runtime
             if (State != SimulationState.Stopped)
                 throw new NotSupportedException("Simulation is not stopped");
 
-            Type t = typeof(SecureHost);
+            var t = typeof(SecureHost);
 
-            AppDomainSetup setup = new AppDomainSetup();
+            var setup = new AppDomainSetup();
             setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            Evidence evidence = new Evidence();
+            var evidence = new Evidence();
 
             try
             {
@@ -66,7 +71,7 @@ namespace AntMe.Runtime
                 throw;
             }
 
-            SimulationContext context = ExtensionLoader.CreateSimulationContext();
+            var context = ExtensionLoader.CreateSimulationContext();
             _deserializer = new LevelStateByteSerializer(context);
         }
 
@@ -78,10 +83,10 @@ namespace AntMe.Runtime
 
             try
             {
-                byte[] rawData = _host.NextFrame();
-                LevelState state = _deserializer.Deserialize(rawData);
+                var rawData = _host.NextFrame();
+                var state = _deserializer.Deserialize(rawData);
 
-                Exception ex = _host.GetLastException();
+                var ex = _host.GetLastException();
                 if (ex != null)
                 {
                     // Fehlerfall
@@ -91,7 +96,7 @@ namespace AntMe.Runtime
                 }
 
                 // Simulation regulär zu Ende
-                else if (state.Mode > LevelMode.Running) 
+                else if (state.Mode > LevelMode.Running)
                 {
                     State = SimulationState.Finished;
                     Stop();
@@ -119,11 +124,6 @@ namespace AntMe.Runtime
                 _deserializer?.Dispose();
                 _deserializer = null;
             }
-        }
-
-        public void Dispose()
-        {
-            Stop();
         }
     }
 }

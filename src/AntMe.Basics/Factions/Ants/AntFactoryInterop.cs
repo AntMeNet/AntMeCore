@@ -3,16 +3,20 @@
 namespace AntMe.Basics.Factions.Ants
 {
     /// <summary>
-    /// Interop Class for Ant Factories.
+    ///     Interop Class for Ant Factories.
     /// </summary>
     public sealed class AntFactoryInterop : FactoryInterop
     {
+        public delegate Type CreateMember();
+
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Faction</param>
-        public AntFactoryInterop(AntFaction faction) 
-            : base(faction) { }
+        public AntFactoryInterop(AntFaction faction)
+            : base(faction)
+        {
+        }
 
         internal Type RequestCreateMember()
         {
@@ -20,7 +24,5 @@ namespace AntMe.Basics.Factions.Ants
         }
 
         public event CreateMember OnCreateMember;
-
-        public delegate Type CreateMember();
     }
 }

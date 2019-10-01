@@ -13,10 +13,10 @@ namespace AntMe.Runtime
             public Func<Map, MapProperty> CreatePropertyDelegate { get; set; }
         }
 
-        private List<MapPropertiesTypeMap> mapProperties = new List<MapPropertiesTypeMap>();
+        private readonly List<MapPropertiesTypeMap> mapProperties = new List<MapPropertiesTypeMap>();
 
         /// <summary>
-        /// Registers additional Map Properties.
+        ///     Registers additional Map Properties.
         /// </summary>
         /// <typeparam name="T">Type of Map Property</typeparam>
         /// <param name="extensionPack"></param>
@@ -26,11 +26,11 @@ namespace AntMe.Runtime
             Func<Map, T> createPropertyDelegate = null)
             where T : MapProperty
         {
-            RegisterMapProperty<T, MapStateProperty>(extensionPack, name, false, createPropertyDelegate, null);
+            RegisterMapProperty<T, MapStateProperty>(extensionPack, name, false, createPropertyDelegate);
         }
 
         /// <summary>
-        /// Registers additional Map Properties.
+        ///     Registers additional Map Properties.
         /// </summary>
         /// <typeparam name="T">Type of Map Property</typeparam>
         /// <typeparam name="S">Type of State for the Map Property</typeparam>
@@ -44,11 +44,11 @@ namespace AntMe.Runtime
             where T : MapProperty
             where S : MapStateProperty
         {
-            RegisterMapProperty<T, S>(extensionPack, name, true, createPropertyDelegate, createStateDelegate);
+            RegisterMapProperty(extensionPack, name, true, createPropertyDelegate, createStateDelegate);
         }
 
         /// <summary>
-        /// Registers additional Map Properties.
+        ///     Registers additional Map Properties.
         /// </summary>
         /// <typeparam name="T">Type of Map Property</typeparam>
         /// <typeparam name="S">Type of State for the Map Property</typeparam>
@@ -66,8 +66,8 @@ namespace AntMe.Runtime
             ValidateDefaults(extensionPack, name);
 
             // Handle Property Type
-            Type type = typeof(T);
-            ValidateType<MapProperty>(type, new Type[] { typeof(SimulationContext), typeof(Map) }, false);
+            var type = typeof(T);
+            ValidateType<MapProperty>(type, new[] {typeof(SimulationContext), typeof(Map)});
 
             // Registration Collision
             if (mapProperties.Any(p => p.Type == type))
@@ -78,41 +78,44 @@ namespace AntMe.Runtime
             if (stateSet)
             {
                 stateType = typeof(S);
-                ValidateType<MapStateProperty>(stateType, new Type[] { typeof(Map), typeof(T) }, true);
+                ValidateType<MapStateProperty>(stateType, new[] {typeof(Map), typeof(T)}, true);
             }
 
-            mapProperties.Add(new MapPropertiesTypeMap()
+            mapProperties.Add(new MapPropertiesTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
                 Type = typeof(T),
                 StateType = stateType,
                 CreatePropertyDelegate = createPropertyDelegate,
-                CreateStateDelegate = createStateDelegate,
+                CreateStateDelegate = createStateDelegate
             });
         }
 
         /// <summary>
-        /// List all Map Properties.
+        ///     List all Map Properties.
         /// </summary>
-        public IEnumerable<IStateInfoTypeMapperEntry> MapProperties { get { return mapProperties; } }
+        public IEnumerable<IStateInfoTypeMapperEntry> MapProperties => mapProperties;
 
         #endregion
 
         #region Map Extender
 
-        private class MapExtenderTypeMap : ExtenderTypeMap<Action<Map>> { }
+        private class MapExtenderTypeMap : ExtenderTypeMap<Action<Map>>
+        {
+        }
 
-        private List<MapExtenderTypeMap> mapExtender = new List<MapExtenderTypeMap>();
+        private readonly List<MapExtenderTypeMap> mapExtender = new List<MapExtenderTypeMap>();
 
         /// <summary>
-        /// Registeres a Delegate to extend a Map.
+        ///     Registeres a Delegate to extend a Map.
         /// </summary>
         /// <param name="extensionPack">Extension Pack</param>
         /// <param name="name">Name</param>
         /// <param name="priority">Priority</param>
         /// <param name="extenderDelegate">Extender Delegate</param>
-        public void RegisterMapExtender(IExtensionPack extensionPack, string name, Action<Map> extenderDelegate, int priority)
+        public void RegisterMapExtender(IExtensionPack extensionPack, string name, Action<Map> extenderDelegate,
+            int priority)
         {
             ValidateDefaults(extensionPack, name);
 
@@ -120,7 +123,7 @@ namespace AntMe.Runtime
             if (extenderDelegate == null)
                 throw new ArgumentNullException("extenderDelegate");
 
-            mapExtender.Add(new MapExtenderTypeMap()
+            mapExtender.Add(new MapExtenderTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -131,18 +134,21 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// List of all Map Extender.
+        ///     List of all Map Extender.
         /// </summary>
-        public IEnumerable<IRankedTypeMapperEntry> MapExtender { get { return mapExtender.OrderBy(g => g.Rank); } }
+        public IEnumerable<IRankedTypeMapperEntry> MapExtender
+        {
+            get { return mapExtender.OrderBy(g => g.Rank); }
+        }
 
         #endregion
 
         #region Map Material
 
-        private List<TypeMap> mapMaterials = new List<TypeMap>();
+        private readonly List<TypeMap> mapMaterials = new List<TypeMap>();
 
         /// <summary>
-        /// Registers a new Material.
+        ///     Registers a new Material.
         /// </summary>
         /// <typeparam name="T">Material Type</typeparam>
         /// <param name="extensionPack">Extension Pack</param>
@@ -152,10 +158,10 @@ namespace AntMe.Runtime
         {
             ValidateDefaults(extensionPack, name);
 
-            Type t = typeof(T);
-            ValidateType<MapMaterial>(t, new Type[] { typeof(SimulationContext) }, false);
+            var t = typeof(T);
+            ValidateType<MapMaterial>(t, new[] {typeof(SimulationContext)});
 
-            mapMaterials.Add(new TypeMap()
+            mapMaterials.Add(new TypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -164,20 +170,22 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// List of all available Materials.
+        ///     List of all available Materials.
         /// </summary>
-        public IEnumerable<ITypeMapperEntry> MapMaterials { get { return mapMaterials; } }
+        public IEnumerable<ITypeMapperEntry> MapMaterials => mapMaterials;
 
         #endregion
 
         #region Map Tiles
 
-        private class MapTileTypeMap : StateInfoTypeMap<Func<MapTile, MapTileState>, Func<MapTile, Item, MapTileInfo>> { }
+        private class MapTileTypeMap : StateInfoTypeMap<Func<MapTile, MapTileState>, Func<MapTile, Item, MapTileInfo>>
+        {
+        }
 
-        private List<MapTileTypeMap> mapTiles = new List<MapTileTypeMap>();
+        private readonly List<MapTileTypeMap> mapTiles = new List<MapTileTypeMap>();
 
         /// <summary>
-        /// Registeres a Map Tile.
+        ///     Registeres a Map Tile.
         /// </summary>
         /// <typeparam name="T">Map Tile Type</typeparam>
         /// <typeparam name="S">Map Tile State Type</typeparam>
@@ -195,16 +203,16 @@ namespace AntMe.Runtime
         {
             ValidateDefaults(extensionPack, name);
 
-            Type t = typeof(T);
-            ValidateType<MapTile>(t, new Type[] { typeof(SimulationContext) }, false);
+            var t = typeof(T);
+            ValidateType<MapTile>(t, new[] {typeof(SimulationContext)});
 
-            Type stateType = typeof(S);
-            ValidateType<MapTileState>(stateType, new Type[] { typeof(T) }, true);
+            var stateType = typeof(S);
+            ValidateType<MapTileState>(stateType, new[] {typeof(T)}, true);
 
-            Type infoType = typeof(I);
-            ValidateType<MapTileInfo>(infoType, new Type[] { typeof(T), typeof(Item) }, false);
+            var infoType = typeof(I);
+            ValidateType<MapTileInfo>(infoType, new[] {typeof(T), typeof(Item)});
 
-            mapTiles.Add(new MapTileTypeMap()
+            mapTiles.Add(new MapTileTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -217,22 +225,25 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// List of all Map Tiles
+        ///     List of all Map Tiles
         /// </summary>
-        public IEnumerable<IStateInfoTypeMapperEntry> MapTiles { get { return mapTiles; } }
+        public IEnumerable<IStateInfoTypeMapperEntry> MapTiles => mapTiles;
 
         #endregion
 
         #region Map Tile Properties
 
-        private class MapTilePropertyTypeMap : StateInfoTypeMap<Func<MapTile, MapTileProperty, MapTileStateProperty>, Func<MapTile, MapTileProperty, Item, MapTileInfoProperty>> { }
+        private class MapTilePropertyTypeMap : StateInfoTypeMap<Func<MapTile, MapTileProperty, MapTileStateProperty>,
+            Func<MapTile, MapTileProperty, Item, MapTileInfoProperty>>
+        {
+        }
 
-        private List<MapTilePropertyTypeMap> mapTileProperties = new List<MapTilePropertyTypeMap>();
+        private readonly List<MapTilePropertyTypeMap> mapTileProperties = new List<MapTilePropertyTypeMap>();
 
         public void RegisterMapTileProperty<T>(IExtensionPack extensionPack, string name)
             where T : MapTileProperty
         {
-            RegisterMapTileProperty<T, MapTileStateProperty, MapTileInfoProperty>(extensionPack, name, false, false, null, null);
+            RegisterMapTileProperty<T, MapTileStateProperty, MapTileInfoProperty>(extensionPack, name, false, false);
         }
 
         public void RegisterMapTilePropertyS<T, S>(IExtensionPack extensionPack, string name,
@@ -240,7 +251,7 @@ namespace AntMe.Runtime
             where T : MapTileProperty
             where S : MapTileStateProperty
         {
-            RegisterMapTileProperty<T, S, MapTileInfoProperty>(extensionPack, name, true, false, createStateDelegate, null);
+            RegisterMapTileProperty<T, S, MapTileInfoProperty>(extensionPack, name, true, false, createStateDelegate);
         }
 
         public void RegisterMapTilePropertyI<T, I>(IExtensionPack extensionPack, string name,
@@ -248,7 +259,8 @@ namespace AntMe.Runtime
             where T : MapTileProperty
             where I : MapTileInfoProperty
         {
-            RegisterMapTileProperty<T, MapTileStateProperty, I>(extensionPack, name, false, true, null, createInfoDelegate);
+            RegisterMapTileProperty<T, MapTileStateProperty, I>(extensionPack, name, false, true, null,
+                createInfoDelegate);
         }
 
         public void RegisterMapTilePropertySI<T, S, I>(IExtensionPack extensionPack, string name,
@@ -272,8 +284,8 @@ namespace AntMe.Runtime
             ValidateDefaults(extensionPack, name);
 
             // Handle Property Type
-            Type type = typeof(T);
-            ValidateType<MapTileProperty>(type, new Type[] { typeof(SimulationContext), typeof(MapTile) }, false);
+            var type = typeof(T);
+            ValidateType<MapTileProperty>(type, new[] {typeof(SimulationContext), typeof(MapTile)});
 
             // Registration Collision
             if (mapTileProperties.Any(p => p.Type == type))
@@ -285,7 +297,7 @@ namespace AntMe.Runtime
             if (stateSet)
             {
                 stateType = typeof(S);
-                ValidateType<MapTileStateProperty>(stateType, new Type[] { typeof(MapTile), typeof(T) }, true);
+                ValidateType<MapTileStateProperty>(stateType, new[] {typeof(MapTile), typeof(T)}, true);
             }
 
             // Handle Info Type
@@ -293,10 +305,10 @@ namespace AntMe.Runtime
             if (infoSet)
             {
                 infoType = typeof(I);
-                ValidateType<MapTileInfoProperty>(infoType, new Type[] { typeof(MapTile), typeof(T), typeof(Item) });
+                ValidateType<MapTileInfoProperty>(infoType, new[] {typeof(MapTile), typeof(T), typeof(Item)});
             }
 
-            mapTileProperties.Add(new MapTilePropertyTypeMap()
+            mapTileProperties.Add(new MapTilePropertyTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -309,19 +321,22 @@ namespace AntMe.Runtime
         }
 
         /// <summary>
-        /// List of all Map Tile Properties.
+        ///     List of all Map Tile Properties.
         /// </summary>
-        public IEnumerable<IStateInfoTypeMapperEntry> MapTileProperties { get { return mapTileProperties; } }
+        public IEnumerable<IStateInfoTypeMapperEntry> MapTileProperties => mapTileProperties;
 
         #endregion
 
         #region Map Tile Attachments
 
-        private class MapTileAttachmentTypeMap : AttachmentTypeMap<Func<MapTile, MapTileProperty>> { }
+        private class MapTileAttachmentTypeMap : AttachmentTypeMap<Func<MapTile, MapTileProperty>>
+        {
+        }
 
-        private List<MapTileAttachmentTypeMap> mapTileAttachments = new List<MapTileAttachmentTypeMap>();
+        private readonly List<MapTileAttachmentTypeMap> mapTileAttachments = new List<MapTileAttachmentTypeMap>();
 
-        public void AttachMapTileProperty<I, P>(IExtensionPack extensionPack, string name, Func<MapTile, P> createPropertyDelegate = null)
+        public void AttachMapTileProperty<I, P>(IExtensionPack extensionPack, string name,
+            Func<MapTile, P> createPropertyDelegate = null)
             where I : MapTile
             where P : MapTileProperty
         {
@@ -333,11 +348,12 @@ namespace AntMe.Runtime
             if (mapTileAttachments.Any(c => c.Type == typeof(I) && c.AttachmentType == typeof(P)))
             {
                 // TODO: Tracer
-                string msg = string.Format("Item Property Combination '{0}'/'{1}' is already reagistered", typeof(I).FullName, typeof(P).FullName);
+                var msg = string.Format("Item Property Combination '{0}'/'{1}' is already reagistered",
+                    typeof(I).FullName, typeof(P).FullName);
                 throw new NotSupportedException(msg);
             }
 
-            mapTileAttachments.Add(new MapTileAttachmentTypeMap()
+            mapTileAttachments.Add(new MapTileAttachmentTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -347,17 +363,20 @@ namespace AntMe.Runtime
             });
         }
 
-        public IEnumerable<IAttachmentTypeMapperEntry> MapTileAttachments { get { return mapTileAttachments; } }
+        public IEnumerable<IAttachmentTypeMapperEntry> MapTileAttachments => mapTileAttachments;
 
         #endregion
 
         #region Map Tile Extender
 
-        private class MapTileExtenderTypeMap : ExtenderTypeMap<Action<MapTile>> { }
+        private class MapTileExtenderTypeMap : ExtenderTypeMap<Action<MapTile>>
+        {
+        }
 
-        private List<MapTileExtenderTypeMap> mapTileExtender = new List<MapTileExtenderTypeMap>();
+        private readonly List<MapTileExtenderTypeMap> mapTileExtender = new List<MapTileExtenderTypeMap>();
 
-        public void RegisterMapTileExtender<T>(IExtensionPack extensionPack, string name, Action<MapTile> extenderDelegate, int priority)
+        public void RegisterMapTileExtender<T>(IExtensionPack extensionPack, string name,
+            Action<MapTile> extenderDelegate, int priority)
             where T : MapTile
         {
             // Kein Name angegeben
@@ -368,7 +387,7 @@ namespace AntMe.Runtime
             if (extenderDelegate == null)
                 throw new ArgumentNullException("extenderDelegate");
 
-            mapTileExtender.Add(new MapTileExtenderTypeMap()
+            mapTileExtender.Add(new MapTileExtenderTypeMap
             {
                 ExtensionPack = extensionPack,
                 Name = name,
@@ -378,15 +397,14 @@ namespace AntMe.Runtime
             });
         }
 
-        public IEnumerable<IRankedTypeMapperEntry> MapTileExtender { get { return mapTileExtender; } }
-
+        public IEnumerable<IRankedTypeMapperEntry> MapTileExtender => mapTileExtender;
 
         #endregion
 
         #region Map Resolver
 
         /// <summary>
-        /// Resolves the given Map.
+        ///     Resolves the given Map.
         /// </summary>
         /// <param name="context"></param>
         /// <param name="map">Map</param>
@@ -397,17 +415,14 @@ namespace AntMe.Runtime
 
             // Attachements
             foreach (var mapProperty in mapProperties)
-            {
                 if (mapProperty.CreatePropertyDelegate != null)
                 {
-                    MapProperty property = mapProperty.CreatePropertyDelegate(map);
+                    var property = mapProperty.CreatePropertyDelegate(map);
                     if (property != null)
                     {
                         if (property.GetType() != mapProperty.Type)
-                        {
                             // TODO: Trace
                             throw new NotSupportedException("Delegate returned wrong Property Type");
-                        }
                         map.AddProperty(property);
                     }
                 }
@@ -415,13 +430,9 @@ namespace AntMe.Runtime
                 {
                     map.AddProperty(Activator.CreateInstance(mapProperty.Type, context, map) as MapProperty);
                 }
-            }
 
             // Extender
-            foreach (var extender in mapExtender.OrderBy(c => c.Rank))
-            {
-                extender.ExtenderDelegate(map);
-            }
+            foreach (var extender in mapExtender.OrderBy(c => c.Rank)) extender.ExtenderDelegate(map);
         }
 
         public void ResolveMapTile(SimulationContext context, MapTile tile)
@@ -433,52 +444,50 @@ namespace AntMe.Runtime
                 throw new NotSupportedException("Item is not registered.");
 
             // Type Order
-            List<Type> types = new List<Type>();
-            Type current = tile.GetType();
+            var types = new List<Type>();
+            var current = tile.GetType();
             types.Add(current);
             while (current != typeof(MapTile))
             {
                 current = current.BaseType;
                 types.Add(current);
             }
-            Type[] itemTypes = types.ToArray();
+
+            var itemTypes = types.ToArray();
             Array.Reverse(itemTypes);
 
             // Attachements
             foreach (var type in itemTypes)
+            foreach (var attachment in mapTileAttachments.Where(c => c.Type == type))
             {
-                foreach (var attachment in mapTileAttachments.Where(c => c.Type == type))
-                {
-                    // Skip if allready available
-                    if (tile.Properties.Any(p => p.GetType() == attachment.AttachmentType))
-                        continue;
+                // Skip if allready available
+                if (tile.Properties.Any(p => p.GetType() == attachment.AttachmentType))
+                    continue;
 
-                    if (attachment.CreateDelegate != null)
+                if (attachment.CreateDelegate != null)
+                {
+                    var property = attachment.CreateDelegate(tile);
+                    if (property != null)
                     {
-                        MapTileProperty property = attachment.CreateDelegate(tile);
-                        if (property != null)
-                        {
-                            if (property.GetType() != attachment.AttachmentType)
-                                throw new NotSupportedException("Delegate returned wrong Property Type");
-                            tile.AddProperty(property);
-                        }
+                        if (property.GetType() != attachment.AttachmentType)
+                            throw new NotSupportedException("Delegate returned wrong Property Type");
+                        tile.AddProperty(property);
                     }
-                    else
-                    {
-                        tile.AddProperty(Activator.CreateInstance(attachment.AttachmentType, context, tile) as MapTileProperty);
-                    }
+                }
+                else
+                {
+                    tile.AddProperty(
+                        Activator.CreateInstance(attachment.AttachmentType, context, tile) as MapTileProperty);
                 }
             }
 
             // Extender
             foreach (var extender in mapTileExtender.Where(c => itemTypes.Contains(c.Type)).OrderBy(c => c.Rank))
-            {
                 extender.ExtenderDelegate(tile);
-            }
         }
 
         /// <summary>
-        /// Generates a Map State for the given Map.
+        ///     Generates a Map State for the given Map.
         /// </summary>
         /// <param name="map">Map</param>
         /// <returns>Map State</returns>
@@ -487,7 +496,7 @@ namespace AntMe.Runtime
             if (map == null)
                 throw new ArgumentNullException("Map");
 
-            MapState state = new MapState(map);
+            var state = new MapState(map);
 
             // State Properties auffüllen
             foreach (var property in map.Properties)
@@ -505,10 +514,8 @@ namespace AntMe.Runtime
                     if (prop != null)
                     {
                         if (prop.GetType() != mapping.StateType)
-                        {
                             // TODO: Trace
                             throw new NotSupportedException("Delegate returned a wrong Property Type");
-                        }
 
                         state.AddProperty(prop);
                     }
@@ -518,10 +525,8 @@ namespace AntMe.Runtime
                     // Option 2: Dynamische Erzeugung
                     prop = Activator.CreateInstance(mapping.StateType, map, property) as MapStateProperty;
                     if (prop == null)
-                    {
                         // TODO: Trace
                         throw new Exception("Could not create State Property");
-                    }
                     state.AddProperty(prop);
                 }
             }
@@ -571,10 +576,8 @@ namespace AntMe.Runtime
                     if (prop != null)
                     {
                         if (prop.GetType() != propertyMapping.StateType)
-                        {
                             // TODO: Trace
                             throw new NotSupportedException("Delegate returned a wrong Property Type");
-                        }
 
                         state.AddProperty(prop);
                     }
@@ -584,10 +587,8 @@ namespace AntMe.Runtime
                     // Option 2: Dynamische Erzeugung
                     prop = Activator.CreateInstance(propertyMapping.StateType, tile, property) as MapTileStateProperty;
                     if (prop == null)
-                    {
                         // TODO: Trace
                         throw new Exception("Could not create State Property");
-                    }
                     state.AddProperty(prop);
                 }
             }
@@ -605,10 +606,8 @@ namespace AntMe.Runtime
 
             var container = mapTiles.FirstOrDefault(g => g.Type == tile.GetType());
             if (container == null)
-            {
                 // TODO: Trace
                 throw new ArgumentException("Item is not registered");
-            }
 
             // Keine Info
             if (container.InfoType == null)
@@ -634,10 +633,8 @@ namespace AntMe.Runtime
                         if (prop != null)
                         {
                             if (prop.GetType() != map.InfoType)
-                            {
                                 // TODO: Tracing
                                 throw new NotSupportedException("Create Delegate returned a wrong type");
-                            }
 
                             info.AddProperty(prop);
                         }
@@ -647,10 +644,8 @@ namespace AntMe.Runtime
                         // Option 2: Automatische Erstellung
                         prop = Activator.CreateInstance(map.InfoType, tile, property, observer) as MapTileInfoProperty;
                         if (prop == null)
-                        {
                             // TODO: Trace
                             throw new Exception("Could not create Info Property");
-                        }
                         info.AddProperty(prop);
                     }
 

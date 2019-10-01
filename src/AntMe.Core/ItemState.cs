@@ -5,53 +5,19 @@ using System.IO;
 namespace AntMe
 {
     /// <summary>
-    /// Base Class for all Item States.
+    ///     Base Class for all Item States.
     /// </summary>
     public class ItemState : PropertyList<ItemStateProperty>, ISerializableState
     {
         /// <summary>
-        /// Item Id.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        [DisplayName("ID")]
-        [Description("Id of this Item")]
-        [ReadOnly(true)]
-        [Category("Static")]
-        public int Id { get; set; }
+        public ItemState()
+        {
+        }
 
         /// <summary>
-        /// Item Position.
-        /// </summary>
-        [DisplayName("Position")]
-        [Description("Item Position")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public Vector3 Position { get; set; }
-
-        /// <summary>
-        /// Item Radius.
-        /// </summary>
-        [DisplayName("Radius")]
-        [Description("Item Radius")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public float Radius { get; set; }
-
-        /// <summary>
-        /// Item Orientation.
-        /// </summary>
-        [DisplayName("Orientation")]
-        [Description("Item Orientation")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public short Orientation { get; set; }
-
-        /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public ItemState() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Reference to the related Engine Item</param>
         public ItemState(Item item)
@@ -61,16 +27,52 @@ namespace AntMe
 
             Id = item.Id;
             Position = item.Position;
-            Orientation = (short)item.Orientation.Degree;
+            Orientation = (short) item.Orientation.Degree;
             Radius = item.Radius;
 
             item.PositionChanged += (i, v) => { Position = v; };
-            item.OrientationChanged += (i, v) => { Orientation = (short)v.Degree; };
+            item.OrientationChanged += (i, v) => { Orientation = (short) v.Degree; };
             item.RadiusChanged += (i, v) => { Radius = v; };
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Item Id.
+        /// </summary>
+        [DisplayName("ID")]
+        [Description("Id of this Item")]
+        [ReadOnly(true)]
+        [Category("Static")]
+        public int Id { get; set; }
+
+        /// <summary>
+        ///     Item Position.
+        /// </summary>
+        [DisplayName("Position")]
+        [Description("Item Position")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public Vector3 Position { get; set; }
+
+        /// <summary>
+        ///     Item Radius.
+        /// </summary>
+        [DisplayName("Radius")]
+        [Description("Item Radius")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public float Radius { get; set; }
+
+        /// <summary>
+        ///     Item Orientation.
+        /// </summary>
+        [DisplayName("Orientation")]
+        [Description("Item Orientation")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public short Orientation { get; set; }
+
+        /// <summary>
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -84,7 +86,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -98,7 +100,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -113,7 +115,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -128,7 +130,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Returns a representive String for this State.
+        ///     Returns a representive String for this State.
         /// </summary>
         /// <returns>State Description</returns>
         public override string ToString()

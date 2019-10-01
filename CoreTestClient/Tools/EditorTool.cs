@@ -1,6 +1,6 @@
-﻿using AntMe;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using AntMe;
 
 namespace CoreTestClient.Tools
 {
@@ -8,12 +8,12 @@ namespace CoreTestClient.Tools
     {
         protected readonly SimulationContext Context;
 
-        public abstract ToolStripItem RootItem { get; }
-
         public EditorTool(SimulationContext context)
         {
             Context = context;
         }
+
+        public abstract ToolStripItem RootItem { get; }
 
         public virtual bool CanApply(Map map, Index2? cell, Vector2? position)
         {
@@ -25,15 +25,15 @@ namespace CoreTestClient.Tools
             if (map == null)
                 throw new ArgumentNullException("There is no map");
 
-            Index2 mapSize = map.GetCellCount();
-            if (cell.HasValue && 
+            var mapSize = map.GetCellCount();
+            if (cell.HasValue &&
                 (cell.Value.X < 0 || cell.Value.X >= mapSize.X ||
-                cell.Value.Y < 0 || cell.Value.Y >= mapSize.Y))
+                 cell.Value.Y < 0 || cell.Value.Y >= mapSize.Y))
                 throw new ArgumentOutOfRangeException("Cell Index is out of range");
 
-            if (position.HasValue && 
+            if (position.HasValue &&
                 (position.Value.X < 0 || position.Value.X >= mapSize.X * Map.CELLSIZE ||
-                position.Value.Y < 0 || position.Value.Y >= mapSize.Y * Map.CELLSIZE))
+                 position.Value.Y < 0 || position.Value.Y >= mapSize.Y * Map.CELLSIZE))
                 throw new ArgumentOutOfRangeException("Position is out of range");
 
             OnApply(map, cell, position);

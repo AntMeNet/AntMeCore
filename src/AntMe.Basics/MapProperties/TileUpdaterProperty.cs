@@ -3,7 +3,7 @@
 namespace AntMe.Basics.MapProperties
 {
     /// <summary>
-    /// Map Property for individual Tile Updates.
+    ///     Map Property for individual Tile Updates.
     /// </summary>
     public class TileUpdaterProperty : MapProperty
     {

@@ -4,27 +4,27 @@ using AntMe.Basics.Items;
 namespace AntMe.Basics.Factions.Ants
 {
     /// <summary>
-    /// Interop Class for the Ant Faction Units (Ants)
+    ///     Interop Class for the Ant Faction Units (Ants)
     /// </summary>
     public sealed class AntUnitInterop : UnitInterop
     {
         /// <summary>
-        /// Delay Counter for Markers.
+        ///     Reference to the Faction.
+        /// </summary>
+        private new readonly AntFaction Faction;
+
+        /// <summary>
+        ///     Reference to the related Ant Item.
+        /// </summary>
+        private new readonly AntItem Item;
+
+        /// <summary>
+        ///     Delay Counter for Markers.
         /// </summary>
         private int markerDelay;
 
         /// <summary>
-        /// Reference to the Faction.
-        /// </summary>
-        private readonly new AntFaction Faction;
-
-        /// <summary>
-        /// Reference to the related Ant Item.
-        /// </summary>
-        private readonly new AntItem Item;
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Faction</param>
         /// <param name="item">Item</param>
@@ -36,7 +36,7 @@ namespace AntMe.Basics.Factions.Ants
         }
 
         /// <summary>
-        /// Gets called by the Engine on Round Update.
+        ///     Gets called by the Engine on Round Update.
         /// </summary>
         protected override void Update(int round)
         {
@@ -48,7 +48,7 @@ namespace AntMe.Basics.Factions.Ants
         }
 
         /// <summary>
-        /// Creates a Mark at the Ants Position.
+        ///     Creates a Mark at the Ants Position.
         /// </summary>
         /// <param name="information">Information</param>
         /// <param name="size">Maxium Size</param>
@@ -68,26 +68,26 @@ namespace AntMe.Basics.Factions.Ants
             return true;
         }
 
-        #region Properties
-
-        /// <summary>
-        /// Gets the Name of this Item.
-        /// </summary>
-        public string Name { get { return Item.Name; } }
-
-        /// <summary>
-        /// Returns the Caste Name for this Item.
-        /// </summary>
-        public string Caste { get { return Item.Attributes?.Name ?? string.Empty; } }
-
-        #endregion
-
         #region Events
 
         /// <summary>
-        /// Signal for a new Round.
+        ///     Signal for a new Round.
         /// </summary>
         public event InteropProperty.InteropEvent Tick;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        ///     Gets the Name of this Item.
+        /// </summary>
+        public string Name => Item.Name;
+
+        /// <summary>
+        ///     Returns the Caste Name for this Item.
+        /// </summary>
+        public string Caste => Item.Attributes?.Name ?? string.Empty;
 
         #endregion
     }

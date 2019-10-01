@@ -1,7 +1,5 @@
 ﻿using AntMe.Basics.Items;
-using AntMe.Runtime;
-using System;
-using System.IO;
+using AntMe.Levelpack.Properties;
 
 namespace AntMe.Levelpack.Levels
 {
@@ -15,11 +13,13 @@ namespace AntMe.Levelpack.Levels
     )]
     public sealed class ArenaLevel : Level
     {
-        public ArenaLevel(SimulationContext context) : base(context) { }
+        public ArenaLevel(SimulationContext context) : base(context)
+        {
+        }
 
         public override byte[] GetMap()
         {
-            return Levelpack.Properties.Resources.arenaLevel;
+            return Resources.arenaLevel;
         }
 
         protected override void OnInit()
@@ -31,62 +31,74 @@ namespace AntMe.Levelpack.Levels
 
             // Player 1
             cell = new Index2(6, 6);
-            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), SugarItem.SugarMaxCapacity);
+            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                SugarItem.SugarMaxCapacity);
             Engine.InsertItem(sugar);
 
             // Player 2
             cell = new Index2(23, 13);
-            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), SugarItem.SugarMaxCapacity);
+            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                SugarItem.SugarMaxCapacity);
             Engine.InsertItem(sugar);
 
             // Player 3
             cell = new Index2(6, 13);
-            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), SugarItem.SugarMaxCapacity);
+            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                SugarItem.SugarMaxCapacity);
             Engine.InsertItem(sugar);
 
             // Player 4
             cell = new Index2(23, 6);
-            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), SugarItem.SugarMaxCapacity);
+            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                SugarItem.SugarMaxCapacity);
             Engine.InsertItem(sugar);
 
             // Player 5
             cell = new Index2(13, 15);
-            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), SugarItem.SugarMaxCapacity);
+            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                SugarItem.SugarMaxCapacity);
             Engine.InsertItem(sugar);
 
             // Player 6
             cell = new Index2(16, 4);
-            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), SugarItem.SugarMaxCapacity);
+            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                SugarItem.SugarMaxCapacity);
             Engine.InsertItem(sugar);
 
             // Player 7
             cell = new Index2(10, 10);
-            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), SugarItem.SugarMaxCapacity);
+            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                SugarItem.SugarMaxCapacity);
             Engine.InsertItem(sugar);
 
             // Player 8
             cell = new Index2(21, 8);
-            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), SugarItem.SugarMaxCapacity);
+            sugar = new SugarItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                SugarItem.SugarMaxCapacity);
             Engine.InsertItem(sugar);
 
             // Apple 1
             cell = new Index2(1, 4);
-            apple = new AppleItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), 250);
+            apple = new AppleItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                250);
             Engine.InsertItem(apple);
 
             // Apple 2
             cell = new Index2(5, 18);
-            apple = new AppleItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), 250);
+            apple = new AppleItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                250);
             Engine.InsertItem(apple);
 
             // Apple 3
             cell = new Index2(25, 18);
-            apple = new AppleItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), 250);
+            apple = new AppleItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                250);
             Engine.InsertItem(apple);
 
             // Apple 4
             cell = new Index2(25, 1);
-            apple = new AppleItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE), 250);
+            apple = new AppleItem(Context, new Vector2((cell.X + 0.5f) * Map.CELLSIZE, (cell.Y + 0.5f) * Map.CELLSIZE),
+                250);
             Engine.InsertItem(apple);
         }
     }

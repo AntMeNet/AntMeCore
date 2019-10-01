@@ -3,13 +3,13 @@
 namespace AntMe
 {
     /// <summary>
-    /// Attribute to name a Group of Units.
+    ///     Attribute to name a Group of Units.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class UnitGroupAttribute : Attribute
     {
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="name">Name of the Group</param>
         public UnitGroupAttribute(string name)
@@ -18,7 +18,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Name of the Group.
+        ///     Name of the Group.
         /// </summary>
         public string Name { get; set; }
     }

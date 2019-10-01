@@ -1,7 +1,4 @@
-﻿using AntMe.Basics.LevelProperties;
-using System.IO;
-
-namespace AntMe.Levelpack.Levels
+﻿namespace AntMe.Levelpack.Levels
 {
     //[LevelDescription(
     //    "{5C5A40C3-7196-4F1D-9BDF-D3C954CC2491}",

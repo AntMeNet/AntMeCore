@@ -4,17 +4,35 @@ using System.IO;
 namespace AntMe
 {
     /// <summary>
-    /// Base State Class for all Faction States.
+    ///     Base State Class for all Faction States.
     /// </summary>
     public class FactionState : PropertyList<FactionStateProperty>, ISerializableState
     {
         /// <summary>
-        /// Reference to the related Faction.
+        ///     Reference to the related Faction.
         /// </summary>
         protected readonly Faction Faction;
 
         /// <summary>
-        /// Name of the Player.
+        ///     Default Contructor for the Deserializer.
+        /// </summary>
+        public FactionState()
+        {
+        }
+
+        /// <summary>
+        ///     Default Constructor for the Type Mapper.
+        /// </summary>
+        /// <param name="faction">Faction</param>
+        public FactionState(Faction faction)
+        {
+            Faction = faction;
+
+            // TODO: Bind Fields
+        }
+
+        /// <summary>
+        ///     Name of the Player.
         /// </summary>
         [DisplayName("Name")]
         [Description("Name of the Player")]
@@ -23,7 +41,7 @@ namespace AntMe
         public string Name { get; set; }
 
         /// <summary>
-        /// Slot Index.
+        ///     Slot Index.
         /// </summary>
         [DisplayName("Slot")]
         [Description("Slot Index")]
@@ -32,7 +50,7 @@ namespace AntMe
         public byte SlotIndex { get; set; }
 
         /// <summary>
-        /// Faction Name.
+        ///     Faction Name.
         /// </summary>
         [DisplayName("Faction Name")]
         [Description("Name of the Faction")]
@@ -41,7 +59,7 @@ namespace AntMe
         public string FactionName { get; set; }
 
         /// <summary>
-        /// Player Color.
+        ///     Player Color.
         /// </summary>
         [DisplayName("Color")]
         [Description("Player Color")]
@@ -50,7 +68,7 @@ namespace AntMe
         public PlayerColor PlayerColor { get; set; }
 
         /// <summary>
-        /// Start Point on Map.
+        ///     Start Point on Map.
         /// </summary>
         [DisplayName("Start Point")]
         [Description("Start Point")]
@@ -59,23 +77,7 @@ namespace AntMe
         public Vector2 StartPoint { get; set; }
 
         /// <summary>
-        /// Default Contructor for the Deserializer.
-        /// </summary>
-        public FactionState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
-        /// </summary>
-        /// <param name="faction">Faction</param>
-        public FactionState(Faction faction) : base()
-        {
-            Faction = faction;
-
-            // TODO: Bind Fields
-        }
-
-        /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -83,13 +85,13 @@ namespace AntMe
         {
             stream.Write(Name ?? string.Empty);
             stream.Write(FactionName ?? string.Empty);
-            stream.Write((byte)PlayerColor);
+            stream.Write((byte) PlayerColor);
             stream.Write(StartPoint.X);
             stream.Write(StartPoint.Y);
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -98,7 +100,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -106,14 +108,14 @@ namespace AntMe
         {
             Name = stream.ReadString();
             FactionName = stream.ReadString();
-            PlayerColor = (PlayerColor)stream.ReadByte();
+            PlayerColor = (PlayerColor) stream.ReadByte();
             StartPoint = new Vector2(
                 stream.ReadSingle(),
                 stream.ReadSingle());
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -122,7 +124,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Returns a representive String for this State.
+        ///     Returns a representive String for this State.
         /// </summary>
         /// <returns>State Description</returns>
         public override string ToString()
@@ -132,52 +134,52 @@ namespace AntMe
     }
 
     /// <summary>
-    /// List of all possible Player Colors.
+    ///     List of all possible Player Colors.
     /// </summary>
     public enum PlayerColor
     {
         /// <summary>
-        /// Black
+        ///     Black
         /// </summary>
         Black = 0,
 
         /// <summary>
-        /// Red
+        ///     Red
         /// </summary>
         Red = 1,
 
         /// <summary>
-        /// Blue
+        ///     Blue
         /// </summary>
         Blue = 2,
 
         /// <summary>
-        /// Cyan
+        ///     Cyan
         /// </summary>
         Cyan = 3,
 
         /// <summary>
-        /// Purple
+        ///     Purple
         /// </summary>
         Purple = 4,
 
         /// <summary>
-        /// Orange
+        ///     Orange
         /// </summary>
         Orange = 5,
 
         /// <summary>
-        /// Green
+        ///     Green
         /// </summary>
         Green = 6,
 
         /// <summary>
-        /// White
+        ///     White
         /// </summary>
         White = 7,
 
         /// <summary>
-        /// Undefined
+        ///     Undefined
         /// </summary>
         Undefined = 8
     }

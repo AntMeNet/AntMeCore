@@ -1,35 +1,16 @@
-﻿using AntMe.Basics.ItemProperties;
-using System;
+﻿using System;
 
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Base Class for all Collector Properties.
+    ///     Base Class for all Collector Properties.
     /// </summary>
     public abstract class CollectorProperty : GoodsProperty
     {
         private float collectorRange;
 
         /// <summary>
-        /// Gets the fitting Type of Collectable Properties.
-        /// </summary>
-        public Type AcceptedCollectableType { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the Collectors Range.
-        /// </summary>
-        public float CollectorRange
-        {
-            get { return collectorRange; }
-            set
-            {
-                collectorRange = Math.Max(value, 0f);
-                OnCollectorRangeChanged?.Invoke(Item, collectorRange);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the Collectable Radius.
+        ///     Gets or sets the Collectable Radius.
         /// </summary>
         public CollectorProperty(Item item, Type collectionType) : base(item)
         {
@@ -38,7 +19,25 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Takes the requested amount from the Property.
+        ///     Gets the fitting Type of Collectable Properties.
+        /// </summary>
+        public Type AcceptedCollectableType { get; }
+
+        /// <summary>
+        ///     Gets or sets the Collectors Range.
+        /// </summary>
+        public float CollectorRange
+        {
+            get => collectorRange;
+            set
+            {
+                collectorRange = Math.Max(value, 0f);
+                OnCollectorRangeChanged?.Invoke(Item, collectorRange);
+            }
+        }
+
+        /// <summary>
+        ///     Takes the requested amount from the Property.
         /// </summary>
         /// <param name="property">Source Property</param>
         /// <param name="amount">Requested Amount</param>
@@ -65,7 +64,7 @@ namespace AntMe.Basics.ItemProperties
             amount = Math.Min(amount, Capacity - Amount);
 
             // Request Good
-            int result = property.Take(this, amount);
+            var result = property.Take(this, amount);
 
             // Finalize transfer.
             Amount += result;
@@ -74,7 +73,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Give the given amount to the given Destination.
+        ///     Give the given amount to the given Destination.
         /// </summary>
         /// <param name="property">Destination Property</param>
         /// <param name="amount">Requested Amount</param>
@@ -101,7 +100,7 @@ namespace AntMe.Basics.ItemProperties
             amount = Math.Min(amount, Amount);
 
             // Request
-            int result = property.Give(this, amount);
+            var result = property.Give(this, amount);
 
             // Finalize transfer
             Amount -= result;
@@ -110,20 +109,22 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Signal for a changed Collector Range.
+        ///     Signal for a changed Collector Range.
         /// </summary>
         public event ValueChanged<float> OnCollectorRangeChanged;
     }
 
     /// <summary>
-    /// Base Class for all Collector Properties.
+    ///     Base Class for all Collector Properties.
     /// </summary>
     /// <typeparam name="T">Type of fitting Collectable Property</typeparam>
     public abstract class CollectorProperty<T> : CollectorProperty where T : CollectableProperty
     {
         /// <summary>
-        /// Gets or sets the Collectable Radius.
+        ///     Gets or sets the Collectable Radius.
         /// </summary>
-        public CollectorProperty(Item item) : base(item, typeof(T)) { }
+        public CollectorProperty(Item item) : base(item, typeof(T))
+        {
+        }
     }
 }

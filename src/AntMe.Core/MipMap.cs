@@ -36,12 +36,12 @@ namespace AntMe
         /// <summary>
         ///     Height of the base layer.
         /// </summary>
-        public float Height { get; private set; }
+        public float Height { get; }
 
         /// <summary>
         ///     Width of the base layer.
         /// </summary>
-        public float Width { get; private set; }
+        public float Width { get; }
 
         /// <summary>
         ///     Adds a new layer to the mipmap, conserving the ordering by rejected radius.
@@ -65,7 +65,7 @@ namespace AntMe
         public void Add(T obj, Vector3 pos, float radius)
         {
             // the base layer is the default
-            MipMapLayer<T> lastLayer = Layers[0];
+            var lastLayer = Layers[0];
             foreach (var layer in Layers)
             {
                 // check greater than current max radius and add to the last checked layer since its max radius was ok.
@@ -74,8 +74,10 @@ namespace AntMe
                     lastLayer.Add(obj, pos, radius);
                     return;
                 }
+
                 lastLayer = layer;
             }
+
             lastLayer.Add(obj, pos, radius);
         }
 
@@ -89,12 +91,8 @@ namespace AntMe
         {
             var result = new HashSet<T>();
             foreach (var layer in Layers)
-            {
-                foreach (T item in layer.FindAll(center, radius))
-                {
-                    result.Add(item);
-                }
-            }
+            foreach (var item in layer.FindAll(center, radius))
+                result.Add(item);
             return result;
         }
 
@@ -103,10 +101,7 @@ namespace AntMe
         /// </summary>
         public void Clear()
         {
-            foreach (var layer in Layers)
-            {
-                layer.Clear();
-            }
+            foreach (var layer in Layers) layer.Clear();
         }
 
         /// <summary>
@@ -118,16 +113,13 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Entfernt das angegeben Objekt.
+        ///     Entfernt das angegeben Objekt.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="pos"></param>
         public void Remove(T obj, Vector3 pos)
         {
-            foreach (var layer in Layers)
-            {
-                layer.Remove(obj, pos);
-            }
+            foreach (var layer in Layers) layer.Remove(obj, pos);
         }
     }
 }

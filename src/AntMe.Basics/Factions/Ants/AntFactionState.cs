@@ -3,23 +3,27 @@
 namespace AntMe.Basics.Factions.Ants
 {
     /// <summary>
-    /// State for the Ant Faction.
+    ///     State for the Ant Faction.
     /// </summary>
     public sealed class AntFactionState : FactionState
     {
         /// <summary>
-        /// Default Constructor for the Deserializer.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public AntFactionState() : base() { }
+        public AntFactionState()
+        {
+        }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="faction">Faction</param>
-        public AntFactionState(AntFaction faction) : base(faction) { }
+        public AntFactionState(AntFaction faction) : base(faction)
+        {
+        }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -29,7 +33,7 @@ namespace AntMe.Basics.Factions.Ants
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -39,7 +43,7 @@ namespace AntMe.Basics.Factions.Ants
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -49,7 +53,7 @@ namespace AntMe.Basics.Factions.Ants
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

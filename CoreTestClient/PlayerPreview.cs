@@ -12,7 +12,6 @@ namespace CoreTestClient
 
         public void SetPlayer(PlayerInfo player)
         {
-
         }
     }
 }

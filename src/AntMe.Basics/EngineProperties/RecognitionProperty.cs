@@ -1,12 +1,11 @@
-﻿using AntMe.Basics.ItemProperties;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using AntMe.Basics.ItemProperties;
 
 namespace AntMe.Basics.EngineProperties
 {
     /// <summary>
-    /// Engine Extension to handle all Recognition Issues (Sighting, Smelling,...)
+    ///     Engine Extension to handle all Recognition Issues (Sighting, Smelling,...)
     /// </summary>
     public sealed class RecognitionProperty : EngineProperty
     {
@@ -18,7 +17,7 @@ namespace AntMe.Basics.EngineProperties
         private MipMap<VisibleProperty> visiblesMap;
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="engine">Reference to the Engine</param>
         public RecognitionProperty(Engine engine) : base(engine)
@@ -30,19 +29,19 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call after Engine Initialization.
+        ///     Gets a call after Engine Initialization.
         /// </summary>
         public override void Init()
         {
-            Vector2 size = Engine.Map.GetSize();
-            float mapWidth = size.X;
-            float mapHeight = size.Y;
+            var size = Engine.Map.GetSize();
+            var mapWidth = size.X;
+            var mapHeight = size.Y;
             visiblesMap = new MipMap<VisibleProperty>(mapWidth, mapHeight);
             smellablesMap = new MipMap<SmellableProperty>(mapWidth, mapHeight);
         }
 
         /// <summary>
-        /// Gets a call after adding a new Item to the Engine.
+        ///     Gets a call after adding a new Item to the Engine.
         /// </summary>
         /// <param name="item">New Item</param>
         protected override void Insert(Item item)
@@ -82,7 +81,7 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call before removing an item from Engine.
+        ///     Gets a call before removing an item from Engine.
         /// </summary>
         /// <param name="item">Removed Item</param>
         protected override void Remove(Item item)
@@ -93,7 +92,7 @@ namespace AntMe.Basics.EngineProperties
             {
                 // Remove also the references to this Items
                 var prop = item.GetProperty<VisibleProperty>();
-                foreach (SightingProperty sighting in prop.SightingItems.ToArray())
+                foreach (var sighting in prop.SightingItems.ToArray())
                 {
                     sighting.RemoveVisibleItem(prop);
                     prop.RemoveSightingItem(sighting);
@@ -108,7 +107,7 @@ namespace AntMe.Basics.EngineProperties
             {
                 // Remove also References
                 var prop = item.GetProperty<SightingProperty>();
-                foreach (VisibleProperty visible in prop.VisibleItems.ToArray())
+                foreach (var visible in prop.VisibleItems.ToArray())
                 {
                     prop.RemoveVisibleItem(visible);
                     visible.RemoveSightingItem(prop);
@@ -124,7 +123,7 @@ namespace AntMe.Basics.EngineProperties
             {
                 // Remove also References
                 var prop = item.GetProperty<SmellableProperty>();
-                foreach (SnifferProperty sniffer in prop.SnifferItems.ToArray())
+                foreach (var sniffer in prop.SnifferItems.ToArray())
                 {
                     sniffer.RemoveSmellableItem(prop);
                     prop.RemoveSnifferItem(sniffer);
@@ -139,7 +138,7 @@ namespace AntMe.Basics.EngineProperties
             {
                 // Also remove References
                 var prop = item.GetProperty<SnifferProperty>();
-                foreach (SmellableProperty smellable in prop.SmellableItems.ToArray())
+                foreach (var smellable in prop.SmellableItems.ToArray())
                 {
                     prop.RemoveSmellableItem(smellable);
                     smellable.RemoveSnifferItem(prop);
@@ -150,7 +149,7 @@ namespace AntMe.Basics.EngineProperties
         }
 
         /// <summary>
-        /// Gets a call after every Engine Update.
+        ///     Gets a call after every Engine Update.
         /// </summary>
         public override void Update()
         {
@@ -158,87 +157,25 @@ namespace AntMe.Basics.EngineProperties
             UpdateSniffer();
         }
 
-        #region Visibility
-
-        /// <summary>
-        /// Handle all visiblity Issues.
-        /// </summary>
-        private void UpdateVisibles()
-        {
-            // Remake the visibles map
-            visiblesMap.Clear();
-            foreach (VisibleProperty visible in visibles.Values)
-                visiblesMap.Add(visible, visible.Item.Position, visible.VisibilityRadius);
-
-            // Run through sighting Items
-            foreach (SightingProperty sighting in viewers.Values)
-            {
-                var visibleItems = new HashSet<VisibleProperty>();
-
-                // Run through all visible elements in the vincinity
-                foreach (VisibleProperty visible in visiblesMap.FindAll(sighting.Item.Position, sighting.ViewRange))
-                {
-                    // Ignore myself
-                    if (visible.Item == sighting.Item)
-                        continue;
-
-                    float max = sighting.ViewRange + visible.VisibilityRadius;
-
-                    // Check Distance
-                    // TODO: Include Sighting Angle
-                    if (Item.GetDistance(sighting.Item, visible.Item) <= max)
-                    {
-                        // Inform about visible Items.
-                        sighting.NoteVisibleItem(visible);
-                        visibleItems.Add(visible);
-                    }
-                }
-
-                // Add new Items and remove old once
-                var addVisible = visibleItems.Except(sighting.VisibleItems).ToArray();
-                var removeVisible = sighting.VisibleItems.Except(visibleItems).ToArray();
-
-                foreach (var item in addVisible)
-                {
-                    sighting.AddVisibleItem(item);
-                    item.AddSightingItem(sighting);
-                }
-
-                
-                foreach (var item in removeVisible)
-                {
-                    sighting.RemoveVisibleItem(item);
-                    item.RemoveSightingItem(sighting);
-                }
-            }
-        }
-
-        private void item_CellChanged(Item item, Index2 newValue)
-        {
-            viewers[item.Id].UpdateEnvironment(Engine.Map, item, newValue);
-        }
-
-        #endregion
-
         #region Smelling
 
         /// <summary>
-        /// Handles the sniffing Stuff
+        ///     Handles the sniffing Stuff
         /// </summary>
         private void UpdateSniffer()
         {
             // Remake the smellables map
             smellablesMap.Clear();
-            foreach (SmellableProperty smellable in smellables.Values)
+            foreach (var smellable in smellables.Values)
                 smellablesMap.Add(smellable, smellable.Item.Position, smellable.SmellableRadius);
 
             // Run through all sniffing Items
-            foreach (SnifferProperty sniffer in sniffers.Values)
+            foreach (var sniffer in sniffers.Values)
             {
                 var smellableItems = new HashSet<SmellableProperty>();
 
                 // Run through potential smallable Items
-                foreach (SmellableProperty smellable in smellablesMap.FindAll(sniffer.Item.Position, 0f))
+                foreach (var smellable in smellablesMap.FindAll(sniffer.Item.Position, 0f))
                 {
                     // Ignore myself
                     if (smellable.Item == sniffer.Item)
@@ -269,6 +206,68 @@ namespace AntMe.Basics.EngineProperties
                     item.RemoveSnifferItem(sniffer);
                 }
             }
+        }
+
+        #endregion
+
+        #region Visibility
+
+        /// <summary>
+        ///     Handle all visiblity Issues.
+        /// </summary>
+        private void UpdateVisibles()
+        {
+            // Remake the visibles map
+            visiblesMap.Clear();
+            foreach (var visible in visibles.Values)
+                visiblesMap.Add(visible, visible.Item.Position, visible.VisibilityRadius);
+
+            // Run through sighting Items
+            foreach (var sighting in viewers.Values)
+            {
+                var visibleItems = new HashSet<VisibleProperty>();
+
+                // Run through all visible elements in the vincinity
+                foreach (var visible in visiblesMap.FindAll(sighting.Item.Position, sighting.ViewRange))
+                {
+                    // Ignore myself
+                    if (visible.Item == sighting.Item)
+                        continue;
+
+                    var max = sighting.ViewRange + visible.VisibilityRadius;
+
+                    // Check Distance
+                    // TODO: Include Sighting Angle
+                    if (Item.GetDistance(sighting.Item, visible.Item) <= max)
+                    {
+                        // Inform about visible Items.
+                        sighting.NoteVisibleItem(visible);
+                        visibleItems.Add(visible);
+                    }
+                }
+
+                // Add new Items and remove old once
+                var addVisible = visibleItems.Except(sighting.VisibleItems).ToArray();
+                var removeVisible = sighting.VisibleItems.Except(visibleItems).ToArray();
+
+                foreach (var item in addVisible)
+                {
+                    sighting.AddVisibleItem(item);
+                    item.AddSightingItem(sighting);
+                }
+
+
+                foreach (var item in removeVisible)
+                {
+                    sighting.RemoveVisibleItem(item);
+                    item.RemoveSightingItem(sighting);
+                }
+            }
+        }
+
+        private void item_CellChanged(Item item, Index2 newValue)
+        {
+            viewers[item.Id].UpdateEnvironment(Engine.Map, item, newValue);
         }
 
         #endregion

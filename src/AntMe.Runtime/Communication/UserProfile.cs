@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
+﻿using System.Runtime.Serialization;
 
 namespace AntMe.Runtime.Communication
 {
     /// <summary>
-    /// Information Class for Users.
+    ///     Information Class for Users.
     /// </summary>
     [DataContract]
     public sealed class UserProfile
     {
         /// <summary>
-        /// Client Id.
+        ///     Client Id.
         /// </summary>
         [DataMember]
         public int Id { get; internal set; }
 
         /// <summary>
-        /// Display Name.
+        ///     Display Name.
         /// </summary>
         [DataMember]
         public string Username { get; internal set; }

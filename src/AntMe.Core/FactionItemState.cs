@@ -4,26 +4,19 @@ using System.IO;
 namespace AntMe
 {
     /// <summary>
-    /// Base State Class for all Faction Items. 
+    ///     Base State Class for all Faction Items.
     /// </summary>
     public abstract class FactionItemState : ItemState
     {
         /// <summary>
-        /// Slot Index
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        [DisplayName("Slot Index")]
-        [Description("Slot Index")]
-        [ReadOnly(true)]
-        [Category("Static")]
-        public byte SlotIndex { get; set; }
+        public FactionItemState()
+        {
+        }
 
         /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public FactionItemState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         public FactionItemState(FactionItem item) : base(item)
@@ -32,7 +25,16 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Slot Index
+        /// </summary>
+        [DisplayName("Slot Index")]
+        [Description("Slot Index")]
+        [ReadOnly(true)]
+        [Category("Static")]
+        public byte SlotIndex { get; set; }
+
+        /// <summary>
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -43,7 +45,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -53,7 +55,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -64,7 +66,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -74,7 +76,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Returns a representive String for this State.
+        ///     Returns a representive String for this State.
         /// </summary>
         /// <returns>State Description</returns>
         public override string ToString()

@@ -1,26 +1,24 @@
-﻿
-using AntMe.Basics.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AntMe.Basics.Items;
 
 namespace AntMe.Basics.Factions.Ants
 {
     /// <summary>
-    /// Faction for Ants.
+    ///     Faction for Ants.
     /// </summary>
     public sealed class AntFaction : Faction
     {
-        private AnthillItem primaryHill = null;
+        private readonly AntFactionState _state = new AntFactionState();
         private readonly Dictionary<int, AnthillItem> antHills = new Dictionary<int, AnthillItem>();
         private readonly string[] names;
-
-        private readonly AntFactionState _state = new AntFactionState();
         private int _antRespawnDelay;
-        private int totalAntCount = 0;
+        private AnthillItem primaryHill;
+        private int totalAntCount;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="context">Simulation Context</param>
         /// <param name="factoryType">Type of the Player Factory</param>
@@ -31,44 +29,35 @@ namespace AntMe.Basics.Factions.Ants
             // TODO: Check Factory Type?
 
             // Load all possible Ant Names
-            names = AntGeneratorFiles.femaleNames.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            names = AntGeneratorFiles.femaleNames.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
-        /// Initialize a Faction.
+        ///     Initialize a Faction.
         /// </summary>
         protected override void OnInit()
         {
             Level.Engine.OnRemoveItem += Level_RemovedItem;
 
             // Generate the first group of Anthills (Initial Anthills)
-            int hillCount = Settings.GetInt<AntFaction>("InitialAnthillCount").Value;
+            var hillCount = Settings.GetInt<AntFaction>("InitialAnthillCount").Value;
             hillCount = Math.Min(hillCount, Settings.GetInt<AntFaction>("TotalAnthillCount").Value);
             hillCount = Math.Min(hillCount, Settings.GetInt<AntFaction>("ConcurrentAnthillCount").Value);
-            for (int i = 0; i < hillCount; i++)
-            {
-                
+            for (var i = 0; i < hillCount; i++)
                 if (i == 0)
-                {
                     // Generate Primary Hill
                     primaryHill = CreateAntHill(Home);
-                }
                 else
-                {
                     // TODO: Random Positions (on i > 1)
                     CreateAntHill(Home);
-                }
-            }
 
             // Generate the first group of Ants (Initial Ants)
-            int antCount = Settings.GetInt<AntFaction>("InitialAntCount").Value;
+            var antCount = Settings.GetInt<AntFaction>("InitialAntCount").Value;
             antCount = Math.Min(antCount, Settings.GetInt<AntFaction>("TotalAntCount").Value);
             antCount = Math.Min(antCount, Settings.GetInt<AntFaction>("ConcurrentAntCount").Value);
             for (var i = 0; i < antCount; i++)
-            {
                 if (primaryHill != null)
                     CreateAnt(primaryHill);
-            }
         }
 
         private void Level_RemovedItem(Item item)
@@ -86,15 +75,15 @@ namespace AntMe.Basics.Factions.Ants
             if (_antRespawnDelay-- <= 0 &&
                 Units.Count < Settings.GetInt<AntFaction>("ConcurrentAntCount").Value &&
                 totalAntCount < Settings.GetInt<AntFaction>("TotalAntCount").Value)
-            {
                 CreateAnt(primaryHill);
-            }
         }
 
-        protected override void OnUpdated(int round) { }
+        protected override void OnUpdated(int round)
+        {
+        }
 
         /// <summary>
-        /// Generates a new Anthill.
+        ///     Generates a new Anthill.
         /// </summary>
         /// <param name="position">Position</param>
         private AnthillItem CreateAntHill(Vector2 position)
@@ -106,22 +95,20 @@ namespace AntMe.Basics.Factions.Ants
         }
 
         /// <summary>
-        /// Generates a new Ant at the position of the given Anthill.
+        ///     Generates a new Ant at the position of the given Anthill.
         /// </summary>
         private AntItem CreateAnt(AnthillItem anthill)
         {
             // Find Direction
-            Angle direction = Angle.FromDegree(Random.Next(0, 360));
-            Vector2 rim = Vector2.FromAngle(direction) * (anthill.Radius + AntItem.AntRadius);
-            Vector2 position = anthill.Position.ToVector2XY() + rim;
+            var direction = Angle.FromDegree(Random.Next(0, 360));
+            var rim = Vector2.FromAngle(direction) * (anthill.Radius + AntItem.AntRadius);
+            var position = anthill.Position.ToVector2XY() + rim;
 
             // Type anfragen
-            Type antType = (Factory.Interop as AntFactoryInterop).RequestCreateMember();
+            var antType = (Factory.Interop as AntFactoryInterop).RequestCreateMember();
             if (antType == null)
-            {
                 // Spieler will offensichtlich keine Ameise erstellen
                 return null;
-            }
 
             // Prüfen, ob es sich um den richtigen Typen handelt
             if (!antType.IsSubclassOf(typeof(AntUnit)))
@@ -131,11 +118,11 @@ namespace AntMe.Basics.Factions.Ants
             var attributes = GetAttributes(antType);
 
             // Namen erzeugen
-            string name = names[Random.Next(0, names.Length - 1)];
+            var name = names[Random.Next(0, names.Length - 1)];
 
             // AntItem erstellen
-            AntItem antItem = new AntItem(Context, attributes, this, position, direction, name);
-            AntUnit antUnit = (AntUnit)Activator.CreateInstance(antType);
+            var antItem = new AntItem(Context, attributes, this, position, direction, name);
+            var antUnit = (AntUnit) Activator.CreateInstance(antType);
 
             CreateUnit(antUnit, antItem);
 
@@ -159,10 +146,8 @@ namespace AntMe.Basics.Factions.Ants
         public AnthillInfo GetClosestAnthill(Item item)
         {
             // TODO: Check for a smarter Way without Info Object
-            return antHills.Values.
-                Select(anthill => anthill.GetItemInfo(item) as AnthillInfo).
-                OrderBy(i => i.Distance).
-                FirstOrDefault();
+            return antHills.Values.Select(anthill => anthill.GetItemInfo(item) as AnthillInfo).OrderBy(i => i.Distance)
+                .FirstOrDefault();
         }
     }
 }

@@ -1,38 +1,37 @@
-﻿using AntMe;
+﻿using System;
+using System.Windows.Forms;
+using AntMe;
 using AntMe.Runtime;
 using AntMe.Runtime.Communication;
 using CoreTestClient.Screens;
-using System;
-using System.Windows.Forms;
 
 namespace CoreTestClient
 {
     public partial class MainForm : Form
     {
-        private GameModeScreen CurrentMode = null;
+        private ISimulationClient CurrentClient;
+        private GameModeScreen CurrentMode;
 
-        private ISimulationClient CurrentClient = null;
-
-        private RenderControl Renderer = null;
+        private RenderControl Renderer;
 
         public MainForm()
         {
             InitializeComponent();
 
-            using (LoaderForm form = new LoaderForm())
+            using (var form = new LoaderForm())
             {
                 form.ShowDialog(this);
             }
         }
 
-        private void closeMenu_Click(object sender, System.EventArgs e)
+        private void closeMenu_Click(object sender, EventArgs e)
         {
             Close();
         }
 
         private void extensionsMenu_Click(object sender, EventArgs e)
         {
-            using (ExtensionsForm form = new ExtensionsForm())
+            using (var form = new ExtensionsForm())
             {
                 form.ShowDialog(this);
             }
@@ -40,7 +39,7 @@ namespace CoreTestClient
 
         private void globalSettingsMenu_Click(object sender, EventArgs e)
         {
-            using (SettingsForm form = new SettingsForm(ExtensionLoader.ExtensionSettings))
+            using (var form = new SettingsForm(ExtensionLoader.ExtensionSettings))
             {
                 form.ShowDialog(this);
             }
@@ -90,23 +89,17 @@ namespace CoreTestClient
 
             // Display Simulation State in Status Bar
             if (CurrentClient != null)
-            {
                 stateLabel.Text = CurrentClient.ServerState.ToString();
-            }
             else
-            {
                 stateLabel.Text = "No Client";
-            }
 
             // Display Game Time in Status Bar
             if (CurrentClient != null && CurrentClient.CurrentState != null)
-            {
-                timeLabel.Text = TimeSpan.FromSeconds((double)CurrentClient.CurrentState.Round / Level.FRAMES_PER_SECOND).ToString("h\\:mm\\:ss");
-            }
+                timeLabel.Text = TimeSpan
+                    .FromSeconds((double) CurrentClient.CurrentState.Round / Level.FRAMES_PER_SECOND)
+                    .ToString("h\\:mm\\:ss");
             else
-            {
                 timeLabel.Text = string.Empty;
-            }
         }
 
         private void startToolButton_Click(object sender, EventArgs e)
@@ -135,7 +128,8 @@ namespace CoreTestClient
             }
         }
 
-        private void CurrentClient_OnSimulationChanged(ISimulationClient client, SimulationState simulationState, byte frames)
+        private void CurrentClient_OnSimulationChanged(ISimulationClient client, SimulationState simulationState,
+            byte frames)
         {
             framesToolButton.Text = string.Format("{0} fps", frames);
             // throw new NotImplementedException();
@@ -148,7 +142,7 @@ namespace CoreTestClient
 
         private void codeGeneratorMenu_Click(object sender, EventArgs e)
         {
-            using (CodeGeneratorForm form = new CodeGeneratorForm())
+            using (var form = new CodeGeneratorForm())
             {
                 form.ShowDialog(this);
             }
@@ -164,7 +158,6 @@ namespace CoreTestClient
         {
             if (CurrentClient != null && CurrentClient.IsMaster)
                 CurrentClient.PitchSimulation(5);
-
         }
 
         private void frames10ToolButton_Click(object sender, EventArgs e)
@@ -199,7 +192,7 @@ namespace CoreTestClient
 
         private void localizationMenu_Click(object sender, EventArgs e)
         {
-            using (LocalizationForm form = new LocalizationForm())
+            using (var form = new LocalizationForm())
             {
                 form.ShowDialog(this);
             }
@@ -207,7 +200,7 @@ namespace CoreTestClient
 
         private void mapEditorMenu_Click(object sender, EventArgs e)
         {
-            using (MapEditorForm form = new MapEditorForm())
+            using (var form = new MapEditorForm())
             {
                 form.ShowDialog(this);
             }

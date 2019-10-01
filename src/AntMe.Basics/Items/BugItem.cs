@@ -1,11 +1,11 @@
-﻿using AntMe.Basics.Factions.Bugs;
-using System.Threading;
+﻿using System.Threading;
+using AntMe.Basics.Factions.Bugs;
 
 namespace AntMe.Basics.Items
 {
     /// <summary>
-    /// A bug item.
-    /// TODO: is this a FactionItem since there is a BugFaction?
+    ///     A bug item.
+    ///     TODO: is this a FactionItem since there is a BugFaction?
     /// </summary>
     public class BugItem : FactionItem
     {
@@ -19,9 +19,9 @@ namespace AntMe.Basics.Items
         private const int BUG_ZIGZAGRANGE = 30;
 
         private readonly BugFaction faction;
+        private readonly ManualResetEvent reset;
 
         private readonly Thread thread;
-        private readonly ManualResetEvent reset;
 
         public BugItem(SimulationContext context, Vector2 position, Angle direction, BugFaction faction)
             : base(context, faction, position, BugRadius, direction)

@@ -1,37 +1,60 @@
-﻿using AntMe.Runtime.EventLog;
-using AntMe.Serialization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
+using AntMe.Runtime.EventLog;
+using AntMe.Serialization;
 
 namespace AntMe.Runtime.Communication
 {
     /// <summary>
-    /// The WCF specific Version of the Simulation Client.
+    ///     The WCF specific Version of the Simulation Client.
     /// </summary>
     internal sealed class WcfSimulationClient : ISimulationClient
     {
-        private int masterId = -1;
-        private List<UserProfile> users = new List<UserProfile>();
-        private List<Slot> slots = new List<Slot>(AntMe.Level.MAX_SLOTS);
         private LevelStateByteSerializer _deserializer;
-        private SimulationState _serverState = SimulationState.Stopped;
-        private LevelState _currentState;
-        private LevelInfo _level;
-        private byte _rate = SimulationServer.INITFRAMERATE;
 
-        private WcfSimulationCallback callback;
+        private readonly WcfSimulationCallback callback;
         private ISimulationService channel;
-        private DuplexChannelFactory<ISimulationService> factory;
 
-        private string[] extensionPaths;
+        private readonly string[] extensionPaths;
+        private DuplexChannelFactory<ISimulationService> factory;
+        private int masterId = -1;
+        private readonly List<Slot> slots = new List<Slot>(AntMe.Level.MAX_SLOTS);
+        private readonly List<UserProfile> users = new List<UserProfile>();
+
+        public event SimulationClientDelegate<UserProfile> OnMasterChanged;
+
+        public event SimulationClientDelegate OnUserlistChanged;
+
+        public event SimulationClientDelegate<UserProfile> OnUserAdded;
+
+        public event SimulationClientDelegate<int> OnUserDropped;
+
+        public event SimulationClientDelegate<UserProfile> OnUsernameChanged;
+
+        public event SimulationClientDelegate<UserProfile, string> OnMessageReceived;
+
+        public event SimulationClientDelegate<LevelInfo> OnLevelChanged;
+
+        public event SimulationClientDelegate OnPlayerReset;
+
+        public event SimulationClientDelegate<byte> OnPlayerChanged;
+
+        public event SimulationClientDelegate<SimulationState, byte> OnSimulationChanged;
+
+        public event SimulationClientDelegate<LevelState> OnSimulationState;
+
+        public void Dispose()
+        {
+            // TODO (Deserializer?)
+        }
 
         #region Construction
 
         /// <summary>
-        /// Private Constructor
+        ///     Private Constructor
         /// </summary>
         /// <param name="callback">Instance of the Callback Class</param>
         internal WcfSimulationClient(string[] extensionPaths, WcfSimulationCallback callback)
@@ -57,11 +80,11 @@ namespace AntMe.Runtime.Communication
             this.callback.OnUsernameChanged += callback_OnUsernameChanged;
 
             for (byte i = 0; i < AntMe.Level.MAX_SLOTS; i++)
-                slots.Add(new Slot() { Id = i });
+                slots.Add(new Slot {Id = i});
         }
 
         /// <summary>
-        /// Creates the Connection to the Service Connector Factory & Channel.
+        ///     Creates the Connection to the Service Connector Factory & Channel.
         /// </summary>
         /// <param name="factory">Factory</param>
         /// <param name="channel">Channel</param>
@@ -72,34 +95,34 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Returns the Client Id.
+        ///     Returns the Client Id.
         /// </summary>
         public int ClientId { get; private set; }
 
         /// <summary>
-        /// Returns if the Connection is open.
+        ///     Returns if the Connection is open.
         /// </summary>
         public bool IsOpen { get; private set; }
 
         /// <summary>
-        /// Returns if the Connection is ready for Communication.
+        ///     Returns if the Connection is ready for Communication.
         /// </summary>
         public bool IsReady { get; private set; }
 
         /// <summary>
-        /// Returns the Protocol Number.
+        ///     Returns the Protocol Number.
         /// </summary>
         public byte Protocol { get; private set; }
 
         /// <summary>
-        /// Opens the Connection to the Server.
+        ///     Opens the Connection to the Server.
         /// </summary>
         /// <param name="username">Username</param>
         public void Open(string username)
         {
             try
             {
-                int id = channel.Hello(username);
+                var id = channel.Hello(username);
                 ClientId = id;
                 IsOpen = true;
                 IsReady = false;
@@ -113,16 +136,16 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Opens the Connection to the Server.
+        ///     Opens the Connection to the Server.
         /// </summary>
         public void Open()
         {
-            string username = "Unknown";
+            var username = "Unknown";
             Open(username);
         }
 
         /// <summary>
-        /// Close Connection by Error.
+        ///     Close Connection by Error.
         /// </summary>
         /// <param name="ex"></param>
         public void CloseByError(Exception ex)
@@ -133,7 +156,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Close Connection.
+        ///     Close Connection.
         /// </summary>
         public void Close()
         {
@@ -142,18 +165,20 @@ namespace AntMe.Runtime.Communication
             {
                 channel?.Goodbye();
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
 
             OnClose?.Invoke(this);
         }
 
         /// <summary>
-        /// Event to inform about closing the connection.
+        ///     Event to inform about closing the connection.
         /// </summary>
         public event CloseClientDelegate OnClose;
 
         /// <summary>
-        /// Event to inform about closing by Error.
+        ///     Event to inform about closing by Error.
         /// </summary>
         public event ErrorClientDelegate OnError;
 
@@ -162,44 +187,29 @@ namespace AntMe.Runtime.Communication
         #region Connection
 
         /// <summary>
-        /// Is the current Client the Server Master?
+        ///     Is the current Client the Server Master?
         /// </summary>
-        public bool IsMaster
-        {
-            get { return masterId == ClientId; }
-        }
+        public bool IsMaster => masterId == ClientId;
 
         /// <summary>
-        /// Returns the Current Level Information.
+        ///     Returns the Current Level Information.
         /// </summary>
-        public LevelInfo Level
-        {
-            get { return _level; }
-        }
+        public LevelInfo Level { get; private set; }
 
-        public Log EventLog
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Log EventLog => throw new NotImplementedException();
 
         /// <summary>
-        /// List of Users.
+        ///     List of Users.
         /// </summary>
-        public ReadOnlyCollection<UserProfile> Users
-        {
-            get { return users.AsReadOnly(); }
-        }
+        public ReadOnlyCollection<UserProfile> Users => users.AsReadOnly();
 
         /// <summary>
-        /// List of Slots.
+        ///     List of Slots.
         /// </summary>
-        public ReadOnlyCollection<Slot> Slots
-        {
-            get { return slots.AsReadOnly(); }
-        }
+        public ReadOnlyCollection<Slot> Slots => slots.AsReadOnly();
 
         /// <summary>
-        /// User Profile of the Server Master.
+        ///     User Profile of the Server Master.
         /// </summary>
         public UserProfile Master
         {
@@ -207,7 +217,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Current User Profile.
+        ///     Current User Profile.
         /// </summary>
         public UserProfile Me
         {
@@ -215,33 +225,23 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Current Server State.
+        ///     Current Server State.
         /// </summary>
-        public SimulationState ServerState
-        {
-            get { return _serverState; }
-        }
+        public SimulationState ServerState { get; private set; } = SimulationState.Stopped;
 
         /// <summary>
-        /// Latest Simulation State.
+        ///     Latest Simulation State.
         /// </summary>
-        public LevelState CurrentState
-        {
-            get { return _currentState; }
-        }
+        public LevelState CurrentState { get; private set; }
 
         /// <summary>
-        /// Current Simulation Framerate.
+        ///     Current Simulation Framerate.
         /// </summary>
-        public byte Rate
-        {
-            get { return _rate; }
-        }
+        public byte Rate { get; private set; } = SimulationServer.INITFRAMERATE;
 
-        
 
         /// <summary>
-        /// Change the Username
+        ///     Change the Username
         /// </summary>
         /// <param name="name">New User</param>
         /// <returns>Success</returns>
@@ -264,7 +264,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Send Chat Message
+        ///     Send Chat Message
         /// </summary>
         /// <param name="message">Message</param>
         public void SendMessage(string message)
@@ -282,7 +282,6 @@ namespace AntMe.Runtime.Communication
                 CloseByError(ex);
                 throw;
             }
-
         }
 
         #endregion
@@ -290,7 +289,7 @@ namespace AntMe.Runtime.Communication
         #region Simulation Management
 
         /// <summary>
-        /// Aqure the Master-Slot
+        ///     Aqure the Master-Slot
         /// </summary>
         /// <returns>Success</returns>
         public bool AquireMaster()
@@ -309,11 +308,10 @@ namespace AntMe.Runtime.Communication
                 CloseByError(ex);
                 throw;
             }
-
         }
 
         /// <summary>
-        /// Free the Master Slot.
+        ///     Free the Master Slot.
         /// </summary>
         /// <returns>Success</returns>
         public bool FreeMaster()
@@ -332,7 +330,6 @@ namespace AntMe.Runtime.Communication
                 CloseByError(ex);
                 throw;
             }
-
         }
 
         public bool UploadLevel(TypeInfo level)
@@ -351,7 +348,6 @@ namespace AntMe.Runtime.Communication
                 CloseByError(ex);
                 throw;
             }
-
         }
 
         public bool UploadPlayer(TypeInfo player)
@@ -370,7 +366,6 @@ namespace AntMe.Runtime.Communication
                 CloseByError(ex);
                 throw;
             }
-
         }
 
         public bool UploadMaster(byte slot, TypeInfo player)
@@ -389,7 +384,6 @@ namespace AntMe.Runtime.Communication
                 CloseByError(ex);
                 throw;
             }
-
         }
 
         public bool SetPlayerState(byte slot, PlayerColor color, byte team, bool ready)
@@ -444,7 +438,6 @@ namespace AntMe.Runtime.Communication
                 CloseByError(ex);
                 throw;
             }
-
         }
 
         #endregion
@@ -452,7 +445,7 @@ namespace AntMe.Runtime.Communication
         #region Flow
 
         /// <summary>
-        /// Start the Simulation.
+        ///     Start the Simulation.
         /// </summary>
         /// <returns>Success</returns>
         public bool StartSimulation()
@@ -471,11 +464,10 @@ namespace AntMe.Runtime.Communication
                 CloseByError(ex);
                 throw;
             }
-
         }
 
         /// <summary>
-        /// Pause the Simulation.
+        ///     Pause the Simulation.
         /// </summary>
         public void PauseSimulation()
         {
@@ -495,7 +487,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Resume the Simulation.
+        ///     Resume the Simulation.
         /// </summary>
         public void ResumeSimulation()
         {
@@ -515,7 +507,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Stops the Simulation.
+        ///     Stops the Simulation.
         /// </summary>
         public void StopSimulation()
         {
@@ -535,7 +527,7 @@ namespace AntMe.Runtime.Communication
         }
 
         /// <summary>
-        /// Change the Framerate of the Simulation.
+        ///     Change the Framerate of the Simulation.
         /// </summary>
         /// <param name="frames"></param>
         public void PitchSimulation(byte frames)
@@ -557,33 +549,6 @@ namespace AntMe.Runtime.Communication
 
         #endregion
 
-        public event SimulationClientDelegate<UserProfile> OnMasterChanged;
-
-        public event SimulationClientDelegate OnUserlistChanged;
-
-        public event SimulationClientDelegate<UserProfile> OnUserAdded;
-
-        public event SimulationClientDelegate<int> OnUserDropped;
-
-        public event SimulationClientDelegate<UserProfile> OnUsernameChanged;
-
-        public event SimulationClientDelegate<UserProfile, string> OnMessageReceived;
-
-        public event SimulationClientDelegate<LevelInfo> OnLevelChanged;
-
-        public event SimulationClientDelegate OnPlayerReset;
-
-        public event SimulationClientDelegate<byte> OnPlayerChanged;
-
-        public event SimulationClientDelegate<SimulationState, byte> OnSimulationChanged;
-
-        public event SimulationClientDelegate<LevelState> OnSimulationState;
-
-        public void Dispose()
-        {
-            // TODO (Deserializer?)
-        }
-
         #region Server Callbacks
 
         private void callback_OnUsernameChanged(UserProfile user)
@@ -591,10 +556,7 @@ namespace AntMe.Runtime.Communication
             lock (users)
             {
                 var hit = users.SingleOrDefault(u => u.Id == user.Id);
-                if (hit != null)
-                {
-                    hit.Username = user.Username;
-                }
+                if (hit != null) hit.Username = user.Username;
             }
 
             OnUsernameChanged?.Invoke(this, user);
@@ -604,8 +566,8 @@ namespace AntMe.Runtime.Communication
         {
             lock (users)
             {
-                this.users.Clear();
-                this.users.AddRange(parameter);
+                users.Clear();
+                users.AddRange(parameter);
             }
 
             OnUserlistChanged?.Invoke(this);
@@ -613,7 +575,7 @@ namespace AntMe.Runtime.Communication
 
         private void callback_OnUserDropped(int id)
         {
-            bool hit = false;
+            var hit = false;
             lock (users)
             {
                 var user = users.SingleOrDefault(u => u.Id == id);
@@ -630,7 +592,7 @@ namespace AntMe.Runtime.Communication
 
         private void callback_OnUserAdded(UserProfile user)
         {
-            bool hit = false;
+            var hit = false;
             lock (users)
             {
                 // Check, if exists
@@ -650,27 +612,27 @@ namespace AntMe.Runtime.Communication
             // Skip, as long there is no Deserializer
             if (_deserializer == null)
             {
-                SimulationContext context = ExtensionLoader.CreateSimulationContext();
+                var context = ExtensionLoader.CreateSimulationContext();
                 _deserializer = new LevelStateByteSerializer(context);
             }
 
             // Set latest Main State
-            _currentState = _deserializer.Deserialize(parameter);
+            CurrentState = _deserializer.Deserialize(parameter);
 
-            OnSimulationState?.Invoke(this, _currentState);
+            OnSimulationState?.Invoke(this, CurrentState);
         }
 
         private void callback_OnSimulationChanged(SimulationState state, byte framerate)
         {
             // Server State changed from running to stopped
-            if (_serverState != SimulationState.Stopped && state == SimulationState.Stopped)
+            if (ServerState != SimulationState.Stopped && state == SimulationState.Stopped)
             {
                 // Trash Deserializer
                 _deserializer?.Dispose();
                 _deserializer = null;
-                
+
                 // Remove last State
-                _currentState = null;
+                CurrentState = null;
             }
 
             //// Server State changed from stopped to running
@@ -683,8 +645,8 @@ namespace AntMe.Runtime.Communication
             //}
 
             // Set local Properties
-            _serverState = state;
-            _rate = framerate;
+            ServerState = state;
+            Rate = framerate;
 
             // Drop Event
             OnSimulationChanged?.Invoke(this, state, framerate);
@@ -740,7 +702,7 @@ namespace AntMe.Runtime.Communication
             if (level != null)
                 levelInfo = ExtensionLoader.SecureFindLevel(extensionPaths, level.AssemblyFile, level.TypeName);
 
-            _level = levelInfo;
+            Level = levelInfo;
 
             OnLevelChanged?.Invoke(this, levelInfo);
         }

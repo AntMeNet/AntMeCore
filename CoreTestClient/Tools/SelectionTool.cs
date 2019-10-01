@@ -1,7 +1,7 @@
-﻿using System.Windows.Forms;
-using AntMe;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
+using AntMe;
 
 namespace CoreTestClient.Tools
 {
@@ -9,11 +9,20 @@ namespace CoreTestClient.Tools
     {
         private Index2? selectedCell;
 
-        private ToolStripButton selectionButton;
+        private readonly ToolStripButton selectionButton;
+
+        public SelectionTool(SimulationContext context) : base(context)
+        {
+            var path = Path.Combine(".", "Resources", "select.png");
+            var image = Image.FromFile(path);
+            selectionButton = new ToolStripButton("Select", image);
+            selectionButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            selectionButton.Click += (s, e) => { Select(); };
+        }
 
         public Index2? SelectedCell
         {
-            get { return selectedCell; }
+            get => selectedCell;
             set
             {
                 selectedCell = value;
@@ -21,16 +30,7 @@ namespace CoreTestClient.Tools
             }
         }
 
-        public override ToolStripItem RootItem { get { return selectionButton; } }
-
-        public SelectionTool(SimulationContext context) : base(context)
-        {
-            string path = Path.Combine(".", "Resources", "select.png");
-            Image image = Image.FromFile(path);
-            selectionButton = new ToolStripButton("Select", image);
-            selectionButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            selectionButton.Click += (s, e) => { Select(); };
-        }
+        public override ToolStripItem RootItem => selectionButton;
 
         protected override void OnApply(Map map, Index2? cell, Vector2? position)
         {

@@ -3,13 +3,13 @@
 namespace AntMe
 {
     /// <summary>
-    /// Base Attribute for all Unit Attributes.
+    ///     Base Attribute for all Unit Attributes.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public abstract class UnitAttribute : Attribute
     {
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="key">Attribute Key</param>
         /// <param name="value">Value</param>
@@ -18,7 +18,7 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Sepcial Constructor to define also the minimum and maximum Value.
+        ///     Sepcial Constructor to define also the minimum and maximum Value.
         /// </summary>
         /// <param name="key">Attribute Key</param>
         /// <param name="value">Value</param>
@@ -33,23 +33,23 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Attribute Key.
+        ///     Attribute Key.
         /// </summary>
-        public string Key { get; private set; }
+        public string Key { get; }
 
         /// <summary>
-        /// Value of this Attribute.
+        ///     Value of this Attribute.
         /// </summary>
-        public sbyte Value { get; private set; }
+        public sbyte Value { get; }
 
         /// <summary>
-        /// Gets the minimum Value allowed for Value.
+        ///     Gets the minimum Value allowed for Value.
         /// </summary>
-        public sbyte MinValue { get; private set; }
+        public sbyte MinValue { get; }
 
         /// <summary>
-        /// Gets the maximum Value allowed for Value.
+        ///     Gets the maximum Value allowed for Value.
         /// </summary>
-        public sbyte MaxValue { get; private set; }
+        public sbyte MaxValue { get; }
     }
 }

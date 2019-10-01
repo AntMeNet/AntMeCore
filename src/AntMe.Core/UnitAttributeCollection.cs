@@ -4,14 +4,14 @@ using System.Collections.Generic;
 namespace AntMe
 {
     /// <summary>
-    /// Collection of Attributes of an Unit.
+    ///     Collection of Attributes of an Unit.
     /// </summary>
     public sealed class UnitAttributeCollection
     {
-        private Dictionary<string, sbyte> values;
+        private readonly Dictionary<string, sbyte> values;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="name">Name of this Attribute Category</param>
         /// <param name="attributes">List of Attributes</param>
@@ -20,7 +20,7 @@ namespace AntMe
             Name = name;
 
             values = new Dictionary<string, sbyte>();
-            int sum = 0;
+            var sum = 0;
             foreach (var item in attributes)
             {
                 values.Add(item.Key, item.Value);
@@ -33,17 +33,17 @@ namespace AntMe
         }
 
         /// <summary>
-        /// Gets or sets Name of the Unit Category.
+        ///     Gets or sets Name of the Unit Category.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
-        /// List of all available Keys.
+        ///     List of all available Keys.
         /// </summary>
-        public IEnumerable<string> Keys { get { return values.Keys; } }
+        public IEnumerable<string> Keys => values.Keys;
 
         /// <summary>
-        /// Returns the Value of the given Key or 0 if not available.
+        ///     Returns the Value of the given Key or 0 if not available.
         /// </summary>
         /// <param name="key">Attribute Key</param>
         /// <returns>Attribute Value or 0</returns>

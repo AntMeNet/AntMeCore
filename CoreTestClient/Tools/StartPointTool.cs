@@ -1,20 +1,17 @@
-﻿using System.Windows.Forms;
-using AntMe;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
+using AntMe;
 
 namespace CoreTestClient.Tools
 {
     internal sealed class StartPointTool : EditorTool
     {
-        private ToolStripDropDownButton button;
-
         private byte ActiveSlot;
+        private readonly ToolStripDropDownButton button;
 
-        private ToolStripItem[] buttons;
-
-        public Index2?[] StartPoints { get; private set; }
+        private readonly ToolStripItem[] buttons;
 
         public StartPointTool(SimulationContext context) : base(context)
         {
@@ -23,25 +20,26 @@ namespace CoreTestClient.Tools
             button.ToolTipText = "Start Point";
             button.Click += (s, e) => { Select(); };
 
-            string path = Path.Combine(".", "Resources", "start.png");
-            Image image = Image.FromFile(path);
+            var path = Path.Combine(".", "Resources", "start.png");
+            var image = Image.FromFile(path);
             button.Image = image;
 
             buttons = new ToolStripItem[Map.MAX_STARTPOINTS];
             StartPoints = new Index2?[Map.MAX_STARTPOINTS];
             for (byte i = 0; i < Map.MAX_STARTPOINTS; i++)
             {
-                ToolStripItem b = button.DropDownItems.Add(string.Format("Slot {0}", i + 1));
+                var b = button.DropDownItems.Add(string.Format("Slot {0}", i + 1));
                 buttons[i] = b;
                 b.Tag = i;
-                b.Click += (s, e) =>
-                {
-                    SelectSlot((byte)b.Tag);
-                };
+                b.Click += (s, e) => { SelectSlot((byte) b.Tag); };
             }
 
             SelectSlot(0);
         }
+
+        public Index2?[] StartPoints { get; }
+
+        public override ToolStripItem RootItem => button;
 
         private void SelectSlot(byte slot)
         {
@@ -49,14 +47,9 @@ namespace CoreTestClient.Tools
             button.Text = string.Format("Start Point {0}", ActiveSlot + 1);
         }
 
-        public override ToolStripItem RootItem
-        {
-            get { return button; }
-        }
-
         protected override void OnApply(Map map, Index2? cell, Vector2? position)
         {
-            if (StartPoints[ActiveSlot].HasValue && 
+            if (StartPoints[ActiveSlot].HasValue &&
                 cell.HasValue &&
                 StartPoints[ActiveSlot].Value == cell.Value)
                 StartPoints[ActiveSlot] = null;

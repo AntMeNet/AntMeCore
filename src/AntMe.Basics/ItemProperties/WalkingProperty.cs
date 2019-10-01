@@ -3,7 +3,7 @@
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Property for all walking Elements.
+    ///     Property for all walking Elements.
     /// </summary>
     public sealed class WalkingProperty : ItemProperty
     {
@@ -12,7 +12,7 @@ namespace AntMe.Basics.ItemProperties
         private float speed;
 
         /// <summary>
-        /// Creates a new Instance of a Walking Property.
+        ///     Creates a new Instance of a Walking Property.
         /// </summary>
         /// <param name="item">Reference to the related Item</param>
         public WalkingProperty(Item item) : base(item)
@@ -24,11 +24,11 @@ namespace AntMe.Basics.ItemProperties
         #region Properties
 
         /// <summary>
-        /// Gets or sets the Walking Direction.
+        ///     Gets or sets the Walking Direction.
         /// </summary>
         public Angle Direction
         {
-            get { return direction; }
+            get => direction;
             set
             {
                 direction = value;
@@ -37,11 +37,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the current Walking Speed limited by the current Max Speed.
+        ///     Gets or sets the current Walking Speed limited by the current Max Speed.
         /// </summary>
         public float Speed
         {
-            get { return speed; }
+            get => speed;
             set
             {
                 speed = Math.Max(value, 0f);
@@ -50,11 +50,11 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Gets or sets the maximum Speed.
+        ///     Gets or sets the maximum Speed.
         /// </summary>
         public float MaximumSpeed
         {
-            get { return maxSpeed; }
+            get => maxSpeed;
             set
             {
                 maxSpeed = Math.Max(value, 0f);
@@ -64,7 +64,7 @@ namespace AntMe.Basics.ItemProperties
 
 
         /// <summary>
-        /// Sets the current Speed Multiplier.
+        ///     Sets the current Speed Multiplier.
         /// </summary>
         public float MoveMalus { get; set; }
 
@@ -73,7 +73,7 @@ namespace AntMe.Basics.ItemProperties
         #region Internal Calls
 
         /// <summary>
-        /// Internal Call for hitting a Wall.
+        ///     Internal Call for hitting a Wall.
         /// </summary>
         /// <param name="direction">Direction</param>
         internal void HitWall(Compass direction)
@@ -82,7 +82,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Internal Call for hitting the Map Border.
+        ///     Internal Call for hitting the Map Border.
         /// </summary>
         /// <param name="direction">Direction</param>
         internal void HitBorder(Compass direction)
@@ -95,27 +95,27 @@ namespace AntMe.Basics.ItemProperties
         #region Events
 
         /// <summary>
-        /// Event for a Direction Change.
+        ///     Event for a Direction Change.
         /// </summary>
         public event ValueChanged<Angle> OnMoveDirectionChanged;
 
         /// <summary>
-        /// Event for Speed Change.
+        ///     Event for Speed Change.
         /// </summary>
         public event ValueChanged<float> OnMoveSpeedChanged;
 
         /// <summary>
-        /// Event for Maximum Speed Change.
+        ///     Event for Maximum Speed Change.
         /// </summary>
         public event ValueChanged<float> OnMaximumMoveSpeedChanged;
 
         /// <summary>
-        /// Event for hitting the Map Border.
+        ///     Event for hitting the Map Border.
         /// </summary>
         public event ValueChanged<Compass> OnHitBorder;
 
         /// <summary>
-        /// Event for hitting a Wall.
+        ///     Event for hitting a Wall.
         /// </summary>
         public event ValueChanged<Compass> OnHitWall;
 

@@ -1,11 +1,11 @@
-﻿using AntMe.Basics.MapProperties;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using AntMe.Basics.MapProperties;
 
 namespace AntMe.Basics.MapTiles
 {
     /// <summary>
-    /// Represents a Ramp through a Cliff.
+    ///     Represents a Ramp through a Cliff.
     /// </summary>
     public class RampMapTile : MapTile, IUpdateableMapTile
     {
@@ -19,14 +19,25 @@ namespace AntMe.Basics.MapTiles
         //
 
         /// <summary>
-        /// Default Constrcutor.
+        ///     Default Constrcutor.
         /// </summary>
         public RampMapTile(SimulationContext context) : base(context)
         {
         }
 
         /// <summary>
-        /// Returns the Level to enter on the South Side.
+        ///     Gets called in every Round to update Items in this Map Tile.
+        /// </summary>
+        /// <param name="round">Current Round</param>
+        /// <param name="items">Included Items</param>
+        public void Update(int round, IEnumerable<Item> items)
+        {
+            // TODO: Just to test the update mechanism: Items slide down the ramp slowly
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Returns the Level to enter on the South Side.
         /// </summary>
         protected override byte? GetConnectionLevelSouth()
         {
@@ -34,11 +45,11 @@ namespace AntMe.Basics.MapTiles
         }
 
         /// <summary>
-        /// Returns the Level to enter on the North Side.
+        ///     Returns the Level to enter on the North Side.
         /// </summary>
         protected override byte? GetConnectionLevelNorth()
         {
-            return (byte)(HeightLevel + 1);
+            return (byte) (HeightLevel + 1);
         }
 
         protected override bool OnValidateEastSide(MapTile tile, IList<Exception> exceptions)
@@ -48,6 +59,7 @@ namespace AntMe.Basics.MapTiles
                 exceptions.Add(new NotSupportedException("Map Tile must be a Ramp or Right Cliff Tile"));
                 return false;
             }
+
             return true;
         }
 
@@ -58,11 +70,12 @@ namespace AntMe.Basics.MapTiles
                 exceptions.Add(new NotSupportedException("Map Tile must be a Ramp or Left Cliff Tile"));
                 return false;
             }
+
             return true;
         }
 
         /// <summary>
-        /// Returns the Height at the given Position.
+        ///     Returns the Height at the given Position.
         /// </summary>
         /// <param name="position">relative Position</param>
         /// <returns>Map Height</returns>
@@ -85,17 +98,6 @@ namespace AntMe.Basics.MapTiles
                 case MapTileOrientation.RotBy270Degrees: return (1f - position.X + HeightLevel) * Map.LEVELHEIGHT;
                 default: throw new NotSupportedException("Unsupported Map Tile Orientation");
             }
-        }
-
-        /// <summary>
-        /// Gets called in every Round to update Items in this Map Tile.
-        /// </summary>
-        /// <param name="round">Current Round</param>
-        /// <param name="items">Included Items</param>
-        public void Update(int round, IEnumerable<Item> items)
-        {
-            // TODO: Just to test the update mechanism: Items slide down the ramp slowly
-            throw new NotImplementedException();
         }
     }
 }

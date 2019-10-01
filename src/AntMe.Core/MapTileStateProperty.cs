@@ -1,30 +1,31 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace AntMe
 {
     /// <summary>
-    /// Base Class for all Map Tile Properties States.
+    ///     Base Class for all Map Tile Properties States.
     /// </summary>
     public class MapTileStateProperty : StateProperty
     {
         /// <summary>
-        /// Reference to the Map Tile.
+        ///     Reference to the Map Tile.
         /// </summary>
         protected readonly MapTile MapTile;
 
         /// <summary>
-        /// Reference to the Map Tile Property.
+        ///     Reference to the Map Tile Property.
         /// </summary>
-        protected readonly new MapTileProperty Property;
+        protected new readonly MapTileProperty Property;
 
         /// <summary>
-        /// Default Constructor for the Deserializer.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public MapTileStateProperty() : base() { }
+        public MapTileStateProperty()
+        {
+        }
 
         /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="mapTile">Map Tile</param>
         /// <param name="property">Map Tile Property</param>

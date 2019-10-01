@@ -2,8 +2,12 @@
 {
     public sealed class RightRampToCliffMapTileState : CliffMapTileState
     {
-        public RightRampToCliffMapTileState() : base() { }
+        public RightRampToCliffMapTileState()
+        {
+        }
 
-        public RightRampToCliffMapTileState(RightRampToCliffMapTile mapTile) : base(mapTile) { }
+        public RightRampToCliffMapTileState(RightRampToCliffMapTile mapTile) : base(mapTile)
+        {
+        }
     }
 }

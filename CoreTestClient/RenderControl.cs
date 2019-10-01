@@ -1,20 +1,23 @@
-﻿using AntMe;
-using AntMe.Runtime.Communication;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
+﻿using System;
 using System.Linq;
-using System.Collections.Generic;
-using CoreTestClient.Renderer;
-using AntMe.Runtime;
-using System.IO;
+using System.Windows.Forms;
+using AntMe;
+using AntMe.Runtime.Communication;
 
 namespace CoreTestClient
 {
     internal sealed partial class RenderControl : UserControl
     {
-        private ISimulationClient simulation;
+        private Index2 _mapCells;
+        private Vector2 _mapSize;
         private LevelState currentState;
+        private readonly TreeNode factionsNode;
+        private readonly TreeNode itemsNode;
+
+        private readonly TreeNode levelNode;
+        private readonly TreeNode mapNode;
+        private ISimulationClient simulation;
+        private ItemState[] treeState;
 
         public RenderControl()
         {
@@ -29,38 +32,6 @@ namespace CoreTestClient
             mapLabel.Text = string.Empty;
             itemLabel.Text = string.Empty;
         }
-
-        #region Simulation Client Handling
-
-        public void SetSimulation(ISimulationClient client)
-        {
-            // Unattach old Simulation
-            if (simulation != null)
-            {
-                simulation.OnSimulationState -= Simulation_OnSimulationState;
-                simulation = null;
-                currentState = null;
-            }
-
-            // Attach new Simulation
-            if (client != null)
-            {
-                simulation = client;
-                simulation.OnSimulationState += Simulation_OnSimulationState;
-            }
-        }
-
-        private void Simulation_OnSimulationState(ISimulationClient client, LevelState levelState)
-        {
-            if (currentState == null)
-            {
-                SetScale(levelState.Map.GetCellCount());
-            }
-            currentState = levelState;
-            scene.SetState(levelState);
-        }
-
-        #endregion
 
         #region Renderscreen Events
 
@@ -77,7 +48,7 @@ namespace CoreTestClient
             scene.Invalidate();
 
             // Update Infos
-            LevelState state = currentState;
+            var state = currentState;
             if (state != null)
             {
                 itemLabel.Text = "Items: " + state.Items.Count;
@@ -92,9 +63,6 @@ namespace CoreTestClient
             // Update Tree
             UpdateTree();
         }
-
-        private Index2 _mapCells;
-        private Vector2 _mapSize;
 
         private void Rescale()
         {
@@ -118,19 +86,13 @@ namespace CoreTestClient
             mapLabel.Text = "Map: " + _mapCells.X + "/" + _mapCells.Y + " @ " + Map.CELLSIZE;
         }
 
-        private TreeNode levelNode;
-        private TreeNode mapNode;
-        private TreeNode factionsNode;
-        private TreeNode itemsNode;
-        private ItemState[] treeState = null;
-
         private void UpdateTree()
         {
-            LevelState state = currentState;
+            var state = currentState;
 
             if (state != null)
             {
-                ItemState[] itemStates = state.Items.ToArray();
+                var itemStates = state.Items.ToArray();
 
                 // Initial
                 if (treeState == null)
@@ -164,17 +126,14 @@ namespace CoreTestClient
 
                 // Items entfernen
                 foreach (var item in treeState)
-                {
                     if (!state.Items.Contains(item))
                     {
                         var node = itemsNode.Nodes["item" + item.Id];
                         if (node != null) node.Remove();
                     }
-                }
 
                 // Items einfügen
                 foreach (var item in itemStates)
-                {
                     if (!treeState.Contains(item))
                     {
                         var node = itemsNode.Nodes.Add("item" + item.Id, item.ToString());
@@ -186,7 +145,6 @@ namespace CoreTestClient
                             subnode.Tag = property;
                         }
                     }
-                }
 
                 treeState = itemStates;
             }
@@ -207,8 +165,35 @@ namespace CoreTestClient
                     treeState = null;
                 }
             }
-
-
         }
+
+        #region Simulation Client Handling
+
+        public void SetSimulation(ISimulationClient client)
+        {
+            // Unattach old Simulation
+            if (simulation != null)
+            {
+                simulation.OnSimulationState -= Simulation_OnSimulationState;
+                simulation = null;
+                currentState = null;
+            }
+
+            // Attach new Simulation
+            if (client != null)
+            {
+                simulation = client;
+                simulation.OnSimulationState += Simulation_OnSimulationState;
+            }
+        }
+
+        private void Simulation_OnSimulationState(ISimulationClient client, LevelState levelState)
+        {
+            if (currentState == null) SetScale(levelState.Map.GetCellCount());
+            currentState = levelState;
+            scene.SetState(levelState);
+        }
+
+        #endregion
     }
 }

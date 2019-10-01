@@ -5,7 +5,7 @@ using System.Linq;
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// Property for all smellable Items.
+    ///     Property for all smellable Items.
     /// </summary>
     public sealed class SmellableProperty : ItemProperty
     {
@@ -13,7 +13,7 @@ namespace AntMe.Basics.ItemProperties
         private float smellableRadius;
 
         /// <summary>
-        /// Default Constructor.
+        ///     Default Constructor.
         /// </summary>
         /// <param name="item">Item</param>
         public SmellableProperty(Item item) : base(item)
@@ -24,19 +24,16 @@ namespace AntMe.Basics.ItemProperties
         #region Properties
 
         /// <summary>
-        /// List of all Items that sniffes the Item.
+        ///     List of all Items that sniffes the Item.
         /// </summary>
-        public IEnumerable<SnifferProperty> SnifferItems
-        {
-            get { return snifferItems.AsEnumerable(); }
-        }
+        public IEnumerable<SnifferProperty> SnifferItems => snifferItems.AsEnumerable();
 
         /// <summary>
-        /// Gets or sets the current Smellable Radius.
+        ///     Gets or sets the current Smellable Radius.
         /// </summary>
         public float SmellableRadius
         {
-            get { return smellableRadius; }
+            get => smellableRadius;
             set
             {
                 smellableRadius = Math.Max(0f, value);
@@ -49,7 +46,7 @@ namespace AntMe.Basics.ItemProperties
         #region Internal Calls
 
         /// <summary>
-        /// Internal Call to add another Sniffer to the List.
+        ///     Internal Call to add another Sniffer to the List.
         /// </summary>
         /// <param name="item">New SnifferProperty of the Sniffing Item</param>
         internal void AddSnifferItem(SnifferProperty item)
@@ -63,15 +60,12 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Internal Call to remove a sniffing Item from the List.
+        ///     Internal Call to remove a sniffing Item from the List.
         /// </summary>
         /// <param name="item">Removed SnifferProperty of the Sniffing Item</param>
         internal void RemoveSnifferItem(SnifferProperty item)
         {
-            if (snifferItems.Remove(item))
-            {
-                OnLostSnifferItem?.Invoke(item);
-            }
+            if (snifferItems.Remove(item)) OnLostSnifferItem?.Invoke(item);
         }
 
         #endregion
@@ -79,17 +73,17 @@ namespace AntMe.Basics.ItemProperties
         #region Events
 
         /// <summary>
-        /// Signal for a new Sniffing Item.
+        ///     Signal for a new Sniffing Item.
         /// </summary>
         public event ChangeItem<SnifferProperty> OnNewSnifferItem;
 
         /// <summary>
-        /// Signal for a lost Sniffing Item.
+        ///     Signal for a lost Sniffing Item.
         /// </summary>
         public event ChangeItem<SnifferProperty> OnLostSnifferItem;
 
         /// <summary>
-        /// Signal for a changed smellable Radius.
+        ///     Signal for a changed smellable Radius.
         /// </summary>
         public event ValueChanged<float> OnSmellableRadiusChanged;
 

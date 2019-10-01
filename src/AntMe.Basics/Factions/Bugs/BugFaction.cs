@@ -3,7 +3,7 @@
 namespace AntMe.Basics.Factions.Bugs
 {
     /// <summary>
-    /// A bug faction. Creates new Bugs based on the given bug colony and settings.
+    ///     A bug faction. Creates new Bugs based on the given bug colony and settings.
     /// </summary>
     public sealed class BugFaction : Faction
     {

@@ -4,35 +4,19 @@ using System.IO;
 namespace AntMe.Basics.ItemProperties
 {
     /// <summary>
-    /// State Property for all collidable Items.
+    ///     State Property for all collidable Items.
     /// </summary>
     public sealed class CollidableState : ItemStateProperty
     {
         /// <summary>
-        /// Is the Item a fixed Mass
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        [DisplayName("Fixed Mass")]
-        [Description("Is the Item a fixed Mass")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public bool Fixed { get; set; }
+        public CollidableState()
+        {
+        }
 
         /// <summary>
-        /// Item Mass
-        /// </summary>
-        [DisplayName("Mass")]
-        [Description("Item Mass")]
-        [ReadOnly(true)]
-        [Category("Dynamic")]
-        public float Mass { get; set; }
-
-        /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public CollidableState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="item">Related Engine Item</param>
         /// <param name="property">Related Engine Property</param>
@@ -48,7 +32,25 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes the first Frame of this State.
+        ///     Is the Item a fixed Mass
+        /// </summary>
+        [DisplayName("Fixed Mass")]
+        [Description("Is the Item a fixed Mass")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public bool Fixed { get; set; }
+
+        /// <summary>
+        ///     Item Mass
+        /// </summary>
+        [DisplayName("Mass")]
+        [Description("Item Mass")]
+        [ReadOnly(true)]
+        [Category("Dynamic")]
+        public float Mass { get; set; }
+
+        /// <summary>
+        ///     Serializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -59,7 +61,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Serializes following Frames of this State.
+        ///     Serializes following Frames of this State.
         /// </summary>
         /// <param name="stream">Output Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -70,7 +72,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes the first Frame of this State.
+        ///     Deserializes the first Frame of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>
@@ -81,7 +83,7 @@ namespace AntMe.Basics.ItemProperties
         }
 
         /// <summary>
-        /// Deserializes all following Frames of this State.
+        ///     Deserializes all following Frames of this State.
         /// </summary>
         /// <param name="stream">Input Stream</param>
         /// <param name="version">Protocol Version</param>

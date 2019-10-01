@@ -1,5 +1,4 @@
-﻿using AntMe;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 
 namespace AntMe.Runtime.Communication
 {
@@ -28,9 +27,9 @@ namespace AntMe.Runtime.Communication
         #region Master Handling
 
         [OperationContract(
-                    IsInitiating = false,
-                    IsTerminating = false
-                )]
+            IsInitiating = false,
+            IsTerminating = false
+        )]
         [FaultContract(typeof(AntMeFault))]
         void AquireMaster();
 

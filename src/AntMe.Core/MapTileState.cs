@@ -1,60 +1,61 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace AntMe
 {
     /// <summary>
-    /// Base Class for all Map Tile States.
+    ///     Base Class for all Map Tile States.
     /// </summary>
     public abstract class MapTileState : PropertyList<MapTileStateProperty>, ISerializableState
     {
         /// <summary>
-        /// Reference to the Map Tile.
+        ///     Reference to the Map Tile.
         /// </summary>
         protected readonly MapTile MapTile;
 
         /// <summary>
-        /// Height Level for this Tile.
+        ///     Default Constructor for the Deserializer.
         /// </summary>
-        public int HeightLevel { get; set; }
+        public MapTileState()
+        {
+        }
 
         /// <summary>
-        /// Material for this Tile.
-        /// </summary>
-        public MapMaterial Material { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Orientation of this Tile.
-        /// </summary>
-        public MapTileOrientation Orientation { get; set; }
-
-        /// <summary>
-        /// Default Constructor for the Deserializer.
-        /// </summary>
-        public MapTileState() : base() { }
-
-        /// <summary>
-        /// Default Constructor for the Type Mapper.
+        ///     Default Constructor for the Type Mapper.
         /// </summary>
         /// <param name="mapTile">Related Tile</param>
-        public MapTileState(MapTile mapTile) : base()
+        public MapTileState(MapTile mapTile)
         {
             MapTile = mapTile;
 
             HeightLevel = MapTile.HeightLevel;
-            MapTile.OnHeightLevelChanged += (v) => { HeightLevel = v; };
+            MapTile.OnHeightLevelChanged += v => { HeightLevel = v; };
 
             Material = MapTile.Material;
-            MapTile.OnMaterialChanged += (v) => { Material = v; };
+            MapTile.OnMaterialChanged += v => { Material = v; };
 
             Orientation = MapTile.Orientation;
-            MapTile.OnOrientationChanged += (v) => { Orientation = v; };
+            MapTile.OnOrientationChanged += v => { Orientation = v; };
         }
+
+        /// <summary>
+        ///     Height Level for this Tile.
+        /// </summary>
+        public int HeightLevel { get; set; }
+
+        /// <summary>
+        ///     Material for this Tile.
+        /// </summary>
+        public MapMaterial Material { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Orientation of this Tile.
+        /// </summary>
+        public MapTileOrientation Orientation { get; set; }
 
         public void DeserializeFirst(BinaryReader stream, byte version)
         {
             HeightLevel = stream.ReadInt32();
-            Orientation = (MapTileOrientation)stream.ReadUInt16();
+            Orientation = (MapTileOrientation) stream.ReadUInt16();
         }
 
         public void DeserializeUpdate(BinaryReader stream, byte version)
@@ -64,7 +65,7 @@ namespace AntMe
         public void SerializeFirst(BinaryWriter stream, byte version)
         {
             stream.Write(HeightLevel);
-            stream.Write((ushort)Orientation);
+            stream.Write((ushort) Orientation);
         }
 
         public void SerializeUpdate(BinaryWriter stream, byte version)
