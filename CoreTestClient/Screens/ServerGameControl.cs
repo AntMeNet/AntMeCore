@@ -49,12 +49,10 @@ namespace CoreTestClient.Screens
             ISimulationClient result = null;
             Task.Run(async () =>
             {
-                var uri = "http://localhost:80/AntMeServer/";
-                SimulationServer.Start(extensionPaths,uri);
-
+               
                 try
                 {
-                    result = await SimulationClient.CreateSignalR(extensionPaths, uri + "signalR");
+                    result = await SimulationClient.CreateSignalR(extensionPaths, "http://localhost:80/AntMeServer/signalR");
                 }
                 catch (Exception)
                 {

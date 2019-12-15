@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntMe.Runtime.Simulation", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntMe.Runtime.Client", "src\AntMe.Runtime.Client\AntMe.Runtime.Client.csproj", "{29A110AF-4CBD-4D07-99D3-CA75B7431DA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestServer", "TestServer\TestServer.csproj", "{17E111DA-D6F9-4FEE-A9C4-2DD1F289AA80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{29A110AF-4CBD-4D07-99D3-CA75B7431DA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29A110AF-4CBD-4D07-99D3-CA75B7431DA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29A110AF-4CBD-4D07-99D3-CA75B7431DA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17E111DA-D6F9-4FEE-A9C4-2DD1F289AA80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17E111DA-D6F9-4FEE-A9C4-2DD1F289AA80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17E111DA-D6F9-4FEE-A9C4-2DD1F289AA80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17E111DA-D6F9-4FEE-A9C4-2DD1F289AA80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
